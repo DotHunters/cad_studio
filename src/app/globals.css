@@ -87,8 +87,9 @@
 }
 
 @theme inline {
-  --font-heading: var(--font-sans);
-  --font-sans: var(--font-sans);
+  /* Set by next/font in src/app/fonts.ts */
+  --font-heading: var(--font-cormorant), ui-serif, Georgia, serif;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --color-ink: var(--brand-ink);
   --color-paper: var(--brand-paper);
   --color-gold: var(--brand-gold);
@@ -143,6 +144,12 @@
   }
   html {
     @apply font-sans;
+  }
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-heading tracking-tight;
   }
 }
 

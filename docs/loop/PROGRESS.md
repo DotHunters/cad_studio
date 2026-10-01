@@ -35,3 +35,9 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - PR: open at https://github.com/DotHunters/cad_studio/compare/main...feat/m1-foundation?expand=1 (no gh CLI)
 - Notes: shadcn init also added Geist font to layout — replaced in 1.3.
 - Next: 1.3
+
+### 2026-10-01 — 1.3 Fonts
+- Branch: feat/m1-foundation
+- Done: `src/app/fonts.ts` — Inter (body, `--font-inter`) + Cormorant Garamond (headings, `--font-cormorant`, 400–700 + italic), latin + latin-ext for French; Tailwind `font-sans`/`font-heading` mapped with system fallbacks; h1–h4 use heading font. Removed shadcn's Geist.
+- Checks: lint ✅ · typecheck ✅ · test — (until 1.4) · build ✅ · format ✅
+- Next: 1.4

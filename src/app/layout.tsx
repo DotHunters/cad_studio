@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
-
-const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
+import { cormorant, inter } from "./fonts";
 
 export const metadata: Metadata = {
   title: "Cad Studio — Photography in Canada",
@@ -17,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("font-sans", geist.variable)}>
+    <html lang="en" className={cn("font-sans", inter.variable, cormorant.variable)}>
       <body className="antialiased">{children}</body>
     </html>
   );
