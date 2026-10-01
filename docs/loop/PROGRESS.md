@@ -82,3 +82,10 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (37) · build ✅ · format ✅
 - Notes: one build failed with Next "Invariant: no direct app page entry found for /_not-found" — stale `.next` cache; `rm -rf .next` fixed it. Owner's local Postgres verified: schema up to date, seed counts match.
 - Next: 1.10
+
+### 2026-10-01 — 1.10 Bilingual i18n
+- Branch: feat/m1-foundation
+- Done: next-intl 4 — `src/i18n/{routing,navigation,request}.ts`, middleware (skips `api`, `admin`, `_next`, files), `localePrefix: "always"` so `/` → `/en` (or `/fr` by Accept-Language). App moved to `src/app/[locale]/(site)`; `[locale]/layout.tsx` owns `<html lang="en-CA|fr-CA">`, fonts, `NextIntlClientProvider`, metadata with `hreflang` alternates (en-CA, fr-CA, x-default). Localized 404 via `[...rest]` catch-all + global fallback 404. Typed messages (`AppConfig`) so bad keys/locales fail typecheck. `messages/en.json` + `fr.json` (FR flagged in `messages/README.md`).
+- Checks: lint ✅ · typecheck ✅ · test ✅ (40, incl. EN/FR key parity + brand-name guard) · e2e ✅ (8) · build ✅ · format ✅
+- Notes: admin stays English-only, outside `[locale]`. Locale-aware `formatCAD`/dates already take `Locale` (1.9).
+- Next: 1.11

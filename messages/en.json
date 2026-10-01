@@ -1,0 +1,21 @@
+{
+  "Metadata": {
+    "title": "Cad Studio — Photography in Canada",
+    "titleTemplate": "%s | Cad Studio — Photography in Canada",
+    "description": "Cad Studio — event, wedding, portrait and product photography in Toronto and beyond."
+  },
+  "Common": {
+    "skipToContent": "Skip to content",
+    "language": "Language",
+    "switchToLocale": "Français"
+  },
+  "Home": {
+    "heading": "Cad Studio",
+    "tagline": "Collection Art Design"
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "body": "The page you're looking for doesn't exist or has moved.",
+    "backHome": "Back to home"
+  }
+}
