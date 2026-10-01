@@ -14,13 +14,15 @@ type Props = {
   slides: Slide[];
   pauseLabel: string;
   playLabel: string;
+  /** Accessible label per indicator, e.g. "Show image 2 of 4". */
+  slideLabels: string[];
 };
 
 /**
  * Cross-fading full-bleed hero images. Auto-advances unless the user prefers reduced
- * motion, and offers a pause control (WCAG 2.2.2).
+ * motion, with a pause control (WCAG 2.2.2) and slide indicators.
  */
-export function HeroSlideshow({ slides, pauseLabel, playLabel }: Props) {
+export function HeroSlideshow({ slides, pauseLabel, playLabel, slideLabels }: Props) {
   const [active, setActive] = useState(0);
   const [playing, setPlaying] = useState(true);
 
@@ -38,36 +40,63 @@ export function HeroSlideshow({ slides, pauseLabel, playLabel }: Props) {
   }, [playing, slides.length]);
 
   return (
-    <div className="absolute inset-0">
-      {slides.map((slide, index) => (
-        <Image
-          key={slide.src}
-          src={slide.src}
-          alt={index === active ? slide.alt : ""}
-          aria-hidden={index !== active}
-          fill
-          priority={index === 0}
-          sizes="100vw"
-          className={cn(
-            "object-cover transition-opacity duration-300",
-            index === active ? "opacity-100" : "opacity-0",
-          )}
-        />
-      ))}
+    <>
+      <div className="absolute inset-0 -z-10">
+        {slides.map((slide, index) => (
+          <Image
+            key={slide.src}
+            src={slide.src}
+            alt={index === active ? slide.alt : ""}
+            aria-hidden={index !== active}
+            fill
+            priority={index === 0}
+            sizes="100vw"
+            className={cn(
+              "object-cover transition-opacity duration-300",
+              index === active ? "opacity-100" : "opacity-0",
+            )}
+          />
+        ))}
+      </div>
+
       {slides.length > 1 && (
-        <button
-          type="button"
-          onClick={() => setPlaying((value) => !value)}
-          aria-label={playing ? pauseLabel : playLabel}
-          className="text-paper focus-visible:ring-gold-light absolute right-4 bottom-4 z-10 rounded-full bg-black/50 p-2 focus-visible:ring-2 focus-visible:outline-none"
-        >
-          {playing ? (
-            <Pause className="size-4" aria-hidden />
-          ) : (
-            <Play className="size-4" aria-hidden />
-          )}
-        </button>
+        <div className="absolute inset-x-0 bottom-20 flex items-center justify-center gap-3">
+          <ul className="flex items-center gap-1">
+            {slides.map((slide, index) => (
+              <li key={slide.src}>
+                <button
+                  type="button"
+                  onClick={() => setActive(index)}
+                  aria-label={slideLabels[index]}
+                  aria-current={index === active}
+                  className="focus-visible:ring-gold-light group/dot flex h-6 items-center px-1 focus-visible:ring-2 focus-visible:outline-none"
+                >
+                  <span
+                    className={cn(
+                      "block h-0.5 transition-all duration-300",
+                      index === active
+                        ? "bg-gold-gradient w-8"
+                        : "bg-paper/40 group-hover/dot:bg-paper/70 w-4",
+                    )}
+                  />
+                </button>
+              </li>
+            ))}
+          </ul>
+          <button
+            type="button"
+            onClick={() => setPlaying((value) => !value)}
+            aria-label={playing ? pauseLabel : playLabel}
+            className="text-paper/80 hover:text-paper focus-visible:ring-gold-light rounded-full p-1.5 focus-visible:ring-2 focus-visible:outline-none"
+          >
+            {playing ? (
+              <Pause className="size-3.5" aria-hidden />
+            ) : (
+              <Play className="size-3.5" aria-hidden />
+            )}
+          </button>
+        </div>
       )}
-    </div>
+    </>
   );
 }

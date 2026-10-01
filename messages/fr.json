@@ -19,14 +19,20 @@
   "Home": {
     "heading": "Cad Studio",
     "tagline": "Collection Art Design",
-    "heroTitle": "Vos moments, magnifiquement préservés.",
+    "heroTitle": "Vos moments, <accent>magnifiquement</accent> préservés.",
     "heroSubtitle": "Photographie d'événements, de mariages, de portraits et de produits — planifiée avec soin, livrée avec style. Basés à Toronto, disponibles partout dans le monde.",
     "heroImageAlt": "Photographie d'exemple {index} sur {total}",
     "pauseSlideshow": "Mettre le diaporama en pause",
     "playSlideshow": "Lancer le diaporama",
-    "categoriesTitle": "Ce que nous photographions",
+    "categoriesTitle": "Des services <accent>sur mesure</accent>",
     "categoriesIntro": "Choisissez un service pour voir les forfaits et les prix de départ.",
-    "viewPackages": "Voir les forfaits"
+    "viewPackages": "Voir les forfaits",
+    "trustYears": "Plus de 10 ans d'expérience",
+    "trustEvents": "Expérience en gestion d'événements",
+    "trustLocation": "Toronto · Canada",
+    "showSlide": "Afficher l'image {index} sur {total}",
+    "scroll": "Défiler",
+    "categoriesEyebrow": "Ce que nous photographions"
   },
   "NotFound": {
     "title": "Page introuvable",

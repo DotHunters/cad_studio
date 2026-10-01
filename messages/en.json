@@ -19,14 +19,20 @@
   "Home": {
     "heading": "Cad Studio",
     "tagline": "Collection Art Design",
-    "heroTitle": "Your moments, beautifully kept.",
+    "heroTitle": "Your moments, <accent>beautifully</accent> kept.",
     "heroSubtitle": "Event, wedding, portrait and product photography — planned with care, delivered with style. Toronto-based, available worldwide.",
     "heroImageAlt": "Sample photograph {index} of {total}",
     "pauseSlideshow": "Pause slideshow",
     "playSlideshow": "Play slideshow",
-    "categoriesTitle": "What we photograph",
+    "categoriesTitle": "Services, <accent>tailored</accent> to you",
     "categoriesIntro": "Choose a service to see packages and starting prices.",
-    "viewPackages": "View packages"
+    "viewPackages": "View packages",
+    "trustYears": "10+ years behind the lens",
+    "trustEvents": "Event management experience",
+    "trustLocation": "Toronto · Canada",
+    "showSlide": "Show image {index} of {total}",
+    "scroll": "Scroll",
+    "categoriesEyebrow": "What we photograph"
   },
   "NotFound": {
     "title": "Page not found",

@@ -5,17 +5,24 @@ import { Link } from "@/i18n/navigation";
 import { categorySlugs } from "@/lib/categories";
 import { placeholderImage } from "@/lib/images";
 
+import { Accent, SectionHeading } from "./section-heading";
+
 export function CategoryTiles() {
   const t = useTranslations();
 
   return (
-    <section aria-labelledby="categories-title" className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-      <div className="mb-8 max-w-2xl">
-        <h2 id="categories-title" className="text-3xl sm:text-4xl">
-          {t("Home.categoriesTitle")}
-        </h2>
-        <p className="text-muted-foreground mt-2">{t("Home.categoriesIntro")}</p>
-      </div>
+    <section
+      aria-labelledby="categories-title"
+      className="mx-auto max-w-7xl scroll-mt-20 px-4 py-20 sm:px-6 sm:py-28"
+    >
+      <SectionHeading
+        id="categories-title"
+        align="center"
+        eyebrow={t("Home.categoriesEyebrow")}
+        title={t.rich("Home.categoriesTitle", { accent: (chunks) => <Accent>{chunks}</Accent> })}
+        intro={t("Home.categoriesIntro")}
+        className="mb-12"
+      />
 
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {categorySlugs.map((slug) => {

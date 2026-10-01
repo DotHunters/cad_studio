@@ -108,4 +108,13 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Done: `HomeHero` (full-bleed cross-fading `HeroSlideshow`, 6 s interval, pause/play control per WCAG 2.2.2, starts paused under reduced motion; headline, subtitle, Get a Quote + Book a Date CTAs). `CategoryTiles` (6 tiles → `/packages?category=<slug>`). `src/lib/categories.ts` slug↔enum map; `src/lib/images.ts` placehold.co helper (blank by default — labels clashed with overlaid text in screenshots; text colour = background since placehold.co always prints something). `next.config` allows placehold.co, AVIF/WebP. EN + FR copy.
 - Found + fixed on M1 (`0b0212f`): middleware matcher bug made every `/fr` page render English content — see entry above. M2 rebased onto it.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (66) · e2e ✅ (28) · build ✅ · format ✅ · visual check EN desktop + FR mobile
+- PR: https://github.com/DotHunters/cad_studio/pull/2 (base feat/m1-foundation)
 - Next: 2.2
+
+### 2026-10-01 — 2.1 refinement: reference-site design pass + owner gold gradient
+- Branch: feat/m2-content
+- Owner shared chanthans.com as a design reference (ideas only — no copy/photos/branding taken) and a metallic gold gradient for buttons and lines.
+- Done: `HeaderShell` — transparent header with white logo + light text over the home hero, solid after 24 px scroll; uppercase letter-spaced nav. Centred full-height hero: trust pill (owner facts only: 10+ years, event management, Toronto · Canada), serif headline with italic gold accent word (`t.rich`), pill CTAs (`Button size="cta"`), slide indicator dashes (clickable, `aria-current`), scroll cue. `SectionHeading` + `Accent` (eyebrow, gold rule, serif title, intro) — categories section uses it. Gradient: `--brand-gold-gradient`; `bg-gold-gradient` (exact, lines/accents only) and `bg-gold-button` (25% white tint so ink text is ≥5.1:1 — raw gradient measured 2.9:1 worst case) as the default `Button` variant, mobile-menu CTA and skip link. Gradient lines: active slide indicator, trust dot, section rule, footer hairline. AGENTS.md §5 documents the gradient, contrast rule and design patterns. Q14 (WhatsApp number) added.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (66) · e2e ✅ (36) · build ✅ · format ✅ · screenshots EN desktop light/dark, FR mobile
+- Notes: Windows `.next` lock flakiness (build invariant / e2e "no production build") — retry clears it; loop.md now documents it. Untracked `README.md` belongs to the owner — not committed by the loop.
+- Next: 2.2 (use SectionHeading + patterns from AGENTS.md §5)

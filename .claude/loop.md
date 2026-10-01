@@ -25,6 +25,7 @@ Run on every `/loop` tick. Goal: build the MVP in `AGENTS.md` (milestones 1–8)
    pnpm lint && pnpm typecheck && pnpm test && pnpm build
    ```
    Until task 1.1 creates these scripts, run whatever subset exists and note the gap in the log.
+   If `next build` fails with `Invariant: no direct app page entry found for …`, the `.next` cache is stale or half-deleted (Windows file locks): retry `rm -rf .next` until the folder is gone, then rebuild. Run `build` and `test:e2e` sequentially, never in parallel (both write `.next`).
    Don't tick a task until the checks pass. If you can't get them green this tick, leave the task unchecked and log why.
 6. **Record.**
    - Tick the task in `TASKS.md`.

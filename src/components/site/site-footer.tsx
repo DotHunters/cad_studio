@@ -11,7 +11,8 @@ export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="bg-ink text-paper dark:border-border mt-auto border-t border-transparent">
+    <footer className="bg-ink text-paper mt-auto">
+      <div aria-hidden className="bg-gold-gradient h-px" />
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-3">
         <div className="space-y-3">
           <Logo variant="gold" alt={siteConfig.name} className="h-14" />

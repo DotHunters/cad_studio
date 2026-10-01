@@ -4,6 +4,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
+import { HeaderShell } from "./header-shell";
 import { LocaleSwitcher } from "./locale-switcher";
 import { Logo } from "./logo";
 import { MobileNav } from "./mobile-nav";
@@ -19,19 +20,19 @@ export function SiteHeader() {
   }));
 
   return (
-    <header className="bg-background/90 supports-[backdrop-filter]:bg-background/75 sticky top-0 z-40 border-b backdrop-blur">
-      <div className="relative mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
+    <HeaderShell>
+      <div className="group-data-[transparent=true]:text-paper relative mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
         <Link href="/" className="shrink-0" aria-label={t("Common.logoAlt")}>
           <Logo alt={t("Common.logoAlt")} className="h-12" priority />
         </Link>
 
         <nav aria-label={t("Common.mainNav")} className="hidden md:block">
-          <ul className="flex items-center gap-1 lg:gap-3">
+          <ul className="flex items-center gap-1 lg:gap-4">
             {items.map((item) => (
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className="hover:text-gold-text rounded-md px-2 py-1 text-sm transition-colors"
+                  className="hover:text-gold-text group-data-[transparent=true]:hover:text-gold-light rounded-md px-2 py-1 text-xs font-medium tracking-[0.15em] uppercase transition-colors"
                 >
                   {item.label}
                 </Link>
@@ -42,14 +43,8 @@ export function SiteHeader() {
 
         <div className="flex items-center gap-1 sm:gap-2">
           <Link
-            href={ctaNav.book.href}
-            className={cn(buttonVariants({ variant: "outline" }), "hidden h-9 px-3 lg:inline-flex")}
-          >
-            {t(`Nav.${ctaNav.book.key}`)}
-          </Link>
-          <Link
             href={ctaNav.quote.href}
-            className={cn(buttonVariants(), "hidden h-9 px-3 sm:inline-flex")}
+            className={cn(buttonVariants({ size: "cta" }), "hidden h-9 px-4 lg:inline-flex")}
           >
             {t(`Nav.${ctaNav.quote.key}`)}
           </Link>
@@ -67,6 +62,6 @@ export function SiteHeader() {
           />
         </div>
       </div>
-    </header>
+    </HeaderShell>
   );
 }

@@ -19,6 +19,24 @@
   --brand-muted: #6b6b6b;
   --brand-sand: #f0ece6;
   --brand-line: #e5e0d8;
+  /* Owner-supplied metallic gold gradient. */
+  --brand-gold-gradient:
+    radial-gradient(
+      ellipse farthest-corner at right bottom,
+      #fedb37 0%,
+      #fdb931 8%,
+      #9f7928 30%,
+      #8a6e2f 40%,
+      transparent 80%
+    ),
+    radial-gradient(
+      ellipse farthest-corner at left top,
+      #ffffff 0%,
+      #ffffac 8%,
+      #d1b464 25%,
+      #5d4a1f 62.5%,
+      #5d4a1f 100%
+    );
 
   --background: var(--brand-paper);
   --foreground: var(--brand-ink);
@@ -133,6 +151,20 @@
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* Gold gradient exactly as supplied — for lines, rules and decorative accents (no text on it). */
+@utility bg-gold-gradient {
+  background: var(--brand-gold-gradient);
+}
+
+/*
+ * Buttons: same gradient under a 25% white tint so ink text passes WCAG AA
+ * (measured worst case 5.1:1; the raw gradient bottoms out at 2.9:1).
+ */
+@utility bg-gold-button {
+  background:
+    linear-gradient(rgb(255 255 255 / 0.25), rgb(255 255 255 / 0.25)), var(--brand-gold-gradient);
 }
 
 @layer base {
