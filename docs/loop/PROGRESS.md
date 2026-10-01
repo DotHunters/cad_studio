@@ -217,5 +217,5 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 ### 2026-10-01 — 4.1 Canadian sales tax
 - Branch: feat/m4-quote (stacked on feat/m3-portfolio-gallery / PR #4)
 - Done (TDD): `src/lib/tax.ts` — `parseRate` (Decimal string/Prisma Decimal → integer parts per 100,000; rejects >5 decimals, negatives, ≥100%), `calculateTax(subtotalCents, rate)` → `{ lines: [{code GST|PST|QST|HST, rate "9.975%", amountCents}], taxCents }` with each line on the pre-tax subtotal (QST not on GST) and half-up rounding to the cent, `findTaxRate` (case-insensitive, throws for unknown regions). 12 tests: ON HST, QC GST+QST, GST-only, Atlantic HST, INTL, rounding edges, invalid input. Coverage: 100% lines/branches.
-- Checks: lint ✅ · typecheck ✅ · test ✅ (142) · format ✅ (no UI change; build/e2e unchanged)
+- Checks: lint ✅ · typecheck ✅ · test ✅ (142) · format ✅ after a follow-up formatting commit (the first commit was pushed with format:check failing — always run `pnpm format` before committing)
 - Next: 4.2

@@ -63,7 +63,10 @@ export function calculateTax(subtotalCents: number, rate: TaxRateInput): TaxResu
   return { lines, taxCents: lines.reduce((sum, line) => sum + line.amountCents, 0) };
 }
 
-export function findTaxRate<T extends { province: string }>(rates: readonly T[], province: string): T {
+export function findTaxRate<T extends { province: string }>(
+  rates: readonly T[],
+  province: string,
+): T {
   const code = province.trim().toUpperCase();
   const rate = rates.find((candidate) => candidate.province.toUpperCase() === code);
   if (!rate) throw new RangeError(`No tax rate configured for region "${province}"`);
