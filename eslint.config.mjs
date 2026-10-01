@@ -18,6 +18,11 @@ const eslintConfig = [
     },
   },
   {
+    // CLI scripts may log to the console.
+    files: ["prisma/**/*.ts"],
+    rules: { "no-console": "off" },
+  },
+  {
     ignores: [
       "node_modules/**",
       ".next/**",

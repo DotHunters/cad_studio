@@ -68,3 +68,10 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ · build ✅ · format ✅ · `prisma validate` ✅
 - Blockers: **no Postgres on this machine** (no Docker/psql) — migration not yet applied to a real DB. Need `DATABASE_URL` (local Postgres or Neon/Supabase) in `.env.local` to run `pnpm db:deploy` + seed.
 - Next: 1.8
+
+### 2026-10-01 — 1.8 Seed
+- Branch: feat/m1-foundation
+- Done: `prisma/seed-data.ts` (6 packages EN+FR, 7 add-ons, 13 pricing rules in cents/whole %, 14 tax regions with accountant comment, `CANCELLATION_POLICY`/`PAYMENT_INSTRUCTIONS` TODO(owner) EN/FR, 4 fictional sample projects with 25 `placeholder/…` images, 4 `[SAMPLE]` reviews approved but `isSample`-gated). `prisma/seed.ts` idempotent upserts; site settings create-only so owner edits survive re-seeding. 14 unit tests on seed invariants.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (21) · build ✅ · format ✅ · **migrate deploy + seed ×2 verified against PGlite** (in-memory Postgres, scratchpad only — not added to project).
+- Notes: placeholder image convention `publicId = "placeholder/<slug>-<n>"` → loader must render via placehold.co (task 3.1). French drafted by agent → `TODO(owner-fr): review`.
+- Next: 1.9
