@@ -1,0 +1,49 @@
+{
+  "Metadata": {
+    "title": "Cad Studio — Photographie au Canada",
+    "titleTemplate": "%s | Cad Studio — Photographie au Canada",
+    "description": "Cad Studio — photographie d'événements, de mariages, de portraits et de produits à Toronto et ailleurs."
+  },
+  "Common": {
+    "skipToContent": "Aller au contenu",
+    "language": "Langue",
+    "switchToLocale": "English",
+    "logoAlt": "Accueil Cad Studio",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "mainNav": "Principale",
+    "footerNav": "Pied de page",
+    "toggleTheme": "Basculer entre thème clair et sombre",
+    "switchLanguageLabel": "View the site in English"
+  },
+  "Home": {
+    "heading": "Cad Studio",
+    "tagline": "Collection Art Design"
+  },
+  "NotFound": {
+    "title": "Page introuvable",
+    "body": "La page que vous cherchez n'existe pas ou a été déplacée.",
+    "backHome": "Retour à l'accueil"
+  },
+  "Nav": {
+    "packages": "Forfaits",
+    "portfolio": "Portfolio",
+    "gallery": "Galerie",
+    "reviews": "Avis",
+    "about": "À propos",
+    "contact": "Contact",
+    "getQuote": "Obtenir un devis",
+    "bookDate": "Réserver une date",
+    "privacy": "Confidentialité",
+    "terms": "Conditions"
+  },
+  "Footer": {
+    "tagline": "Photographie d'événements, de mariages, de portraits et de produits.",
+    "serviceArea": "Basé à Scarborough, Toronto — au service du Grand Toronto, de tout le Canada et du monde entier.",
+    "email": "Courriel",
+    "rights": "© {year} Cad Studio. Tous droits réservés."
+  },
+  "PricingBanner": {
+    "message": "Tarifs en attente de confirmation — les prix affichés sont provisoires."
+  }
+}

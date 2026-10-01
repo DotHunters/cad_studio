@@ -35,7 +35,7 @@ Run on every `/loop` tick. Goal: build the MVP in `AGENTS.md` (milestones 1–8)
    - Make one Conventional Commit per task (`feat:`, `fix:`, `test:`, `chore:` …).
    - Push the branch after each commit: `git push -u origin <branch>`. Before pushing, `git fetch`; if the remote branch moved, rebase onto it (don't merge).
    - Open **one PR per milestone** against `main` once the branch has its first commit. Title it `M<N>: <Milestone name>`. In the body, list the milestone's tasks as a checklist and keep it updated.
-     - If `gh` is available: `gh pr create` / `gh pr edit`.
+     - If `gh` is available: `gh pr create` / `gh pr edit`. On this machine, if `gh` is not on PATH, use `"/c/Program Files/GitHub CLI/gh.exe"` (authenticated).
      - If `gh` isn't installed: push anyway, then log the compare URL `https://github.com/DotHunters/cad_studio/compare/main...<branch>?expand=1` in `PROGRESS.md` so the user can open the PR.
    - **Never merge PRs, force-push, or delete branches.** The user reviews and merges. Start the next milestone's branch from `main` after its PR is merged. If it isn't merged yet, branch from the previous milestone branch and say so in the PR body.
 

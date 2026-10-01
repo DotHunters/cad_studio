@@ -1,0 +1,321 @@
+// Cad Studio data model — AGENTS.md §7.
+// Money: integer CAD cents. Times: UTC. Translatable text: `*Fr` companion columns
+// (nullable, fall back to English). Auth.js tables arrive with task 7.1.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Category {
+  CORPORATE
+  WEDDING
+  FAMILY
+  GATHERING
+  PROFESSIONAL
+  PRODUCT
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+enum QuoteStatus {
+  DRAFT
+  SENT
+  ACCEPTED
+  EXPIRED
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum ReviewType {
+  CUSTOMER
+  RECOMMENDATION
+}
+
+enum Reach {
+  LOCAL
+  GLOBAL
+}
+
+enum Role {
+  ADMIN
+  STAFF
+}
+
+/// PAYMENT_LINK = external link sent by admin; STRIPE = phase 2.
+enum PaymentMethod {
+  BANK_TRANSFER
+  CASH
+  PAYMENT_LINK
+  STRIPE
+}
+
+enum AddOnUnit {
+  FLAT
+  PER_HOUR
+  PER_ITEM
+}
+
+enum Locale {
+  en
+  fr
+}
+
+model Package {
+  id               String    @id @default(cuid())
+  slug             String    @unique
+  category         Category
+  name             String
+  nameFr           String?
+  summary          String
+  summaryFr        String?
+  /// Markdown.
+  description      String
+  descriptionFr    String?
+  basePriceCents   Int
+  includedHours    Int
+  includedShooters Int       @default(1)
+  editedImages     Int?
+  turnaroundDays   Int?
+  inclusions       String[]
+  inclusionsFr     String[]
+  exclusions       String[]
+  exclusionsFr     String[]
+  /// [{ q, a, qFr?, aFr? }]
+  faqs             Json      @default("[]")
+  isActive         Boolean   @default(true)
+  sortOrder        Int       @default(0)
+  images           Image[]
+  addOns           AddOn[]
+  quotes           Quote[]
+  bookings         Booking[]
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  @@index([category, isActive, sortOrder])
+}
+
+model AddOn {
+  id         String     @id @default(cuid())
+  /// e.g. VIDEO, DRONE, ALBUM, RUSH
+  code       String     @unique
+  name       String
+  nameFr     String?
+  priceCents Int
+  unit       AddOnUnit
+  categories Category[]
+  isActive   Boolean    @default(true)
+  sortOrder  Int        @default(0)
+  packages   Package[]
+}
+
+/// Admin-editable knobs for the quote engine, e.g. EXTRA_HOUR_RATE.
+model PricingRule {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+/// Admin-editable content/config, e.g. CANCELLATION_POLICY, PAYMENT_INSTRUCTIONS.
+/// Localized text is stored as { en, fr }.
+model SiteSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+model TaxRate {
+  /// ON, BC, QC, … or INTL
+  province String  @id
+  gst      Decimal @db.Decimal(6, 5)
+  pst      Decimal @db.Decimal(6, 5)
+  hst      Decimal @db.Decimal(6, 5)
+  label    String
+}
+
+/// Yearly sequences for references like CAD-Q-2026-0001. key = "Q-2026" | "B-2026".
+model ReferenceCounter {
+  key   String @id
+  value Int    @default(0)
+}
+
+model Customer {
+  id                 String    @id @default(cuid())
+  name               String
+  email              String    @unique
+  phone              String?
+  locale             Locale    @default(en)
+  marketingOptIn     Boolean   @default(false)
+  /// When terms/privacy consent was given.
+  consentAt          DateTime?
+  /// When marketing opt-in was given (CASL).
+  marketingConsentAt DateTime?
+  quotes             Quote[]
+  bookings           Booking[]
+  createdAt          DateTime  @default(now())
+}
+
+model Quote {
+  id              String      @id @default(cuid())
+  reference       String      @unique
+  category        Category
+  packageId       String?
+  package         Package?    @relation(fields: [packageId], references: [id], onDelete: SetNull)
+  eventDate       DateTime
+  durationHours   Decimal     @db.Decimal(5, 2)
+  photographers   Int
+  guestCount      Int?
+  province        String
+  city            String?
+  distanceKm      Int?
+  isInternational Boolean     @default(false)
+  /// [{ code, qty }]
+  addOns          Json
+  /// Line items as computed by the quote engine.
+  breakdown       Json
+  subtotalCents   Int
+  taxCents        Int
+  totalCents      Int
+  status          QuoteStatus @default(SENT)
+  expiresAt       DateTime
+  customerId      String
+  customer        Customer    @relation(fields: [customerId], references: [id])
+  booking         Booking?
+  createdAt       DateTime    @default(now())
+
+  @@index([status, createdAt])
+}
+
+model Booking {
+  id                 String         @id @default(cuid())
+  reference          String         @unique
+  category           Category
+  packageId          String?
+  package            Package?       @relation(fields: [packageId], references: [id], onDelete: SetNull)
+  quoteId            String?        @unique
+  quote              Quote?         @relation(fields: [quoteId], references: [id], onDelete: SetNull)
+  /// UTC
+  startAt            DateTime
+  /// UTC
+  endAt              DateTime
+  photographers      Int
+  guestCount         Int?
+  venue              String?
+  notes              String?
+  status             BookingStatus  @default(PENDING)
+  depositCents       Int?
+  paymentMethod      PaymentMethod?
+  /// Admin sent the payment request email.
+  paymentRequestedAt DateTime?
+  /// Optional link included in that email.
+  paymentLinkUrl     String?
+  /// Set by admin when payment is received.
+  depositPaidAt      DateTime?
+  customerId         String
+  customer           Customer       @relation(fields: [customerId], references: [id])
+  reviews            Review[]
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  @@index([startAt])
+  @@index([status, startAt])
+}
+
+model BlockedDate {
+  id     String   @id @default(cuid())
+  date   DateTime @unique @db.Date
+  reason String?
+}
+
+model PortfolioProject {
+  id               String    @id @default(cuid())
+  slug             String    @unique
+  title            String
+  titleFr          String?
+  /// null => "Private client". Shown only when consentToPublish is true.
+  clientName       String?
+  consentToPublish Boolean   @default(false)
+  category         Category
+  reach            Reach
+  city             String?
+  country          String
+  year             Int
+  /// Markdown.
+  story            String
+  storyFr          String?
+  coverId          String?
+  images           Image[]
+  featured         Boolean   @default(false)
+  isSample         Boolean   @default(false)
+  publishedAt      DateTime?
+
+  @@index([category, reach, year])
+}
+
+model Image {
+  id               String            @id @default(cuid())
+  /// Cloudinary public id.
+  publicId         String            @unique
+  width            Int
+  height           Int
+  /// Required, descriptive.
+  alt              String
+  altFr            String?
+  category         Category?
+  tags             String[]
+  inGallery        Boolean           @default(true)
+  sortOrder        Int               @default(0)
+  /// Admin confirmed client consent to publish (AGENTS.md §9).
+  consentToPublish Boolean           @default(false)
+  isSample         Boolean           @default(false)
+  projectId        String?
+  project          PortfolioProject? @relation(fields: [projectId], references: [id], onDelete: SetNull)
+  packageId        String?
+  package          Package?          @relation(fields: [packageId], references: [id], onDelete: SetNull)
+  createdAt        DateTime          @default(now())
+
+  @@index([inGallery, category, sortOrder])
+}
+
+model Review {
+  id               String       @id @default(cuid())
+  type             ReviewType
+  authorName       String
+  /// Recommendations only.
+  authorTitle      String?
+  /// Recommendations only.
+  company          String?
+  /// Cloudinary id of the company logo; shown only when logoPermission is true.
+  logoPublicId     String?
+  logoPermission   Boolean      @default(false)
+  /// 1–5, required for CUSTOMER (enforced in validation).
+  rating           Int?
+  category         Category?
+  body             String
+  locale           Locale       @default(en)
+  verified         Boolean      @default(false)
+  bookingId        String?
+  booking          Booking?     @relation(fields: [bookingId], references: [id], onDelete: SetNull)
+  status           ReviewStatus @default(PENDING)
+  /// Set by automatic spam/profanity check; stays PENDING for manual review.
+  flagged          Boolean      @default(false)
+  featured         Boolean      @default(false)
+  consentToPublish Boolean
+  isSample         Boolean      @default(false)
+  createdAt        DateTime     @default(now())
+
+  @@index([status, type, createdAt])
+}

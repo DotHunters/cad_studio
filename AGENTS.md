@@ -139,12 +139,14 @@ pnpm db:studio        # Prisma Studio
 - **Logo:** owner-supplied source files in `assets/` — `gold.png` (primary), `black.png` (light backgrounds), `white.png` (dark backgrounds); transparent PNG, 2014×814. Logo wordmark reads "Cad ♡ Studio" with tagline "· COLLECTION ART DESIGN ·" (CAD = Collection Art Design). Copy to `public/brand/` (`logo-gold.png`, `logo-black.png`, `logo-white.png`) and render via `next/image` with `alt="Cad Studio"`. Header: black logo in light theme, white logo in dark theme; gold for hero/footer/OG. Derive favicon from the camera-heart mark. Ask the owner for an SVG version for crispness. Logo gold gradient: `#C79856` → `#FAD983`.
 - **Tone:** confident, warm, premium, never salesy. Short sentences. Canadian English spelling (colour, centre, cheque) in copy; code identifiers stay US English.
 - **Visual direction:** editorial and photo-first. Images are the hero — UI chrome is minimal.
-  - Palette (CSS variables in `globals.css`):
-    - `--ink` near-black `#111111`
-    - `--paper` off-white `#FAF8F5`
-    - `--accent` warm gold `#C79856` (matched to logo; CTAs, highlights only — fails 4.5:1 as text on `--paper`, so use it as a fill with `--ink` text, or for large display text only)
-    - `--accent-light` `#FAD983` (logo highlight; gradients, dark-theme accents)
-    - `--muted` `#6B6B6B`
+  - Palette (CSS variables in `globals.css`, prefixed `--brand-*` so they don't clash with shadcn's semantic `--accent`/`--muted`; shadcn tokens are mapped onto them):
+    - `--brand-ink` near-black `#111111` → Tailwind `ink`
+    - `--brand-paper` off-white `#FAF8F5` → `paper`
+    - `--brand-gold` warm gold `#C79856` (matched to logo) → `gold`, also shadcn `--primary` with ink text (7.2:1). CTAs/highlights only — **2.5:1 as text on paper, never use for text in light mode**
+    - `--brand-gold-light` `#FAD983` (logo highlight; gradients, dark-theme accents) → `gold-light`
+    - `--brand-gold-text` `#8A6430` (gold for text/links on light backgrounds, 5.0:1) → `text-gold-text` (auto-switches to `#C79856` in dark mode)
+    - `--brand-muted` `#6B6B6B` → shadcn `--muted-foreground` (5.0:1 on paper)
+    - Dark theme via `.dark` class on `<html>`.
   - Typography: serif display (e.g. *Cormorant Garamond* / *Playfair Display*) for headings, clean sans (*Inter*) for body, via `next/font`.
   - Generous white space, full-bleed imagery, subtle motion (fade/slide ≤ 300 ms; respect `prefers-reduced-motion`).
 - Support **light and dark** themes.
@@ -236,6 +238,8 @@ pnpm db:studio        # Prisma Studio
 ---
 
 ## 7. Data model (Prisma, summary)
+
+> **Source of truth: `prisma/schema.prisma`** (Prisma 7, `prisma-client` generator → `src/generated/prisma`, `@prisma/adapter-pg`). The schema adds to this summary: relations, `*Fr` columns, `Package.faqs`, `AddOnUnit` enum, `Locale` enum, consent flags on `PortfolioProject`/`Image`, `Review.logoPermission`/`flagged`/`locale`, `ReferenceCounter` for `CAD-Q/B-YYYY-####`, `Customer.marketingConsentAt`, timestamps and indexes. Auth.js tables come with task 7.1, `AuditLog` with 7.9.
 
 ```prisma
 enum Category { CORPORATE WEDDING FAMILY GATHERING PROFESSIONAL PRODUCT }
@@ -524,6 +528,7 @@ Add a comment in the seed file: `// Verify current rates and service applicabili
 - Stripe webhooks verified with signing secret; idempotent handlers.
 
 ### Environment variables (`.env.example`)
+See `.env.example` (source of truth, with comments). Summary:
 ```
 DATABASE_URL=
 AUTH_SECRET=
@@ -531,16 +536,20 @@ AUTH_RESEND_KEY=
 RESEND_API_KEY=
 EMAIL_FROM="Cad Studio <bookings@cadstudio.example>"   # dummy domain until owner provides one
 ADMIN_NOTIFY_EMAIL=
-CLOUDINARY_CLOUD_NAME=
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=   # public: used by the client-side image loader
 CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
-TURNSTILE_SITE_KEY=
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=      # public: rendered in the browser widget
 TURNSTILE_SECRET_KEY=
-STRIPE_SECRET_KEY=          # phase 2
-STRIPE_WEBHOOK_SECRET=      # phase 2
+UPSTASH_REDIS_REST_URL=              # rate limiting
+UPSTASH_REDIS_REST_TOKEN=
+LINK_TOKEN_SECRET=                   # signs reschedule/cancel/review links
+CRON_SECRET=                         # authorizes Vercel Cron requests
+STRIPE_SECRET_KEY=                   # phase 2
+STRIPE_WEBHOOK_SECRET=               # phase 2
 NEXT_PUBLIC_SITE_URL=
 STUDIO_TIMEZONE=America/Toronto
-SHOW_SAMPLE_CONTENT=true    # false in production
+SHOW_SAMPLE_CONTENT=true             # false in production
 PRICING_CONFIRMED=false
 ```
 
@@ -587,7 +596,7 @@ PRICING_CONFIRMED=false
 At the end of each milestone: update the checklist below and summarize what changed.
 
 ### Progress checklist
-- [ ] 1 Foundation
+- [x] 1 Foundation
 - [ ] 2 Content pages
 - [ ] 3 Portfolio & Gallery
 - [ ] 4 Quote engine
