@@ -102,3 +102,10 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Bug: middleware matcher `.*\..*` was written as `"…|.*\..*"` in a TS string → regex `.*..*` (any 2+ chars), so the middleware skipped every path except `/`. `/fr` got `lang="fr-CA"` and French metadata (explicit locale) but all component text in English. The 1.10 e2e test only checked the title, so it passed.
 - Fix: `"\."` in `src/middleware.ts`; `tests/unit/middleware.test.ts` asserts which paths are localized vs skipped; French smoke test now checks rendered content.
 - Checks: lint ✅ · typecheck ✅ · test ✅ · e2e ✅ (18) · build ✅ · format ✅
+
+### 2026-10-01 — 2.1 Home hero + category tiles
+- Branch: feat/m2-content (stacked on feat/m1-foundation; PR #1 unmerged)
+- Done: `HomeHero` (full-bleed cross-fading `HeroSlideshow`, 6 s interval, pause/play control per WCAG 2.2.2, starts paused under reduced motion; headline, subtitle, Get a Quote + Book a Date CTAs). `CategoryTiles` (6 tiles → `/packages?category=<slug>`). `src/lib/categories.ts` slug↔enum map; `src/lib/images.ts` placehold.co helper (blank by default — labels clashed with overlaid text in screenshots; text colour = background since placehold.co always prints something). `next.config` allows placehold.co, AVIF/WebP. EN + FR copy.
+- Found + fixed on M1 (`0b0212f`): middleware matcher bug made every `/fr` page render English content — see entry above. M2 rebased onto it.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (66) · e2e ✅ (28) · build ✅ · format ✅ · visual check EN desktop + FR mobile
+- Next: 2.2

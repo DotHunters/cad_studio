@@ -23,7 +23,7 @@ Legend: `[ ]` todo · `[x]` done · `BLOCKED(Q#)` waiting on `OPEN_QUESTIONS.md`
 
 ## M2 — Content pages · branch `feat/m2-content`
 
-- [ ] 2.1 Home: hero with placeholder images, two CTAs, 6 category tiles. — §6.1
+- [x] 2.1 Home: hero with placeholder images, two CTAs, 6 category tiles. — §6.1
 - [ ] 2.2 Home: trust strip (stats as `TODO(owner)`), featured portfolio slot, owner intro, reviews carousel slot (approved + featured only), final CTA band. — §6.1, Q7
 - [ ] 2.3 Packages list: DB-driven, category filter tabs, cards with "from $X CAD", Customize quote and Book CTAs. Update the language-switcher e2e test to use `/en/packages` (path preservation). — §6.2
 - [ ] 2.4 Package detail `/packages/[slug]`: inclusions/exclusions, deliverables, sample images, FAQs, add-ons, terms summary. — §6.2

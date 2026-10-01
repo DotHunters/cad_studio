@@ -18,7 +18,15 @@
   },
   "Home": {
     "heading": "Cad Studio",
-    "tagline": "Collection Art Design"
+    "tagline": "Collection Art Design",
+    "heroTitle": "Vos moments, magnifiquement préservés.",
+    "heroSubtitle": "Photographie d'événements, de mariages, de portraits et de produits — planifiée avec soin, livrée avec style. Basés à Toronto, disponibles partout dans le monde.",
+    "heroImageAlt": "Photographie d'exemple {index} sur {total}",
+    "pauseSlideshow": "Mettre le diaporama en pause",
+    "playSlideshow": "Lancer le diaporama",
+    "categoriesTitle": "Ce que nous photographions",
+    "categoriesIntro": "Choisissez un service pour voir les forfaits et les prix de départ.",
+    "viewPackages": "Voir les forfaits"
   },
   "NotFound": {
     "title": "Page introuvable",
@@ -45,5 +53,31 @@
   },
   "PricingBanner": {
     "message": "Tarifs en attente de confirmation — les prix affichés sont provisoires."
+  },
+  "Categories": {
+    "corporate": {
+      "name": "Événements corporatifs",
+      "description": "Conférences, lancements, galas et portraits sur place."
+    },
+    "wedding": {
+      "name": "Mariages",
+      "description": "Fiançailles, cérémonie et réception."
+    },
+    "family": {
+      "name": "Événements familiaux",
+      "description": "Anniversaires, fêtes prénatales et grandes étapes."
+    },
+    "gathering": {
+      "name": "Rassemblements",
+      "description": "Événements communautaires, culturels, religieux et sociaux."
+    },
+    "professional": {
+      "name": "Séances professionnelles",
+      "description": "Portraits, photos professionnelles, image de marque et portfolios."
+    },
+    "product": {
+      "name": "Photographie de produits",
+      "description": "Commerce en ligne, catalogue, mise en situation et vue de dessus."
+    }
   }
 }

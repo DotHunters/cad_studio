@@ -18,7 +18,15 @@
   },
   "Home": {
     "heading": "Cad Studio",
-    "tagline": "Collection Art Design"
+    "tagline": "Collection Art Design",
+    "heroTitle": "Your moments, beautifully kept.",
+    "heroSubtitle": "Event, wedding, portrait and product photography — planned with care, delivered with style. Toronto-based, available worldwide.",
+    "heroImageAlt": "Sample photograph {index} of {total}",
+    "pauseSlideshow": "Pause slideshow",
+    "playSlideshow": "Play slideshow",
+    "categoriesTitle": "What we photograph",
+    "categoriesIntro": "Choose a service to see packages and starting prices.",
+    "viewPackages": "View packages"
   },
   "NotFound": {
     "title": "Page not found",
@@ -45,5 +53,31 @@
   },
   "PricingBanner": {
     "message": "Pricing pending owner confirmation — prices shown are placeholders."
+  },
+  "Categories": {
+    "corporate": {
+      "name": "Corporate Events",
+      "description": "Conferences, launches, galas and on-site headshots."
+    },
+    "wedding": {
+      "name": "Weddings",
+      "description": "Engagement, ceremony and reception."
+    },
+    "family": {
+      "name": "Family Events",
+      "description": "Birthdays, anniversaries, baby showers and milestones."
+    },
+    "gathering": {
+      "name": "Gatherings",
+      "description": "Community, cultural, religious and social events."
+    },
+    "professional": {
+      "name": "Professional Photoshoots",
+      "description": "Portraits, headshots, branding and portfolios."
+    },
+    "product": {
+      "name": "Product Photography",
+      "description": "E-commerce, catalogue, lifestyle and flat-lay."
+    }
   }
 }
