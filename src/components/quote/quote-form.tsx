@@ -1,17 +1,24 @@
 "use client";
 
+import { CheckCircle2, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { type ReactNode, useEffect, useMemo, useState } from "react";
+import { type FormEvent, type ReactNode, useEffect, useMemo, useState, useTransition } from "react";
 import { useForm, useWatch } from "react-hook-form";
+import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
 
 import type { Locale } from "@/config/site";
+import { Link } from "@/i18n/navigation";
 import { type CategorySlug, categoryFromSlug, categorySlugs } from "@/lib/categories";
 import { localize } from "@/lib/localize";
 import { formatCAD } from "@/lib/money";
 import { calculateQuote, type QuoteResult } from "@/lib/pricing/calculate-quote";
+import { toEngineInput } from "@/lib/pricing/engine-input";
 import { resolvePackage } from "@/lib/pricing/rules";
 import { cn } from "@/lib/utils";
-import { provinceCodes, quoteDetailsSchema } from "@/lib/validators/quote";
+import { provinceCodes, quoteDetailsSchema, quoteRequestSchema } from "@/lib/validators/quote";
+import { createQuote } from "@/server/actions/quote";
 import type { PricingContext } from "@/server/queries/pricing";
 
 import { QuoteBreakdown } from "./quote-breakdown";
@@ -30,7 +37,38 @@ export type QuoteFormValues = {
   isInternational: boolean;
   /** Add-on code → quantity as typed ("0" = not selected). */
   addOnQty: Record<string, string>;
+  name: string;
+  email: string;
+  phone: string;
+  marketingOptIn: boolean;
+  /** Honeypot. */
+  website: string;
 };
+
+const ERROR_KEYS = [
+  "required",
+  "invalidDate",
+  "pastDate",
+  "invalidTime",
+  "invalidDuration",
+  "invalidNumber",
+  "invalidEmail",
+  "invalidPhone",
+  "tooLong",
+  "spam",
+] as const;
+type ErrorKey = (typeof ERROR_KEYS)[number];
+const isErrorKey = (key: string): key is ErrorKey =>
+  (ERROR_KEYS as readonly string[]).includes(key);
+
+/** Form values → the shape the shared schemas expect. */
+function toPayload(values: QuoteFormValues) {
+  return {
+    ...values,
+    packageSlug: values.packageSlug || undefined,
+    addOns: Object.entries(values.addOnQty ?? {}).map(([code, qty]) => ({ code, qty: qty || 0 })),
+  };
+}
 
 type Props = {
   context: PricingContext;
@@ -48,11 +86,13 @@ function Field({
   id,
   label,
   hint,
+  error,
   children,
 }: {
   id: string;
   label: string;
   hint?: ReactNode;
+  error?: string | null;
   children: ReactNode;
 }) {
   return (
@@ -64,6 +104,11 @@ function Field({
       {hint && (
         <p id={`${id}-hint`} className="text-muted-foreground mt-1.5 text-xs">
           {hint}
+        </p>
+      )}
+      {error && (
+        <p id={`${id}-error`} className="text-destructive mt-1.5 text-sm">
+          {error}
         </p>
       )}
     </div>
@@ -78,7 +123,16 @@ export function QuoteForm({ context, locale, today, initialPackage, initialCateg
     initialCategory ??
     (startingPackage ? (startingPackage.category.toLowerCase() as CategorySlug) : "");
 
-  const { register, control, setValue } = useForm<QuoteFormValues>({
+  const {
+    register,
+    control,
+    setValue,
+    setError,
+    clearErrors,
+    setFocus,
+    reset,
+    formState: { errors },
+  } = useForm<QuoteFormValues>({
     defaultValues: {
       category: startingCategory,
       packageSlug: startingPackage?.slug ?? "",
@@ -92,8 +146,15 @@ export function QuoteForm({ context, locale, today, initialPackage, initialCateg
       distanceKm: "",
       isInternational: false,
       addOnQty: {},
+      name: "",
+      email: "",
+      phone: "",
+      marketingOptIn: false,
+      website: "",
     },
   });
+  const [pending, startTransition] = useTransition();
+  const [saved, setSaved] = useState<{ reference: string; totalCents: number } | null>(null);
   const values = useWatch({ control }) as QuoteFormValues;
   // Marks the form interactive once hydrated (used by e2e tests to avoid typing too early).
   const [hydrated, setHydrated] = useState(false);
@@ -114,29 +175,12 @@ export function QuoteForm({ context, locale, today, initialPackage, initialCateg
     result: QuoteResult | null;
     guestHint: number | null;
   } => {
-    const parsed = quoteDetailsSchema.safeParse({
-      ...values,
-      packageSlug: values.packageSlug || undefined,
-      addOns: Object.entries(values.addOnQty ?? {}).map(([code, qty]) => ({ code, qty: qty || 0 })),
-    });
-    if (!parsed.success || !pkg || parsed.data.eventDate < today)
+    const parsed = quoteDetailsSchema.safeParse(toPayload(values));
+    if (!parsed.success || !pkg || parsed.data.eventDate < today) {
       return { result: null, guestHint: null };
+    }
     try {
-      const quote = calculateQuote(
-        {
-          category: pkg.category,
-          pkg,
-          eventDate: parsed.data.eventDate,
-          durationHours: parsed.data.durationHours,
-          photographers: parsed.data.photographers,
-          guestCount: parsed.data.guestCount,
-          province: parsed.data.province,
-          distanceKm: parsed.data.distanceKm ?? null,
-          isInternational: parsed.data.isInternational,
-          addOns: parsed.data.addOns,
-        },
-        context,
-      );
+      const quote = calculateQuote(toEngineInput(parsed.data, pkg), context);
       return { result: quote, guestHint: quote.flags.suggestedPhotographers };
     } catch {
       return { result: null, guestHint: null };
@@ -145,21 +189,101 @@ export function QuoteForm({ context, locale, today, initialPackage, initialCateg
 
   const sectionTitle = "font-heading text-2xl";
 
+  const errorText = (field: string): string | null => {
+    const key = (errors as Record<string, { message?: string } | undefined>)[field]?.message;
+    if (!key) return null;
+    return isErrorKey(key) ? t(`Quote.errors.${key}`) : key;
+  };
+  const a11y = (field: string, hintId?: string) => {
+    const invalid = Boolean(errorText(field));
+    const describedBy = [hintId, invalid ? `${field}-error` : undefined].filter(Boolean).join(" ");
+    return { "aria-invalid": invalid || undefined, "aria-describedby": describedBy || undefined };
+  };
+
+  const showErrors = (errorsByField: Record<string, string>) => {
+    const fields = Object.keys(errorsByField);
+    for (const field of fields) {
+      setError(field as keyof QuoteFormValues, { message: errorsByField[field] });
+    }
+    if (fields[0]) setFocus(fields[0] as keyof QuoteFormValues);
+    toast.error(t("Quote.fixErrors"));
+  };
+
+  const onSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    clearErrors();
+    const payload = toPayload(values);
+    const parsed = quoteRequestSchema.safeParse(payload);
+    const fieldErrors: Record<string, string> = {};
+    if (!parsed.success) {
+      for (const issue of parsed.error.issues) fieldErrors[issue.path.join(".")] ??= issue.message;
+    } else if (parsed.data.eventDate < today) {
+      fieldErrors.eventDate = "pastDate";
+    }
+    if (!parsed.success || Object.keys(fieldErrors).length > 0) {
+      showErrors(fieldErrors);
+      return;
+    }
+    // Send the validated data; the server re-validates and re-prices it anyway.
+    const request = parsed.data;
+
+    startTransition(async () => {
+      const outcome = await createQuote(request);
+      if (outcome.ok) {
+        setSaved({ reference: outcome.reference, totalCents: outcome.totalCents });
+        return;
+      }
+      if (outcome.error === "validation") {
+        showErrors(outcome.fieldErrors);
+        return;
+      }
+      toast.error(
+        outcome.error === "captcha"
+          ? t("Quote.captchaError")
+          : outcome.error === "unavailable"
+            ? t("Quote.unavailable")
+            : t("Quote.serverError"),
+      );
+    });
+  };
+
+  if (saved) {
+    return (
+      <div role="status" className="bg-card mx-auto max-w-2xl rounded-xl border p-8 text-center">
+        <CheckCircle2 className="text-gold-text mx-auto size-10" aria-hidden />
+        <h2 className="mt-4 text-3xl">{t("Quote.successTitle")}</h2>
+        <p className="text-muted-foreground mt-2" data-testid="quote-reference">
+          {t("Quote.successBody", {
+            reference: saved.reference,
+            total: formatCAD(saved.totalCents, locale),
+          })}
+        </p>
+        <Button
+          variant="outline"
+          size="cta"
+          className="mt-6"
+          onClick={() => {
+            setSaved(null);
+            reset();
+          }}
+        >
+          {t("Contact.sendAnother")}
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div className="grid gap-10 lg:grid-cols-[1fr_380px]">
-      <form
-        className="space-y-10"
-        data-hydrated={hydrated}
-        onSubmit={(event) => event.preventDefault()}
-        noValidate
-      >
+      <form className="space-y-10" data-hydrated={hydrated} onSubmit={onSubmit} noValidate>
         <fieldset className="space-y-6">
           <legend className={sectionTitle}>{t("Quote.sectionEvent")}</legend>
           <div className="grid gap-6 sm:grid-cols-2">
-            <Field id="category" label={t("Quote.category")}>
+            <Field id="category" label={t("Quote.category")} error={errorText("category")}>
               <select
                 id="category"
                 className={fieldClass}
+                {...a11y("category")}
                 {...register("category", {
                   onChange: () => {
                     setValue("packageSlug", "");
@@ -206,21 +330,23 @@ export function QuoteForm({ context, locale, today, initialPackage, initialCateg
                 ))}
               </select>
             </Field>
-            <Field id="eventDate" label={t("Quote.eventDate")}>
+            <Field id="eventDate" label={t("Quote.eventDate")} error={errorText("eventDate")}>
               <input
                 id="eventDate"
                 type="date"
                 min={today}
                 className={fieldClass}
+                {...a11y("eventDate")}
                 {...register("eventDate")}
               />
             </Field>
-            <Field id="startTime" label={t("Quote.startTime")}>
+            <Field id="startTime" label={t("Quote.startTime")} error={errorText("startTime")}>
               <input
                 id="startTime"
                 type="time"
                 step={900}
                 className={fieldClass}
+                {...a11y("startTime")}
                 {...register("startTime")}
               />
             </Field>
@@ -230,7 +356,11 @@ export function QuoteForm({ context, locale, today, initialPackage, initialCateg
         <fieldset className="space-y-6">
           <legend className={sectionTitle}>{t("Quote.sectionCoverage")}</legend>
           <div className="grid gap-6 sm:grid-cols-3">
-            <Field id="durationHours" label={t("Quote.durationHours")}>
+            <Field
+              id="durationHours"
+              label={t("Quote.durationHours")}
+              error={errorText("durationHours")}
+            >
               <input
                 id="durationHours"
                 type="number"
@@ -239,10 +369,15 @@ export function QuoteForm({ context, locale, today, initialPackage, initialCateg
                 max={24}
                 step={0.5}
                 className={fieldClass}
+                {...a11y("durationHours")}
                 {...register("durationHours")}
               />
             </Field>
-            <Field id="photographers" label={t("Quote.photographers")}>
+            <Field
+              id="photographers"
+              label={t("Quote.photographers")}
+              error={errorText("photographers")}
+            >
               <input
                 id="photographers"
                 type="number"
@@ -250,6 +385,7 @@ export function QuoteForm({ context, locale, today, initialPackage, initialCateg
                 min={1}
                 max={10}
                 className={fieldClass}
+                {...a11y("photographers")}
                 {...register("photographers")}
               />
             </Field>
@@ -380,6 +516,67 @@ export function QuoteForm({ context, locale, today, initialPackage, initialCateg
               })}
             </ul>
           )}
+        </fieldset>
+
+        <fieldset className="space-y-6">
+          <legend className={sectionTitle}>{t("Quote.sectionContact")}</legend>
+          <div className="grid gap-6 sm:grid-cols-2">
+            <Field id="name" label={t("Quote.name")} error={errorText("name")}>
+              <input
+                id="name"
+                autoComplete="name"
+                className={fieldClass}
+                {...a11y("name")}
+                {...register("name")}
+              />
+            </Field>
+            <Field id="email" label={t("Quote.email")} error={errorText("email")}>
+              <input
+                id="email"
+                type="email"
+                autoComplete="email"
+                className={fieldClass}
+                {...a11y("email")}
+                {...register("email")}
+              />
+            </Field>
+            <Field id="phone" label={t("Quote.phone")} error={errorText("phone")}>
+              <input
+                id="phone"
+                type="tel"
+                autoComplete="tel"
+                className={fieldClass}
+                {...a11y("phone")}
+                {...register("phone")}
+              />
+            </Field>
+          </div>
+          {/* CASL: opt-in, never pre-checked. */}
+          <label className="flex items-start gap-3 text-sm">
+            <input
+              type="checkbox"
+              className="accent-gold mt-1 size-4"
+              {...register("marketingOptIn")}
+            />
+            <span>{t("Quote.marketing")}</span>
+          </label>
+          <div aria-hidden className="absolute -left-[10000px] h-px w-px overflow-hidden">
+            <label htmlFor="quote-website">{t("Contact.honeypot")}</label>
+            <input id="quote-website" tabIndex={-1} autoComplete="off" {...register("website")} />
+          </div>
+          <p className="text-muted-foreground text-sm">
+            {t.rich("Quote.privacyNotice", {
+              privacy: (chunks) => (
+                <Link href="/privacy" className="text-gold-text underline underline-offset-4">
+                  {chunks}
+                </Link>
+              ),
+            })}
+          </p>
+          <Button type="submit" size="cta" disabled={pending} className="w-full sm:w-auto">
+            {pending && <Loader2 className="size-4 animate-spin" aria-hidden />}
+            {pending ? t("Quote.sending") : t("Quote.submit")}
+          </Button>
         </fieldset>
       </form>
 

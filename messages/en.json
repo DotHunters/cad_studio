@@ -364,7 +364,21 @@
       "invalidPhone": "Enter a valid phone number.",
       "tooLong": "This is too long.",
       "spam": "Please leave this field empty."
-    }
+    },
+    "sectionContact": "Your details",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone (optional)",
+    "marketing": "Send me occasional news and offers from Cad Studio (optional). You can unsubscribe at any time.",
+    "privacyNotice": "We use these details to send your quote and follow up about your event. See our <privacy>privacy policy</privacy>.",
+    "submit": "Get my quote",
+    "sending": "Saving…",
+    "fixErrors": "Please fix the highlighted fields.",
+    "successTitle": "Your quote is saved",
+    "successBody": "Reference {reference}. Total {total}. We’ll be in touch shortly.",
+    "serverError": "Something went wrong and your quote wasn’t saved. Please try again.",
+    "captchaError": "We couldn’t verify you’re human. Please try again.",
+    "unavailable": "This event type isn’t available for quotes right now. Please contact us."
   },
   "Provinces": {
     "ON": "Ontario",

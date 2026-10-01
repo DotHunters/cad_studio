@@ -47,7 +47,7 @@ Legend: `[ ]` todo · `[x]` done · `BLOCKED(Q#)` waiting on `OPEN_QUESTIONS.md`
 - [x] 4.2 `src/lib/pricing` `calculateQuote` with TDD: base, extra hours, extra shooters, add-on unit types, travel threshold, international flag, weekend, stat holiday, discounts, rounding, deposit. Coverage ≥ 90%. — §8.1
 - [x] 4.3 Shared Zod quote input schema in `src/lib/validators`. — §6.5, §11
 - [x] 4.4 `/quote` UI: multi-step form, live breakdown using the same function, guest-count hint, prefill from a package. — §6.5
-- [ ] 4.5 `createQuote` Server Action: server recomputes the price, `CAD-Q-YYYY-####` reference, 14-day expiry, rate limit, Turnstile. — §6.5, §11
+- [x] 4.5 `createQuote` Server Action: server recomputes the price, `CAD-Q-YYYY-####` reference, 14-day expiry, rate limit, Turnstile. — §6.5, §11
 - [ ] 4.6 Quote emails (client summary + admin notification) with React Email. — §6.5
 - [ ] 4.7 Result page with "Book this quote" CTA and the "Estimate only" notice. Add the e2e test (scenario 1). — §6.5, §15
 

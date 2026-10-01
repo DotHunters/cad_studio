@@ -1,5 +1,7 @@
 import { expect, type Page, test } from "@playwright/test";
 
+import { queryDb } from "./db";
+
 const total = (page: Page) => page.getByTestId("quote-total");
 
 /** Navigate and wait until React has hydrated the form, so typed values reach the form state. */
@@ -103,5 +105,61 @@ test.describe("quote generator", () => {
     await expect(page.getByRole("region", { name: "Votre estimation" })).toContainText(
       "Forfait Mariage",
     );
+  });
+
+  test("marketing consent is never pre-checked (CASL)", async ({ page }) => {
+    await open(page, "/en/quote?package=wedding");
+    await expect(page.getByRole("checkbox", { name: /Send me occasional news/ })).not.toBeChecked();
+  });
+
+  test("shows inline errors for missing contact details", async ({ page }) => {
+    await open(page, "/en/quote?package=wedding");
+    await page.getByLabel("Event date").fill(WEEKDAY);
+    await page.getByRole("button", { name: "Get my quote" }).click();
+    await expect(page.getByLabel("Name")).toHaveAttribute("aria-invalid", "true");
+    await expect(page.getByLabel("Name")).toBeFocused();
+    await expect(
+      page
+        .getByText("Enter a valid email address.")
+        .or(page.getByText("This field is required."))
+        .first(),
+    ).toBeVisible();
+  });
+
+  test("saves the quote with a reference and the server's own price", async ({
+    page,
+  }, testInfo) => {
+    const email = `e2e-quote-${testInfo.project.name}-${Date.now()}@example.com`;
+    await open(page, "/en/quote?package=corporate-event");
+    await page.getByLabel("Event date").fill(WEEKDAY);
+    await page.getByLabel("Distance from Scarborough (km)").fill("100");
+    await expect(total(page)).toHaveText("$1,450.92 CAD");
+
+    await page.getByLabel("Name").fill("E2E Tester");
+    await page.getByLabel("Email").fill(email);
+    await page.getByRole("button", { name: "Get my quote" }).click();
+
+    const confirmation = page.getByTestId("quote-reference");
+    await expect(confirmation).toContainText(
+      /Reference CAD-Q-\d{4}-\d{4,}\. Total \$1,450\.92 CAD/,
+    );
+    const reference = (await confirmation.textContent())!.match(/CAD-Q-\d{4}-\d{4,}/)![0];
+
+    const [saved] = await queryDb<{
+      totalCents: number;
+      status: string;
+      email: string;
+      marketingOptIn: boolean;
+    }>(
+      `select q."totalCents", q.status, c.email, c."marketingOptIn"
+         from "Quote" q join "Customer" c on c.id = q."customerId" where q.reference = $1`,
+      [reference],
+    );
+    expect(saved).toMatchObject({
+      totalCents: 145092,
+      status: "SENT",
+      email,
+      marketingOptIn: false,
+    });
   });
 });

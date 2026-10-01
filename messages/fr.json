@@ -364,7 +364,21 @@
       "invalidPhone": "Entrez un numéro de téléphone valide.",
       "tooLong": "Ce texte est trop long.",
       "spam": "Veuillez laisser ce champ vide."
-    }
+    },
+    "sectionContact": "Vos coordonnées",
+    "name": "Nom",
+    "email": "Courriel",
+    "phone": "Téléphone (facultatif)",
+    "marketing": "Envoyez-moi à l’occasion des nouvelles et des offres de Cad Studio (facultatif). Vous pouvez vous désabonner en tout temps.",
+    "privacyNotice": "Nous utilisons ces renseignements pour vous envoyer votre devis et faire le suivi de votre événement. Consultez notre <privacy>politique de confidentialité</privacy>.",
+    "submit": "Obtenir mon devis",
+    "sending": "Enregistrement…",
+    "fixErrors": "Veuillez corriger les champs en surbrillance.",
+    "successTitle": "Votre devis est enregistré",
+    "successBody": "Référence {reference}. Total {total}. Nous communiquerons avec vous sous peu.",
+    "serverError": "Une erreur s’est produite et votre devis n’a pas été enregistré. Veuillez réessayer.",
+    "captchaError": "Nous n’avons pas pu vérifier que vous êtes une personne. Veuillez réessayer.",
+    "unavailable": "Ce type d’événement n’est pas offert pour les devis pour le moment. Veuillez nous écrire."
   },
   "Provinces": {
     "ON": "Ontario",

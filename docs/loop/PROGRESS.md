@@ -239,3 +239,10 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Found + fixed: e2e typed into the form before hydration (React Hook Form missed the change → flaky failures); form now exposes `data-hydrated` and tests wait for it. Verified with `--repeat-each=3` (54/54).
 - Checks: lint ✅ · typecheck ✅ · test ✅ (190) · e2e ✅ (198; totals hand-computed: base, extra hours, add-on, weekend, travel, QC tax, international) · build ✅ · format ✅ · screenshot reviewed
 - Next: 4.5 (contact fields + createQuote server action)
+
+### 2026-10-01 — 4.5 createQuote server action
+- Branch: feat/m4-quote · PR #5 (stacked on #4)
+- Done: `src/server/actions/quote.ts` `createQuote` — re-validates with `quoteRequestSchema`, rejects past dates (studio TZ), Turnstile when configured, honeypot → fake success (nothing saved), re-prices from `getPricingContext()` (client price never sent), then in one transaction: atomic per-year counter (`ReferenceCounter` native upsert) → `CAD-Q-YYYY-####`, customer upsert by lower-cased email (records new marketing consent with timestamp, never silently withdraws it — CASL), quote row (event start converted from Toronto time to UTC, breakdown JSON incl. line items/tax/deposit/flags, status SENT, expiry = now + QUOTE_VALID_DAYS). Quote form gains a "Your details" section (name, email, phone, unchecked marketing opt-in, honeypot, privacy notice), client-side validation with inline translated errors (`aria-invalid`/`aria-describedby`, focus first error, toast), loading state and success state with reference + total. Helpers: `src/lib/references.ts` (format/parse/counter key) and `src/lib/pricing/engine-input.ts` (`toEngineInput`, shared by browser and server), both unit tested.
+- e2e: submission saves a quote whose DB total equals the server's price (145092 cents), reference format, marketing opt-in false; inline errors; CASL checkbox unchecked. New `tests/e2e/db.ts` helper queries the DB. Note: e2e runs add test quotes/customers (`e2e-quote-…@example.com`) to the local DB.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (196) · e2e ✅ (204) · build ✅ · format ✅
+- Next: 4.6 (quote emails)
