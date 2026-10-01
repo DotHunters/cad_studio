@@ -74,7 +74,7 @@ Legend: `[ ]` todo · `[x]` done · `BLOCKED(Q#)` waiting on `OPEN_QUESTIONS.md`
 ## M7 — Admin · branch `feat/m7-admin`
 
 - [x] 7.1 Auth.js v5 with `ADMIN`/`STAFF` roles, middleware, and a role check in every action. Add the e2e test (scenario 7). — §2, §11, §15
-- [ ] 7.2 Dashboard: upcoming bookings, new quotes, pending reviews, revenue estimate. — §6.10
+- [x] 7.2 Dashboard: upcoming bookings, new quotes, pending reviews, revenue estimate. — §6.10
 - [ ] 7.3 CRUD for packages, add-ons, pricing rules, tax rates and site settings (deposit %, cancellation policy, payment instructions); EN/FR fields side by side; `revalidateTag`. — §6.10, §7, §10
 - [ ] 7.4 Portfolio and gallery admin: bulk upload, tags, reorder, required "Client consent to publish obtained" checkbox. — §6.10, §9
 - [ ] 7.5 Review moderation: approve, reject, feature, logo permission. Add the e2e test (scenario 5). — §6.10, §8.4, §15

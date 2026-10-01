@@ -363,3 +363,11 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (327) · e2e ✅ (288) · build ✅ · format ✅
 - Next: 7.2 Dashboard
 
+### 2026-10-02 — 7.2 Admin dashboard
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Done: `/admin` shows stat cards (upcoming pending+confirmed bookings, quotes in the last 7 days, pending reviews with flagged count, revenue estimate for the current studio-local month — confirmed/completed vs pending, before tax, unpriced bookings counted not guessed), a "Needs attention" box (PENDING bookings with no payment request after 24 h — §8.3 — and open reschedule/cancel requests), the next 8 bookings and the 5 latest quotes. Pure helpers `studioMonthRange` (Toronto month incl. DST and year rollover) and `revenueEstimate` in `src/lib/admin/dashboard.ts` + 7 unit tests; live (uncached) query in `src/server/queries/admin-dashboard.ts`.
+- Lists don't link anywhere yet — the bookings/quotes/reviews admin pages arrive in 7.5–7.7.
+- e2e: signed-in admin sees a flagged unrequested booking in "Needs attention" and in upcoming bookings, plus all stat cards.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (334) · e2e ✅ (290) · build ✅ · format ✅
+- Next: 7.3 CRUD for packages, add-ons, pricing rules, tax rates, site settings
+
