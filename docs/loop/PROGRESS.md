@@ -318,3 +318,9 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - e2e (`cron-api.spec.ts`): no/wrong secret → 401; of four fixtures only the unpaid, 49-h-old request is released; second run releases nothing.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (273) · e2e ✅ (244) · build ✅ · format ✅
 - Next: 5.8 (remaining e2e: scenario 4 blocked date not selectable)
+
+### 2026-10-02 — 5.8 Booking scenarios — **M5 Booking complete**
+- Branch: feat/m5-booking · PR #6 (stacked on #5 → #4)
+- Done: §15 scenario 4 e2e (`book-blocked.spec.ts`): a date blocked in the DB is disabled in the booking calendar (navigates to next month if needed), can't be selected, and shows as "full" in the public API; serial file, per-project dates. Scenario 2 (book a quote → CAD-B, capacity decreases) was added in 5.4/5.5; scenario 3 (concurrent last slot) is the DB integration test from 5.4. Added the parallel-DB-test rules to `.claude/loop.md` (third time this bit).
+- Checks: lint ✅ · typecheck ✅ · test ✅ (273 incl. integration) · e2e ✅ (248) · build ✅ · format ✅
+- Next: M6 Reviews → 6.1 (branch `feat/m6-reviews`; stack on feat/m5-booking while PRs #4–#6 are open)
