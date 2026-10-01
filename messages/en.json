@@ -139,5 +139,30 @@
     "empty": "No packages in this category yet.",
     "emptyCta": "See all packages",
     "taxNote": "Prices in Canadian dollars, before applicable taxes and travel."
+  },
+  "PackageDetail": {
+    "breadcrumb": "Breadcrumb",
+    "packages": "Packages",
+    "startingAt": "Starting at",
+    "priceNote": "Before applicable taxes and travel. Final price confirmed by Cad Studio.",
+    "included": "What's included",
+    "notIncluded": "Not included",
+    "deliverables": "Deliverables",
+    "coverage": "Coverage",
+    "photographers": "Photographers",
+    "editedImages": "Edited images",
+    "turnaround": "Delivery",
+    "turnaroundDays": "Within {count, plural, one {# day} other {# days}}",
+    "onlineGallery": "Private online gallery",
+    "addOns": "Available add-ons",
+    "perHour": "/ hour",
+    "perItem": "/ item",
+    "gallery": "Sample images",
+    "faqs": "Frequently asked questions",
+    "terms": "Booking terms",
+    "deposit": "A {percent}% deposit confirms your date.",
+    "seePortfolio": "See {category} in our portfolio",
+    "ctaTitle": "Make it <accent>yours</accent>",
+    "ctaBody": "Adjust hours, photographers and add-ons to see your price instantly."
   }
 }

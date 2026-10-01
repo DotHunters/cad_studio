@@ -139,5 +139,30 @@
     "empty": "Aucun forfait dans cette catégorie pour le moment.",
     "emptyCta": "Voir tous les forfaits",
     "taxNote": "Prix en dollars canadiens, avant taxes et frais de déplacement applicables."
+  },
+  "PackageDetail": {
+    "breadcrumb": "Fil d'Ariane",
+    "packages": "Forfaits",
+    "startingAt": "À partir de",
+    "priceNote": "Avant taxes et frais de déplacement applicables. Prix final confirmé par Cad Studio.",
+    "included": "Ce qui est inclus",
+    "notIncluded": "Non inclus",
+    "deliverables": "Livrables",
+    "coverage": "Couverture",
+    "photographers": "Photographes",
+    "editedImages": "Images retouchées",
+    "turnaround": "Livraison",
+    "turnaroundDays": "Dans un délai de {count, plural, one {# jour} other {# jours}}",
+    "onlineGallery": "Galerie en ligne privée",
+    "addOns": "Options disponibles",
+    "perHour": "/ heure",
+    "perItem": "/ unité",
+    "gallery": "Images d'exemple",
+    "faqs": "Questions fréquentes",
+    "terms": "Conditions de réservation",
+    "deposit": "Un acompte de {percent} % confirme votre date.",
+    "seePortfolio": "Voir {category} dans notre portfolio",
+    "ctaTitle": "Faites-en <accent>le vôtre</accent>",
+    "ctaBody": "Ajustez les heures, les photographes et les options pour voir votre prix instantanément."
   }
 }

@@ -132,3 +132,11 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Done: `/[locale]/packages` — DB-driven via cached `getActivePackages()` (tag `packages`), `CategoryFilter` (link-based tabs, `?category=`, `aria-current`, works without JS; unknown/repeated values → All), `PackageCard` (category, localized name/summary/inclusions, "From $X CAD" via `formatCAD`, hours/photographers/edited images with ICU plurals, Customize quote → `/quote?package=slug`, Book → `/book?package=slug`), empty state, tax note, metadata + hreflang. Deferred 1.11 follow-ups done: language-switcher e2e now verifies `/en/packages → /fr/packages`; solid-header test uses `/en/packages`.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (76) · e2e ✅ (60) · build ✅ · format ✅ · screenshot reviewed
 - Next: 2.4
+
+### 2026-10-01 — 2.4 Package detail
+- Branch: feat/m2-content · PR #2
+- Done: `/[locale]/packages/[slug]` — breadcrumb (Packages › category › name), markdown description (`react-markdown`, no raw HTML), included/not included, add-ons linked to the package with unit prices (/ hour, / item), sample images (when present), link to portfolio filtered by category, FAQs as `<details>` (when present), sticky aside with "Starting at" price, deliverables (coverage, photographers, edited images, turnaround), Customize quote + Book CTAs, booking terms (deposit % from `PricingRule`, cancellation policy from `SiteSetting`), dark CTA band. 404 for unknown/inactive slugs. Metadata + hreflang. Queries `getPackageBySlug`, `getBookingTerms` (cached, tagged). `src/lib/content.ts`: `parseLocalizedText`, `parseFaqs`, `publishableText` (hides seeded "TODO(owner)" copy from public pages).
+- Caught in review: drafted copy invented a payment policy ("balance due before delivery") — removed; only the DB deposit % is stated. Message test caught an empty translation key.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (82) · e2e ✅ (76) · build ✅ · format ✅ · screenshot reviewed
+- Notes: seed has no package FAQs or package images, so those sections are hidden until the owner adds them in admin (7.3/7.4).
+- Next: 2.5
