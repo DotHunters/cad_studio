@@ -6,7 +6,11 @@ import { db } from "@/lib/db";
 import { shouldShowSampleContent } from "@/lib/flags";
 
 /** Cache tags; admin edits call revalidateTag() with these (AGENTS.md §10). */
-export const CACHE_TAGS = { portfolio: "portfolio", reviews: "reviews" } as const;
+export const CACHE_TAGS = {
+  portfolio: "portfolio",
+  reviews: "reviews",
+  gallery: "gallery",
+} as const;
 
 const REVALIDATE_SECONDS = 3600;
 

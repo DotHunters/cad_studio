@@ -279,5 +279,20 @@
     "ctaTitle": "Planning something <accent>similar</accent>?",
     "ctaBody": "Tell us about your event and get an instant estimate.",
     "viewPackages": "View {category} packages"
+  },
+  "Gallery": {
+    "metaTitle": "Gallery",
+    "metaDescription": "Browse wedding, event, portrait and product photography by Cad Studio.",
+    "eyebrow": "Gallery",
+    "title": "Moments, <accent>framed</accent>",
+    "intro": "A selection of recent images. Filter by service or theme.",
+    "filtersLabel": "Filter images",
+    "category": "Service",
+    "tag": "Theme",
+    "all": "All",
+    "count": "Showing {shown} of {total, plural, one {# image} other {# images}}",
+    "loadMore": "Load more",
+    "empty": "No images match these filters yet.",
+    "clearFilters": "Clear filters"
   }
 }

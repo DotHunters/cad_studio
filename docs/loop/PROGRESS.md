@@ -194,3 +194,10 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ · e2e ✅ (150) · build ✅ · format ✅
 - Notes: image grid becomes lightbox-enabled in 3.5.
 - Next: 3.4
+
+### 2026-10-01 — 3.4 Gallery grid
+- Branch: feat/m3-portfolio-gallery · PR #4
+- Done: `/[locale]/gallery` — masonry via CSS columns (images keep real aspect ratio), first row `priority`, rest lazy-loaded, blur placeholders via `StoredImage`; category and tag filters (tag row only when >1 tag exists) as links; "Load more" via `?page=N` (12 per step, capped at 50 pages, works without JS); "Showing X of Y" status; empty state. Only `inGallery && consentToPublish` images (AGENTS.md §9), samples gated. `src/lib/gallery-filters.ts` (parse/filter/tags/paginate/href, unit tested); `getGalleryImages` cached with new `gallery` tag. Shared `FilterGroup` extracted from the portfolio page. `/gallery` in sitemap.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (128) · e2e ✅ (162) · build ✅ · format ✅ · screenshot reviewed
+- Notes: CSS columns order items top-to-bottom per column; the lightbox (3.5) navigates in DOM order.
+- Next: 3.5

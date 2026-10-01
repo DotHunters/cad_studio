@@ -279,5 +279,20 @@
     "ctaTitle": "Vous planifiez quelque chose de <accent>semblable</accent>?",
     "ctaBody": "Parlez-nous de votre événement et obtenez une estimation instantanée.",
     "viewPackages": "Voir les forfaits {category}"
+  },
+  "Gallery": {
+    "metaTitle": "Galerie",
+    "metaDescription": "Parcourez les photos de mariages, d’événements, de portraits et de produits de Cad Studio.",
+    "eyebrow": "Galerie",
+    "title": "Des moments, <accent>encadrés</accent>",
+    "intro": "Une sélection d’images récentes. Filtrez par service ou par thème.",
+    "filtersLabel": "Filtrer les images",
+    "category": "Service",
+    "tag": "Thème",
+    "all": "Toutes",
+    "count": "{shown} sur {total, plural, one {# image} other {# images}}",
+    "loadMore": "Afficher plus",
+    "empty": "Aucune image ne correspond à ces filtres pour le moment.",
+    "clearFilters": "Effacer les filtres"
   }
 }
