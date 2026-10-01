@@ -41,3 +41,10 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Done: `src/app/fonts.ts` — Inter (body, `--font-inter`) + Cormorant Garamond (headings, `--font-cormorant`, 400–700 + italic), latin + latin-ext for French; Tailwind `font-sans`/`font-heading` mapped with system fallbacks; h1–h4 use heading font. Removed shadcn's Geist.
 - Checks: lint ✅ · typecheck ✅ · test — (until 1.4) · build ✅ · format ✅
 - Next: 1.4
+
+### 2026-10-01 — 1.4 Vitest + Playwright
+- Branch: feat/m1-foundation
+- Done: Vitest 5 (node env, `@/` paths, v8 coverage over `src/lib/**`) with `cn` unit tests; Playwright (desktop Chrome + Pixel 7 projects, builds and serves on port 3100) with home-page smoke test; scripts `test`, `test:watch`, `test:coverage`, `test:e2e`.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (2) · e2e ✅ (2) · build ✅ · format ✅
+- Notes: Chromium installed locally via `pnpm exec playwright install chromium`. Full DoD now runnable.
+- Next: 1.5
