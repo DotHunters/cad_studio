@@ -526,6 +526,7 @@ Add a comment in the seed file: `// Verify current rates and service applicabili
 - Stripe webhooks verified with signing secret; idempotent handlers.
 
 ### Environment variables (`.env.example`)
+See `.env.example` (source of truth, with comments). Summary:
 ```
 DATABASE_URL=
 AUTH_SECRET=
@@ -533,16 +534,20 @@ AUTH_RESEND_KEY=
 RESEND_API_KEY=
 EMAIL_FROM="Cad Studio <bookings@cadstudio.example>"   # dummy domain until owner provides one
 ADMIN_NOTIFY_EMAIL=
-CLOUDINARY_CLOUD_NAME=
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=   # public: used by the client-side image loader
 CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
-TURNSTILE_SITE_KEY=
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=      # public: rendered in the browser widget
 TURNSTILE_SECRET_KEY=
-STRIPE_SECRET_KEY=          # phase 2
-STRIPE_WEBHOOK_SECRET=      # phase 2
+UPSTASH_REDIS_REST_URL=              # rate limiting
+UPSTASH_REDIS_REST_TOKEN=
+LINK_TOKEN_SECRET=                   # signs reschedule/cancel/review links
+CRON_SECRET=                         # authorizes Vercel Cron requests
+STRIPE_SECRET_KEY=                   # phase 2
+STRIPE_WEBHOOK_SECRET=               # phase 2
 NEXT_PUBLIC_SITE_URL=
 STUDIO_TIMEZONE=America/Toronto
-SHOW_SAMPLE_CONTENT=true    # false in production
+SHOW_SAMPLE_CONTENT=true             # false in production
 PRICING_CONFIRMED=false
 ```
 

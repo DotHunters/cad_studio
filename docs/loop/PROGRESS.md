@@ -54,3 +54,10 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Done: `src/config/site.ts` — name "Cad Studio", tagline, owner, Scarborough/ON service area (no street address), dummy `cadstudio.example` URL/emails, `STUDIO_TIMEZONE` with validated fallback to `America/Toronto`, locales `en`/`fr`, `Locale` type. Phone, socials, hours = `TODO(owner)`. 5 unit tests.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (7) · build ✅ · format ✅
 - Next: 1.6
+
+### 2026-10-01 — 1.6 .env.example
+- Branch: feat/m1-foundation
+- Done: `.env.example` with comments, grouped by concern; confirmed it's tracked (`!.env.example`) while `.env*` stays ignored. Spec deviations (AGENTS.md §11 updated): browser-read keys renamed `NEXT_PUBLIC_TURNSTILE_SITE_KEY` / `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`; added `UPSTASH_REDIS_REST_URL/TOKEN` (rate limiting), `LINK_TOKEN_SECRET` (signed links), `CRON_SECRET` (Vercel Cron) — all required by existing spec features.
+- Checks: lint ✅ · typecheck ✅ · test ✅ · build ✅ · format ✅
+- Next: 1.7 (Prisma) — needs a Postgres for `migrate dev`; will use local Docker or generate migration SQL offline if unavailable.
+- Next: 1.7
