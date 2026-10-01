@@ -9,13 +9,13 @@ Legend: `[ ]` todo · `[x]` done · `BLOCKED(Q#)` waiting on `OPEN_QUESTIONS.md`
 
 ## M1 — Foundation · branch `feat/m1-foundation`
 
-- [ ] 1.1 Scaffold Next.js 15 (App Router, TS strict, pnpm), ESLint + Prettier. Add the package.json scripts from §3 (`lint`, `typecheck`, `test`, `test:e2e`, `db:*`). — §2, §3
+- [x] 1.1 Scaffold Next.js 15 (App Router, TS strict, pnpm), ESLint + Prettier, `lint`/`typecheck`/`format` scripts. (`test`, `test:e2e` added in 1.4; `db:*` in 1.7.) — §2, §3
 - [ ] 1.2 Tailwind v4 + shadcn/ui init. Put the palette tokens (`--ink`, `--paper`, `--accent`, `--accent-light`, `--muted`) in `globals.css` with light and dark themes. — §5
 - [ ] 1.3 Fonts via `next/font`: serif display for headings, Inter for body. — §5
-- [ ] 1.4 Vitest + Playwright setup with one passing smoke test each. Create the `tests/unit` and `tests/e2e` dirs. — §2, §4
+- [ ] 1.4 Vitest + Playwright setup, `test` + `test:e2e` scripts, with one passing smoke test each. Create the `tests/unit` and `tests/e2e` dirs. — §2, §4
 - [ ] 1.5 `src/config/site.ts`: name, contact, socials, `STUDIO_TIMEZONE`. Unknown values are `TODO(owner)`. — §4, §8.3, Q1, Q6
 - [ ] 1.6 `.env.example` with every variable from §11 (incl. `SHOW_SAMPLE_CONTENT`, `PRICING_CONFIRMED`, dummy `cadstudio.example` domain). Make sure `.gitignore` covers `.env*`. — §11
-- [ ] 1.7 Prisma: `schema.prisma` with all models and enums from §7 (incl. `SiteSetting`, `PaymentMethod`, `*Fr` columns, `Customer.locale`), plus `src/lib/db.ts` singleton and the initial migration. — §7
+- [ ] 1.7 Prisma + `db:migrate`/`db:seed`/`db:studio` scripts: `schema.prisma` with all models and enums from §7 (incl. `SiteSetting`, `PaymentMethod`, `*Fr` columns, `Customer.locale`), plus `src/lib/db.ts` singleton and the initial migration. — §7
 - [ ] 1.8 `prisma/seed.ts`: packages, add-ons, pricing rules (capacity 3, travel 40 km/$0.70), tax rates (with the accountant comment), `SiteSetting` (`CANCELLATION_POLICY`, `PAYMENT_INSTRUCTIONS` as `TODO(owner)` in EN/FR), fictional sample clients/portfolio projects/recommendations/reviews with `isSample = true` and placeholder images. — §7, §8.1, §8.2, §13
 - [ ] 1.9 Money and date helpers: `formatCAD`, `toCents`, `formatInStudioTz` + unit tests. — §9, §12
 - [ ] 1.10 Bilingual i18n with `next-intl`: `[locale]` routes (`en`, `fr`), middleware, message files for EN + FR (FR flagged `TODO(owner-fr): review`), `hreflang` alternates, locale-aware `formatCAD`/dates. — §4, §9
