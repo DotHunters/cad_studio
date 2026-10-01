@@ -48,3 +48,9 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (2) · e2e ✅ (2) · build ✅ · format ✅
 - Notes: Chromium installed locally via `pnpm exec playwright install chromium`. Full DoD now runnable.
 - Next: 1.5
+
+### 2026-10-01 — 1.5 Site config
+- Branch: feat/m1-foundation
+- Done: `src/config/site.ts` — name "Cad Studio", tagline, owner, Scarborough/ON service area (no street address), dummy `cadstudio.example` URL/emails, `STUDIO_TIMEZONE` with validated fallback to `America/Toronto`, locales `en`/`fr`, `Locale` type. Phone, socials, hours = `TODO(owner)`. 5 unit tests.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (7) · build ✅ · format ✅
+- Next: 1.6
