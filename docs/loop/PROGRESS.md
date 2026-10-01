@@ -66,7 +66,7 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Branch: feat/m1-foundation
 - Done: Prisma 7.10 (pinned stable; npm `latest` is an 8.0 RC) with `prisma.config.ts` (loads `.env.local`), `prisma-client` generator → `src/generated/prisma` (gitignored, `postinstall` generates), `@prisma/adapter-pg`. Full schema for all §7 models + relations, `*Fr` columns, FAQs, consent/sample flags, `ReferenceCounter`, indexes. `src/lib/db.ts` server-only singleton. Scripts `db:generate`, `db:migrate`, `db:deploy`, `db:seed`, `db:studio`. Initial migration `20261001000000_init` (14 tables) generated offline with `prisma migrate diff`.
 - Checks: lint ✅ · typecheck ✅ · test ✅ · build ✅ · format ✅ · `prisma validate` ✅
-- Blockers: **no Postgres on this machine** (no Docker/psql) — migration not yet applied to a real DB. Need `DATABASE_URL` (local Postgres or Neon/Supabase) in `.env.local` to run `pnpm db:deploy` + seed.
+- Blockers: resolved — owner installed local Postgres (`localhost:5432/cad_studio`); migration applied and seed loaded.
 - Next: 1.8
 
 ### 2026-10-01 — 1.8 Seed
@@ -75,3 +75,10 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (21) · build ✅ · format ✅ · **migrate deploy + seed ×2 verified against PGlite** (in-memory Postgres, scratchpad only — not added to project).
 - Notes: placeholder image convention `publicId = "placeholder/<slug>-<n>"` → loader must render via placehold.co (task 3.1). French drafted by agent → `TODO(owner-fr): review`.
 - Next: 1.9
+
+### 2026-10-01 — 1.9 Money + date helpers
+- Branch: feat/m1-foundation
+- Done (TDD): `src/lib/money.ts` — `formatCAD(cents, locale, {suffix})` → "$1,250.00 CAD" / "1 250,00 $ CAD", rejects non-integer cents; `toCents(number|string)` rounds via decimal representation (1.005 → 101, 0.1+0.2 → 30), parses "$1,250.50", rejects >2 decimals/NaN/∞. `src/lib/dates.ts` — `formatInStudioTz(date, pattern, locale, tz)` (date-fns-tz, enCA/frCA), `studioDateKey()` for availability. 16 new tests (DST/EST, midnight boundary, French months).
+- Checks: lint ✅ · typecheck ✅ · test ✅ (37) · build ✅ · format ✅
+- Notes: one build failed with Next "Invariant: no direct app page entry found for /_not-found" — stale `.next` cache; `rm -rf .next` fixed it. Owner's local Postgres verified: schema up to date, seed counts match.
+- Next: 1.10
