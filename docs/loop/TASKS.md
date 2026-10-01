@@ -30,7 +30,7 @@ Legend: `[ ]` todo · `[x]` done · `BLOCKED(Q#)` waiting on `OPEN_QUESTIONS.md`
 - [x] 2.5 About: owner profile from §6.8 facts only; everything else `TODO(owner)`. — §6.8, §13
 - [x] 2.6 Contact: form (Zod, honeypot, Turnstile placeholder), Server Action, Resend email to admin. Service area text only — no street address, no map. — §6.9, §11
 - [x] 2.7 Privacy and Terms pages covering PIPEDA, Law 25 and CASL (content marked for owner/legal review). — §9
-- [ ] 2.8 `generateMetadata` per page, `LocalBusiness` and `Service` JSON-LD, `sitemap.ts`, `robots.ts`. — §10
+- [x] 2.8 `generateMetadata` per page, `LocalBusiness` and `Service` JSON-LD, `sitemap.ts`, `robots.ts`. — §10
 
 ## M3 — Portfolio & Gallery · branch `feat/m3-portfolio-gallery`
 

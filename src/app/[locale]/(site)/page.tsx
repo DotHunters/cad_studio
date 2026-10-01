@@ -7,8 +7,11 @@ import { FeaturedPortfolio } from "@/components/site/featured-portfolio";
 import { FinalCta } from "@/components/site/final-cta";
 import { HomeHero } from "@/components/site/home-hero";
 import { HomeIntro } from "@/components/site/home-intro";
+import { JsonLd } from "@/components/site/json-ld";
 import { ReviewsCarousel } from "@/components/site/reviews-carousel";
 import { WhyUs } from "@/components/site/why-us";
+import { siteConfig } from "@/config/site";
+import { businessJsonLd } from "@/lib/seo/json-ld";
 
 // Featured work and reviews come from the DB; queries are cached and tagged (AGENTS.md §10).
 export const revalidate = 3600;
@@ -22,6 +25,7 @@ export default function HomePage({ params }: Props) {
 
   return (
     <>
+      <JsonLd data={businessJsonLd({ baseUrl: siteConfig.url, locale })} />
       <HomeHero />
       <HomeIntro />
       <CategoryTiles />

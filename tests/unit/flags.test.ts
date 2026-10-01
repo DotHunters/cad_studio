@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  isPricingConfirmed,
   shouldShowLegalDraftNotice,
   shouldShowPricingBanner,
   shouldShowSampleContent,
@@ -46,5 +47,13 @@ describe("shouldShowLegalDraftNotice", () => {
   it("shows until legal review is confirmed", () => {
     expect(shouldShowLegalDraftNotice({})).toBe(true);
     expect(shouldShowLegalDraftNotice({ LEGAL_REVIEWED: "true" })).toBe(false);
+  });
+});
+
+describe("isPricingConfirmed", () => {
+  it("is true only when explicitly confirmed", () => {
+    expect(isPricingConfirmed({})).toBe(false);
+    expect(isPricingConfirmed({ PRICING_CONFIRMED: "false" })).toBe(false);
+    expect(isPricingConfirmed({ PRICING_CONFIRMED: "true" })).toBe(true);
   });
 });

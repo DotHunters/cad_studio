@@ -17,3 +17,8 @@ export function shouldShowSampleContent(env: Env = process.env): boolean {
 export function shouldShowLegalDraftNotice(env: Env = process.env): boolean {
   return env.LEGAL_REVIEWED !== "true";
 }
+
+/** Owner has confirmed prices: hides the banner and allows prices in structured data. */
+export function isPricingConfirmed(env: Env = process.env): boolean {
+  return env.PRICING_CONFIRMED === "true";
+}

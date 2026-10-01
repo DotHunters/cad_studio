@@ -161,3 +161,10 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Unknowns are `<!-- TODO(owner/legal) -->` comments (never rendered) → new Q15 lists everything legal must decide.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (98; incl. EN/FR section parity, no visible TODOs, §9 coverage) · e2e ✅ (110) · build ✅ · format ✅
 - Next: 2.8
+
+### 2026-10-01 — 2.8 SEO — **M2 Content pages complete**
+- Branch: feat/m2-content · PR #2
+- Done: `pageMetadata()` helper (canonical, en-CA/fr-CA/x-default alternates, Open Graph with per-page title, og:locale + alternate, 1200×630 `public/brand/og-default.png` generated from the gold logo, Twitter large card) used by every page; layout keeps `metadataBase` + title template. JSON-LD via `<JsonLd>` (escapes `<`): `ProfessionalService` on home (service area only, no street address, founder), `Service` on package pages (offers only when `PRICING_CONFIRMED=true` — new `isPricingConfirmed` flag), `Person` on About. `sitemap.ts` (static pages + active packages from DB, fr-CA alternates, hourly revalidate) and `robots.ts` (disallow /admin, /api; previews fully blocked).
+- Caught by test: the `<`→`<` escape in `serializeJsonLd` lost its backslash when written (same class as the middleware bug); fixed via `chr(92)`; added a "Tooling pitfalls" section to `.claude/loop.md`.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (108) · e2e ✅ (124) · build ✅ · format ✅
+- Next: M3 → 3.1 (branch `feat/m3-portfolio-gallery`; stack on feat/m2-content while PR #2 is open)

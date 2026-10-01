@@ -5,26 +5,27 @@ import type { Locale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
 
+import { JsonLd } from "@/components/site/json-ld";
 import { Accent, SectionHeading } from "@/components/site/section-heading";
 import { buttonVariants } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { Link } from "@/i18n/navigation";
 import { placeholderImage } from "@/lib/images";
+import { personJsonLd } from "@/lib/seo/json-ld";
 import { cn } from "@/lib/utils";
+import { pageMetadata } from "@/lib/seo/metadata";
 
 type Props = { params: Promise<{ locale: Locale }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "About" });
-  return {
+  return pageMetadata({
+    locale,
+    path: "/about",
     title: t("metaTitle"),
     description: t("metaDescription"),
-    alternates: {
-      canonical: `/${locale}/about`,
-      languages: { "en-CA": "/en/about", "fr-CA": "/fr/about", "x-default": "/en/about" },
-    },
-  };
+  });
 }
 
 /**
@@ -50,6 +51,7 @@ export default async function AboutPage({ params }: Props) {
 
   return (
     <>
+      <JsonLd data={personJsonLd({ baseUrl: siteConfig.url, locale, jobTitle: t("ownerRole") })} />
       <section className="mx-auto max-w-7xl px-4 pt-16 pb-12 sm:px-6 sm:pt-24">
         <SectionHeading
           as="h1"

@@ -8,6 +8,7 @@ import { Toaster } from "sonner";
 import { ThemeProvider } from "@/components/site/theme-provider";
 import { siteConfig } from "@/config/site";
 import { routing } from "@/i18n/routing";
+import { pageMetadata } from "@/lib/seo/metadata";
 import { cn } from "@/lib/utils";
 
 import { cormorant, inter } from "../fonts";
@@ -30,15 +31,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     metadataBase: new URL(siteConfig.url),
     title: { default: t("title"), template: t("titleTemplate") },
-    description: t("description"),
-    alternates: {
-      canonical: `/${locale}`,
-      languages: {
-        "en-CA": "/en",
-        "fr-CA": "/fr",
-        "x-default": "/en",
-      },
-    },
+    // Home page defaults; other pages override with their own pageMetadata().
+    ...pageMetadata({ locale, path: "", description: t("description"), socialTitle: t("title") }),
   };
 }
 

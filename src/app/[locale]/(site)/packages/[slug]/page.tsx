@@ -6,14 +6,19 @@ import type { Locale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import ReactMarkdown from "react-markdown";
 
+import { JsonLd } from "@/components/site/json-ld";
 import { Accent } from "@/components/site/section-heading";
 import { buttonVariants } from "@/components/ui/button";
+import { siteConfig } from "@/config/site";
 import { Link } from "@/i18n/navigation";
 import { slugFromCategory } from "@/lib/categories";
 import { parseFaqs, publishableText } from "@/lib/content";
+import { isPricingConfirmed } from "@/lib/flags";
 import { storedImageSrc } from "@/lib/images";
 import { localize } from "@/lib/localize";
 import { formatCAD } from "@/lib/money";
+import { serviceJsonLd } from "@/lib/seo/json-ld";
+import { pageMetadata } from "@/lib/seo/metadata";
 import { cn } from "@/lib/utils";
 import { getBookingTerms, getPackageBySlug } from "@/server/queries/packages";
 
@@ -23,18 +28,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, slug } = await params;
   const pkg = await getPackageBySlug(slug);
   if (!pkg) return {};
-  return {
+  return pageMetadata({
+    locale,
+    path: `/packages/${slug}`,
     title: localize(pkg.name, pkg.nameFr, locale),
     description: localize(pkg.summary, pkg.summaryFr, locale),
-    alternates: {
-      canonical: `/${locale}/packages/${slug}`,
-      languages: {
-        "en-CA": `/en/packages/${slug}`,
-        "fr-CA": `/fr/packages/${slug}`,
-        "x-default": `/en/packages/${slug}`,
-      },
-    },
-  };
+  });
 }
 
 export default async function PackageDetailPage({ params }: Props) {
@@ -87,6 +86,20 @@ export default async function PackageDetailPage({ params }: Props) {
 
   return (
     <article className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
+      <JsonLd
+        data={serviceJsonLd({
+          baseUrl: siteConfig.url,
+          locale,
+          pricingConfirmed: isPricingConfirmed(),
+          pkg: {
+            slug: pkg.slug,
+            name,
+            description: localize(pkg.summary, pkg.summaryFr, locale),
+            category: categoryName,
+            basePriceCents: pkg.basePriceCents,
+          },
+        })}
+      />
       <nav aria-label={t("PackageDetail.breadcrumb")} className="text-muted-foreground text-sm">
         <ol className="flex items-center gap-1">
           <li>

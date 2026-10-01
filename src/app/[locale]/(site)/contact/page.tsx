@@ -8,20 +8,19 @@ import { ContactForm } from "@/components/contact/contact-form";
 import { Accent, SectionHeading } from "@/components/site/section-heading";
 import { siteConfig } from "@/config/site";
 import { Link } from "@/i18n/navigation";
+import { pageMetadata } from "@/lib/seo/metadata";
 
 type Props = { params: Promise<{ locale: Locale }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "Contact" });
-  return {
+  return pageMetadata({
+    locale,
+    path: "/contact",
     title: t("metaTitle"),
     description: t("metaDescription"),
-    alternates: {
-      canonical: `/${locale}/contact`,
-      languages: { "en-CA": "/en/contact", "fr-CA": "/fr/contact", "x-default": "/en/contact" },
-    },
-  };
+  });
 }
 
 /** Contact (AGENTS.md §6.9). Service area only — no public street address or map (owner decision). */
