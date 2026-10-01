@@ -13,6 +13,7 @@ import { applyReviewFilters, parseReviewFilters, reviewsHref } from "@/lib/revie
 import { averageRating } from "@/lib/reviews";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { getPublishedReviews } from "@/server/queries/reviews";
+import { getVerifiedBooking } from "@/server/review-links";
 
 type Props = {
   params: Promise<{ locale: Locale }>;
@@ -34,8 +35,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ReviewsPage({ params, searchParams }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const filters = parseReviewFilters(await searchParams);
-  const [t, reviews] = await Promise.all([getTranslations(), getPublishedReviews()]);
+  const query = await searchParams;
+  const filters = parseReviewFilters(query);
+  const first = (value: string | string[] | undefined) => (Array.isArray(value) ? value[0] : value);
+  const link = { reference: first(query.booking), exp: first(query.exp), token: first(query.t) };
+  const [t, reviews, verified] = await Promise.all([
+    getTranslations(),
+    getPublishedReviews(),
+    getVerifiedBooking(link.reference, link.exp, link.token),
+  ]);
 
   const customers = reviews.filter((review) => review.type === "CUSTOMER");
   const recommendations = reviews.filter((review) => review.type === "RECOMMENDATION");
@@ -149,7 +157,27 @@ export default async function ReviewsPage({ params, searchParams }: Props) {
           intro={t("ReviewForm.intro")}
         />
         <div className="mt-8 max-w-3xl">
-          <ReviewForm />
+          {verified ? (
+            <p role="note" className="bg-card mb-6 rounded-lg border p-4 text-sm">
+              {t("ReviewForm.verifiedNotice", { reference: verified.reference })}
+            </p>
+          ) : link.reference ? (
+            <p role="note" className="text-muted-foreground mb-6 rounded-lg border p-4 text-sm">
+              {t("ReviewForm.linkInvalid")}
+            </p>
+          ) : null}
+          <ReviewForm
+            booking={
+              verified
+                ? {
+                    reference: verified.reference,
+                    exp: String(link.exp),
+                    token: String(link.token),
+                    category: verified.categorySlug,
+                  }
+                : undefined
+            }
+          />
         </div>
       </section>
     </div>

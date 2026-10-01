@@ -576,6 +576,8 @@
   "ReviewForm": {
     "title": "Your title (optional)",
     "intro": "Your review is read by our team before it’s published.",
+    "verifiedNotice": "Thank you for choosing Cad Studio! Your review for booking {reference} will carry a “Verified client” badge once published.",
+    "linkInvalid": "This review link has expired or was already used — you’re still welcome to share a review below.",
     "asCompany": "I’m writing a recommendation on behalf of a company",
     "rating": "Your rating",
     "star": "{count, plural, one {# star} other {# stars}}",

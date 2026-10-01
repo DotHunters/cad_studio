@@ -12,6 +12,7 @@ import {
   reviewFieldErrors,
   reviewSubmissionSchema,
 } from "@/lib/validators/review";
+import { getVerifiedBooking } from "@/server/review-links";
 
 export type SubmitReviewResult =
   | { ok: true }
@@ -39,6 +40,12 @@ export async function submitReview(
   if (!(await verifyTurnstile(turnstileToken, ip))) return { ok: false, error: "captcha" };
 
   try {
+    // A valid link from a completed booking makes this a verified review.
+    const verifiedBooking = await getVerifiedBooking(
+      review.bookingReference,
+      review.bookingExp,
+      review.bookingToken,
+    );
     const flagged = flagForModeration(
       [review.authorName, review.authorTitle, review.company, review.body]
         .filter(Boolean)
@@ -51,10 +58,12 @@ export async function submitReview(
         authorTitle: review.type === "RECOMMENDATION" ? review.authorTitle : null,
         company: review.type === "RECOMMENDATION" ? review.company : null,
         rating: review.type === "CUSTOMER" ? review.rating : null,
-        category: review.category ? (review.category.toUpperCase() as never) : null,
+        category: (verifiedBooking?.categorySlug ?? review.category)?.toUpperCase() as never,
         body: review.body,
         locale: (await getLocale()) === "fr" ? "fr" : "en",
         status: "PENDING",
+        verified: verifiedBooking !== null,
+        bookingId: verifiedBooking?.bookingId ?? null,
         flagged,
         consentToPublish: true,
       },
@@ -66,6 +75,7 @@ export async function submitReview(
         text: [
           `From: ${review.authorName}${review.company ? ` · ${review.authorTitle ?? ""} ${review.company}` : ""}`,
           review.category ? `Service: ${review.category}` : "",
+          verifiedBooking ? `Verified client — booking ${verifiedBooking.reference}` : "",
           flagged ? "Flagged by the automatic spam/profanity check — please read carefully." : "",
           "",
           review.body,

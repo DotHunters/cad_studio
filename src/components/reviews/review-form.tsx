@@ -2,7 +2,7 @@
 
 import { CheckCircle2, Loader2, Star } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { type FormEvent, type ReactNode, useState } from "react";
+import { type FormEvent, type ReactNode, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { categorySlugs } from "@/lib/categories";
@@ -11,7 +11,7 @@ import { submitReview } from "@/server/actions/review";
 
 type Props = {
   /** Signed booking link from a completed booking (6.3) — marks the review as verified. */
-  booking?: { reference: string; token: string };
+  booking?: { reference: string; exp: string; token: string; category: string };
 };
 
 const fieldClass =
@@ -37,6 +37,9 @@ export function ReviewForm({ booking }: Props) {
   const [sent, setSent] = useState(false);
   const [serverError, setServerError] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  // Lets e2e tests wait until the submit handler is attached.
+  const [hydrated, setHydrated] = useState(false);
+  useEffect(() => setHydrated(true), []);
 
   const errorText = (field: string) => {
     const key = errors[field];
@@ -71,6 +74,7 @@ export function ReviewForm({ booking }: Props) {
         consentToPublish: form.get("consentToPublish") === "on",
         bookingReference: booking?.reference,
         bookingToken: booking?.token,
+        bookingExp: booking?.exp,
         website: String(form.get("website") ?? ""),
       });
       if (result.ok) setSent(true);
@@ -92,7 +96,12 @@ export function ReviewForm({ booking }: Props) {
   }
 
   return (
-    <form onSubmit={onSubmit} noValidate className="bg-card space-y-6 rounded-xl border p-6 sm:p-8">
+    <form
+      onSubmit={onSubmit}
+      noValidate
+      data-hydrated={hydrated}
+      className="bg-card space-y-6 rounded-xl border p-6 sm:p-8"
+    >
       <label className="flex items-start gap-3 text-sm">
         <input
           type="checkbox"
@@ -176,7 +185,12 @@ export function ReviewForm({ booking }: Props) {
           <label htmlFor="review-category" className="text-sm font-medium">
             {t("ReviewForm.category")}
           </label>
-          <select id="review-category" name="category" defaultValue="" className={fieldClass}>
+          <select
+            id="review-category"
+            name="category"
+            defaultValue={booking?.category ?? ""}
+            className={fieldClass}
+          >
             <option value="">—</option>
             {categorySlugs.map((slug) => (
               <option key={slug} value={slug}>

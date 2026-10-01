@@ -34,6 +34,7 @@ export const reviewSubmissionSchema = z
     // Optional signed booking link (6.3) marks the review as verified.
     bookingReference: optionalText(40),
     bookingToken: optionalText(64),
+    bookingExp: optionalText(20),
     website: z.string().max(0, "spam").optional(),
   })
   .superRefine((review, ctx) => {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { signValue, verifySignedValue } from "@/lib/signing";
+import { signExpiring, signValue, verifyExpiring, verifySignedValue } from "@/lib/signing";
 
 const secret = "test-secret-at-least-32-characters-long";
 
@@ -29,5 +29,37 @@ describe("signed links", () => {
 
   it("refuses weak secrets", () => {
     expect(() => signValue("x", "short")).toThrow(/secret/);
+  });
+});
+
+describe("expiring signed links", () => {
+  const now = new Date("2026-10-02T12:00:00Z");
+  const later = new Date("2026-12-31T00:00:00Z");
+
+  it("verifies before the expiry and not after", () => {
+    const { exp, signature } = signExpiring("review:CAD-B-2026-0001", later, secret);
+    expect(verifyExpiring("review:CAD-B-2026-0001", exp, signature, secret, now)).toBe(true);
+    expect(verifyExpiring("review:CAD-B-2026-0001", String(exp), signature, secret, now)).toBe(
+      true,
+    );
+    expect(
+      verifyExpiring(
+        "review:CAD-B-2026-0001",
+        exp,
+        signature,
+        secret,
+        new Date("2027-01-01T00:00:00Z"),
+      ),
+    ).toBe(false);
+  });
+
+  it("rejects a changed expiry, value or malformed expiry", () => {
+    const { exp, signature } = signExpiring("review:CAD-B-2026-0001", later, secret);
+    expect(verifyExpiring("review:CAD-B-2026-0001", exp + 86400, signature, secret, now)).toBe(
+      false,
+    );
+    expect(verifyExpiring("review:CAD-B-2026-0002", exp, signature, secret, now)).toBe(false);
+    expect(verifyExpiring("review:CAD-B-2026-0001", "soon", signature, secret, now)).toBe(false);
+    expect(verifyExpiring("review:CAD-B-2026-0001", undefined, signature, secret, now)).toBe(false);
   });
 });
