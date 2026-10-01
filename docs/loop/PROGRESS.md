@@ -213,3 +213,9 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Done: `imageGalleryJsonLd()` (ImageObject per image with caption, size, credit and copyright holder; capped at 30) on `/gallery` and every case study. Cache tags consolidated in `src/server/cache.ts` (`CACHE_TAGS` packages/portfolio/gallery/reviews/settings, `CONTENT_REVALIDATE_SECONDS`, `revalidateContent(...kinds)` for admin mutations in M7); all queries import from it.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (130) · e2e ✅ (180) · build ✅ · format ✅
 - Next: M4 → 4.1 (branch `feat/m4-quote`; stack on feat/m3-portfolio-gallery while PR #4 is open)
+
+### 2026-10-01 — 4.1 Canadian sales tax
+- Branch: feat/m4-quote (stacked on feat/m3-portfolio-gallery / PR #4)
+- Done (TDD): `src/lib/tax.ts` — `parseRate` (Decimal string/Prisma Decimal → integer parts per 100,000; rejects >5 decimals, negatives, ≥100%), `calculateTax(subtotalCents, rate)` → `{ lines: [{code GST|PST|QST|HST, rate "9.975%", amountCents}], taxCents }` with each line on the pre-tax subtotal (QST not on GST) and half-up rounding to the cent, `findTaxRate` (case-insensitive, throws for unknown regions). 12 tests: ON HST, QC GST+QST, GST-only, Atlantic HST, INTL, rounding edges, invalid input. Coverage: 100% lines/branches.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (142) · format ✅ (no UI change; build/e2e unchanged)
+- Next: 4.2
