@@ -53,7 +53,7 @@ Legend: `[ ]` todo · `[x]` done · `BLOCKED(Q#)` waiting on `OPEN_QUESTIONS.md`
 
 ## M5 — Booking · branch `feat/m5-booking`
 
-- [ ] 5.1 `src/lib/booking` availability logic (blocked dates, past dates, lead days, daily capacity) with TDD, coverage ≥ 90%. — §8.3
+- [x] 5.1 `src/lib/booking` availability logic (blocked dates, past dates, lead days, daily capacity) with TDD, coverage ≥ 90%. — §8.3
 - [ ] 5.2 Public availability endpoint returning `{date, status}` only. — §8.3
 - [ ] 5.3 `/book` stepper: service → calendar (react-day-picker) → details → contact + consent → review with deposit amount + payment method choice (bank transfer / cash). — §6.6, §9
 - [ ] 5.4 `createBooking` in a serializable transaction with capacity re-check and a `CAD-B-YYYY-####` reference. — §6.6, §8.3

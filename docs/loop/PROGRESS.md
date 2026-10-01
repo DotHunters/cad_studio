@@ -260,3 +260,9 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (212) · e2e ✅ (214) · build ✅ · format ✅
 - Notes: the result page labels the deposit with the current DEPOSIT_PCT; the stored deposit amount is what was quoted.
 - Next: M5 → 5.1 (branch `feat/m5-booking`; stack on feat/m4-quote while PRs #4/#5 are open)
+
+### 2026-10-02 — 5.1 Availability logic
+- Branch: feat/m5-booking (stacked on feat/m4-quote / PR #5)
+- Done (TDD): `src/lib/booking/availability.ts` — `dayAvailability` (past / too-soon within MIN_LEAD_DAYS / blocked / open / full with remaining capacity; only PENDING + CONFIRMED bookings hold capacity; capacity from MAX_PHOTOGRAPHERS_PER_DAY, never negative), `publicStatus` (available / limited / full only — blocked, past and too-soon look "full" so no reason leaks), `canBook(date, photographers)`, `monthAvailability(year, month)` (leap years), `addDaysToKey`. All on studio-local "YYYY-MM-DD" keys. 14 tests, 100% lines/branches.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (222) · format ✅ (pure logic)
+- Next: 5.2 (public availability endpoint)
