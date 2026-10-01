@@ -102,3 +102,33 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Bug: middleware matcher `.*\..*` was written as `"…|.*\..*"` in a TS string → regex `.*..*` (any 2+ chars), so the middleware skipped every path except `/`. `/fr` got `lang="fr-CA"` and French metadata (explicit locale) but all component text in English. The 1.10 e2e test only checked the title, so it passed.
 - Fix: `"\."` in `src/middleware.ts`; `tests/unit/middleware.test.ts` asserts which paths are localized vs skipped; French smoke test now checks rendered content.
 - Checks: lint ✅ · typecheck ✅ · test ✅ · e2e ✅ (18) · build ✅ · format ✅
+
+### 2026-10-01 — 2.1 Home hero + category tiles
+- Branch: feat/m2-content (stacked on feat/m1-foundation; PR #1 unmerged)
+- Done: `HomeHero` (full-bleed cross-fading `HeroSlideshow`, 6 s interval, pause/play control per WCAG 2.2.2, starts paused under reduced motion; headline, subtitle, Get a Quote + Book a Date CTAs). `CategoryTiles` (6 tiles → `/packages?category=<slug>`). `src/lib/categories.ts` slug↔enum map; `src/lib/images.ts` placehold.co helper (blank by default — labels clashed with overlaid text in screenshots; text colour = background since placehold.co always prints something). `next.config` allows placehold.co, AVIF/WebP. EN + FR copy.
+- Found + fixed on M1 (`0b0212f`): middleware matcher bug made every `/fr` page render English content — see entry above. M2 rebased onto it.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (66) · e2e ✅ (28) · build ✅ · format ✅ · visual check EN desktop + FR mobile
+- PR: https://github.com/DotHunters/cad_studio/pull/2 (base feat/m1-foundation)
+- Next: 2.2
+
+### 2026-10-01 — 2.1 refinement: reference-site design pass + owner gold gradient
+- Branch: feat/m2-content
+- Owner shared chanthans.com as a design reference (ideas only — no copy/photos/branding taken) and a metallic gold gradient for buttons and lines.
+- Done: `HeaderShell` — transparent header with white logo + light text over the home hero, solid after 24 px scroll; uppercase letter-spaced nav. Centred full-height hero: trust pill (owner facts only: 10+ years, event management, Toronto · Canada), serif headline with italic gold accent word (`t.rich`), pill CTAs (`Button size="cta"`), slide indicator dashes (clickable, `aria-current`), scroll cue. `SectionHeading` + `Accent` (eyebrow, gold rule, serif title, intro) — categories section uses it. Gradient: `--brand-gold-gradient`; `bg-gold-gradient` (exact, lines/accents only) and `bg-gold-button` (25% white tint so ink text is ≥5.1:1 — raw gradient measured 2.9:1 worst case) as the default `Button` variant, mobile-menu CTA and skip link. Gradient lines: active slide indicator, trust dot, section rule, footer hairline. AGENTS.md §5 documents the gradient, contrast rule and design patterns. Q14 (WhatsApp number) added.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (66) · e2e ✅ (36) · build ✅ · format ✅ · screenshots EN desktop light/dark, FR mobile
+- Notes: Windows `.next` lock flakiness (build invariant / e2e "no production build") — retry clears it; loop.md now documents it. Untracked `README.md` belongs to the owner — not committed by the loop.
+- Next: 2.2 (use SectionHeading + patterns from AGENTS.md §5)
+
+### 2026-10-01 — 2.2 Home: intro, why-us, featured portfolio, reviews, final CTA
+- Branch: feat/m2-content · PR #2 (retargeted to `main` after PR #1 was merged with a merge commit — no rebase needed)
+- Done: `HomeIntro` (split statement + owner note, signature "I. Rukshan", About CTA), `WhyUs` dark band (3 reason cards from owner facts, stats strip shown only when ≥2 owner-confirmed stats — `siteConfig.stats`, events/countries TODO(owner); "Trusted by" consented client names; "Ready to plan your date?" bar), `FeaturedPortfolio` (3 featured projects, Local/Global + Sample badges, client name only with consent, "View all work"), `ReviewsCarousel` (approved+featured+consented, CSS scroll-snap, focusable, star ratings with text labels, average + count), `FinalCta`. Data: `src/server/queries/home.ts` with `unstable_cache` tagged `portfolio`/`reviews`, page `revalidate = 3600`. Helpers + tests: `localize()` (FR fallback), `averageRating()`, `storedImageSrc()` (placeholder ids → shaded blanks; real ids throw until 3.1). Headings use lining numerals (Cormorant's "10" read as "IO").
+- Bug found + fixed: the sample flag was read inside `unstable_cache`, so a build without `SHOW_SAMPLE_CONTENT` cached sample-free results that a later run reused. Flag is now an argument (part of the cache key); reproduced the failing build→e2e sequence and it passes.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (76) · e2e ✅ (48) · build ✅ · format ✅ · full-page screenshot reviewed
+- Notes: e2e webServer sets `SHOW_SAMPLE_CONTENT=true`. Owner's `.env.local` has no `SHOW_SAMPLE_CONTENT`, so samples are hidden in their local dev until they add `SHOW_SAMPLE_CONTENT=true`.
+- Next: 2.3
+
+### 2026-10-01 — 2.3 Packages list
+- Branch: feat/m2-content · PR #2
+- Done: `/[locale]/packages` — DB-driven via cached `getActivePackages()` (tag `packages`), `CategoryFilter` (link-based tabs, `?category=`, `aria-current`, works without JS; unknown/repeated values → All), `PackageCard` (category, localized name/summary/inclusions, "From $X CAD" via `formatCAD`, hours/photographers/edited images with ICU plurals, Customize quote → `/quote?package=slug`, Book → `/book?package=slug`), empty state, tax note, metadata + hreflang. Deferred 1.11 follow-ups done: language-switcher e2e now verifies `/en/packages → /fr/packages`; solid-header test uses `/en/packages`.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (76) · e2e ✅ (60) · build ✅ · format ✅ · screenshot reviewed
+- Next: 2.4

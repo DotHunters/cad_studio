@@ -17,11 +17,10 @@ test.describe("site layout", () => {
     await expect(page).toHaveURL(/#main-content$/);
   });
 
-  // TODO(2.3): switch to /en/packages once that page exists, to cover path preservation.
-  test("language switcher opens the same page in French", async ({ page }) => {
-    await page.goto("/en");
+  test("language switcher keeps the current page", async ({ page }) => {
+    await page.goto("/en/packages");
     await page.getByRole("link", { name: "Voir le site en français" }).click();
-    await expect(page).toHaveURL(/\/fr$/);
+    await expect(page).toHaveURL(/\/fr\/packages$/);
     await expect(page.locator("html")).toHaveAttribute("lang", "fr-CA");
   });
 

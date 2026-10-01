@@ -5,7 +5,9 @@ test("root redirects to the English home page", async ({ page }) => {
   await expect(page).toHaveURL(/\/en$/);
   await expect(page.locator("html")).toHaveAttribute("lang", "en-CA");
   await expect(page).toHaveTitle(/Cad Studio/);
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Cad Studio");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    "Your moments, beautifully kept.",
+  );
 });
 
 test("French home page is served under /fr", async ({ page }) => {
@@ -13,6 +15,9 @@ test("French home page is served under /fr", async ({ page }) => {
   await expect(page.locator("html")).toHaveAttribute("lang", "fr-CA");
   await expect(page).toHaveTitle(/Photographie au Canada/);
   // Content (not just metadata) must be French — guards the middleware matcher.
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+    "Vos moments, magnifiquement préservés.",
+  );
   await expect(page.getByRole("link", { name: "View the site in English" })).toBeVisible();
 });
 

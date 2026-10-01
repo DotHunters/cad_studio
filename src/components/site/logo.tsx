@@ -28,14 +28,15 @@ export function Logo({ alt, variant = "theme", className, priority }: Props) {
       <Image
         src="/brand/logo-black.png"
         alt={alt}
-        className={cn("w-auto dark:hidden", className)}
+        // Over a dark hero (transparent header) or in dark mode, show the white logo.
+        className={cn("w-auto group-data-[transparent=true]:hidden dark:hidden", className)}
         {...shared}
       />
       <Image
         src="/brand/logo-white.png"
         alt=""
         aria-hidden
-        className={cn("hidden w-auto dark:block", className)}
+        className={cn("hidden w-auto group-data-[transparent=true]:block dark:block", className)}
         {...shared}
       />
     </>

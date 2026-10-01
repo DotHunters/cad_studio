@@ -21,3 +21,4 @@ Statuses: `OPEN` · `PARTIAL` (part answered, rest still placeholder) · `ANSWER
 | Q11 | Bank transfer details / payment instructions? When is the deposit due? | `PAYMENT_INSTRUCTIONS` = `TODO(owner)` | 5.5, 7.6 | APPLIED | Admin emails bank details or a payment link to the customer. Spec: admin "Send payment request" action; hold expires 48 h after request. |
 | Q13 | Brand name: "Cad Studio" (logo) or "CAD Studios" (old spec)? | — | all | APPLIED | **Cad Studio**. |
 | Q12 | Who reviews the French copy before launch? | — | 8.6 | APPLIED | Agents write the French; a tester reviews at the end. FR text flagged `TODO(owner-fr): review`. |
+| Q14 | WhatsApp number for a floating "chat with us" button (idea from the reference site)? | Button hidden until a number is set in `siteConfig.contact.whatsapp` | 2.2 | OPEN | |

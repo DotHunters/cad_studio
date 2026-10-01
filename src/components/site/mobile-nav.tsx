@@ -69,8 +69,8 @@ export function MobileNav({ items, ctas, navLabel, openLabel, closeLabel }: Prop
                 href={cta.href}
                 className={
                   index === 0
-                    ? "bg-primary text-primary-foreground rounded-lg px-4 py-3 text-center font-medium"
-                    : "rounded-lg border px-4 py-3 text-center font-medium"
+                    ? "bg-gold-button text-ink rounded-full px-4 py-3 text-center text-xs font-semibold tracking-[0.15em] uppercase"
+                    : "rounded-full border px-4 py-3 text-center text-xs font-semibold tracking-[0.15em] uppercase"
                 }
               >
                 {cta.label}

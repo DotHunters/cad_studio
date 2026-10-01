@@ -45,6 +45,13 @@ export const siteConfig = {
     facebook: null as string | null,
     tiktok: null as string | null,
   },
+  // Trust-strip stats. Only owner-confirmed numbers; null hides the stat (AGENTS.md §13).
+  stats: {
+    yearsExperience: 10 as number | null,
+    // TODO(owner): number of events photographed and countries worked in (Q7).
+    eventsPhotographed: null as number | null,
+    countries: null as number | null,
+  },
   // TODO(owner): business hours.
   businessHours: null as string | null,
   locales: ["en", "fr"] as const,

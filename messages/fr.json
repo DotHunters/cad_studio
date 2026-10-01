@@ -18,7 +18,55 @@
   },
   "Home": {
     "heading": "Cad Studio",
-    "tagline": "Collection Art Design"
+    "tagline": "Collection Art Design",
+    "heroTitle": "Vos moments, <accent>magnifiquement</accent> préservés.",
+    "heroSubtitle": "Photographie d'événements, de mariages, de portraits et de produits — planifiée avec soin, livrée avec style. Basés à Toronto, disponibles partout dans le monde.",
+    "heroImageAlt": "Photographie d'exemple {index} sur {total}",
+    "pauseSlideshow": "Mettre le diaporama en pause",
+    "playSlideshow": "Lancer le diaporama",
+    "categoriesTitle": "Des services <accent>sur mesure</accent>",
+    "categoriesIntro": "Choisissez un service pour voir les forfaits et les prix de départ.",
+    "viewPackages": "Voir les forfaits",
+    "trustYears": "Plus de 10 ans d'expérience",
+    "trustEvents": "Expérience en gestion d'événements",
+    "trustLocation": "Toronto · Canada",
+    "showSlide": "Afficher l'image {index} sur {total}",
+    "scroll": "Défiler",
+    "categoriesEyebrow": "Ce que nous photographions",
+    "introEyebrow": "Plus que des photos",
+    "introStatement": "La lumière, les rires, <accent>les personnes</accent> qui ont tout rendu précieux.",
+    "introBody": "Cad Studio est dirigé par I. Rukshan, photographe avec plus de dix ans d'expérience et une formation en gestion d'événements. Résultat : une couverture calme et organisée. Nous connaissons le déroulement, nous sommes là où les moments se produisent, et rien d'important n'est manqué.",
+    "introRole": "Fondateur et photographe principal",
+    "introCta": "À propos du studio",
+    "whyEyebrow": "Pourquoi Cad Studio",
+    "whyTitle": "Planifié comme un événement, <accent>photographié</accent> comme une histoire",
+    "whyIntro": "De l'expérience derrière l'objectif et en coulisses.",
+    "whyExperienceTitle": "Plus de 10 ans d'expérience",
+    "whyExperienceBody": "Une décennie de mariages, d'événements corporatifs, de portraits et de photos de produits — et le jugement qui l'accompagne.",
+    "whyPlanningTitle": "Expérience en gestion d'événements",
+    "whyPlanningBody": "Nous comprenons les horaires, les lieux et les fournisseurs : la couverture reste fluide et discrète le jour J.",
+    "whyReachTitle": "Local et international",
+    "whyReachBody": "Basés à Scarborough, Toronto. Au service du Grand Toronto, de tout le Canada et partout dans le monde.",
+    "statYears": "Années d'expérience",
+    "statEvents": "Événements photographiés",
+    "statCountries": "Pays",
+    "trustedBy": "Ils nous font confiance",
+    "readyTitle": "Prêt à planifier votre <accent>date</accent>?",
+    "portfolioEyebrow": "Réalisations choisies",
+    "portfolioTitle": "Des histoires <accent>racontées</accent>",
+    "portfolioIntro": "Quelques projets récents, ici et ailleurs.",
+    "viewAllWork": "Voir toutes les réalisations",
+    "privateClient": "Client privé",
+    "reachLocal": "Local",
+    "reachGlobal": "International",
+    "sampleBadge": "Exemple",
+    "reviewsEyebrow": "Témoignages",
+    "reviewsTitle": "Ce que disent nos <accent>clients</accent>",
+    "averageRating": "{rating} sur 5 selon {count, plural, one {# avis} other {# avis}}",
+    "starsLabel": "{rating} étoiles sur 5",
+    "readAllReviews": "Lire tous les avis",
+    "finalTitle": "Créons quelque chose d'<accent>intemporel</accent>",
+    "finalBody": "Parlez-nous de votre événement et obtenez une estimation instantanée — ou choisissez une date et nous nous occupons du reste."
   },
   "NotFound": {
     "title": "Page introuvable",
@@ -45,5 +93,51 @@
   },
   "PricingBanner": {
     "message": "Tarifs en attente de confirmation — les prix affichés sont provisoires."
+  },
+  "Categories": {
+    "corporate": {
+      "name": "Événements corporatifs",
+      "description": "Conférences, lancements, galas et portraits sur place."
+    },
+    "wedding": {
+      "name": "Mariages",
+      "description": "Fiançailles, cérémonie et réception."
+    },
+    "family": {
+      "name": "Événements familiaux",
+      "description": "Anniversaires, fêtes prénatales et grandes étapes."
+    },
+    "gathering": {
+      "name": "Rassemblements",
+      "description": "Événements communautaires, culturels, religieux et sociaux."
+    },
+    "professional": {
+      "name": "Séances professionnelles",
+      "description": "Portraits, photos professionnelles, image de marque et portfolios."
+    },
+    "product": {
+      "name": "Photographie de produits",
+      "description": "Commerce en ligne, catalogue, mise en situation et vue de dessus."
+    }
+  },
+  "Packages": {
+    "metaTitle": "Forfaits",
+    "metaDescription": "Forfaits photo pour mariages, événements corporatifs, événements familiaux, rassemblements, portraits et produits — avec prix de départ en dollars canadiens.",
+    "eyebrow": "Forfaits et tarifs",
+    "title": "Trouvez le <accent>bon</accent> forfait",
+    "intro": "Chaque forfait peut être adapté. Commencez ici, puis personnalisez votre devis en quelques minutes.",
+    "filterLabel": "Filtrer les forfaits par catégorie",
+    "all": "Tous",
+    "from": "À partir de",
+    "hours": "{count, plural, one {# heure} other {# heures}}",
+    "photographers": "{count, plural, one {# photographe} other {# photographes}}",
+    "editedImages": "{count}+ images retouchées",
+    "includes": "Comprend",
+    "customize": "Personnaliser le devis",
+    "book": "Réserver",
+    "details": "Voir les détails",
+    "empty": "Aucun forfait dans cette catégorie pour le moment.",
+    "emptyCta": "Voir tous les forfaits",
+    "taxNote": "Prix en dollars canadiens, avant taxes et frais de déplacement applicables."
   }
 }

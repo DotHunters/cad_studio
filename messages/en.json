@@ -18,7 +18,55 @@
   },
   "Home": {
     "heading": "Cad Studio",
-    "tagline": "Collection Art Design"
+    "tagline": "Collection Art Design",
+    "heroTitle": "Your moments, <accent>beautifully</accent> kept.",
+    "heroSubtitle": "Event, wedding, portrait and product photography — planned with care, delivered with style. Toronto-based, available worldwide.",
+    "heroImageAlt": "Sample photograph {index} of {total}",
+    "pauseSlideshow": "Pause slideshow",
+    "playSlideshow": "Play slideshow",
+    "categoriesTitle": "Services, <accent>tailored</accent> to you",
+    "categoriesIntro": "Choose a service to see packages and starting prices.",
+    "viewPackages": "View packages",
+    "trustYears": "10+ years behind the lens",
+    "trustEvents": "Event management experience",
+    "trustLocation": "Toronto · Canada",
+    "showSlide": "Show image {index} of {total}",
+    "scroll": "Scroll",
+    "categoriesEyebrow": "What we photograph",
+    "introEyebrow": "More than photographs",
+    "introStatement": "The light, the laughter, <accent>the people</accent> who made it matter.",
+    "introBody": "Cad Studio is led by I. Rukshan, a photographer with more than ten years behind the lens and a background in event management. That means calm, organized coverage: we know the run-of-show, we're where the moments happen, and nothing important is missed.",
+    "introRole": "Founder & Lead Photographer",
+    "introCta": "About the studio",
+    "whyEyebrow": "Why Cad Studio",
+    "whyTitle": "Planned like an event, <accent>shot</accent> like a story",
+    "whyIntro": "Experience behind the camera and behind the scenes.",
+    "whyExperienceTitle": "10+ years of experience",
+    "whyExperienceBody": "A decade of weddings, corporate events, portraits and product work — and the judgement that comes with it.",
+    "whyPlanningTitle": "Event management background",
+    "whyPlanningBody": "We understand timelines, venues and vendors, so coverage stays smooth and unobtrusive on the day.",
+    "whyReachTitle": "Local and global",
+    "whyReachBody": "Based in Scarborough, Toronto. Serving the GTA, Canada-wide, and travelling worldwide.",
+    "statYears": "Years of experience",
+    "statEvents": "Events photographed",
+    "statCountries": "Countries",
+    "trustedBy": "Trusted by",
+    "readyTitle": "Ready to plan your <accent>date</accent>?",
+    "portfolioEyebrow": "Selected work",
+    "portfolioTitle": "Stories we've <accent>told</accent>",
+    "portfolioIntro": "A few recent projects, near and far.",
+    "viewAllWork": "View all work",
+    "privateClient": "Private client",
+    "reachLocal": "Local",
+    "reachGlobal": "Global",
+    "sampleBadge": "Sample",
+    "reviewsEyebrow": "Kind words",
+    "reviewsTitle": "What our <accent>clients</accent> say",
+    "averageRating": "{rating} out of 5 from {count, plural, one {# review} other {# reviews}}",
+    "starsLabel": "{rating} out of 5 stars",
+    "readAllReviews": "Read all reviews",
+    "finalTitle": "Let's create something <accent>timeless</accent>",
+    "finalBody": "Tell us about your event and get an instant estimate — or pick a date and we'll take it from there."
   },
   "NotFound": {
     "title": "Page not found",
@@ -45,5 +93,51 @@
   },
   "PricingBanner": {
     "message": "Pricing pending owner confirmation — prices shown are placeholders."
+  },
+  "Categories": {
+    "corporate": {
+      "name": "Corporate Events",
+      "description": "Conferences, launches, galas and on-site headshots."
+    },
+    "wedding": {
+      "name": "Weddings",
+      "description": "Engagement, ceremony and reception."
+    },
+    "family": {
+      "name": "Family Events",
+      "description": "Birthdays, anniversaries, baby showers and milestones."
+    },
+    "gathering": {
+      "name": "Gatherings",
+      "description": "Community, cultural, religious and social events."
+    },
+    "professional": {
+      "name": "Professional Photoshoots",
+      "description": "Portraits, headshots, branding and portfolios."
+    },
+    "product": {
+      "name": "Product Photography",
+      "description": "E-commerce, catalogue, lifestyle and flat-lay."
+    }
+  },
+  "Packages": {
+    "metaTitle": "Packages",
+    "metaDescription": "Photography packages for weddings, corporate events, family events, gatherings, portraits and products — with starting prices in CAD.",
+    "eyebrow": "Packages & pricing",
+    "title": "Find the <accent>right</accent> package",
+    "intro": "Every package can be tailored. Start here, then customize your quote in minutes.",
+    "filterLabel": "Filter packages by category",
+    "all": "All",
+    "from": "From",
+    "hours": "{count, plural, one {# hour} other {# hours}}",
+    "photographers": "{count, plural, one {# photographer} other {# photographers}}",
+    "editedImages": "{count}+ edited images",
+    "includes": "Includes",
+    "customize": "Customize quote",
+    "book": "Book",
+    "details": "View details",
+    "empty": "No packages in this category yet.",
+    "emptyCta": "See all packages",
+    "taxNote": "Prices in Canadian dollars, before applicable taxes and travel."
   }
 }
