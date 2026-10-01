@@ -266,5 +266,18 @@
     "results": "{count, plural, =0 {Aucune étude de cas} one {# étude de cas} other {# études de cas}}",
     "empty": "Aucune étude de cas ne correspond à ces filtres pour le moment.",
     "clearFilters": "Effacer les filtres"
+  },
+  "Project": {
+    "back": "Toutes les réalisations",
+    "client": "Client",
+    "category": "Catégorie",
+    "location": "Lieu",
+    "year": "Année",
+    "reach": "Portée",
+    "gallery": "Images de ce projet",
+    "imageCount": "{count, plural, one {# image} other {# images}}",
+    "ctaTitle": "Vous planifiez quelque chose de <accent>semblable</accent>?",
+    "ctaBody": "Parlez-nous de votre événement et obtenez une estimation instantanée.",
+    "viewPackages": "Voir les forfaits {category}"
   }
 }

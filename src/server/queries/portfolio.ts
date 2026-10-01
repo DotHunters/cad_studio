@@ -29,3 +29,38 @@ const cachedPublishedProjects = unstable_cache(
 export const getPublishedProjects = () => cachedPublishedProjects(shouldShowSampleContent());
 
 export type ProjectSummary = Awaited<ReturnType<typeof getPublishedProjects>>[number];
+
+const cachedProjectBySlug = unstable_cache(
+  async (slug: string, includeSamples: boolean) => {
+    const project = await db.portfolioProject.findFirst({
+      where: { slug, publishedAt: { not: null }, ...(includeSamples ? {} : { isSample: false }) },
+      include: { images: { orderBy: { sortOrder: "asc" } } },
+    });
+    if (!project) return null;
+
+    const clientName = project.consentToPublish ? project.clientName : null;
+    // A published recommendation from the same (consented) client, if any.
+    const recommendation = clientName
+      ? await db.review.findFirst({
+          where: {
+            type: "RECOMMENDATION",
+            status: "APPROVED",
+            consentToPublish: true,
+            company: clientName,
+            ...(includeSamples ? {} : { isSample: false }),
+          },
+          orderBy: { createdAt: "desc" },
+        })
+      : null;
+
+    return { ...project, clientName, recommendation };
+  },
+  ["portfolio:by-slug"],
+  { tags: [CACHE_TAGS.portfolio, CACHE_TAGS.reviews], revalidate: 3600 },
+);
+
+/** One published case study with all its images, or null (unknown, unpublished or hidden sample). */
+export const getProjectBySlug = (slug: string) =>
+  cachedProjectBySlug(slug, shouldShowSampleContent());
+
+export type ProjectDetail = NonNullable<Awaited<ReturnType<typeof getProjectBySlug>>>;

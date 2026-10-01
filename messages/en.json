@@ -266,5 +266,18 @@
     "results": "{count, plural, =0 {No case studies} one {# case study} other {# case studies}}",
     "empty": "No case studies match these filters yet.",
     "clearFilters": "Clear filters"
+  },
+  "Project": {
+    "back": "All work",
+    "client": "Client",
+    "category": "Category",
+    "location": "Location",
+    "year": "Year",
+    "reach": "Reach",
+    "gallery": "Images from this project",
+    "imageCount": "{count, plural, one {# image} other {# images}}",
+    "ctaTitle": "Planning something <accent>similar</accent>?",
+    "ctaBody": "Tell us about your event and get an instant estimate.",
+    "viewPackages": "View {category} packages"
   }
 }

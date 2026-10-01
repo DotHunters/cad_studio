@@ -187,3 +187,10 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - PR #3/#4: Vercel preview deployments are Ready (owner connected Vercel); previews are behind Vercel Authentication, so content couldn't be checked from here.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (121) · e2e ✅ (136) · build ✅ · format ✅
 - Next: 3.3
+
+### 2026-10-01 — 3.3 Portfolio case study
+- Branch: feat/m3-portfolio-gallery · PR #4 (PR #3 merged → #4 retargeted to `main`)
+- Done: `/[locale]/portfolio/[slug]` — back link, category + Sample badge, title, lead image (priority), markdown story (`skipHtml`), client recommendation (approved, consented `RECOMMENDATION` whose company matches the consented client name), facts aside (client or "Private client", category, location, year, reach), remaining images grid with count, CTA to quote + category packages. 404 for unknown/unpublished/hidden-sample. `getProjectBySlug` cached with portfolio + reviews tags, sample flag in key. Case studies added to the sitemap.
+- Checks: lint ✅ · typecheck ✅ · test ✅ · e2e ✅ (150) · build ✅ · format ✅
+- Notes: image grid becomes lightbox-enabled in 3.5.
+- Next: 3.4
