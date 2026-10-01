@@ -60,10 +60,8 @@ test.describe("home page", () => {
   });
 
   test("header is solid on other pages", async ({ page }) => {
-    await page.goto("/en/does-not-exist-yet");
-    // 404 has no site header; use a real page once M2 adds one. Home-only transparency is
-    // covered above, and HERO_PATHS limits it to "/".
-    await expect(page.locator("header[data-transparent='true']")).toHaveCount(0);
+    await page.goto("/en/packages");
+    await expect(page.locator("header")).toHaveAttribute("data-transparent", "false");
   });
 
   test("owner intro shows the founder signature", async ({ page }) => {

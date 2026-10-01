@@ -126,3 +126,9 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (76) · e2e ✅ (48) · build ✅ · format ✅ · full-page screenshot reviewed
 - Notes: e2e webServer sets `SHOW_SAMPLE_CONTENT=true`. Owner's `.env.local` has no `SHOW_SAMPLE_CONTENT`, so samples are hidden in their local dev until they add `SHOW_SAMPLE_CONTENT=true`.
 - Next: 2.3
+
+### 2026-10-01 — 2.3 Packages list
+- Branch: feat/m2-content · PR #2
+- Done: `/[locale]/packages` — DB-driven via cached `getActivePackages()` (tag `packages`), `CategoryFilter` (link-based tabs, `?category=`, `aria-current`, works without JS; unknown/repeated values → All), `PackageCard` (category, localized name/summary/inclusions, "From $X CAD" via `formatCAD`, hours/photographers/edited images with ICU plurals, Customize quote → `/quote?package=slug`, Book → `/book?package=slug`), empty state, tax note, metadata + hreflang. Deferred 1.11 follow-ups done: language-switcher e2e now verifies `/en/packages → /fr/packages`; solid-header test uses `/en/packages`.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (76) · e2e ✅ (60) · build ✅ · format ✅ · screenshot reviewed
+- Next: 2.4
