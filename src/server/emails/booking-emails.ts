@@ -89,7 +89,7 @@ export async function sendBookingEmails(data: BookingEmailData) {
       data.paymentMethod === "CASH" ? tConfirmed("nextCash") : tConfirmed("nextBank"),
       tConfirmed("nextConfirm"),
     ],
-    icsNote: t("icsNote"),
+    icsNote: `${t("icsNote")} ${t("changeLink")}`,
     cta: { label: t("bookingCta"), url: bookingUrl },
     footer: t("bookingFooter"),
   });

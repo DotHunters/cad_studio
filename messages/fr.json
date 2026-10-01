@@ -416,7 +416,8 @@
     "icsNote": "Une invitation de calendrier est jointe.",
     "icsSummary": "Cad Studio — {category}",
     "icsDescription": "Réservation {reference} (acompte en attente). Voir : {url}",
-    "bookingFooter": "Cad Studio · Scarborough, Toronto · Vous recevez ce courriel parce que vous avez demandé une réservation sur notre site."
+    "bookingFooter": "Cad Studio · Scarborough, Toronto · Vous recevez ce courriel parce que vous avez demandé une réservation sur notre site.",
+    "changeLink": "Besoin de changer la date ou d’annuler? Utilisez le lien ci-dessus pour nous envoyer une demande."
   },
   "QuoteResult": {
     "metaTitle": "Votre devis",
@@ -527,5 +528,26 @@
     "nextCash": "Nous communiquerons avec vous pour convenir d’un moment pour payer votre acompte comptant.",
     "nextConfirm": "Dès réception de votre acompte, nous confirmerons votre réservation par courriel.",
     "emailCopy": "Une copie de cette demande a été envoyée à votre adresse courriel."
+  },
+  "ChangeRequest": {
+    "title": "Besoin de modifier quelque chose?",
+    "intro": "Envoyez-nous une demande et nous vous répondrons. Les modifications et remboursements suivent notre politique d’annulation.",
+    "type": "Que souhaitez-vous faire?",
+    "reschedule": "Changer la date",
+    "cancel": "Annuler la réservation",
+    "preferredDate": "Nouvelle date souhaitée (facultatif si vous ajoutez une note)",
+    "message": "Message (facultatif)",
+    "submit": "Envoyer la demande",
+    "sending": "Envoi…",
+    "successTitle": "Demande envoyée",
+    "successBody": "Nous avons reçu votre demande et vous répondrons par courriel.",
+    "closed": "Cette réservation ne peut plus être modifiée en ligne. Veuillez nous écrire.",
+    "forbidden": "Ce lien n’est pas valide. Utilisez le lien de votre courriel.",
+    "serverError": "Une erreur s’est produite. Veuillez réessayer.",
+    "errors": {
+      "required": "Ajoutez une date souhaitée ou une note.",
+      "invalidDate": "Choisissez une date valide.",
+      "tooLong": "Ce texte est trop long."
+    }
   }
 }

@@ -5,12 +5,14 @@ import type { Locale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
 
+import { ChangeRequestForm } from "@/components/booking/change-request-form";
 import { Accent, SectionHeading } from "@/components/site/section-heading";
-import { formatInStudioTz } from "@/lib/dates";
+import { formatInStudioTz, studioDateKey } from "@/lib/dates";
 import { localize } from "@/lib/localize";
 import { formatCAD } from "@/lib/money";
 import { parseReference } from "@/lib/references";
 import { verifySignedValue } from "@/lib/signing";
+import { canRequestChange } from "@/lib/validators/change-request";
 import { linkSecret } from "@/server/link-secret";
 import { getBookingByReference } from "@/server/queries/quotes";
 
@@ -51,7 +53,16 @@ export default async function BookingConfirmedPage({ params, searchParams }: Pro
   if (!booking) notFound();
 
   const when = `${formatInStudioTz(booking.startAt, "PPPP", locale)} · ${formatInStudioTz(booking.startAt, "p", locale)}–${formatInStudioTz(booking.endAt, "p", locale)}`;
-  const tBook = await getTranslations("Book");
+  const [tBook, tChange] = await Promise.all([
+    getTranslations("Book"),
+    getTranslations("ChangeRequest"),
+  ]);
+  const changeable = canRequestChange({
+    status: booking.status,
+    startAt: booking.startAt,
+    openRequests: 0,
+    now: new Date(),
+  });
   const facts = [
     { label: t("status"), value: t(STATUS_KEY[booking.status]) },
     { label: t("when"), value: when },
@@ -101,6 +112,22 @@ export default async function BookingConfirmedPage({ params, searchParams }: Pro
             <li>{t("nextConfirm")}</li>
           </ol>
           <p className="text-muted-foreground mt-6 text-sm">{t("emailCopy")}</p>
+        </section>
+      )}
+
+      {changeable && signature && (
+        <section id="change" aria-labelledby="change-title" className="mt-14 scroll-mt-24">
+          <h2 id="change-title" className="text-3xl">
+            {tChange("title")}
+          </h2>
+          <p className="text-muted-foreground mt-2 text-sm">{tChange("intro")}</p>
+          <div className="mt-6">
+            <ChangeRequestForm
+              reference={reference}
+              token={signature}
+              today={studioDateKey(new Date())}
+            />
+          </div>
         </section>
       )}
     </div>

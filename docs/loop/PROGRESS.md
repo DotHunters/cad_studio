@@ -303,3 +303,11 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Test fixes: §15 scenario 2 now uses a different Wednesday per Playwright project (desktop and mobile raced on one date's capacity); the blur-placeholder test holds `/_next/image` responses so the pre-load state is observable (was timing-dependent) — verified with `--repeat-each=3`.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (262) · e2e ✅ (232; server log shows client + studio booking emails built per booking) · build ✅ · format ✅
 - Next: 5.6 (signed reschedule/cancel links)
+
+### 2026-10-02 — 5.6 Reschedule / cancel requests
+- Branch: feat/m5-booking · PR #6
+- Done: clients request changes from the signed booking page; nothing changes automatically (cancellation/refund policy is owner-defined, Q15). New `BookingChangeRequest` model (type RESCHEDULE|CANCEL, preferred date, message, status OPEN|RESOLVED; migration `20261002010000_booking_change_requests`) for admin (M7). `src/lib/validators/change-request.ts`: `changeRequestSchema` (reschedule needs a preferred date or a note) + `canRequestChange` (PENDING/CONFIRMED, upcoming, < 3 open requests) — unit tested. `requestBookingChange` server action verifies the `booking:` signature, checks eligibility, stores the request and emails the studio (reply-to client). `ChangeRequestForm` on `/book/[reference]` (only when changeable); booking email mentions the link.
+- e2e: reschedule recorded (DB row), cancellation request leaves the booking PENDING, 4th open request refused, no form for cancelled bookings, unsigned/bad links 404. Fixtures use per-project `CAD-B-9999-…` references and per-test emails.
+- Notes: one full run lost its web server (Playwright reused a leftover server that then stopped) and one hit a transient ECONNRESET; reruns pass. `--repeat-each` on the booking scenario must use `--workers=1` (parallel repeats legitimately compete for the same date's capacity).
+- Checks: lint ✅ · typecheck ✅ · test ✅ (267) · e2e ✅ (242 on rerun) · build ✅ · format ✅
+- Next: 5.7 (cron to release unpaid holds)

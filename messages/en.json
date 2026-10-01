@@ -416,7 +416,8 @@
     "icsNote": "A calendar invitation is attached.",
     "icsSummary": "Cad Studio — {category}",
     "icsDescription": "Booking {reference} (pending deposit). View: {url}",
-    "bookingFooter": "Cad Studio · Scarborough, Toronto · You received this email because you requested a booking on our website."
+    "bookingFooter": "Cad Studio · Scarborough, Toronto · You received this email because you requested a booking on our website.",
+    "changeLink": "Need to reschedule or cancel? Use the link above to send us a request."
   },
   "QuoteResult": {
     "metaTitle": "Your quote",
@@ -527,5 +528,26 @@
     "nextCash": "We’ll contact you to arrange a time to pay your deposit in cash.",
     "nextConfirm": "Once your deposit is received, we’ll confirm your booking by email.",
     "emailCopy": "A copy of this request has been sent to your email."
+  },
+  "ChangeRequest": {
+    "title": "Need to change something?",
+    "intro": "Send us a request and we’ll get back to you. Changes and refunds follow our cancellation policy.",
+    "type": "What would you like to do?",
+    "reschedule": "Reschedule",
+    "cancel": "Cancel the booking",
+    "preferredDate": "Preferred new date (optional if you add a note)",
+    "message": "Message (optional)",
+    "submit": "Send request",
+    "sending": "Sending…",
+    "successTitle": "Request sent",
+    "successBody": "We’ve received your request and will reply by email.",
+    "closed": "This booking can no longer be changed online. Please contact us.",
+    "forbidden": "This link is not valid. Please use the link from your email.",
+    "serverError": "Something went wrong. Please try again.",
+    "errors": {
+      "required": "Add a preferred date or a note.",
+      "invalidDate": "Choose a valid date.",
+      "tooLong": "This is too long."
+    }
   }
 }
