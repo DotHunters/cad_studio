@@ -311,3 +311,10 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Notes: one full run lost its web server (Playwright reused a leftover server that then stopped) and one hit a transient ECONNRESET; reruns pass. `--repeat-each` on the booking scenario must use `--workers=1` (parallel repeats legitimately compete for the same date's capacity).
 - Checks: lint ✅ · typecheck ✅ · test ✅ (267) · e2e ✅ (242 on rerun) · build ✅ · format ✅
 - Next: 5.7 (cron to release unpaid holds)
+
+### 2026-10-02 — 5.7 Release unpaid holds (cron)
+- Branch: feat/m5-booking · PR #6
+- Done: `src/lib/booking/holds.ts` (`isHoldExpired`: PENDING, no deposit, payment request ≥ PENDING_HOLD_HOURS ago; never for bookings without a payment request; `overdueCutoff`; `needsPaymentRequest` for the admin 24 h warning) — 7 tests. `GET /api/cron/release-holds` (timing-safe `Bearer $CRON_SECRET`, 401 otherwise) cancels overdue holds with the condition re-checked in the update (a just-recorded deposit wins), emails each client a localized "hold released" note, returns `{ released }`; idempotent. `vercel.json` schedules it daily at 13:00 UTC (Hobby-safe; hourly on Pro — noted in AGENTS.md §8.3). Playwright web server gets `CRON_SECRET=e2e-cron-secret`.
+- e2e (`cron-api.spec.ts`): no/wrong secret → 401; of four fixtures only the unpaid, 49-h-old request is released; second run releases nothing.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (273) · e2e ✅ (244) · build ✅ · format ✅
+- Next: 5.8 (remaining e2e: scenario 4 blocked date not selectable)

@@ -61,7 +61,7 @@ Legend: `[ ]` todo · `[x]` done · `BLOCKED(Q#)` waiting on `OPEN_QUESTIONS.md`
 - [x] 5.4 `createBooking` in a serializable transaction with capacity re-check and a `CAD-B-YYYY-####` reference. — §6.6, §8.3
 - [x] 5.5 Confirmation emails (client locale) with `.ics` attachment, deposit amount and "payment details will follow by email". — §6.6, §8.3
 - [x] 5.6 Signed reschedule/cancel links and request handling. — §6.6, §11
-- [ ] 5.7 Vercel Cron job to expire `PENDING` bookings with no deposit `PENDING_HOLD_HOURS` after the payment request was sent. — §8.3
+- [x] 5.7 Vercel Cron job to expire `PENDING` bookings with no deposit `PENDING_HOLD_HOURS` after the payment request was sent. — §8.3
 - [ ] 5.8 E2E tests: scenarios 2, 3 and 4. — §15
 
 ## M6 — Reviews · branch `feat/m6-reviews`

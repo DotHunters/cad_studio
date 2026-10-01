@@ -417,7 +417,9 @@
     "icsSummary": "Cad Studio — {category}",
     "icsDescription": "Booking {reference} (pending deposit). View: {url}",
     "bookingFooter": "Cad Studio · Scarborough, Toronto · You received this email because you requested a booking on our website.",
-    "changeLink": "Need to reschedule or cancel? Use the link above to send us a request."
+    "changeLink": "Need to reschedule or cancel? Use the link above to send us a request.",
+    "holdReleasedSubject": "Your hold on {date} has been released — {reference}",
+    "holdReleasedBody": "Hi {name},\n\nWe didn’t receive the deposit for booking {reference} on {date}, so we’ve released the date for other clients.\n\nIf you’d still like to book, reply to this email or make a new request on our website — we’d love to help if the date is still free.\n\nCad Studio"
   },
   "QuoteResult": {
     "metaTitle": "Your quote",

@@ -417,7 +417,9 @@
     "icsSummary": "Cad Studio — {category}",
     "icsDescription": "Réservation {reference} (acompte en attente). Voir : {url}",
     "bookingFooter": "Cad Studio · Scarborough, Toronto · Vous recevez ce courriel parce que vous avez demandé une réservation sur notre site.",
-    "changeLink": "Besoin de changer la date ou d’annuler? Utilisez le lien ci-dessus pour nous envoyer une demande."
+    "changeLink": "Besoin de changer la date ou d’annuler? Utilisez le lien ci-dessus pour nous envoyer une demande.",
+    "holdReleasedSubject": "Votre date du {date} a été libérée — {reference}",
+    "holdReleasedBody": "Bonjour {name},\n\nNous n’avons pas reçu l’acompte pour la réservation {reference} du {date}; la date a donc été libérée pour d’autres clients.\n\nSi vous souhaitez toujours réserver, répondez à ce courriel ou faites une nouvelle demande sur notre site — nous serons ravis de vous aider si la date est encore libre.\n\nCad Studio"
   },
   "QuoteResult": {
     "metaTitle": "Votre devis",
