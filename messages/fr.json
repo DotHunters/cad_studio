@@ -496,5 +496,26 @@
       "spam": "Veuillez laisser ce champ vide.",
       "unavailable": "Cette date n’est plus disponible. Veuillez en choisir une autre."
     }
+  },
+  "BookingConfirmed": {
+    "metaTitle": "Demande de réservation reçue",
+    "eyebrow": "Réservation {reference}",
+    "title": "Demande <accent>reçue</accent>",
+    "intro": "Merci, {name}. Votre date est retenue le temps de régler votre acompte.",
+    "status": "Statut",
+    "statusPending": "En attente — acompte à recevoir",
+    "statusConfirmed": "Confirmée",
+    "statusCancelled": "Annulée",
+    "statusCompleted": "Terminée",
+    "when": "Quand",
+    "package": "Forfait",
+    "deposit": "Acompte",
+    "payment": "Mode de paiement",
+    "total": "Total",
+    "nextTitle": "Prochaines étapes",
+    "nextBank": "Nous vous enverrons sous peu les coordonnées pour le virement de votre acompte.",
+    "nextCash": "Nous communiquerons avec vous pour convenir d’un moment pour payer votre acompte comptant.",
+    "nextConfirm": "Dès réception de votre acompte, nous confirmerons votre réservation par courriel.",
+    "emailCopy": "Une copie de cette demande a été envoyée à votre adresse courriel."
   }
 }

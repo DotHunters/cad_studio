@@ -1,4 +1,6 @@
-import { expect, type Page, test } from "@playwright/test";
+import { expect, type Page, test, type TestInfo } from "@playwright/test";
+
+import { queryDb } from "./db";
 
 const heading = (page: Page) => page.locator("#booking-step-heading");
 const next = (page: Page) => page.getByRole("button", { name: "Continue" });
@@ -18,16 +20,29 @@ async function pickFirstAvailableDay(page: Page) {
   return label;
 }
 
-async function fillContact(page: Page) {
+async function fillContact(page: Page, email: string) {
   await page.getByLabel("Name", { exact: true }).fill("Booking Tester");
-  await page.getByLabel("Email", { exact: true }).fill("e2e-booking-wizard@example.com");
+  await page.getByLabel("Email", { exact: true }).fill(email);
   await page.getByLabel(/Bank transfer/).check();
   await page.getByRole("checkbox", { name: /I agree to the terms of service/ }).check();
   await page.getByRole("checkbox", { name: /I've read the privacy policy/ }).check();
 }
 
+/** Unique per test and project, so parallel tests never touch each other's bookings. */
+const emailFor = (testInfo: TestInfo) =>
+  `e2e-booking-${testInfo.project.name}-${testInfo.testId}@example.com`;
+
+test.afterEach(async ({}, testInfo) => {
+  await queryDb(
+    `delete from "Booking" where "customerId" in (select id from "Customer" where email = $1)`,
+    [emailFor(testInfo)],
+  );
+});
+
 test.describe("booking wizard", () => {
-  test("walks from a package to the review with the estimate and deposit", async ({ page }) => {
+  test("walks from a package to the review with the estimate and deposit", async ({
+    page,
+  }, testInfo) => {
     await open(page, "/en/book?package=wedding");
     await expect(heading(page)).toHaveText("Service");
     await expect(page.getByLabel("Event type")).toHaveValue("wedding");
@@ -47,12 +62,18 @@ test.describe("booking wizard", () => {
 
     await expect(heading(page)).toHaveText("Your details");
     await expect(page.getByRole("checkbox", { name: /Send me occasional news/ })).not.toBeChecked();
-    await fillContact(page);
+    await fillContact(page, emailFor(testInfo));
     await next(page).click();
 
     await expect(heading(page)).toHaveText("Review your booking");
     await expect(page.getByRole("main")).toContainText("Casa Loma");
     await expect(page.getByTestId("booking-deposit")).toContainText("30%");
+
+    await page.getByRole("button", { name: "Request booking" }).click();
+    await expect(page).toHaveURL(/\/en\/book\/CAD-B-\d{4}-\d{4,}\?t=[\w-]{32}$/);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Request received");
+    await expect(page.getByRole("main")).toContainText("Pending — awaiting deposit");
+    await expect(page.getByRole("main")).toContainText("bank transfer details");
   });
 
   test("validates each step before moving on", async ({ page }) => {
@@ -91,7 +112,49 @@ test.describe("booking wizard", () => {
     await expect(page.getByText("That quote link is invalid or has expired")).toBeVisible();
   });
 
-  test("books from a quote, keeping the quoted price until details change", async ({ page }) => {
+  // AGENTS.md §15 scenario 2.
+  test("books a quote; the date's capacity decreases", async ({ page, request }, testInfo) => {
+    await queryDb(
+      `delete from "Booking" where "startAt" >= '2027-06-09' and "startAt" < '2027-06-11'
+         and "customerId" in (select id from "Customer" where email like 'e2e-%')`,
+    );
+    const status = async () => {
+      const body = (await (await request.get("/api/availability?month=2027-06")).json()) as {
+        days: Array<{ date: string; status: string }>;
+      };
+      return body.days.find((day) => day.date === "2027-06-09")?.status;
+    };
+    expect(await status()).toBe("available");
+
+    await open(page, "/en/quote?package=wedding");
+    await page.getByLabel("Event date").fill("2027-06-09");
+    await page.getByLabel("Name", { exact: true }).fill("Quote To Booking");
+    await page.getByLabel("Email", { exact: true }).fill(emailFor(testInfo));
+    await page.getByRole("button", { name: "Get my quote" }).click();
+    await page.getByRole("link", { name: "Book this quote" }).click();
+    await expect(page.locator('form[data-hydrated="true"]')).toBeVisible();
+    for (let step = 0; step < 3; step++) await next(page).click();
+    await fillContact(page, emailFor(testInfo));
+    await next(page).click();
+    await page.getByRole("button", { name: "Request booking" }).click();
+
+    await expect(page).toHaveURL(/\/en\/book\/CAD-B-/);
+    const reference = page.url().match(/CAD-B-\d{4}-\d{4,}/)![0];
+    // Wedding takes 2 of 3 photographers → the day is now "limited".
+    await expect.poll(status).toBe("limited");
+
+    const [booking] = await queryDb<{ status: string; totalCents: number; quoteStatus: string }>(
+      `select b.status, b."totalCents", q.status as "quoteStatus"
+         from "Booking" b join "Quote" q on q.id = b."quoteId" where b.reference = $1`,
+      [reference],
+    );
+    // Booked at the quoted price; the quote is now accepted.
+    expect(booking).toEqual({ status: "PENDING", totalCents: 316400, quoteStatus: "ACCEPTED" });
+  });
+
+  test("books from a quote, keeping the quoted price until details change", async ({
+    page,
+  }, testInfo) => {
     // Create a quote first (Wednesday 9 June 2027, wedding, 8 h, 2 photographers).
     await open(page, "/en/quote?package=wedding");
     await page.getByLabel("Event date").fill("2027-06-09");
@@ -107,7 +170,7 @@ test.describe("booking wizard", () => {
     await expect(page.getByLabel("End time")).toHaveValue("22:00");
     await next(page).click();
     await next(page).click();
-    await fillContact(page);
+    await fillContact(page, emailFor(testInfo));
     await next(page).click();
 
     await expect(page.getByText(/Quoted price \(from CAD-Q-/)).toBeVisible();

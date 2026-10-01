@@ -90,3 +90,15 @@ export async function getBookableQuote(
     depositCents: breakdown.depositCents,
   };
 }
+
+/** A booking by reference for its private page. Not cached (personal data). */
+export async function getBookingByReference(reference: string) {
+  return db.booking.findUnique({
+    where: { reference },
+    include: {
+      package: { select: { name: true, nameFr: true } },
+      customer: { select: { name: true } },
+      quote: { select: { totalCents: true, reference: true } },
+    },
+  });
+}

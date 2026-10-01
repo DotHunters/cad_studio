@@ -496,5 +496,26 @@
       "spam": "Please leave this field empty.",
       "unavailable": "That date is no longer available. Please choose another."
     }
+  },
+  "BookingConfirmed": {
+    "metaTitle": "Booking request received",
+    "eyebrow": "Booking {reference}",
+    "title": "Request <accent>received</accent>",
+    "intro": "Thank you, {name}. Your date is held while we arrange your deposit.",
+    "status": "Status",
+    "statusPending": "Pending — awaiting deposit",
+    "statusConfirmed": "Confirmed",
+    "statusCancelled": "Cancelled",
+    "statusCompleted": "Completed",
+    "when": "When",
+    "package": "Package",
+    "deposit": "Deposit",
+    "payment": "Payment method",
+    "total": "Total",
+    "nextTitle": "What happens next",
+    "nextBank": "We’ll email you the bank transfer details for your deposit shortly.",
+    "nextCash": "We’ll contact you to arrange a time to pay your deposit in cash.",
+    "nextConfirm": "Once your deposit is received, we’ll confirm your booking by email.",
+    "emailCopy": "A copy of this request has been sent to your email."
   }
 }

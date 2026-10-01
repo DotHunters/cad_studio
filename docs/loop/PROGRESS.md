@@ -287,3 +287,12 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Also fixed: `/quote` (from 4.4) and `/book` were missing from the sitemap — the 4.4 `sed` silently matched nothing; SEO e2e now asserts both.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (250) · e2e ✅ (230 full run; 7 wizard tests) · build ✅ · format ✅ · screenshot reviewed (calendar recoloured after first look)
 - Next: 5.4 (createBooking in a serializable transaction)
+
+### 2026-10-02 — 5.4 createBooking (serializable) + confirmation page
+- Branch: feat/m5-booking · PR #6
+- Done: `src/server/booking/place-booking.ts` `placeBooking` — re-prices from DB (quoted price only if the signed quote is valid and `matchesQuote`), then a SERIALIZABLE transaction re-checks capacity for the studio-local day (blocked date, lead time, PENDING+CONFIRMED photographers), increments the `B-YYYY` counter → `CAD-B-YYYY-####`, upserts the customer (terms/privacy `consentAt`; CASL opt-in recorded, never withdrawn), creates a PENDING booking (price, breakdown, deposit, payment method, quote link) and marks the quote ACCEPTED (one booking per quote). Serialization failures (P2034/40001) retry up to 3× and then report "unavailable". `src/server/actions/booking.ts` `createBooking` (validation, honeypot, past-date, Turnstile, signed `booking:` token). Wizard submits and handles unavailable (back to the date step), validation (jumps to the step) and server errors. `/[locale]/book/[reference]?t=…` confirmation (signed, noindex): status, when, package, total, deposit, payment method, next steps for bank transfer vs cash.
+- Schema: `Booking` gains `subtotalCents`, `taxCents`, `totalCents`, `breakdown` (migration `20261002000000_booking_price`) — the agreed price wasn't stored before.
+- Tests: Vitest integration test against the real DB (`tests/integration/booking-concurrency.test.ts`, skipped without `DATABASE_URL`; `server-only` stubbed, `unstable_cache` passthrough, files run serially) — §15 scenario 3: two simultaneous requests for the last slot → exactly one succeeds (5/5 repeated runs), then the day is full; stored price/deposit/reference checked. e2e §15 scenario 2: book a quote → CAD-B reference, day goes available → limited, booking at the quoted price, quote ACCEPTED; wizard submit → confirmation page.
+- Found while testing: per-worker `afterAll` cleanup deleted another test's booking mid-run → per-test emails + `afterEach` cleanup.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (252 incl. 2 integration) · e2e ✅ (232) · build ✅ · format ✅
+- Next: 5.5 (booking emails + .ics)

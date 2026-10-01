@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { QuoteBreakdown } from "@/components/quote/quote-breakdown";
 import { Button } from "@/components/ui/button";
 import type { Locale } from "@/config/site";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { matchesQuote, type PriceFingerprint } from "@/lib/booking/quote-match";
 import { type CategorySlug, categoryFromSlug, categorySlugs } from "@/lib/categories";
 import { formatInStudioTz } from "@/lib/dates";
@@ -21,6 +21,7 @@ import { resolvePackage } from "@/lib/pricing/rules";
 import { cn } from "@/lib/utils";
 import { bookingRequestSchema } from "@/lib/validators/booking";
 import { provinceCodes } from "@/lib/validators/quote";
+import { createBooking } from "@/server/actions/booking";
 import type { PricingContext } from "@/server/queries/pricing";
 
 import { AvailabilityCalendar } from "./availability-calendar";
@@ -67,8 +68,6 @@ type Props = {
   monthsAhead: number;
   initial: Partial<BookingFormValues>;
   quote: QuotePrefill | null;
-  /** Called with the validated request on the review step (wired to createBooking in 5.4). */
-  onSubmitRequest?: (request: ReturnType<typeof bookingRequestSchema.parse>) => Promise<void>;
 };
 
 const STEPS = ["service", "date", "details", "contact", "review"] as const;
@@ -108,18 +107,11 @@ const TIMES = Array.from({ length: 48 }, (_, index) => {
   return `${hours}:${index % 2 ? "30" : "00"}`;
 });
 
-export function BookingWizard({
-  context,
-  locale,
-  today,
-  monthsAhead,
-  initial,
-  quote,
-  onSubmitRequest,
-}: Props) {
+export function BookingWizard({ context, locale, today, monthsAhead, initial, quote }: Props) {
   const t = useTranslations();
   const [step, setStep] = useState<Step>("service");
   const [pending, setPending] = useState(false);
+  const router = useRouter();
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => setHydrated(true), []);
 
@@ -262,10 +254,36 @@ export function BookingWizard({
       return;
     }
     const parsed = bookingRequestSchema.safeParse(payload());
-    if (!parsed.success || !onSubmitRequest) return;
+    if (!parsed.success) {
+      // Data changed since its step was validated: send the client back to fix it.
+      const field = parsed.error.issues[0].path[0] as keyof BookingFormValues;
+      go(STEPS.find((name) => STEP_FIELDS[name].includes(field)) ?? "service");
+      setError(field, { message: parsed.error.issues[0].message });
+      return;
+    }
     setPending(true);
     try {
-      await onSubmitRequest(parsed.data);
+      const outcome = await createBooking(parsed.data);
+      if (outcome.ok) {
+        router.push({ pathname: `/book/${outcome.reference}`, query: { t: outcome.token } });
+        return;
+      }
+      if (outcome.error === "unavailable") {
+        // Someone else took the slot meanwhile: choose another date.
+        go("date");
+        setError("eventDate", { message: "unavailable" });
+        toast.error(t("Book.errors.unavailable"));
+        return;
+      }
+      if (outcome.error === "validation") {
+        const [field, message] = Object.entries(outcome.fieldErrors)[0] ?? ["category", "required"];
+        const key = field as keyof BookingFormValues;
+        go(STEPS.find((name) => STEP_FIELDS[name].includes(key)) ?? "service");
+        setError(key, { message });
+        toast.error(t("Book.fixErrors"));
+        return;
+      }
+      toast.error(outcome.error === "captcha" ? t("Quote.captchaError") : t("Quote.serverError"));
     } finally {
       setPending(false);
     }
@@ -696,11 +714,7 @@ export function BookingWizard({
         ) : (
           <span />
         )}
-        <Button
-          type="submit"
-          size="cta"
-          disabled={pending || (step === "review" && !onSubmitRequest)}
-        >
+        <Button type="submit" size="cta" disabled={pending}>
           {pending && <Loader2 className="size-4 animate-spin" aria-hidden />}
           {step === "review" ? (pending ? t("Book.sending") : t("Book.submit")) : t("Book.next")}
         </Button>

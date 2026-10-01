@@ -216,6 +216,12 @@ model Booking {
   venue              String?
   notes              String?
   status             BookingStatus  @default(PENDING)
+  /// Agreed price at booking time (quoted price if booked from a matching quote).
+  subtotalCents      Int?
+  taxCents           Int?
+  totalCents         Int?
+  /// Line items, tax lines and flags as priced at booking time.
+  breakdown          Json?
   depositCents       Int?
   paymentMethod      PaymentMethod?
   /// Admin sent the payment request email.
