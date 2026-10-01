@@ -226,3 +226,9 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Interpretations recorded in AGENTS.md §8.1 and new Q16 for owner confirmation.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (176) · format ✅ (pure logic; no UI change)
 - Next: 4.3
+
+### 2026-10-01 — 4.3 Quote schema
+- Branch: feat/m4-quote · PR #5
+- Done (TDD): `src/lib/validators/quote.ts` — `quoteDetailsSchema` (category slug, optional package, real calendar date, HH:MM start, duration in half hours ≤ 24, 1–10 photographers, optional guest count ≤ 5000, province/territory or INTL, optional city, distance 0–20,000 km, international toggle forcing INTL + no distance, add-ons with whole quantities and zero-qty filtering; coerces form strings) for the live estimate without personal data; `quoteContactSchema` (name, email, optional phone, CASL opt-in defaulting to false, honeypot); `quoteRequestSchema` = both. Error messages are translation keys. 8 tests.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (184) · format ✅
+- Next: 4.4
