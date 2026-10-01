@@ -340,7 +340,7 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (304) · e2e ✅ (266) · build ✅ · format ✅
 - Next: 6.3 (verified-client tokens)
 
-## 2026-10-02 — 6.3 Verified-client review links
+### 2026-10-02 — 6.3 Verified-client review links
 - Branch: feat/m6-reviews · PR #7 (stacked on #6)
 - Done: expiring signed links (`signExpiring`/`verifyExpiring` in `src/lib/signing.ts`; the signature covers purpose `review:<reference>` and the expiry, so the expiry can't be extended). `src/server/review-links.ts`: `reviewInviteUrl(reference, locale)` (90 days; emailed from admin in 7.6) and `getVerifiedBooking` — valid only when the link is unexpired, the booking exists, is COMPLETED and has no verified review yet. `/reviews?booking=…&exp=…&t=…` shows a "Verified client" notice and preselects the booking's service; invalid/expired/used links show a friendly note and still allow an unverified review. `submitReview` re-verifies server-side and saves `verified = true`, `bookingId` and the booking's category (still PENDING for moderation). `ReviewForm` gained a `data-hydrated` marker for e2e.
 - e2e: verified via signed link (+ second use rejected), expired and tampered links unverified, non-completed booking rejected.
