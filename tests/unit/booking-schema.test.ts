@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  addHoursToTime,
   bookingContactSchema,
   bookingDetailsSchema,
   bookingRequestSchema,
@@ -126,5 +127,17 @@ describe("bookingRequestSchema", () => {
     });
     expect(parsed.quoteReference).toBe("CAD-Q-2026-0004");
     expect(parsed.durationHours).toBe(8);
+  });
+});
+
+describe("addHoursToTime", () => {
+  it("adds whole and half hours", () => {
+    expect(addHoursToTime("14:00", 8)).toBe("22:00");
+    expect(addHoursToTime("09:30", 3.5)).toBe("13:00");
+  });
+
+  it("returns null past midnight", () => {
+    expect(addHoursToTime("20:00", 4)).toBeNull();
+    expect(addHoursToTime("20:00", 3.5)).toBe("23:30");
   });
 });

@@ -55,9 +55,9 @@ Legend: `[ ]` todo · `[x]` done · `BLOCKED(Q#)` waiting on `OPEN_QUESTIONS.md`
 
 - [x] 5.1 `src/lib/booking` availability logic (blocked dates, past dates, lead days, daily capacity) with TDD, coverage ≥ 90%. — §8.3
 - [x] 5.2 Public availability endpoint returning `{date, status}` only. — §8.3
-- [ ] 5.3 `/book` stepper: service → calendar (react-day-picker) → details → contact + consent → review with deposit amount + payment method choice (bank transfer / cash). — §6.6, §9
+- [x] 5.3 `/book` stepper: service → calendar (react-day-picker) → details → contact + consent → review with deposit amount + payment method choice (bank transfer / cash). — §6.6, §9
   - [x] 5.3a Booking schema (`src/lib/validators/booking.ts`): details with start/end times in half hours, derived duration, venue/location, notes; contact with required terms + privacy consent, bank transfer/cash, CASL opt-in; optional signed quote. Unit tested.
-  - [ ] 5.3b `/book` wizard UI: steps, react-day-picker calendar fed by `/api/availability`, prefill from `?package=` and signed `?quote=&t=`, review with estimate + deposit.
+  - [x] 5.3b `/book` wizard UI: steps, react-day-picker calendar fed by `/api/availability`, prefill from `?package=` and signed `?quote=&t=`, review with estimate + deposit.
 - [ ] 5.4 `createBooking` in a serializable transaction with capacity re-check and a `CAD-B-YYYY-####` reference. — §6.6, §8.3
 - [ ] 5.5 Confirmation emails (client locale) with `.ics` attachment, deposit amount and "payment details will follow by email". — §6.6, §8.3
 - [ ] 5.6 Signed reschedule/cancel links and request handling. — §6.6, §11

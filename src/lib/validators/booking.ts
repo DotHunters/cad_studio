@@ -32,6 +32,13 @@ export function durationFromTimes(start: string, end: string): number | null {
   return minutes > 0 ? minutes / 60 : null;
 }
 
+/** "14:00" + 8 h → "22:00"; null if the result would pass midnight. */
+export function addHoursToTime(time: string, hours: number): string | null {
+  const total = toMinutes(time) + Math.round(hours * 60);
+  if (total >= 24 * 60) return null;
+  return `${String(Math.floor(total / 60)).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`;
+}
+
 const optionalNumber = z.preprocess(
   (value) => (value === "" || value === null || value === undefined ? undefined : Number(value)),
   z.number("invalidNumber").optional(),
