@@ -7,7 +7,14 @@
   "Common": {
     "skipToContent": "Skip to content",
     "language": "Language",
-    "switchToLocale": "Français"
+    "switchToLocale": "Français",
+    "logoAlt": "Cad Studio home",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "mainNav": "Main",
+    "footerNav": "Footer",
+    "toggleTheme": "Toggle light and dark theme",
+    "switchLanguageLabel": "Voir le site en français"
   },
   "Home": {
     "heading": "Cad Studio",
@@ -17,5 +24,26 @@
     "title": "Page not found",
     "body": "The page you're looking for doesn't exist or has moved.",
     "backHome": "Back to home"
+  },
+  "Nav": {
+    "packages": "Packages",
+    "portfolio": "Portfolio",
+    "gallery": "Gallery",
+    "reviews": "Reviews",
+    "about": "About",
+    "contact": "Contact",
+    "getQuote": "Get a Quote",
+    "bookDate": "Book a Date",
+    "privacy": "Privacy",
+    "terms": "Terms"
+  },
+  "Footer": {
+    "tagline": "Event, wedding, portrait and product photography.",
+    "serviceArea": "Based in Scarborough, Toronto — serving the GTA, Canada-wide and worldwide.",
+    "email": "Email",
+    "rights": "© {year} Cad Studio. All rights reserved."
+  },
+  "PricingBanner": {
+    "message": "Pricing pending owner confirmation — prices shown are placeholders."
   }
 }

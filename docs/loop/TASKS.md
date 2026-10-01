@@ -19,13 +19,13 @@ Legend: `[ ]` todo · `[x]` done · `BLOCKED(Q#)` waiting on `OPEN_QUESTIONS.md`
 - [x] 1.8 `prisma/seed.ts`: packages, add-ons, pricing rules (capacity 3, travel 40 km/$0.70), tax rates (with the accountant comment), `SiteSetting` (`CANCELLATION_POLICY`, `PAYMENT_INSTRUCTIONS` as `TODO(owner)` in EN/FR), fictional sample clients/portfolio projects/recommendations/reviews with `isSample = true` and placeholder images. — §7, §8.1, §8.2, §13
 - [x] 1.9 Money and date helpers: `formatCAD`, `toCents`, `formatInStudioTz` + unit tests. — §9, §12
 - [x] 1.10 Bilingual i18n with `next-intl`: `[locale]` routes (`en`, `fr`), middleware, message files for EN + FR (FR flagged `TODO(owner-fr): review`), `hreflang` alternates, locale-aware `formatCAD`/dates. — §4, §9
-- [ ] 1.11 Site layout: copy `assets/*.png` → `public/brand/`; header (black/white logo by theme, nav, Get a Quote / Book CTAs, EN/FR switcher), footer, theme toggle, skip link, "Pricing pending owner confirmation" banner unless `PRICING_CONFIRMED=true`. — §5, §13
+- [x] 1.11 Site layout: copy `assets/*.png` → `public/brand/`; header (black/white logo by theme, nav, Get a Quote / Book CTAs, EN/FR switcher), footer, theme toggle, skip link, "Pricing pending owner confirmation" banner unless `PRICING_CONFIRMED=true`. — §5, §13
 
 ## M2 — Content pages · branch `feat/m2-content`
 
 - [ ] 2.1 Home: hero with placeholder images, two CTAs, 6 category tiles. — §6.1
 - [ ] 2.2 Home: trust strip (stats as `TODO(owner)`), featured portfolio slot, owner intro, reviews carousel slot (approved + featured only), final CTA band. — §6.1, Q7
-- [ ] 2.3 Packages list: DB-driven, category filter tabs, cards with "from $X CAD", Customize quote and Book CTAs. — §6.2
+- [ ] 2.3 Packages list: DB-driven, category filter tabs, cards with "from $X CAD", Customize quote and Book CTAs. Update the language-switcher e2e test to use `/en/packages` (path preservation). — §6.2
 - [ ] 2.4 Package detail `/packages/[slug]`: inclusions/exclusions, deliverables, sample images, FAQs, add-ons, terms summary. — §6.2
 - [ ] 2.5 About: owner profile from §6.8 facts only; everything else `TODO(owner)`. — §6.8, §13
 - [ ] 2.6 Contact: form (Zod, honeypot, Turnstile placeholder), Server Action, Resend email to admin. Service area text only — no street address, no map. — §6.9, §11

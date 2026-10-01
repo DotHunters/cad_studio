@@ -4,6 +4,7 @@ import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
 
+import { ThemeProvider } from "@/components/site/theme-provider";
 import { siteConfig } from "@/config/site";
 import { routing } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
@@ -46,14 +47,30 @@ export default async function LocaleLayout({ children, params }: Props) {
     notFound();
   }
   setRequestLocale(locale);
+  const t = await getTranslations({ locale, namespace: "Common" });
 
   return (
     <html
       lang={locale === "fr" ? "fr-CA" : "en-CA"}
       className={cn("font-sans", inter.variable, cormorant.variable)}
+      // next-themes sets the theme class on <html> before hydration.
+      suppressHydrationWarning
     >
       <body className="antialiased">
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <a
+          href="#main-content"
+          className="bg-primary text-primary-foreground sr-only z-50 rounded-md px-4 py-2 focus:not-sr-only focus:fixed focus:top-2 focus:left-2"
+        >
+          {t("skipToContent")}
+        </a>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

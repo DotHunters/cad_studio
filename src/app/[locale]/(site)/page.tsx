@@ -11,9 +11,9 @@ export default function HomePage({ params }: Props) {
   const t = useTranslations("Home");
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-2 p-8">
+    <section className="flex min-h-[60vh] flex-col items-center justify-center gap-2 p-8">
       <h1 className="text-5xl font-semibold">{t("heading")}</h1>
       <p className="text-muted-foreground">{t("tagline")}</p>
-    </main>
+    </section>
   );
 }

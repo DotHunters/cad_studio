@@ -89,3 +89,10 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (40, incl. EN/FR key parity + brand-name guard) · e2e ✅ (8) · build ✅ · format ✅
 - Notes: admin stays English-only, outside `[locale]`. Locale-aware `formatCAD`/dates already take `Locale` (1.9).
 - Next: 1.11
+
+### 2026-10-01 — 1.11 Site layout — **M1 Foundation complete**
+- Branch: feat/m1-foundation
+- Done: logos → `public/brand/`; `Logo` (black/white by theme, gold variant); favicon `icon.png` + `apple-icon.png` from the logo's gold heart on an ink rounded square (default favicon removed). `SiteHeader` (sticky, nav, Book a Date / Get a Quote CTAs, EN↔FR switcher keeping the path, theme toggle), `MobileNav` (aria-expanded, Esc/route-change close), `SiteFooter` (gold logo, service area, nav, legal, dummy email), skip link, `next-themes` (class, system default), pricing banner. `src/lib/flags.ts`: `shouldShowPricingBanner` (unless `PRICING_CONFIRMED=true` or Vercel production) and `shouldShowSampleContent` (needs `SHOW_SAMPLE_CONTENT=true`, never Vercel production). Verified visually: desktop light/dark, 360px mobile.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (47) · e2e ✅ (18) · build ✅ · format ✅
+- Notes: nav links point to pages built in M2+ (404 until then). Language-switcher e2e uses `/en` for now; 2.3 switches it to `/en/packages`.
+- Next: M2 → 2.1 (branch `feat/m2-content` from `feat/m1-foundation` while PR #1 is unmerged)

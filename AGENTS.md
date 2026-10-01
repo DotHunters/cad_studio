@@ -596,7 +596,7 @@ PRICING_CONFIRMED=false
 At the end of each milestone: update the checklist below and summarize what changed.
 
 ### Progress checklist
-- [ ] 1 Foundation
+- [x] 1 Foundation
 - [ ] 2 Content pages
 - [ ] 3 Portfolio & Gallery
 - [ ] 4 Quote engine
