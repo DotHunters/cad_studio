@@ -27,3 +27,11 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test — (no runner until 1.4) · build ✅
 - Notes: installed pnpm 10 globally (was missing). pnpm build-script allowlist in `package.json` → `pnpm.onlyBuiltDependencies`; add `@prisma/*`, `sharp`, etc. there when needed.
 - Next: 1.2
+
+### 2026-10-01 — 1.2 Tailwind + shadcn + palette
+- Branch: feat/m1-foundation
+- Done: shadcn/ui init (base-nova style, Base UI, lucide); brand palette as `--brand-*` tokens mapped onto shadcn semantic tokens for light + `.dark`; Tailwind colours `ink`, `paper`, `gold`, `gold-light`, `gold-text`; reduced-motion CSS; `.gitattributes` forces LF (Prettier vs Windows CRLF). Replaced shadcn's dependency on the third-party `cn` npm package with the standard `clsx` + `tailwind-merge` helper. Button `link` variant uses `gold-text` for contrast. AGENTS.md §5 updated with token names + contrast notes.
+- Checks: lint ✅ · typecheck ✅ · test — (until 1.4) · build ✅ · format ✅
+- PR: open at https://github.com/DotHunters/cad_studio/compare/main...feat/m1-foundation?expand=1 (no gh CLI)
+- Notes: shadcn init also added Geist font to layout — replaced in 1.3.
+- Next: 1.3

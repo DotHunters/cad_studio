@@ -139,12 +139,14 @@ pnpm db:studio        # Prisma Studio
 - **Logo:** owner-supplied source files in `assets/` — `gold.png` (primary), `black.png` (light backgrounds), `white.png` (dark backgrounds); transparent PNG, 2014×814. Logo wordmark reads "Cad ♡ Studio" with tagline "· COLLECTION ART DESIGN ·" (CAD = Collection Art Design). Copy to `public/brand/` (`logo-gold.png`, `logo-black.png`, `logo-white.png`) and render via `next/image` with `alt="Cad Studio"`. Header: black logo in light theme, white logo in dark theme; gold for hero/footer/OG. Derive favicon from the camera-heart mark. Ask the owner for an SVG version for crispness. Logo gold gradient: `#C79856` → `#FAD983`.
 - **Tone:** confident, warm, premium, never salesy. Short sentences. Canadian English spelling (colour, centre, cheque) in copy; code identifiers stay US English.
 - **Visual direction:** editorial and photo-first. Images are the hero — UI chrome is minimal.
-  - Palette (CSS variables in `globals.css`):
-    - `--ink` near-black `#111111`
-    - `--paper` off-white `#FAF8F5`
-    - `--accent` warm gold `#C79856` (matched to logo; CTAs, highlights only — fails 4.5:1 as text on `--paper`, so use it as a fill with `--ink` text, or for large display text only)
-    - `--accent-light` `#FAD983` (logo highlight; gradients, dark-theme accents)
-    - `--muted` `#6B6B6B`
+  - Palette (CSS variables in `globals.css`, prefixed `--brand-*` so they don't clash with shadcn's semantic `--accent`/`--muted`; shadcn tokens are mapped onto them):
+    - `--brand-ink` near-black `#111111` → Tailwind `ink`
+    - `--brand-paper` off-white `#FAF8F5` → `paper`
+    - `--brand-gold` warm gold `#C79856` (matched to logo) → `gold`, also shadcn `--primary` with ink text (7.2:1). CTAs/highlights only — **2.5:1 as text on paper, never use for text in light mode**
+    - `--brand-gold-light` `#FAD983` (logo highlight; gradients, dark-theme accents) → `gold-light`
+    - `--brand-gold-text` `#8A6430` (gold for text/links on light backgrounds, 5.0:1) → `text-gold-text` (auto-switches to `#C79856` in dark mode)
+    - `--brand-muted` `#6B6B6B` → shadcn `--muted-foreground` (5.0:1 on paper)
+    - Dark theme via `.dark` class on `<html>`.
   - Typography: serif display (e.g. *Cormorant Garamond* / *Playfair Display*) for headings, clean sans (*Inter*) for body, via `next/font`.
   - Generous white space, full-bleed imagery, subtle motion (fade/slide ≤ 300 ms; respect `prefers-reduced-motion`).
 - Support **light and dark** themes.

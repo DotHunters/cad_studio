@@ -10,7 +10,7 @@ Legend: `[ ]` todo · `[x]` done · `BLOCKED(Q#)` waiting on `OPEN_QUESTIONS.md`
 ## M1 — Foundation · branch `feat/m1-foundation`
 
 - [x] 1.1 Scaffold Next.js 15 (App Router, TS strict, pnpm), ESLint + Prettier, `lint`/`typecheck`/`format` scripts. (`test`, `test:e2e` added in 1.4; `db:*` in 1.7.) — §2, §3
-- [ ] 1.2 Tailwind v4 + shadcn/ui init. Put the palette tokens (`--ink`, `--paper`, `--accent`, `--accent-light`, `--muted`) in `globals.css` with light and dark themes. — §5
+- [x] 1.2 Tailwind v4 + shadcn/ui init. Put the palette tokens (`--ink`, `--paper`, `--accent`, `--accent-light`, `--muted`) in `globals.css` with light and dark themes. — §5
 - [ ] 1.3 Fonts via `next/font`: serif display for headings, Inter for body. — §5
 - [ ] 1.4 Vitest + Playwright setup, `test` + `test:e2e` scripts, with one passing smoke test each. Create the `tests/unit` and `tests/e2e` dirs. — §2, §4
 - [ ] 1.5 `src/config/site.ts`: name, contact, socials, `STUDIO_TIMEZONE`. Unknown values are `TODO(owner)`. — §4, §8.3, Q1, Q6
