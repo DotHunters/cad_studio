@@ -96,3 +96,9 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (47) · e2e ✅ (18) · build ✅ · format ✅
 - Notes: nav links point to pages built in M2+ (404 until then). Language-switcher e2e uses `/en` for now; 2.3 switches it to `/en/packages`.
 - Next: M2 → 2.1 (branch `feat/m2-content` from `feat/m1-foundation` while PR #1 is unmerged)
+
+### 2026-10-01 — Fix: French pages rendered English content (found during 2.1)
+- Branch: feat/m1-foundation
+- Bug: middleware matcher `.*\..*` was written as `"…|.*\..*"` in a TS string → regex `.*..*` (any 2+ chars), so the middleware skipped every path except `/`. `/fr` got `lang="fr-CA"` and French metadata (explicit locale) but all component text in English. The 1.10 e2e test only checked the title, so it passed.
+- Fix: `"\."` in `src/middleware.ts`; `tests/unit/middleware.test.ts` asserts which paths are localized vs skipped; French smoke test now checks rendered content.
+- Checks: lint ✅ · typecheck ✅ · test ✅ · e2e ✅ (18) · build ✅ · format ✅

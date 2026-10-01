@@ -12,6 +12,8 @@ test("French home page is served under /fr", async ({ page }) => {
   await page.goto("/fr");
   await expect(page.locator("html")).toHaveAttribute("lang", "fr-CA");
   await expect(page).toHaveTitle(/Photographie au Canada/);
+  // Content (not just metadata) must be French — guards the middleware matcher.
+  await expect(page.getByRole("link", { name: "View the site in English" })).toBeVisible();
 });
 
 test("pages declare hreflang alternates", async ({ page }) => {
