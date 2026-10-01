@@ -15,6 +15,8 @@ import { resolvePackage } from "@/lib/pricing/rules";
 import { counterKey, formatReference } from "@/lib/references";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { type QuoteRequestInput, quoteRequestSchema } from "@/lib/validators/quote";
+import { localize } from "@/lib/localize";
+import { sendQuoteEmails } from "@/server/emails/quote-emails";
 import { getPricingContext } from "@/server/queries/pricing";
 
 export type CreateQuoteResult =
@@ -74,6 +76,7 @@ export async function createQuote(
       siteConfig.timezone,
     );
 
+    const expiresAt = addDays(now, context.quoteValidDays);
     const reference = await db.$transaction(async (tx) => {
       // Native upsert (INSERT … ON CONFLICT) increments atomically, so concurrent quotes
       // never share a number.
@@ -134,12 +137,35 @@ export async function createQuote(
           taxCents: quote.taxCents,
           totalCents: quote.totalCents,
           status: "SENT",
-          expiresAt: addDays(now, context.quoteValidDays),
+          expiresAt,
           customerId: customer.id,
         },
       });
       return ref;
     });
+
+    // Emails are best-effort: the quote is already saved and the client sees its reference.
+    try {
+      await sendQuoteEmails({
+        reference,
+        locale,
+        customer: { name: request.name, email: request.email, phone: request.phone },
+        category,
+        eventStart,
+        durationHours: request.durationHours,
+        city: request.city,
+        province: request.province,
+        packageName: localize(pkg.name, pkg.nameFr, locale),
+        addOnNames: Object.fromEntries(
+          context.addOns.map((addOn) => [addOn.code, localize(addOn.name, addOn.nameFr, locale)]),
+        ),
+        quote,
+        depositPct: context.rules.DEPOSIT_PCT,
+        expiresAt,
+      });
+    } catch (error) {
+      console.error(`[quote] ${reference} saved but emails failed`, error);
+    }
 
     return { ok: true, reference, totalCents: quote.totalCents };
   } catch (error) {

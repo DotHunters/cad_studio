@@ -395,5 +395,17 @@
     "NU": "Nunavut",
     "YT": "Yukon",
     "INTL": "Outside Canada"
+  },
+  "Email": {
+    "quoteSubject": "Your Cad Studio quote {reference}",
+    "quotePreview": "Your estimate for {date}: {total}",
+    "quoteHeading": "Your quote is ready",
+    "greeting": "Hi {name},",
+    "quoteIntro": "Thank you for your interest in Cad Studio. Here is the estimate you prepared on our website.",
+    "reference": "Reference",
+    "eventLine": "{category} · {date} at {time} · {hours} h",
+    "expires": "This quote is valid until {date}.",
+    "cta": "Book this date",
+    "footer": "Cad Studio · Scarborough, Toronto · You received this email because you requested a quote on our website."
   }
 }

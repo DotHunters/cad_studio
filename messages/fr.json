@@ -395,5 +395,17 @@
     "NU": "Nunavut",
     "YT": "Yukon",
     "INTL": "À l’extérieur du Canada"
+  },
+  "Email": {
+    "quoteSubject": "Votre devis Cad Studio {reference}",
+    "quotePreview": "Votre estimation pour le {date} : {total}",
+    "quoteHeading": "Votre devis est prêt",
+    "greeting": "Bonjour {name},",
+    "quoteIntro": "Merci de votre intérêt pour Cad Studio. Voici l’estimation que vous avez préparée sur notre site.",
+    "reference": "Référence",
+    "eventLine": "{category} · {date} à {time} · {hours} h",
+    "expires": "Ce devis est valide jusqu’au {date}.",
+    "cta": "Réserver cette date",
+    "footer": "Cad Studio · Scarborough, Toronto · Vous recevez ce courriel parce que vous avez demandé un devis sur notre site."
   }
 }

@@ -246,3 +246,9 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - e2e: submission saves a quote whose DB total equals the server's price (145092 cents), reference format, marketing opt-in false; inline errors; CASL checkbox unchecked. New `tests/e2e/db.ts` helper queries the DB. Note: e2e runs add test quotes/customers (`e2e-quote-…@example.com`) to the local DB.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (196) · e2e ✅ (204) · build ✅ · format ✅
 - Next: 4.6 (quote emails)
+
+### 2026-10-01 — 4.6 Quote emails
+- Branch: feat/m4-quote · PR #5 (stacked on #4)
+- Done: React Email template `src/lib/email/templates/quote-summary.tsx` (logo header, reference, event line, itemized breakdown, tax lines, total, deposit, custom-travel note, validity date, "Book this date" link to `/{locale}/quote/{reference}`, disclaimer, transactional footer; all copy passed in translated). `src/server/emails/quote-emails.ts` renders HTML + plain text in the client's locale and sends it, plus a plain-text English studio notification (reply-to = client) with the full breakdown. `sendEmail` accepts HTML. `createQuote` sends after the transaction commits; email failures are logged, never lose the saved quote. Line-item labels extracted to `src/lib/pricing/line-labels.ts` and shared by the live breakdown and both emails. Vitest compiles JSX via `oxc.jsx.runtime = "automatic"`.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (208; label mapping + template render HTML/plain text/conditional travel note) · e2e ✅ (204; server log confirms both emails are built per quote and skipped only for the missing RESEND_API_KEY) · build ✅ · format ✅ · email screenshot reviewed
+- Next: 4.7 (result page `/quote/[reference]` + e2e scenario 1)

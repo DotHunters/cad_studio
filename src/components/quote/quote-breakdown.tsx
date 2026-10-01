@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import type { Locale } from "@/config/site";
 import { formatCAD } from "@/lib/money";
 import type { LineItem, QuoteResult } from "@/lib/pricing/calculate-quote";
+import { lineItemLabel, type Translate } from "@/lib/pricing/line-labels";
 
 type Props = {
   result: QuoteResult | null;
@@ -20,27 +21,8 @@ export function QuoteBreakdown({ result, locale, packageName, addOnNames, deposi
   const t = useTranslations("Quote");
   const money = (cents: number) => formatCAD(cents, locale, { suffix: false });
 
-  const label = (item: LineItem): string => {
-    switch (item.kind) {
-      case "base":
-        return t("lines.base", { name: packageName });
-      case "extraHours":
-        return t("lines.extraHours", { hours: item.hours });
-      case "extraShooters":
-        return t("lines.extraShooters", { count: item.shooters, hours: item.hours });
-      case "addOn": {
-        const name = addOnNames[item.code] ?? item.code;
-        return item.quantity > 1
-          ? t("lines.addOnQty", { name, qty: item.quantity })
-          : t("lines.addOn", { name });
-      }
-      case "travel":
-        return t("lines.travel", { km: item.km });
-      case "surcharge":
-      case "discount":
-        return t(`lines.${item.code}`);
-    }
-  };
+  const label = (item: LineItem) =>
+    lineItemLabel(item, t as unknown as Translate, { packageName, addOnNames });
 
   return (
     <section aria-labelledby="estimate-title" className="bg-card rounded-xl border p-6 shadow-sm">
