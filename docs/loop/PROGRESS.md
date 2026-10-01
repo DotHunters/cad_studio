@@ -140,3 +140,10 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (82) · e2e ✅ (76) · build ✅ · format ✅ · screenshot reviewed
 - Notes: seed has no package FAQs or package images, so those sections are hidden until the owner adds them in admin (7.3/7.4).
 - Next: 2.5
+
+### 2026-10-01 — 2.5 About
+- Branch: feat/m2-content · PR #2
+- Done: `/[locale]/about` — intro (Cad Studio = Collection Art Design, Scarborough, founded by I. Rukshan), owner profile (portrait placeholder, role, 10+ years, event management, base), dark "why event experience matters" band (3 client benefits per §6.8), areas served, contact/packages CTAs, metadata + hreflang. Only owner-provided facts; story/team/equipment left as a `TODO(owner)` code comment (not rendered). No pronouns for the owner (none stated).
+- Bug found + fixed: ICU MessageFormat treats `'` before `<`/`{` as a quote, so French `l'<accent>…` and `d'<accent>…` rendered the raw tag — also affected the FR home final heading shipped in 2.2. Switched to typographic ’; unit test now forbids `'<` / `'{` in messages; e2e regression on `/fr`.
+- Checks: lint ✅ · typecheck ✅ · test ✅ · e2e ✅ (88) · build ✅ · format ✅
+- Next: 2.6

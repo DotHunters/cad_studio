@@ -30,4 +30,10 @@ describe("UI messages", () => {
       expect(text).not.toMatch(/CAD Studios?|Cad Studios/);
     }
   });
+
+  it("has no ASCII apostrophe before a tag or placeholder (ICU would quote it)", () => {
+    // In ICU MessageFormat, ' before < or { starts a literal, so "l'<accent>" renders the
+    // tag as text. Use the typographic apostrophe (’) instead.
+    for (const text of [...leaves(en), ...leaves(fr)]) expect(text).not.toMatch(/'[<{]/);
+  });
 });
