@@ -294,5 +294,15 @@
     "loadMore": "Load more",
     "empty": "No images match these filters yet.",
     "clearFilters": "Clear filters"
+  },
+  "Lightbox": {
+    "open": "Open image {index} of {total}",
+    "dialog": "Image viewer",
+    "close": "Close",
+    "previous": "Previous image",
+    "next": "Next image",
+    "position": "{index} / {total}",
+    "showDescription": "Show description",
+    "hideDescription": "Hide description"
   }
 }

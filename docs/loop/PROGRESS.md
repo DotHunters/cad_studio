@@ -201,3 +201,9 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (128) · e2e ✅ (162) · build ✅ · format ✅ · screenshot reviewed
 - Notes: CSS columns order items top-to-bottom per column; the lightbox (3.5) navigates in DOM order.
 - Next: 3.5
+
+### 2026-10-01 — 3.5 Accessible lightbox
+- Branch: feat/m3-portfolio-gallery · PR #4
+- Done: `LightboxGrid` client component — thumbnails are labelled buttons ("Open image N of M: <alt>", `aria-haspopup="dialog"`); native modal `<dialog>` (`showModal()` makes the page inert → focus contained; Escape closes natively), close button focused on open, focus returned to the opening thumbnail on close, ←/→ keys with wrap-around, prev/next buttons, swipe (touch/pen pointer, 50 px threshold), live "N / M" counter, "Show description" toggle (`aria-expanded`) revealing the alt text, solid black backdrop. Used by the gallery (masonry) and case-study image grids.
+- Checks: lint ✅ · typecheck ✅ · test ✅ · e2e ✅ (178, incl. §15 scenario 6: keyboard open/navigate/close, focus return, focus containment, alt on demand, swipe) · build ✅ · format ✅ · screenshot reviewed
+- Next: 3.6

@@ -28,11 +28,17 @@ test.describe("gallery page", () => {
     await expect(count(page)).toHaveText("Showing 8 of 8 images");
   });
 
-  test("every image has alt text and lazy-loads below the first row", async ({ page }) => {
+  test("every thumbnail is a labelled button and lazy-loads below the first row", async ({
+    page,
+  }) => {
     await page.goto("/en/gallery");
-    const images = page.getByRole("main").locator("li img");
-    await expect(images.first()).toHaveAttribute("alt", /Sample placeholder image/);
-    await expect(images.nth(5)).toHaveAttribute("loading", "lazy");
+    await expect(
+      page.getByRole("button", { name: /^Open image 1 of 12: Sample placeholder image/ }),
+    ).toBeVisible();
+    await expect(page.getByRole("main").locator("li img").nth(5)).toHaveAttribute(
+      "loading",
+      "lazy",
+    );
   });
 
   test("shows an empty state for filters with no images", async ({ page }) => {
@@ -43,9 +49,8 @@ test.describe("gallery page", () => {
   test("is localized in French", async ({ page }) => {
     await page.goto("/fr/gallery?category=product");
     await expect(count(page)).toHaveText("6 sur 6 images");
-    await expect(page.getByRole("main").locator("li img").first()).toHaveAttribute(
-      "alt",
-      /Image d’exemple|Image d'exemple/,
-    );
+    await expect(
+      page.getByRole("button", { name: /Ouvrir l’image 1 sur 6: Image d/ }),
+    ).toBeVisible();
   });
 });

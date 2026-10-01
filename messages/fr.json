@@ -294,5 +294,15 @@
     "loadMore": "Afficher plus",
     "empty": "Aucune image ne correspond à ces filtres pour le moment.",
     "clearFilters": "Effacer les filtres"
+  },
+  "Lightbox": {
+    "open": "Ouvrir l’image {index} sur {total}",
+    "dialog": "Visionneuse d’images",
+    "close": "Fermer",
+    "previous": "Image précédente",
+    "next": "Image suivante",
+    "position": "{index} / {total}",
+    "showDescription": "Afficher la description",
+    "hideDescription": "Masquer la description"
   }
 }

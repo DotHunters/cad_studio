@@ -3,9 +3,9 @@ import type { Locale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
 
+import { LightboxGrid } from "@/components/gallery/lightbox-grid";
 import { FilterGroup } from "@/components/site/filter-group";
 import { Accent, SectionHeading } from "@/components/site/section-heading";
-import { StoredImage } from "@/components/site/stored-image";
 import { buttonVariants } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { categorySlugs } from "@/lib/categories";
@@ -106,20 +106,18 @@ export default async function GalleryPage({ params, searchParams }: Props) {
 
       {items.length > 0 ? (
         // CSS columns give a masonry layout while keeping each image's real aspect ratio.
-        <ul className="mt-6 gap-4 sm:columns-2 lg:columns-3 [&>li]:mb-4">
-          {items.map((image, index) => (
-            <li key={image.id} className="bg-muted break-inside-avoid overflow-hidden rounded-lg">
-              <StoredImage
-                image={image}
-                alt={localize(image.alt, image.altFr, locale)}
-                sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                // First row loads eagerly for a fast LCP; the rest lazy-load.
-                priority={index < 3}
-                className="h-auto w-full"
-              />
-            </li>
-          ))}
-        </ul>
+        <LightboxGrid
+          images={items.map((image) => ({
+            ...image,
+            alt: localize(image.alt, image.altFr, locale),
+          }))}
+          className="mt-6 gap-4 sm:columns-2 lg:columns-3 [&>li]:mb-4"
+          itemClassName="bg-muted break-inside-avoid overflow-hidden rounded-lg"
+          imageClassName="h-auto w-full"
+          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+          // First row loads eagerly for a fast LCP; the rest lazy-load.
+          priorityCount={3}
+        />
       ) : (
         <div className="mt-16 text-center">
           <p className="text-muted-foreground">{t("Gallery.empty")}</p>

@@ -6,6 +6,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 
+import { LightboxGrid } from "@/components/gallery/lightbox-grid";
 import { Accent } from "@/components/site/section-heading";
 import { StoredImage } from "@/components/site/stored-image";
 import { buttonVariants } from "@/components/ui/button";
@@ -131,22 +132,17 @@ export default async function ProjectPage({ params }: Props) {
           <p className="text-muted-foreground mt-1 text-sm">
             {t("Project.imageCount", { count: project.images.length })}
           </p>
-          <ul className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {rest.map((image) => (
-              <li
-                key={image.id}
-                className="bg-muted relative aspect-[4/5] overflow-hidden rounded-lg"
-              >
-                <StoredImage
-                  image={image}
-                  alt={localize(image.alt, image.altFr, locale)}
-                  fill
-                  sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                  className="object-cover"
-                />
-              </li>
-            ))}
-          </ul>
+          <LightboxGrid
+            images={rest.map((image) => ({
+              ...image,
+              alt: localize(image.alt, image.altFr, locale),
+            }))}
+            className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+            itemClassName="bg-muted relative aspect-[4/5] overflow-hidden rounded-lg"
+            imageClassName="object-cover"
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            fill
+          />
         </section>
       )}
 
