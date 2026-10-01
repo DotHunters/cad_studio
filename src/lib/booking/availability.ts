@@ -76,3 +76,47 @@ export function monthAvailability(year: number, month: number, ctx: Availability
     };
   });
 }
+
+/** How far ahead clients can browse and book. */
+export const MAX_MONTHS_AHEAD = 18;
+
+/** "YYYY-MM" from the current month up to MAX_MONTHS_AHEAD; anything else is null. */
+export function parseMonthParam(value: string | null | undefined, today: string) {
+  const match = value ? /^(\d{4})-(\d{2})$/.exec(value) : null;
+  if (!match) return null;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  if (month < 1 || month > 12) return null;
+  const [currentYear, currentMonth] = today.split("-").map(Number);
+  const offset = (year - currentYear) * 12 + (month - currentMonth);
+  return offset >= 0 && offset <= MAX_MONTHS_AHEAD ? { year, month } : null;
+}
+
+/** First day of the month and of the following month, as date keys. */
+export function monthBounds(year: number, month: number) {
+  const pad = (value: number) => String(value).padStart(2, "0");
+  const next = month === 12 ? { year: year + 1, month: 1 } : { year, month: month + 1 };
+  return { start: `${year}-${pad(month)}-01`, end: `${next.year}-${pad(next.month)}-01` };
+}
+
+export type BookingRules = {
+  MAX_PHOTOGRAPHERS_PER_DAY: number;
+  MIN_LEAD_DAYS: number;
+  PENDING_HOLD_HOURS: number;
+};
+
+/** Booking rules from PricingRule rows; a missing or non-numeric rule throws. */
+export function parseBookingRules(
+  rows: ReadonlyArray<{ key: string; value: unknown }>,
+): BookingRules {
+  const keys = ["MAX_PHOTOGRAPHERS_PER_DAY", "MIN_LEAD_DAYS", "PENDING_HOLD_HOURS"] as const;
+  const rules = {} as BookingRules;
+  for (const key of keys) {
+    const value = rows.find((row) => row.key === key)?.value;
+    if (typeof value !== "number" || !Number.isFinite(value)) {
+      throw new Error(`Booking rule ${key} is missing or not a number`);
+    }
+    rules[key] = value;
+  }
+  return rules;
+}

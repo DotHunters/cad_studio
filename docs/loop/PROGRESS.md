@@ -266,3 +266,11 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Done (TDD): `src/lib/booking/availability.ts` — `dayAvailability` (past / too-soon within MIN_LEAD_DAYS / blocked / open / full with remaining capacity; only PENDING + CONFIRMED bookings hold capacity; capacity from MAX_PHOTOGRAPHERS_PER_DAY, never negative), `publicStatus` (available / limited / full only — blocked, past and too-soon look "full" so no reason leaks), `canBook(date, photographers)`, `monthAvailability(year, month)` (leap years), `addDaysToKey`. All on studio-local "YYYY-MM-DD" keys. 14 tests, 100% lines/branches.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (222) · format ✅ (pure logic)
 - Next: 5.2 (public availability endpoint)
+
+### 2026-10-02 — 5.2 Public availability endpoint
+- Branch: feat/m5-booking · PR #6 (stacked on #5 → #4)
+- Done: `GET /api/availability?month=YYYY-MM` → `{ month, days: [{date, status}] }` (available/limited/full only; 400 for malformed or out-of-range months — current month to +18; 503 on failure; `s-maxage=60`). `getAvailabilityContext(start, end)` (not cached): rules from PricingRule, blocked dates, PENDING/CONFIRMED bookings in the studio-local range (Toronto day bounds → UTC), each mapped to its studio-local day. Pure helpers + tests: `parseMonthParam`, `monthBounds`, `parseBookingRules`.
+- e2e (`availability-api.spec.ts`, serial, desktop project only via `testIgnore: /-api\.spec\.ts$/` on mobile): DB fixtures for a blocked day, a 2-of-3 booking (limited), an 11:30 PM Toronto booking (counts for that day, not the next UTC day) and a cancelled booking (ignored); response has only `date` + `status`; bad months → 400; fixtures cleaned up.
+- Found while testing: raw SQL fixtures must convert to UTC explicitly — the local Postgres session time zone is Asia/Colombo, and casting `timestamptz` → `timestamp` used it. App writes go through Prisma (UTC) and are unaffected; noted for future raw SQL.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (227) · e2e ✅ (216) · build ✅ · format ✅
+- Next: 5.3 (/book stepper)

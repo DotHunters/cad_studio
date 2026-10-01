@@ -15,7 +15,12 @@ export default defineConfig({
   },
   projects: [
     { name: "chromium", use: { ...devices["Desktop Chrome"] } },
-    { name: "mobile", use: { ...devices["Pixel 7"] } },
+    {
+      name: "mobile",
+      use: { ...devices["Pixel 7"] },
+      // API specs don't depend on the browser and share DB fixtures; run them once.
+      testIgnore: /-api\.spec\.ts$/,
+    },
   ],
   webServer: {
     command: `pnpm build && pnpm start --port ${PORT}`,

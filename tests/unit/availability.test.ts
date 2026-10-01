@@ -2,6 +2,9 @@ import { describe, expect, it } from "vitest";
 
 import {
   addDaysToKey,
+  monthBounds,
+  parseBookingRules,
+  parseMonthParam,
   canBook,
   dayAvailability,
   monthAvailability,
@@ -113,5 +116,46 @@ describe("capacity comes from the rules", () => {
     expect(dayAvailability("2027-03-16", ctx)).toMatchObject({ remaining: 2, capacity: 5 });
     expect(publicStatus(dayAvailability("2027-03-14", ctx))).toBe("available");
     expect(publicStatus(dayAvailability("2027-03-16", ctx))).toBe("limited");
+  });
+});
+
+describe("parseMonthParam", () => {
+  const today = "2026-10-02";
+
+  it("accepts the current month up to 18 months ahead", () => {
+    expect(parseMonthParam("2026-10", today)).toEqual({ year: 2026, month: 10 });
+    expect(parseMonthParam("2028-04", today)).toEqual({ year: 2028, month: 4 });
+  });
+
+  it("rejects past months, far-future months and malformed values", () => {
+    expect(parseMonthParam("2026-09", today)).toBeNull();
+    expect(parseMonthParam("2028-05", today)).toBeNull();
+    expect(parseMonthParam("2026-13", today)).toBeNull();
+    expect(parseMonthParam("2026-1", today)).toBeNull();
+    expect(parseMonthParam(null, today)).toBeNull();
+  });
+});
+
+describe("monthBounds", () => {
+  it("gives the first day of the month and of the next month", () => {
+    expect(monthBounds(2026, 12)).toEqual({ start: "2026-12-01", end: "2027-01-01" });
+  });
+});
+
+describe("parseBookingRules", () => {
+  it("reads capacity and lead time from pricing rule rows", () => {
+    expect(
+      parseBookingRules([
+        { key: "MAX_PHOTOGRAPHERS_PER_DAY", value: 3 },
+        { key: "MIN_LEAD_DAYS", value: 3 },
+        { key: "PENDING_HOLD_HOURS", value: 48 },
+      ]),
+    ).toEqual({ MAX_PHOTOGRAPHERS_PER_DAY: 3, MIN_LEAD_DAYS: 3, PENDING_HOLD_HOURS: 48 });
+  });
+
+  it("throws when a rule is missing", () => {
+    expect(() => parseBookingRules([{ key: "MIN_LEAD_DAYS", value: 3 }])).toThrow(
+      /MAX_PHOTOGRAPHERS_PER_DAY/,
+    );
   });
 });
