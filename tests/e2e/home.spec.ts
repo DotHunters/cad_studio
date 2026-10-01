@@ -3,12 +3,12 @@ import { expect, test } from "@playwright/test";
 test.describe("home page", () => {
   test("hero has both calls to action", async ({ page }) => {
     await page.goto("/en");
-    const main = page.locator("main");
-    await expect(main.getByRole("link", { name: "Get a Quote" })).toHaveAttribute(
+    const hero = page.locator("main section").first();
+    await expect(hero.getByRole("link", { name: "Get a Quote" })).toHaveAttribute(
       "href",
       "/en/quote",
     );
-    await expect(main.getByRole("link", { name: "Book a Date" })).toHaveAttribute(
+    await expect(hero.getByRole("link", { name: "Book a Date" })).toHaveAttribute(
       "href",
       "/en/book",
     );
@@ -64,5 +64,58 @@ test.describe("home page", () => {
     // 404 has no site header; use a real page once M2 adds one. Home-only transparency is
     // covered above, and HERO_PATHS limits it to "/".
     await expect(page.locator("header[data-transparent='true']")).toHaveCount(0);
+  });
+
+  test("owner intro shows the founder signature", async ({ page }) => {
+    await page.goto("/en");
+    const intro = page.getByRole("region", { name: /The light, the laughter/ });
+    await expect(intro.getByText("I. Rukshan", { exact: true })).toBeVisible();
+    await expect(intro.getByRole("link", { name: "About the studio" })).toHaveAttribute(
+      "href",
+      "/en/about",
+    );
+  });
+
+  test("why-us band hides unconfirmed stats and lists clients", async ({ page }) => {
+    await page.goto("/en");
+    const band = page.getByRole("region", { name: /Planned like an event/ });
+    // Only "years" is confirmed so far; a single stat is not shown on its own, and
+    // unconfirmed stats (events, countries) stay hidden until the owner provides them.
+    await expect(band.getByText("Events photographed", { exact: true })).toHaveCount(0);
+    await expect(band.getByText("Years of experience", { exact: true })).toHaveCount(0);
+    await expect(band.getByText("Northwind Corp (Sample)")).toBeVisible();
+  });
+
+  test("featured portfolio lists sample projects with badges", async ({ page }) => {
+    await page.goto("/en");
+    const portfolio = page.getByRole("region", { name: /Stories we've told/ });
+    await expect(portfolio.getByRole("listitem")).toHaveCount(3);
+    await expect(portfolio.getByText("Sample").first()).toBeVisible();
+    await expect(portfolio.getByRole("link", { name: "View all work" })).toHaveAttribute(
+      "href",
+      "/en/portfolio",
+    );
+  });
+
+  test("reviews carousel shows featured reviews and the average", async ({ page }) => {
+    await page.goto("/en");
+    const reviews = page.getByRole("region", { name: /What our clients say/ });
+    await expect(reviews.getByText(/out of 5 from 3 reviews/)).toBeVisible();
+    await expect(reviews.getByRole("listitem")).toHaveCount(3);
+  });
+
+  test("portfolio and reviews are localized in French", async ({ page }) => {
+    await page.goto("/fr");
+    await expect(page.getByRole("heading", { name: "Mariage au jardin" })).toBeVisible();
+    await expect(page.getByText(/sur 5 selon 3 avis/)).toBeVisible();
+  });
+
+  test("final call to action links to quote and booking", async ({ page }) => {
+    await page.goto("/en");
+    const cta = page.getByRole("region", { name: /Let's create something timeless/ });
+    await expect(cta.getByRole("link", { name: "Get a Quote" })).toHaveAttribute(
+      "href",
+      "/en/quote",
+    );
   });
 });

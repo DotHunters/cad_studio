@@ -22,5 +22,7 @@ export default defineConfig({
     url: baseURL,
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,
+    // Seeded sample clients/reviews fill the home page sections under test.
+    env: { SHOW_SAMPLE_CONTENT: "true" },
   },
 });

@@ -181,7 +181,7 @@
   h2,
   h3,
   h4 {
-    @apply font-heading tracking-tight;
+    @apply font-heading tracking-tight lining-nums;
   }
 }
 

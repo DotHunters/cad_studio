@@ -118,3 +118,11 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (66) · e2e ✅ (36) · build ✅ · format ✅ · screenshots EN desktop light/dark, FR mobile
 - Notes: Windows `.next` lock flakiness (build invariant / e2e "no production build") — retry clears it; loop.md now documents it. Untracked `README.md` belongs to the owner — not committed by the loop.
 - Next: 2.2 (use SectionHeading + patterns from AGENTS.md §5)
+
+### 2026-10-01 — 2.2 Home: intro, why-us, featured portfolio, reviews, final CTA
+- Branch: feat/m2-content · PR #2 (retargeted to `main` after PR #1 was merged with a merge commit — no rebase needed)
+- Done: `HomeIntro` (split statement + owner note, signature "I. Rukshan", About CTA), `WhyUs` dark band (3 reason cards from owner facts, stats strip shown only when ≥2 owner-confirmed stats — `siteConfig.stats`, events/countries TODO(owner); "Trusted by" consented client names; "Ready to plan your date?" bar), `FeaturedPortfolio` (3 featured projects, Local/Global + Sample badges, client name only with consent, "View all work"), `ReviewsCarousel` (approved+featured+consented, CSS scroll-snap, focusable, star ratings with text labels, average + count), `FinalCta`. Data: `src/server/queries/home.ts` with `unstable_cache` tagged `portfolio`/`reviews`, page `revalidate = 3600`. Helpers + tests: `localize()` (FR fallback), `averageRating()`, `storedImageSrc()` (placeholder ids → shaded blanks; real ids throw until 3.1). Headings use lining numerals (Cormorant's "10" read as "IO").
+- Bug found + fixed: the sample flag was read inside `unstable_cache`, so a build without `SHOW_SAMPLE_CONTENT` cached sample-free results that a later run reused. Flag is now an argument (part of the cache key); reproduced the failing build→e2e sequence and it passes.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (76) · e2e ✅ (48) · build ✅ · format ✅ · full-page screenshot reviewed
+- Notes: e2e webServer sets `SHOW_SAMPLE_CONTENT=true`. Owner's `.env.local` has no `SHOW_SAMPLE_CONTENT`, so samples are hidden in their local dev until they add `SHOW_SAMPLE_CONTENT=true`.
+- Next: 2.3

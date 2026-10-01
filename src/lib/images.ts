@@ -25,3 +25,23 @@ export function placeholderImage(
   const encoded = encodeURIComponent(label).replace(/%20/g, "+");
   return `${PLACEHOLDER_HOST}/${width}x${height}/${background}/c79856.png?text=${encoded}&font=playfair-display`;
 }
+
+/** Image record fields needed to render a stored image. */
+export type StoredImage = { publicId: string; width: number; height: number };
+
+const PLACEHOLDER_PREFIX = "placeholder/";
+const PLACEHOLDER_SHADES = ["1c1c1c", "231d16", "1a1a1a", "2a2118", "181818"];
+
+/**
+ * URL for a stored image. Seeded samples use `placeholder/<slug>-<n>` ids and render as blank
+ * brand-toned placeholders; real Cloudinary delivery is added in task 3.1.
+ */
+export function storedImageSrc(image: StoredImage): string {
+  if (image.publicId.startsWith(PLACEHOLDER_PREFIX)) {
+    const index = Number(image.publicId.match(/-(\d+)$/)?.[1] ?? 0);
+    const background = PLACEHOLDER_SHADES[index % PLACEHOLDER_SHADES.length];
+    return placeholderImage(image.width, image.height, { background });
+  }
+  // TODO(3.1): Cloudinary URL with transformations.
+  throw new Error(`Cloudinary images are not wired up yet (task 3.1): ${image.publicId}`);
+}

@@ -33,6 +33,7 @@ Run on every `/loop` tick. Goal: build the MVP in `AGENTS.md` (milestones 1–8)
    - When the last task of a milestone is done, tick that milestone in the `AGENTS.md` §14 progress checklist.
 7. **Git.**
    - Work on `feat/m<N>-<milestone-slug>` (e.g. `feat/m1-foundation`), branched from up-to-date `main`. Never commit to `main` directly.
+   - Stage with `git add -A -- . ':!README.md'` (or explicit paths). `README.md` is owner-maintained: never commit it unless asked.
    - Make one Conventional Commit per task (`feat:`, `fix:`, `test:`, `chore:` …).
    - Push the branch after each commit: `git push -u origin <branch>`. Before pushing, `git fetch`; if the remote branch moved, rebase onto it (don't merge).
    - Open **one PR per milestone** against `main` once the branch has its first commit. Title it `M<N>: <Milestone name>`. In the body, list the milestone's tasks as a checklist and keep it updated.
