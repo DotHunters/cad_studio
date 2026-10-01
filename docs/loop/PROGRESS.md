@@ -18,7 +18,7 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 
 ### 2026-10-01 — setup
 - Loop kit created: `.claude/loop.md`, `docs/loop/TASKS.md`, `docs/loop/OPEN_QUESTIONS.md`, `docs/loop/PROGRESS.md`. Renamed `AGENT.MD` → `AGENTS.md`.
-- Note: `gh` CLI is not installed; PRs are opened via compare links until it is.
+- Note: `gh` CLI installed later; M1 PR: https://github.com/DotHunters/cad_studio/pull/1
 - Next: 1.1
 
 ### 2026-10-01 — 1.1 Scaffold Next.js 15
