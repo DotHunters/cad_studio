@@ -196,5 +196,49 @@
     "ctaTitle": "Parlons de votre <accent>journée</accent>",
     "ctaBody": "Donnez-nous quelques détails et nous vous répondrons.",
     "ctaContact": "Nous contacter"
+  },
+  "Contact": {
+    "metaTitle": "Contact",
+    "metaDescription": "Communiquez avec Cad Studio pour vos mariages, événements corporatifs, événements familiaux, portraits et photos de produits à Toronto et ailleurs.",
+    "eyebrow": "Écrivez-nous",
+    "title": "Racontez-nous votre <accent>histoire</accent>",
+    "intro": "Envoyez-nous un message et nous vous répondrons dès que possible. Pour un prix instantané, essayez le générateur de devis.",
+    "name": "Nom",
+    "email": "Courriel",
+    "phone": "Téléphone (facultatif)",
+    "enquiryType": "De quoi s’agit-il?",
+    "selectType": "Choisissez…",
+    "message": "Message",
+    "types": {
+      "wedding": "Mariage",
+      "corporate": "Événement corporatif",
+      "family": "Événement familial",
+      "gathering": "Rassemblement",
+      "professional": "Séance professionnelle",
+      "product": "Photographie de produits",
+      "other": "Autre chose",
+      "privacy": "Demande relative à la vie privée (accès ou suppression de mes données)"
+    },
+    "honeypot": "Laissez ce champ vide",
+    "privacyNotice": "Nous utilisons ces renseignements uniquement pour répondre à votre demande. Consultez notre <privacy>politique de confidentialité</privacy>.",
+    "submit": "Envoyer le message",
+    "sending": "Envoi…",
+    "successTitle": "Merci — message envoyé",
+    "successBody": "Nous vous répondrons sous peu à l’adresse courriel fournie.",
+    "sendAnother": "Envoyer un autre message",
+    "errors": {
+      "required": "Ce champ est obligatoire.",
+      "invalidEmail": "Entrez une adresse courriel valide.",
+      "invalidPhone": "Entrez un numéro de téléphone valide.",
+      "messageTooShort": "Veuillez écrire au moins 10 caractères.",
+      "tooLong": "Ce texte est trop long.",
+      "spam": "Veuillez laisser ce champ vide."
+    },
+    "serverError": "Une erreur s’est produite et votre message n’a pas été envoyé. Réessayez ou écrivez-nous directement.",
+    "captchaError": "Nous n’avons pas pu vérifier que vous êtes une personne. Veuillez réessayer.",
+    "detailsTitle": "Coordonnées du studio",
+    "emailLabel": "Courriel",
+    "serviceAreaLabel": "Zone desservie",
+    "quoteCta": "Obtenir un devis instantané"
   }
 }

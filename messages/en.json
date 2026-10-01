@@ -196,5 +196,49 @@
     "ctaTitle": "Let's talk about your <accent>day</accent>",
     "ctaBody": "Share a few details and we'll be in touch.",
     "ctaContact": "Contact us"
+  },
+  "Contact": {
+    "metaTitle": "Contact",
+    "metaDescription": "Get in touch with Cad Studio about weddings, corporate events, family events, portraits and product photography in Toronto and beyond.",
+    "eyebrow": "Get in touch",
+    "title": "Tell us about your <accent>story</accent>",
+    "intro": "Send us a message and we'll reply as soon as we can. For an instant price, try the quote generator.",
+    "name": "Name",
+    "email": "Email",
+    "phone": "Phone (optional)",
+    "enquiryType": "What's this about?",
+    "selectType": "Choose one…",
+    "message": "Message",
+    "types": {
+      "wedding": "Wedding",
+      "corporate": "Corporate event",
+      "family": "Family event",
+      "gathering": "Gathering",
+      "professional": "Professional photoshoot",
+      "product": "Product photography",
+      "other": "Something else",
+      "privacy": "Privacy request (access or delete my data)"
+    },
+    "honeypot": "Leave this field empty",
+    "privacyNotice": "We use these details only to reply to your enquiry. See our <privacy>privacy policy</privacy>.",
+    "submit": "Send message",
+    "sending": "Sending…",
+    "successTitle": "Thank you — message sent",
+    "successBody": "We'll get back to you shortly at the email you provided.",
+    "sendAnother": "Send another message",
+    "errors": {
+      "required": "This field is required.",
+      "invalidEmail": "Enter a valid email address.",
+      "invalidPhone": "Enter a valid phone number.",
+      "messageTooShort": "Please write at least 10 characters.",
+      "tooLong": "This is too long.",
+      "spam": "Please leave this field empty."
+    },
+    "serverError": "Something went wrong and your message wasn't sent. Please try again or email us directly.",
+    "captchaError": "We couldn't verify you're human. Please try again.",
+    "detailsTitle": "Studio details",
+    "emailLabel": "Email",
+    "serviceAreaLabel": "Service area",
+    "quoteCta": "Get an instant quote"
   }
 }

@@ -28,7 +28,7 @@ Legend: `[ ]` todo · `[x]` done · `BLOCKED(Q#)` waiting on `OPEN_QUESTIONS.md`
 - [x] 2.3 Packages list: DB-driven, category filter tabs, cards with "from $X CAD", Customize quote and Book CTAs. Update the language-switcher e2e test to use `/en/packages` (path preservation). — §6.2
 - [x] 2.4 Package detail `/packages/[slug]`: inclusions/exclusions, deliverables, sample images, FAQs, add-ons, terms summary. — §6.2
 - [x] 2.5 About: owner profile from §6.8 facts only; everything else `TODO(owner)`. — §6.8, §13
-- [ ] 2.6 Contact: form (Zod, honeypot, Turnstile placeholder), Server Action, Resend email to admin. Service area text only — no street address, no map. — §6.9, §11
+- [x] 2.6 Contact: form (Zod, honeypot, Turnstile placeholder), Server Action, Resend email to admin. Service area text only — no street address, no map. — §6.9, §11
 - [ ] 2.7 Privacy and Terms pages covering PIPEDA, Law 25 and CASL (content marked for owner/legal review). — §9
 - [ ] 2.8 `generateMetadata` per page, `LocalBusiness` and `Service` JSON-LD, `sitemap.ts`, `robots.ts`. — §10
 

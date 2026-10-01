@@ -147,3 +147,10 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Bug found + fixed: ICU MessageFormat treats `'` before `<`/`{` as a quote, so French `l'<accent>…` and `d'<accent>…` rendered the raw tag — also affected the FR home final heading shipped in 2.2. Switched to typographic ’; unit test now forbids `'<` / `'{` in messages; e2e regression on `/fr`.
 - Checks: lint ✅ · typecheck ✅ · test ✅ · e2e ✅ (88) · build ✅ · format ✅
 - Next: 2.6
+
+### 2026-10-01 — 2.6 Contact
+- Branch: feat/m2-content · PR #2
+- Done: `/[locale]/contact` — heading, email (dummy, TODO owner), service area (no address/map per owner), quote link; `ContactForm` (React Hook Form + Zod resolver, labels, inline translated errors with `aria-invalid`/`aria-describedby`, focus first error, loading spinner, success state + "send another", sonner toast for server/captcha errors, honeypot hidden from AT, PIPEDA purpose notice linking `/privacy`, "Privacy request" enquiry type for access/deletion). Shared `contactSchema` (Zod 4; error messages are translation keys). `submitContact` server action re-validates, fakes success on honeypot hits, verifies Turnstile when `TURNSTILE_SECRET_KEY` is set (widget in 8.1), emails admin via Resend with reply-to. `sendEmail` skips with a warning when `RESEND_API_KEY` is missing outside Vercel production, throws in production. `<Toaster>` mounted in the locale layout.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (88) · e2e ✅ (102) · build ✅ · format ✅
+- Notes: no `RESEND_API_KEY` locally → enquiries are logged, not sent. Rate limiting is 8.1. Admin email is plain text; client-facing React Email templates come with quotes/bookings (4.6/5.5).
+- Next: 2.7
