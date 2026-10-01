@@ -44,7 +44,7 @@ Legend: `[ ]` todo · `[x]` done · `BLOCKED(Q#)` waiting on `OPEN_QUESTIONS.md`
 ## M4 — Quote engine · branch `feat/m4-quote`
 
 - [x] 4.1 `src/lib/tax.ts` + tests for every tax regime. — §8.2
-- [ ] 4.2 `src/lib/pricing` `calculateQuote` with TDD: base, extra hours, extra shooters, add-on unit types, travel threshold, international flag, weekend, stat holiday, discounts, rounding, deposit. Coverage ≥ 90%. — §8.1
+- [x] 4.2 `src/lib/pricing` `calculateQuote` with TDD: base, extra hours, extra shooters, add-on unit types, travel threshold, international flag, weekend, stat holiday, discounts, rounding, deposit. Coverage ≥ 90%. — §8.1
 - [ ] 4.3 Shared Zod quote input schema in `src/lib/validators`. — §6.5, §11
 - [ ] 4.4 `/quote` UI: multi-step form, live breakdown using the same function, guest-count hint, prefill from a package. — §6.5
 - [ ] 4.5 `createQuote` Server Action: server recomputes the price, `CAD-Q-YYYY-####` reference, 14-day expiry, rate limit, Turnstile. — §6.5, §11

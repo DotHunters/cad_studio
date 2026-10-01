@@ -442,6 +442,13 @@ tax           = by province (see 8.2)
 total         = subtotal + tax
 deposit       = round(total × DEPOSIT_PCT)
 ```
+Implemented in `src/lib/pricing/calculate-quote.ts` (+ `holidays.ts` for Ontario statutory holidays). Interpretations of the formula — **owner to confirm**:
+- Weekend and stat-holiday surcharges don't stack; the higher applies.
+- Surcharges and discounts apply to the service (base + extra hours + extra shooters), not add-ons or travel.
+- Per-hour add-ons (e.g. videographer) are charged for the full event duration.
+- Duration is in half-hour steps; travel beyond the free radius is charged for the round trip.
+- Sales tax is charged on the whole subtotal, including travel.
+
 Return an itemized `lineItems[]` so the UI can render the breakdown. Round each line to whole cents using banker-safe integer math.
 
 **All prices, rules, deposit % and the cancellation policy are owner-managed from the admin dashboard** (`Package`, `AddOn`, `PricingRule`, `SiteSetting`). Seeds are only starting values; nothing pricing-related may be hardcoded.

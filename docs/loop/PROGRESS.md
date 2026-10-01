@@ -219,3 +219,10 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Done (TDD): `src/lib/tax.ts` — `parseRate` (Decimal string/Prisma Decimal → integer parts per 100,000; rejects >5 decimals, negatives, ≥100%), `calculateTax(subtotalCents, rate)` → `{ lines: [{code GST|PST|QST|HST, rate "9.975%", amountCents}], taxCents }` with each line on the pre-tax subtotal (QST not on GST) and half-up rounding to the cent, `findTaxRate` (case-insensitive, throws for unknown regions). 12 tests: ON HST, QC GST+QST, GST-only, Atlantic HST, INTL, rounding edges, invalid input. Coverage: 100% lines/branches.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (142) · format ✅ after a follow-up formatting commit (the first commit was pushed with format:check failing — always run `pnpm format` before committing)
 - Next: 4.2
+
+### 2026-10-01 — 4.2 Quote engine
+- Branch: feat/m4-quote · PR #5 (stacked on #4)
+- Done (TDD): `src/lib/pricing/calculate-quote.ts` — `calculateQuote(input, {rules, addOns, taxRates})` → itemized `lineItems` (base, extraHours, extraShooters, surcharge, discount, addOn, travel), subtotal, tax lines (via `calculateTax`), total, deposit, flags (custom travel quote, suggested photographers). Integer cents with half-up rounding; validation (duration 0–24 in half hours, 1–10 photographers, distance ≥ 0, real calendar date, known region, add-on offered for the category). `src/lib/pricing/holidays.ts` — Ontario statutory holidays incl. Easter-based Good Friday. 34 new tests (every §8.1 case: base, extra hours/shooters, each add-on unit, travel threshold/round trip/custom, weekend, stat holiday, non-stacking, off-season discount, each tax regime, rounding, deposit, guest hint, validation). Coverage: calculate-quote 100% lines / 95% branches; holidays + tax 100%.
+- Interpretations recorded in AGENTS.md §8.1 and new Q16 for owner confirmation.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (176) · format ✅ (pure logic; no UI change)
+- Next: 4.3
