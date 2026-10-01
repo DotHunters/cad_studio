@@ -13,14 +13,16 @@ import { calculateQuote } from "@/lib/pricing/calculate-quote";
 import { toEngineInput } from "@/lib/pricing/engine-input";
 import { resolvePackage } from "@/lib/pricing/rules";
 import { counterKey, formatReference } from "@/lib/references";
+import { signValue } from "@/lib/signing";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { type QuoteRequestInput, quoteRequestSchema } from "@/lib/validators/quote";
 import { localize } from "@/lib/localize";
 import { sendQuoteEmails } from "@/server/emails/quote-emails";
+import { linkSecret } from "@/server/link-secret";
 import { getPricingContext } from "@/server/queries/pricing";
 
 export type CreateQuoteResult =
-  | { ok: true; reference: string; totalCents: number }
+  | { ok: true; reference: string; token: string; totalCents: number }
   | { ok: false; error: "validation"; fieldErrors: Record<string, string> }
   | { ok: false; error: "captcha" | "unavailable" | "server" };
 
@@ -36,7 +38,7 @@ export async function createQuote(
   if (!parsed.success) {
     // Honeypot hit: pretend success so bots learn nothing; nothing is saved.
     if (parsed.error.issues.some((issue) => issue.path[0] === "website")) {
-      return { ok: true, reference: "CAD-Q-0000-0000", totalCents: 0 };
+      return { ok: true, reference: "CAD-Q-0000-0000", token: "", totalCents: 0 };
     }
     const fieldErrors: Record<string, string> = {};
     for (const issue of parsed.error.issues) fieldErrors[issue.path.join(".")] ??= issue.message;
@@ -144,10 +146,13 @@ export async function createQuote(
       return ref;
     });
 
+    const token = signValue(`quote:${reference}`, linkSecret());
+
     // Emails are best-effort: the quote is already saved and the client sees its reference.
     try {
       await sendQuoteEmails({
         reference,
+        token,
         locale,
         customer: { name: request.name, email: request.email, phone: request.phone },
         category,
@@ -167,7 +172,7 @@ export async function createQuote(
       console.error(`[quote] ${reference} saved but emails failed`, error);
     }
 
-    return { ok: true, reference, totalCents: quote.totalCents };
+    return { ok: true, reference, token, totalCents: quote.totalCents };
   } catch (error) {
     console.error("[quote] failed to create quote", error);
     return { ok: false, error: "server" };

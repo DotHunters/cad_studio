@@ -407,5 +407,23 @@
     "expires": "Ce devis est valide jusqu’au {date}.",
     "cta": "Réserver cette date",
     "footer": "Cad Studio · Scarborough, Toronto · Vous recevez ce courriel parce que vous avez demandé un devis sur notre site."
+  },
+  "QuoteResult": {
+    "metaTitle": "Votre devis",
+    "eyebrow": "Devis {reference}",
+    "title": "Votre <accent>estimation</accent>",
+    "greeting": "Merci, {name}. Nous vous en avons envoyé une copie par courriel.",
+    "event": "Événement",
+    "date": "Date",
+    "time": "Début",
+    "coverage": "Couverture",
+    "photographers": "Photographes",
+    "location": "Lieu",
+    "package": "Forfait",
+    "validUntil": "Valide jusqu’au {date}",
+    "expired": "Ce devis a expiré le {date}. Les prix ont peut-être changé — créez un nouveau devis pour obtenir les tarifs actuels.",
+    "book": "Réserver ce devis",
+    "newQuote": "Créer un nouveau devis",
+    "hours": "{count} h"
   }
 }

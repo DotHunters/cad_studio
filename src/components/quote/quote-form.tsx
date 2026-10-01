@@ -1,6 +1,6 @@
 "use client";
 
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { type FormEvent, type ReactNode, useEffect, useMemo, useState, useTransition } from "react";
 import { useForm, useWatch } from "react-hook-form";
@@ -9,7 +9,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 
 import type { Locale } from "@/config/site";
-import { Link } from "@/i18n/navigation";
+import { Link, useRouter } from "@/i18n/navigation";
 import { type CategorySlug, categoryFromSlug, categorySlugs } from "@/lib/categories";
 import { localize } from "@/lib/localize";
 import { formatCAD } from "@/lib/money";
@@ -130,7 +130,6 @@ export function QuoteForm({ context, locale, today, initialPackage, initialCateg
     setError,
     clearErrors,
     setFocus,
-    reset,
     formState: { errors },
   } = useForm<QuoteFormValues>({
     defaultValues: {
@@ -154,7 +153,7 @@ export function QuoteForm({ context, locale, today, initialPackage, initialCateg
     },
   });
   const [pending, startTransition] = useTransition();
-  const [saved, setSaved] = useState<{ reference: string; totalCents: number } | null>(null);
+  const router = useRouter();
   const values = useWatch({ control }) as QuoteFormValues;
   // Marks the form interactive once hydrated (used by e2e tests to avoid typing too early).
   const [hydrated, setHydrated] = useState(false);
@@ -230,7 +229,8 @@ export function QuoteForm({ context, locale, today, initialPackage, initialCateg
     startTransition(async () => {
       const outcome = await createQuote(request);
       if (outcome.ok) {
-        setSaved({ reference: outcome.reference, totalCents: outcome.totalCents });
+        // The private quote page needs the signed token.
+        router.push({ pathname: `/quote/${outcome.reference}`, query: { t: outcome.token } });
         return;
       }
       if (outcome.error === "validation") {
@@ -246,32 +246,6 @@ export function QuoteForm({ context, locale, today, initialPackage, initialCateg
       );
     });
   };
-
-  if (saved) {
-    return (
-      <div role="status" className="bg-card mx-auto max-w-2xl rounded-xl border p-8 text-center">
-        <CheckCircle2 className="text-gold-text mx-auto size-10" aria-hidden />
-        <h2 className="mt-4 text-3xl">{t("Quote.successTitle")}</h2>
-        <p className="text-muted-foreground mt-2" data-testid="quote-reference">
-          {t("Quote.successBody", {
-            reference: saved.reference,
-            total: formatCAD(saved.totalCents, locale),
-          })}
-        </p>
-        <Button
-          variant="outline"
-          size="cta"
-          className="mt-6"
-          onClick={() => {
-            setSaved(null);
-            reset();
-          }}
-        >
-          {t("Contact.sendAnother")}
-        </Button>
-      </div>
-    );
-  }
 
   return (
     <div className="grid gap-10 lg:grid-cols-[1fr_380px]">

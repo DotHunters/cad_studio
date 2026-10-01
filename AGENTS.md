@@ -608,7 +608,7 @@ At the end of each milestone: update the checklist below and summarize what chan
 - [x] 1 Foundation
 - [x] 2 Content pages
 - [x] 3 Portfolio & Gallery
-- [ ] 4 Quote engine
+- [x] 4 Quote engine
 - [ ] 5 Booking
 - [ ] 6 Reviews
 - [ ] 7 Admin

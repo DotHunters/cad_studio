@@ -126,7 +126,7 @@ test.describe("quote generator", () => {
     ).toBeVisible();
   });
 
-  test("saves the quote with a reference and the server's own price", async ({
+  test("saves the quote and opens its private page with the server's price", async ({
     page,
   }, testInfo) => {
     const email = `e2e-quote-${testInfo.project.name}-${Date.now()}@example.com`;
@@ -139,11 +139,11 @@ test.describe("quote generator", () => {
     await page.getByLabel("Email").fill(email);
     await page.getByRole("button", { name: "Get my quote" }).click();
 
-    const confirmation = page.getByTestId("quote-reference");
-    await expect(confirmation).toContainText(
-      /Reference CAD-Q-\d{4}-\d{4,}\. Total \$1,450\.92 CAD/,
-    );
-    const reference = (await confirmation.textContent())!.match(/CAD-Q-\d{4}-\d{4,}/)![0];
+    await expect(page).toHaveURL(/\/en\/quote\/CAD-Q-\d{4}-\d{4,}\?t=[\w-]{32}$/);
+    const reference = page.url().match(/CAD-Q-\d{4}-\d{4,}/)![0];
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Your estimate");
+    await expect(page.getByText(`Quote ${reference}`)).toBeVisible();
+    await expect(total(page)).toHaveText("$1,450.92 CAD");
 
     const [saved] = await queryDb<{
       totalCents: number;

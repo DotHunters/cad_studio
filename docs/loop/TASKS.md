@@ -49,7 +49,7 @@ Legend: `[ ]` todo · `[x]` done · `BLOCKED(Q#)` waiting on `OPEN_QUESTIONS.md`
 - [x] 4.4 `/quote` UI: multi-step form, live breakdown using the same function, guest-count hint, prefill from a package. — §6.5
 - [x] 4.5 `createQuote` Server Action: server recomputes the price, `CAD-Q-YYYY-####` reference, 14-day expiry, rate limit, Turnstile. — §6.5, §11
 - [x] 4.6 Quote emails (client summary + admin notification) with React Email. — §6.5
-- [ ] 4.7 Result page with "Book this quote" CTA and the "Estimate only" notice. Add the e2e test (scenario 1). — §6.5, §15
+- [x] 4.7 Result page with "Book this quote" CTA and the "Estimate only" notice. Add the e2e test (scenario 1). — §6.5, §15
 
 ## M5 — Booking · branch `feat/m5-booking`
 

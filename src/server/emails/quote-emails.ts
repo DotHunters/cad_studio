@@ -15,6 +15,8 @@ import { lineItemLabel, type Translate } from "@/lib/pricing/line-labels";
 
 export type QuoteEmailData = {
   reference: string;
+  /** Signature for the private quote link. */
+  token: string;
   locale: Locale;
   customer: { name: string; email: string; phone?: string };
   category: string;
@@ -42,7 +44,10 @@ export async function sendQuoteEmails(data: QuoteEmailData) {
   const date = formatInStudioTz(data.eventStart, "PPP", locale);
   const time = formatInStudioTz(data.eventStart, "p", locale);
   const category = tCategories(`${slugFromCategory(data.category as never)}.name`);
-  const quoteUrl = new URL(`/${locale}/quote/${data.reference}`, siteConfig.url).toString();
+  const quoteUrl = new URL(
+    `/${locale}/quote/${data.reference}?t=${data.token}`,
+    siteConfig.url,
+  ).toString();
   const rows = quote.lineItems.map((item) => ({
     label: lineItemLabel(item, tQuote as unknown as Translate, {
       packageName: data.packageName,
