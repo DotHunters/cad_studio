@@ -116,4 +116,13 @@ test.describe("home page", () => {
       "/en/quote",
     );
   });
+
+  test("French final heading renders its accent word (ICU apostrophe regression)", async ({
+    page,
+  }) => {
+    await page.goto("/fr");
+    await expect(
+      page.getByRole("heading", { name: "Créons quelque chose d’intemporel" }),
+    ).toBeVisible();
+  });
 });

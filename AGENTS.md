@@ -599,7 +599,7 @@ At the end of each milestone: update the checklist below and summarize what chan
 
 ### Progress checklist
 - [x] 1 Foundation
-- [ ] 2 Content pages
+- [x] 2 Content pages
 - [ ] 3 Portfolio & Gallery
 - [ ] 4 Quote engine
 - [ ] 5 Booking

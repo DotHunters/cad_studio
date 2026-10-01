@@ -22,3 +22,4 @@ Statuses: `OPEN` · `PARTIAL` (part answered, rest still placeholder) · `ANSWER
 | Q13 | Brand name: "Cad Studio" (logo) or "CAD Studios" (old spec)? | — | all | APPLIED | **Cad Studio**. |
 | Q12 | Who reviews the French copy before launch? | — | 8.6 | APPLIED | Agents write the French; a tester reviews at the end. FR text flagged `TODO(owner-fr): review`. |
 | Q14 | WhatsApp number for a floating "chat with us" button (idea from the reference site)? | Button hidden until a number is set in `siteConfig.contact.whatsapp` | 2.2 | OPEN | |
+| Q15 | Legal review of Privacy & Terms (content/legal/*.md): privacy officer name (Law 25), retention periods, service providers/regions, cancellation & refund policy, image licence terms, liability. | Draft text + visible "pending legal review" notice until `LEGAL_REVIEWED=true` | 2.7 | OPEN | |

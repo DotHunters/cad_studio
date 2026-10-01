@@ -7,6 +7,7 @@ import { PackageCard } from "@/components/packages/package-card";
 import { Accent, SectionHeading } from "@/components/site/section-heading";
 import { Link } from "@/i18n/navigation";
 import { categoryFromSlug, type CategorySlug } from "@/lib/categories";
+import { pageMetadata } from "@/lib/seo/metadata";
 import { getActivePackages } from "@/server/queries/packages";
 
 type Props = {
@@ -17,14 +18,12 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "Packages" });
-  return {
+  return pageMetadata({
+    locale,
+    path: "/packages",
     title: t("metaTitle"),
     description: t("metaDescription"),
-    alternates: {
-      canonical: `/${locale}/packages`,
-      languages: { "en-CA": "/en/packages", "fr-CA": "/fr/packages", "x-default": "/en/packages" },
-    },
-  };
+  });
 }
 
 export default async function PackagesPage({ params, searchParams }: Props) {

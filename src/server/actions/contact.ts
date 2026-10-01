@@ -1,0 +1,58 @@
+"use server";
+
+import { headers } from "next/headers";
+
+import { siteConfig } from "@/config/site";
+import { adminNotifyAddress, sendEmail } from "@/lib/email/send";
+import { verifyTurnstile } from "@/lib/turnstile";
+import { contactSchema, type ContactInput } from "@/lib/validators/contact";
+
+export type ContactResult =
+  | { ok: true }
+  | { ok: false; error: "validation"; fieldErrors: Partial<Record<keyof ContactInput, string>> }
+  | { ok: false; error: "captcha" | "server" };
+
+/** Contact form submission (AGENTS.md §6.9, §11). Always re-validated on the server. */
+export async function submitContact(
+  input: ContactInput,
+  turnstileToken?: string,
+): Promise<ContactResult> {
+  const parsed = contactSchema.safeParse(input);
+  if (!parsed.success) {
+    // Bots that fill the honeypot get a fake success so they learn nothing.
+    if (parsed.error.issues.some((issue) => issue.path[0] === "website")) return { ok: true };
+    const fieldErrors: Partial<Record<keyof ContactInput, string>> = {};
+    for (const issue of parsed.error.issues) {
+      const field = issue.path[0] as keyof ContactInput;
+      fieldErrors[field] ??= issue.message;
+    }
+    return { ok: false, error: "validation", fieldErrors };
+  }
+
+  const requestHeaders = await headers();
+  const ip = requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim();
+  if (!(await verifyTurnstile(turnstileToken, ip))) {
+    return { ok: false, error: "captcha" };
+  }
+
+  const data = parsed.data;
+  try {
+    await sendEmail({
+      to: adminNotifyAddress(),
+      replyTo: data.email,
+      subject: `[${siteConfig.name}] New ${data.enquiryType} enquiry from ${data.name}`,
+      text: [
+        `Name: ${data.name}`,
+        `Email: ${data.email}`,
+        `Phone: ${data.phone ?? "—"}`,
+        `Enquiry type: ${data.enquiryType}`,
+        "",
+        data.message,
+      ].join("\n"),
+    });
+    return { ok: true };
+  } catch (error) {
+    console.error("[contact] failed to send enquiry", error);
+    return { ok: false, error: "server" };
+  }
+}

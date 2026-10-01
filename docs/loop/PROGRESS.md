@@ -132,3 +132,39 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Done: `/[locale]/packages` — DB-driven via cached `getActivePackages()` (tag `packages`), `CategoryFilter` (link-based tabs, `?category=`, `aria-current`, works without JS; unknown/repeated values → All), `PackageCard` (category, localized name/summary/inclusions, "From $X CAD" via `formatCAD`, hours/photographers/edited images with ICU plurals, Customize quote → `/quote?package=slug`, Book → `/book?package=slug`), empty state, tax note, metadata + hreflang. Deferred 1.11 follow-ups done: language-switcher e2e now verifies `/en/packages → /fr/packages`; solid-header test uses `/en/packages`.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (76) · e2e ✅ (60) · build ✅ · format ✅ · screenshot reviewed
 - Next: 2.4
+
+### 2026-10-01 — 2.4 Package detail
+- Branch: feat/m2-content · PR #2
+- Done: `/[locale]/packages/[slug]` — breadcrumb (Packages › category › name), markdown description (`react-markdown`, no raw HTML), included/not included, add-ons linked to the package with unit prices (/ hour, / item), sample images (when present), link to portfolio filtered by category, FAQs as `<details>` (when present), sticky aside with "Starting at" price, deliverables (coverage, photographers, edited images, turnaround), Customize quote + Book CTAs, booking terms (deposit % from `PricingRule`, cancellation policy from `SiteSetting`), dark CTA band. 404 for unknown/inactive slugs. Metadata + hreflang. Queries `getPackageBySlug`, `getBookingTerms` (cached, tagged). `src/lib/content.ts`: `parseLocalizedText`, `parseFaqs`, `publishableText` (hides seeded "TODO(owner)" copy from public pages).
+- Caught in review: drafted copy invented a payment policy ("balance due before delivery") — removed; only the DB deposit % is stated. Message test caught an empty translation key.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (82) · e2e ✅ (76) · build ✅ · format ✅ · screenshot reviewed
+- Notes: seed has no package FAQs or package images, so those sections are hidden until the owner adds them in admin (7.3/7.4).
+- Next: 2.5
+
+### 2026-10-01 — 2.5 About
+- Branch: feat/m2-content · PR #2
+- Done: `/[locale]/about` — intro (Cad Studio = Collection Art Design, Scarborough, founded by I. Rukshan), owner profile (portrait placeholder, role, 10+ years, event management, base), dark "why event experience matters" band (3 client benefits per §6.8), areas served, contact/packages CTAs, metadata + hreflang. Only owner-provided facts; story/team/equipment left as a `TODO(owner)` code comment (not rendered). No pronouns for the owner (none stated).
+- Bug found + fixed: ICU MessageFormat treats `'` before `<`/`{` as a quote, so French `l'<accent>…` and `d'<accent>…` rendered the raw tag — also affected the FR home final heading shipped in 2.2. Switched to typographic ’; unit test now forbids `'<` / `'{` in messages; e2e regression on `/fr`.
+- Checks: lint ✅ · typecheck ✅ · test ✅ · e2e ✅ (88) · build ✅ · format ✅
+- Next: 2.6
+
+### 2026-10-01 — 2.6 Contact
+- Branch: feat/m2-content · PR #2
+- Done: `/[locale]/contact` — heading, email (dummy, TODO owner), service area (no address/map per owner), quote link; `ContactForm` (React Hook Form + Zod resolver, labels, inline translated errors with `aria-invalid`/`aria-describedby`, focus first error, loading spinner, success state + "send another", sonner toast for server/captcha errors, honeypot hidden from AT, PIPEDA purpose notice linking `/privacy`, "Privacy request" enquiry type for access/deletion). Shared `contactSchema` (Zod 4; error messages are translation keys). `submitContact` server action re-validates, fakes success on honeypot hits, verifies Turnstile when `TURNSTILE_SECRET_KEY` is set (widget in 8.1), emails admin via Resend with reply-to. `sendEmail` skips with a warning when `RESEND_API_KEY` is missing outside Vercel production, throws in production. `<Toaster>` mounted in the locale layout.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (88) · e2e ✅ (102) · build ✅ · format ✅
+- Notes: no `RESEND_API_KEY` locally → enquiries are logged, not sent. Rate limiting is 8.1. Admin email is plain text; client-facing React Email templates come with quotes/bookings (4.6/5.5).
+- Next: 2.7
+
+### 2026-10-01 — 2.7 Privacy & Terms
+- Branch: feat/m2-content · PR #2
+- Done: `/[locale]/privacy` and `/[locale]/terms` rendered from `content/legal/{privacy,terms}.{en,fr}.md` (editable without code) via `LegalPage` (react-markdown with `skipHtml`, locale-aware internal links, styled headings/lists), "Last updated" date per doc, visible draft notice until `LEGAL_REVIEWED=true` (new flag + `.env.example`). Privacy covers PIPEDA (purposes, consent, safeguards, access/correction/deletion via the contact form's privacy request, 30-day response, OPC), Québec Law 25 (privacy officer, portability, CAI), CASL (unchecked opt-in, consent timestamp, unsubscribe, transactional exemption), photo/review consent, providers + cross-border note, essential cookies only. Terms reflect the spec's flows (estimates, booking confirmed on deposit, offline payment instructions, release of unpaid holds, reschedule/cancel link, copyright, review moderation, Ontario law).
+- Unknowns are `<!-- TODO(owner/legal) -->` comments (never rendered) → new Q15 lists everything legal must decide.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (98; incl. EN/FR section parity, no visible TODOs, §9 coverage) · e2e ✅ (110) · build ✅ · format ✅
+- Next: 2.8
+
+### 2026-10-01 — 2.8 SEO — **M2 Content pages complete**
+- Branch: feat/m2-content · PR #2
+- Done: `pageMetadata()` helper (canonical, en-CA/fr-CA/x-default alternates, Open Graph with per-page title, og:locale + alternate, 1200×630 `public/brand/og-default.png` generated from the gold logo, Twitter large card) used by every page; layout keeps `metadataBase` + title template. JSON-LD via `<JsonLd>` (escapes `<`): `ProfessionalService` on home (service area only, no street address, founder), `Service` on package pages (offers only when `PRICING_CONFIRMED=true` — new `isPricingConfirmed` flag), `Person` on About. `sitemap.ts` (static pages + active packages from DB, fr-CA alternates, hourly revalidate) and `robots.ts` (disallow /admin, /api; previews fully blocked).
+- Caught by test: the `<`→`<` escape in `serializeJsonLd` lost its backslash when written (same class as the middleware bug); fixed via `chr(92)`; added a "Tooling pitfalls" section to `.claude/loop.md`.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (108) · e2e ✅ (124) · build ✅ · format ✅
+- Next: M3 → 3.1 (branch `feat/m3-portfolio-gallery`; stack on feat/m2-content while PR #2 is open)

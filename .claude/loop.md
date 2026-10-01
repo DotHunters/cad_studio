@@ -41,6 +41,11 @@ Run on every `/loop` tick. Goal: build the MVP in `AGENTS.md` (milestones 1–8)
      - If `gh` isn't installed: push anyway, then log the compare URL `https://github.com/DotHunters/cad_studio/compare/main...<branch>?expand=1` in `PROGRESS.md` so the user can open the PR.
    - **Never merge PRs, force-push, or delete branches.** The user reviews and merges. Start the next milestone's branch from `main` after its PR is merged. If it isn't merged yet, branch from the previous milestone branch and say so in the PR body.
 
+## Tooling pitfalls
+
+- **Backslash escapes get collapsed** by shell heredocs and by the Edit tool: a double backslash (e.g. `\\.` or `\\u003c` inside a TS string) can arrive as a single one. This caused the i18n middleware bug. After writing any regex or string escape, `grep` the line to verify; if it is wrong, rewrite it from Python using `chr(92)` for the backslash. Prefer a unit test that would fail if the escape is lost.
+- Long multi-file heredoc commands sometimes fail with "unexpected EOF"; use the Write tool for new files instead.
+
 ## Hard rules (from AGENTS.md §9, §11, §13)
 
 - Never invent facts about Cad Studio, I. Rukshan, clients, awards, or stats. Use `TODO(owner): …` and add the question to `OPEN_QUESTIONS.md`.
