@@ -572,5 +572,32 @@
     "empty": "Aucun avis ici pour le moment.",
     "writeCta": "Partagez votre expérience",
     "eventOn": "{category} · {date}"
+  },
+  "ReviewForm": {
+    "title": "Votre titre (facultatif)",
+    "intro": "Votre avis est lu par notre équipe avant d’être publié.",
+    "asCompany": "J’écris une recommandation au nom d’une entreprise",
+    "rating": "Votre note",
+    "star": "{count, plural, one {# étoile} other {# étoiles}}",
+    "name": "Votre nom",
+    "nameHint": "Affiché sous la forme prénom et initiale du nom.",
+    "company": "Entreprise",
+    "category": "Service (facultatif)",
+    "body": "Votre avis",
+    "consent": "J’accepte que Cad Studio publie cet avis sur son site.",
+    "submit": "Envoyer l’avis",
+    "sending": "Envoi…",
+    "successTitle": "Merci!",
+    "successBody": "Votre avis apparaîtra une fois vérifié par notre équipe.",
+    "serverError": "Une erreur s’est produite. Veuillez réessayer.",
+    "errors": {
+      "required": "Ce champ est obligatoire.",
+      "ratingRequired": "Choisissez une note de 1 à 5 étoiles.",
+      "bodyTooShort": "Veuillez écrire au moins 20 caractères.",
+      "tooLong": "Ce texte est trop long.",
+      "consentRequired": "Veuillez confirmer pour continuer.",
+      "spam": "Veuillez laisser ce champ vide."
+    },
+    "heading": "Partagez votre <accent>expérience</accent>"
   }
 }

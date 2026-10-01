@@ -331,3 +331,11 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Bugs found by tests: (1) `unstable_cache` returns JSON, so `createdAt` was a string on cache hits → sort crashed; dates are revived in the query wrapper (pitfall added to loop.md). (2) French ratings rendered "4.7" — ICU needs `{rating, number}`; fixed for ratings, hours and km everywhere (incl. the home carousel and quote lines) + a unit test forbidding bare numeric placeholders.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (287) · e2e ✅ (258) · build ✅ · format ✅
 - Next: 6.2 (submit-review form)
+
+### 2026-10-02 — 6.2 Submit-review form
+- Branch: feat/m6-reviews · PR #7 (stacked on #6)
+- Done: "Share your experience" section on `/reviews` — `ReviewForm` (accessible star rating as a radio group, name with "first name + last initial" hint, optional service, review text, publish consent, "on behalf of a company" toggle → recommendation with title + company and no rating, honeypot, success state). `submitReview` server action (input typed `unknown`, validated server-side) always stores PENDING, sets `flagged` via `flagForModeration` (links, shouting, 7+ repeated characters, small EN/FR profanity list with word boundaries), stores locale, notifies the studio. No email is collected (Review has no email field — data minimisation). `src/lib/validators/review.ts` + 17 unit tests.
+- Bugs found by tests: (1) Zod skips `superRefine` when base fields fail, so the rating/company errors only appeared on a second submit → `reviewFieldErrors` re-applies them so all errors show at once; (2) duplicate message key `ReviewForm.title` (section heading vs. "Your title" field) — the second silently overwrote the first; heading is now `ReviewForm.heading`.
+- e2e: pending + not public (§15 scenario 5, first half; approval is 7.5), spam flagged, validation shows all errors, recommendation requires a company.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (304) · e2e ✅ (266) · build ✅ · format ✅
+- Next: 6.3 (verified-client tokens)

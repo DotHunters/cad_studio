@@ -4,6 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
 
 import { ReviewCard } from "@/components/reviews/review-card";
+import { ReviewForm } from "@/components/reviews/review-form";
 import { FilterGroup } from "@/components/site/filter-group";
 import { Accent, SectionHeading } from "@/components/site/section-heading";
 import { StarRating } from "@/components/site/star-rating";
@@ -138,7 +139,19 @@ export default async function ReviewsPage({ params, searchParams }: Props) {
           )}
         </section>
       )}
-      {/* 6.2 adds the "Share your experience" form below. */}
+      <section aria-labelledby="share-title" id="share" className="mt-20 scroll-mt-24">
+        <SectionHeading
+          id="share-title"
+          eyebrow={t("Reviews.writeCta")}
+          title={t.rich("ReviewForm.heading", {
+            accent: (chunks: ReactNode) => <Accent>{chunks}</Accent>,
+          })}
+          intro={t("ReviewForm.intro")}
+        />
+        <div className="mt-8 max-w-3xl">
+          <ReviewForm />
+        </div>
+      </section>
     </div>
   );
 }

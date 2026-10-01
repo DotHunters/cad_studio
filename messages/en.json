@@ -572,5 +572,32 @@
     "empty": "No reviews here yet.",
     "writeCta": "Share your experience",
     "eventOn": "{category} · {date}"
+  },
+  "ReviewForm": {
+    "title": "Your title (optional)",
+    "intro": "Your review is read by our team before it’s published.",
+    "asCompany": "I’m writing a recommendation on behalf of a company",
+    "rating": "Your rating",
+    "star": "{count, plural, one {# star} other {# stars}}",
+    "name": "Your name",
+    "nameHint": "Shown as first name and last initial.",
+    "company": "Company",
+    "category": "Service (optional)",
+    "body": "Your review",
+    "consent": "I agree that Cad Studio may publish this review on its website.",
+    "submit": "Submit review",
+    "sending": "Sending…",
+    "successTitle": "Thank you!",
+    "successBody": "Your review will appear once our team has checked it.",
+    "serverError": "Something went wrong. Please try again.",
+    "errors": {
+      "required": "This field is required.",
+      "ratingRequired": "Choose a rating from 1 to 5 stars.",
+      "bodyTooShort": "Please write at least 20 characters.",
+      "tooLong": "This is too long.",
+      "consentRequired": "Please confirm to continue.",
+      "spam": "Please leave this field empty."
+    },
+    "heading": "Share your <accent>experience</accent>"
   }
 }
