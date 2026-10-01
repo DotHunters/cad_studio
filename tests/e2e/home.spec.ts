@@ -105,7 +105,7 @@ test.describe("home page", () => {
   test("portfolio and reviews are localized in French", async ({ page }) => {
     await page.goto("/fr");
     await expect(page.getByRole("heading", { name: "Mariage au jardin" })).toBeVisible();
-    await expect(page.getByText(/sur 5 selon 3 avis/)).toBeVisible();
+    await expect(page.getByText(/4,7 sur 5 selon 3 avis/)).toBeVisible();
   });
 
   test("final call to action links to quote and booking", async ({ page }) => {

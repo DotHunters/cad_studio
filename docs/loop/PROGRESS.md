@@ -324,3 +324,10 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Done: §15 scenario 4 e2e (`book-blocked.spec.ts`): a date blocked in the DB is disabled in the booking calendar (navigates to next month if needed), can't be selected, and shows as "full" in the public API; serial file, per-project dates. Scenario 2 (book a quote → CAD-B, capacity decreases) was added in 5.4/5.5; scenario 3 (concurrent last slot) is the DB integration test from 5.4. Added the parallel-DB-test rules to `.claude/loop.md` (third time this bit).
 - Checks: lint ✅ · typecheck ✅ · test ✅ (273 incl. integration) · e2e ✅ (248) · build ✅ · format ✅
 - Next: M6 Reviews → 6.1 (branch `feat/m6-reviews`; stack on feat/m5-booking while PRs #4–#6 are open)
+
+### 2026-10-02 — 6.1 Reviews page
+- Branch: feat/m6-reviews (stacked on feat/m5-booking / PR #6)
+- Done: `/[locale]/reviews` — average rating + count, client reviews and recommendations sections, category filter + newest/highest sort as links (`src/lib/review-display.ts`: `customerDisplayName` "Alex Martin" → "Alex M.", `parseReviewFilters`, `applyReviewFilters`, `reviewsHref`; unit tested), empty states, metadata, sitemap. Cached `getPublishedReviews` (APPROVED + consent, samples gated). Shared `ReviewCard` (stars with text label, verified badge, category + month, Sample badge) now also used by the home carousel, which showed full customer names before (against §6.7).
+- Bugs found by tests: (1) `unstable_cache` returns JSON, so `createdAt` was a string on cache hits → sort crashed; dates are revived in the query wrapper (pitfall added to loop.md). (2) French ratings rendered "4.7" — ICU needs `{rating, number}`; fixed for ratings, hours and km everywhere (incl. the home carousel and quote lines) + a unit test forbidding bare numeric placeholders.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (287) · e2e ✅ (258) · build ✅ · format ✅
+- Next: 6.2 (submit-review form)

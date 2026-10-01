@@ -1,5 +1,6 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 
+import { ReviewCard } from "@/components/reviews/review-card";
 import { buttonVariants } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { averageRating } from "@/lib/reviews";
@@ -14,7 +15,11 @@ import { StarRating } from "./star-rating";
  * keeps it keyboard- and touch-friendly without JavaScript.
  */
 export async function ReviewsCarousel() {
-  const [t, { featured, ratings }] = await Promise.all([getTranslations(), getHomeReviews(8)]);
+  const [t, locale, { featured, ratings }] = await Promise.all([
+    getTranslations(),
+    getLocale(),
+    getHomeReviews(8),
+  ]);
   if (featured.length === 0) return null;
 
   const average = averageRating(ratings);
@@ -43,32 +48,8 @@ export async function ReviewsCarousel() {
         className="focus-visible:ring-ring mx-auto mt-12 flex max-w-7xl snap-x snap-mandatory gap-5 overflow-x-auto px-4 pb-4 focus-visible:ring-2 focus-visible:outline-none sm:px-6"
       >
         {featured.map((review) => (
-          <li
-            key={review.id}
-            className="bg-card flex w-[85%] shrink-0 snap-start flex-col rounded-xl border p-6 shadow-sm sm:w-[360px]"
-          >
-            <figure className="flex h-full flex-col">
-              {review.rating !== null && (
-                <StarRating
-                  rating={review.rating}
-                  label={t("Home.starsLabel", { rating: review.rating })}
-                />
-              )}
-              <blockquote className="mt-4 flex-1 leading-relaxed">“{review.body}”</blockquote>
-              <figcaption className="border-border mt-6 border-t pt-4">
-                <p className="font-heading text-lg">{review.authorName}</p>
-                {(review.authorTitle || review.company) && (
-                  <p className="text-muted-foreground text-xs tracking-[0.15em] uppercase">
-                    {[review.authorTitle, review.company].filter(Boolean).join(" · ")}
-                  </p>
-                )}
-                {review.isSample && (
-                  <span className="bg-gold-button text-ink mt-2 inline-block rounded-full px-2.5 py-0.5 text-[0.6rem] font-semibold tracking-[0.15em] uppercase">
-                    {t("Home.sampleBadge")}
-                  </span>
-                )}
-              </figcaption>
-            </figure>
+          <li key={review.id} className="w-[85%] shrink-0 snap-start sm:w-[360px]">
+            <ReviewCard review={review} locale={locale} />
           </li>
         ))}
       </ul>
