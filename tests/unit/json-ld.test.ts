@@ -4,6 +4,7 @@ import {
   businessJsonLd,
   imageGalleryJsonLd,
   personJsonLd,
+  reviewsJsonLd,
   serializeJsonLd,
   serviceJsonLd,
 } from "@/lib/seo/json-ld";
@@ -123,5 +124,58 @@ describe("imageGalleryJsonLd", () => {
       images,
     });
     expect(ld.image).toHaveLength(30);
+  });
+});
+
+describe("reviewsJsonLd", () => {
+  const review = (overrides: Partial<Parameters<typeof reviewsJsonLd>[0]["reviews"][number]>) => ({
+    type: "CUSTOMER" as const,
+    authorName: "Alex Martin",
+    rating: 5,
+    body: "Wonderful day.",
+    isSample: false,
+    createdAt: new Date("2026-06-01T12:00:00Z"),
+    ...overrides,
+  });
+
+  it("emits the average and reviews with first name + last initial", () => {
+    const ld = reviewsJsonLd({
+      baseUrl: base,
+      locale: "fr",
+      reviews: [review({}), review({ rating: 4, createdAt: new Date("2026-07-01T12:00:00Z") })],
+    });
+    expect(ld).toMatchObject({
+      "@type": "ProfessionalService",
+      url: `${base}/fr/reviews`,
+      aggregateRating: { ratingValue: 4.5, reviewCount: 2, bestRating: 5, worstRating: 1 },
+    });
+    expect(ld?.review[0]).toEqual({
+      "@type": "Review",
+      author: { "@type": "Person", name: "Alex M." },
+      datePublished: "2026-07-01",
+      reviewBody: "Wonderful day.",
+      reviewRating: { "@type": "Rating", ratingValue: 4, bestRating: 5 },
+    });
+  });
+
+  it("never includes sample reviews or unrated recommendations", () => {
+    const ld = reviewsJsonLd({
+      baseUrl: base,
+      locale: "en",
+      reviews: [
+        review({}),
+        review({ isSample: true, rating: 1 }),
+        review({ type: "RECOMMENDATION", rating: null }),
+      ],
+    });
+    expect(ld?.aggregateRating).toMatchObject({ ratingValue: 5, reviewCount: 1 });
+    expect(ld?.review).toHaveLength(1);
+  });
+
+  it("is null without real rated reviews", () => {
+    expect(reviewsJsonLd({ baseUrl: base, locale: "en", reviews: [] })).toBeNull();
+    expect(
+      reviewsJsonLd({ baseUrl: base, locale: "en", reviews: [review({ isSample: true })] }),
+    ).toBeNull();
   });
 });

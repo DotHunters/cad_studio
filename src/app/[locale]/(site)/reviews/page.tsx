@@ -5,12 +5,15 @@ import type { ReactNode } from "react";
 
 import { ReviewCard } from "@/components/reviews/review-card";
 import { ReviewForm } from "@/components/reviews/review-form";
+import { JsonLd } from "@/components/site/json-ld";
 import { FilterGroup } from "@/components/site/filter-group";
 import { Accent, SectionHeading } from "@/components/site/section-heading";
 import { StarRating } from "@/components/site/star-rating";
+import { siteConfig } from "@/config/site";
 import { categorySlugs } from "@/lib/categories";
 import { applyReviewFilters, parseReviewFilters, reviewsHref } from "@/lib/review-display";
 import { averageRating } from "@/lib/reviews";
+import { reviewsJsonLd } from "@/lib/seo/json-ld";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { getPublishedReviews } from "@/server/queries/reviews";
 import { getVerifiedBooking } from "@/server/review-links";
@@ -57,8 +60,11 @@ export default async function ReviewsPage({ params, searchParams }: Props) {
     sort: "newest",
   });
 
+  const structuredData = reviewsJsonLd({ baseUrl: siteConfig.url, locale, reviews });
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
+      {structuredData && <JsonLd data={structuredData} />}
       <SectionHeading
         as="h1"
         align="center"

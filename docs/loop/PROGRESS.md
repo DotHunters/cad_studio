@@ -346,3 +346,10 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - e2e: verified via signed link (+ second use rejected), expired and tampered links unverified, non-completed booking rejected.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (306) · e2e ✅ (272) · build ✅ · format ✅
 - Next: 6.4 (AggregateRating/Review JSON-LD)
+
+### 2026-10-02 — 6.4 Review structured data — **M6 Reviews complete**
+- Branch: feat/m6-reviews · PR #7 (stacked on #6)
+- Done: `reviewsJsonLd` in `src/lib/seo/json-ld.ts` → `ProfessionalService` with `AggregateRating` (average, count, best/worst) and up to 20 newest `Review`s (author as first name + last initial, date, body, rating) on `/reviews`. Built from approved reviews only (the query already filters APPROVED + consent); **sample reviews are always excluded**, as are unrated recommendations, so search engines never see invented ratings. No markup at all until there's a real rated review.
+- e2e: with sample-only data the reviews page shows the average but emits no rating markup. A "real approved review appears in JSON-LD" e2e needs cache revalidation from the admin approve action — add it with 7.5 (§15 scenario 5, second half).
+- Checks: lint ✅ · typecheck ✅ · test ✅ (309) · e2e (seo + reviews) ✅ · build ✅ · format ✅
+- Next: M7 Admin (7.1 Auth.js), new branch `feat/m7-admin` stacked on `feat/m6-reviews`

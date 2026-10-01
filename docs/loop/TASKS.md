@@ -69,7 +69,7 @@ Legend: `[ ]` todo · `[x]` done · `BLOCKED(Q#)` waiting on `OPEN_QUESTIONS.md`
 - [x] 6.1 `/reviews`: customer reviews and recommendations sections, average rating, filter and sort. — §6.7
 - [x] 6.2 Submit-review form: always saved as `PENDING`, consent required, spam/profanity flag. — §6.7, §8.4
 - [x] 6.3 Verified-client tokens from completed bookings. — §6.7, §11
-- [ ] 6.4 `AggregateRating` and `Review` JSON-LD for approved reviews only. — §6.7, §10
+- [x] 6.4 `AggregateRating` and `Review` JSON-LD for approved reviews only. — §6.7, §10
 
 ## M7 — Admin · branch `feat/m7-admin`
 

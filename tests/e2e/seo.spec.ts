@@ -77,4 +77,13 @@ test.describe("SEO", () => {
     expect(project).toMatchObject({ "@type": "ImageGallery", name: "Annual Leadership Summit" });
     expect((project.image as unknown[]).length).toBe(6);
   });
+
+  test("reviews page never publishes sample ratings as structured data", async ({ page }) => {
+    // Sample reviews are visible in dev/preview, but rating markup is only built from real
+    // approved reviews (unit-tested in json-ld.test.ts).
+    await page.goto("/en/reviews");
+    await expect(page.getByTestId("reviews-summary")).toContainText("out of 5");
+    const ratings = (await jsonLd(page)).filter((block) => "aggregateRating" in block);
+    expect(ratings).toEqual([]);
+  });
 });
