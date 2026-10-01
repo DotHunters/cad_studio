@@ -114,20 +114,23 @@ test.describe("booking wizard", () => {
 
   // AGENTS.md §15 scenario 2.
   test("books a quote; the date's capacity decreases", async ({ page, request }, testInfo) => {
+    // Each project gets its own Wednesday so parallel runs don't share capacity.
+    const date = testInfo.project.name === "mobile" ? "2027-06-16" : "2027-06-09";
     await queryDb(
-      `delete from "Booking" where "startAt" >= '2027-06-09' and "startAt" < '2027-06-11'
+      `delete from "Booking" where "startAt"::date between $1::date and $1::date + 1
          and "customerId" in (select id from "Customer" where email like 'e2e-%')`,
+      [date],
     );
     const status = async () => {
       const body = (await (await request.get("/api/availability?month=2027-06")).json()) as {
         days: Array<{ date: string; status: string }>;
       };
-      return body.days.find((day) => day.date === "2027-06-09")?.status;
+      return body.days.find((day) => day.date === date)?.status;
     };
     expect(await status()).toBe("available");
 
     await open(page, "/en/quote?package=wedding");
-    await page.getByLabel("Event date").fill("2027-06-09");
+    await page.getByLabel("Event date").fill(date);
     await page.getByLabel("Name", { exact: true }).fill("Quote To Booking");
     await page.getByLabel("Email", { exact: true }).fill(emailFor(testInfo));
     await page.getByRole("button", { name: "Get my quote" }).click();

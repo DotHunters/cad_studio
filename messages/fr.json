@@ -406,7 +406,17 @@
     "eventLine": "{category} · {date} à {time} · {hours} h",
     "expires": "Ce devis est valide jusqu’au {date}.",
     "cta": "Réserver cette date",
-    "footer": "Cad Studio · Scarborough, Toronto · Vous recevez ce courriel parce que vous avez demandé un devis sur notre site."
+    "footer": "Cad Studio · Scarborough, Toronto · Vous recevez ce courriel parce que vous avez demandé un devis sur notre site.",
+    "bookingSubject": "Demande de réservation reçue — {reference}",
+    "bookingPreview": "Votre date du {date} est retenue le temps de régler votre acompte.",
+    "bookingHeading": "Votre demande de réservation est reçue",
+    "bookingIntro": "Merci d’avoir choisi Cad Studio. Votre date est retenue le temps de régler votre acompte.",
+    "bookingStatus": "En attente — acompte à recevoir",
+    "bookingCta": "Voir votre réservation",
+    "icsNote": "Une invitation de calendrier est jointe.",
+    "icsSummary": "Cad Studio — {category}",
+    "icsDescription": "Réservation {reference} (acompte en attente). Voir : {url}",
+    "bookingFooter": "Cad Studio · Scarborough, Toronto · Vous recevez ce courriel parce que vous avez demandé une réservation sur notre site."
   },
   "QuoteResult": {
     "metaTitle": "Votre devis",

@@ -406,7 +406,17 @@
     "eventLine": "{category} · {date} at {time} · {hours} h",
     "expires": "This quote is valid until {date}.",
     "cta": "Book this date",
-    "footer": "Cad Studio · Scarborough, Toronto · You received this email because you requested a quote on our website."
+    "footer": "Cad Studio · Scarborough, Toronto · You received this email because you requested a quote on our website.",
+    "bookingSubject": "Booking request received — {reference}",
+    "bookingPreview": "Your date {date} is held while we arrange your deposit.",
+    "bookingHeading": "Your booking request is in",
+    "bookingIntro": "Thank you for choosing Cad Studio. Your date is held while we arrange your deposit.",
+    "bookingStatus": "Pending — awaiting deposit",
+    "bookingCta": "View your booking",
+    "icsNote": "A calendar invitation is attached.",
+    "icsSummary": "Cad Studio — {category}",
+    "icsDescription": "Booking {reference} (pending deposit). View: {url}",
+    "bookingFooter": "Cad Studio · Scarborough, Toronto · You received this email because you requested a booking on our website."
   },
   "QuoteResult": {
     "metaTitle": "Your quote",

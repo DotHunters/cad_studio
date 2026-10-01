@@ -296,3 +296,10 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Found while testing: per-worker `afterAll` cleanup deleted another test's booking mid-run → per-test emails + `afterEach` cleanup.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (252 incl. 2 integration) · e2e ✅ (232) · build ✅ · format ✅
 - Next: 5.5 (booking emails + .ics)
+
+### 2026-10-02 — 5.5 Booking emails + .ics
+- Branch: feat/m5-booking · PR #6
+- Done: `src/lib/ics.ts` — RFC 5545 VEVENT builder (UTC times, TEXT escaping, CRLF lines, 75-octet folding without splitting multi-byte characters, TENTATIVE while pending, SEQUENCE for future reschedules); 8 tests. React Email `booking-request.tsx` (reference, status, when, package, total, deposit, payment method, next steps for bank transfer vs cash, calendar note, "View your booking" signed link). `src/server/emails/booking-emails.ts` sends it in the client's locale + a plain-text studio notification (reply-to client; reminds the studio to send the payment request), both with `CAD-B-….ics` attached. `sendEmail` supports attachments. `createBooking` sends after the booking is saved (best-effort, logged on failure).
+- Test fixes: §15 scenario 2 now uses a different Wednesday per Playwright project (desktop and mobile raced on one date's capacity); the blur-placeholder test holds `/_next/image` responses so the pre-load state is observable (was timing-dependent) — verified with `--repeat-each=3`.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (262) · e2e ✅ (232; server log shows client + studio booking emails built per booking) · build ✅ · format ✅
+- Next: 5.6 (signed reschedule/cancel links)

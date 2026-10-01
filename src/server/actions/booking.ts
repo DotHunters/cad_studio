@@ -7,7 +7,9 @@ import { studioDateKey } from "@/lib/dates";
 import { signValue } from "@/lib/signing";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { type BookingRequestInput, bookingRequestSchema } from "@/lib/validators/booking";
+import { localize } from "@/lib/localize";
 import { placeBooking } from "@/server/booking/place-booking";
+import { sendBookingEmails } from "@/server/emails/booking-emails";
 import { linkSecret } from "@/server/link-secret";
 
 export type CreateBookingResult =
@@ -46,11 +48,32 @@ export async function createBooking(
         ? { ok: false, error: "unavailable" }
         : { ok: false, error: "validation", fieldErrors: { category: "required" } };
     }
-    return {
-      ok: true,
-      reference: result.reference,
-      token: signValue(`booking:${result.reference}`, linkSecret()),
-    };
+    const request = parsed.data;
+    const token = signValue(`booking:${result.reference}`, linkSecret());
+    // Emails are best-effort: the booking is saved and the client sees its page.
+    try {
+      await sendBookingEmails({
+        reference: result.reference,
+        token,
+        locale,
+        customer: { name: request.name, email: request.email, phone: request.phone },
+        category: request.category.toUpperCase(),
+        packageName: localize(result.packageName, result.packageNameFr, locale),
+        startAt: result.startAt,
+        endAt: result.endAt,
+        venue: [request.venue, request.city].filter(Boolean).join(", ") || undefined,
+        photographers: request.photographers,
+        guestCount: request.guestCount,
+        notes: request.notes,
+        totalCents: result.price.totalCents,
+        depositCents: result.price.depositCents,
+        paymentMethod: request.paymentMethod,
+        fromQuote: result.quoteReference,
+      });
+    } catch (error) {
+      console.error(`[booking] ${result.reference} saved but emails failed`, error);
+    }
+    return { ok: true, reference: result.reference, token };
   } catch (error) {
     console.error("[booking] failed to create booking", error);
     return { ok: false, error: "server" };
