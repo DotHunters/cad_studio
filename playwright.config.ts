@@ -28,6 +28,10 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,
     // Seeded sample clients/reviews fill the home page sections under test.
-    env: { SHOW_SAMPLE_CONTENT: "true", CRON_SECRET: "e2e-cron-secret" },
+    env: {
+      SHOW_SAMPLE_CONTENT: "true",
+      CRON_SECRET: "e2e-cron-secret",
+      AUTH_SECRET: "e2e-auth-secret-not-for-production-use-0000",
+    },
   },
 });

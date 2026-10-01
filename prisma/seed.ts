@@ -102,10 +102,22 @@ async function seedSamples() {
   });
 }
 
+/** First admin account (AGENTS.md §6.10). Nobody can sign up; more staff are added in admin. */
+async function seedAdmin() {
+  const email = process.env.SEED_ADMIN_EMAIL?.trim().toLowerCase();
+  if (!email) return;
+  await db.user.upsert({
+    where: { email },
+    update: { role: "ADMIN", isActive: true },
+    create: { email, role: "ADMIN" },
+  });
+}
+
 async function main() {
   await seedCatalogue();
   await seedSettings();
   await seedSamples();
+  await seedAdmin();
   console.info("Seed complete.");
 }
 

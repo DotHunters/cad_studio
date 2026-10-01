@@ -542,6 +542,7 @@ See `.env.example` (source of truth, with comments). Summary:
 DATABASE_URL=
 AUTH_SECRET=
 AUTH_RESEND_KEY=
+SEED_ADMIN_EMAIL=                    # first ADMIN user, created by pnpm db:seed (sign-in is magic link only)
 RESEND_API_KEY=
 EMAIL_FROM="Cad Studio <bookings@cadstudio.example>"   # dummy domain until owner provides one
 ADMIN_NOTIFY_EMAIL=

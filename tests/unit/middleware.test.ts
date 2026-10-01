@@ -27,4 +27,8 @@ describe("middleware matcher", () => {
   ])("skips %s", (path) => {
     expect(matcher.test(path)).toBe(false);
   });
+
+  it("also runs on the admin area so it can be guarded", () => {
+    expect(config.matcher).toEqual(expect.arrayContaining(["/admin", "/admin/:path*"]));
+  });
 });

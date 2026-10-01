@@ -353,3 +353,13 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - e2e: with sample-only data the reviews page shows the average but emits no rating markup. A "real approved review appears in JSON-LD" e2e needs cache revalidation from the admin approve action — add it with 7.5 (§15 scenario 5, second half).
 - Checks: lint ✅ · typecheck ✅ · test ✅ (309) · e2e (seo + reviews) ✅ · build ✅ · format ✅
 - Next: M7 Admin (7.1 Auth.js), new branch `feat/m7-admin` stacked on `feat/m6-reviews`
+
+### 2026-10-02 — 7.1 Admin auth
+- Branch: feat/m7-admin · PR #8 (stacked on #7 — M3–M6 PRs not merged yet)
+- Done: Auth.js v5 (`next-auth@5.0.0-beta.32`, `@auth/prisma-adapter`) in `src/auth.ts` — email magic link (Resend provider, 15-min single-use links, sent through `sendEmail`; printed to the server log when no email key in dev/test), database sessions (7 days). Migration `20261003000000_admin_auth` adds `User` (role `ADMIN`/`STAFF`, `isActive`), `Account`, `Session`, `VerificationToken`. **No sign-up**: only existing active users get a link; unknown addresses see the same "check your email" page and nothing is sent (no account discovery). `pnpm db:seed` creates the first ADMIN from `SEED_ADMIN_EMAIL` (Q17).
+- Access: middleware redirects to `/admin/sign-in?callbackUrl=…` without a session cookie (cheap, edge); `(panel)/layout.tsx` and every page call `requireAdminPage(role)`; actions call `requireRole(role)` (throws `ForbiddenError`). Pure rules in `src/lib/auth/roles.ts` (`hasRole` — ADMIN ⊇ STAFF, `adminGuardRedirect`, `safeCallbackUrl` against open redirects) + 17 unit tests. Deactivating a user ends access on the next request. Admin root layout is English-only, `noindex`.
+- e2e (scenario 7 + more): redirect with callback, forged cookie rejected, noindex, links only for known users (same page for strangers), real magic-link callback with an Auth.js-hashed token (single use), staff session + sign out deletes the session, deactivated user loses access.
+- Not yet: rate limiting / Turnstile on the sign-in form (8.3); dashboard content (7.2).
+- Checks: lint ✅ · typecheck ✅ · test ✅ (327) · e2e ✅ (288) · build ✅ · format ✅
+- Next: 7.2 Dashboard
+
