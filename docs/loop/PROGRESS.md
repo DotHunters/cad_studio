@@ -274,3 +274,9 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Found while testing: raw SQL fixtures must convert to UTC explicitly — the local Postgres session time zone is Asia/Colombo, and casting `timestamptz` → `timestamp` used it. App writes go through Prisma (UTC) and are unaffected; noted for future raw SQL.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (227) · e2e ✅ (216) · build ✅ · format ✅
 - Next: 5.3 (/book stepper)
+
+### 2026-10-02 — 5.3a Booking schema (5.3 split into a/b)
+- Branch: feat/m5-booking · PR #6
+- Done (TDD): `src/lib/validators/booking.ts` — `bookingDetailsSchema` (category/package, real date, start + end on half-hour steps with end after start → derived `durationHours`, 1–10 photographers, guests, venue/city/province/distance or international → INTL, notes ≤ 2000, add-ons), `bookingContactSchema` (name/email/phone, deposit method BANK_TRANSFER | CASH, required terms + privacy consent, CASL opt-in default false, honeypot), `bookingRequestSchema` (+ optional `quoteReference`/`quoteToken`), `durationFromTimes`. 10 tests. Installed react-day-picker 10 (calendar for 5.3b).
+- Checks: lint ✅ · typecheck ✅ · test ✅ (237) · format ✅
+- Next: 5.3b
