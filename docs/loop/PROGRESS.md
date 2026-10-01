@@ -154,3 +154,10 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (88) · e2e ✅ (102) · build ✅ · format ✅
 - Notes: no `RESEND_API_KEY` locally → enquiries are logged, not sent. Rate limiting is 8.1. Admin email is plain text; client-facing React Email templates come with quotes/bookings (4.6/5.5).
 - Next: 2.7
+
+### 2026-10-01 — 2.7 Privacy & Terms
+- Branch: feat/m2-content · PR #2
+- Done: `/[locale]/privacy` and `/[locale]/terms` rendered from `content/legal/{privacy,terms}.{en,fr}.md` (editable without code) via `LegalPage` (react-markdown with `skipHtml`, locale-aware internal links, styled headings/lists), "Last updated" date per doc, visible draft notice until `LEGAL_REVIEWED=true` (new flag + `.env.example`). Privacy covers PIPEDA (purposes, consent, safeguards, access/correction/deletion via the contact form's privacy request, 30-day response, OPC), Québec Law 25 (privacy officer, portability, CAI), CASL (unchecked opt-in, consent timestamp, unsubscribe, transactional exemption), photo/review consent, providers + cross-border note, essential cookies only. Terms reflect the spec's flows (estimates, booking confirmed on deposit, offline payment instructions, release of unpaid holds, reschedule/cancel link, copyright, review moderation, Ontario law).
+- Unknowns are `<!-- TODO(owner/legal) -->` comments (never rendered) → new Q15 lists everything legal must decide.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (98; incl. EN/FR section parity, no visible TODOs, §9 coverage) · e2e ✅ (110) · build ✅ · format ✅
+- Next: 2.8

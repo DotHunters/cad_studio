@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest";
 
-import { shouldShowPricingBanner, shouldShowSampleContent } from "@/lib/flags";
+import {
+  shouldShowLegalDraftNotice,
+  shouldShowPricingBanner,
+  shouldShowSampleContent,
+} from "@/lib/flags";
 
 describe("shouldShowPricingBanner", () => {
   it("shows while pricing is unconfirmed", () => {
@@ -35,5 +39,12 @@ describe("shouldShowSampleContent", () => {
     expect(shouldShowSampleContent({ SHOW_SAMPLE_CONTENT: "true", VERCEL_ENV: "production" })).toBe(
       false,
     );
+  });
+});
+
+describe("shouldShowLegalDraftNotice", () => {
+  it("shows until legal review is confirmed", () => {
+    expect(shouldShowLegalDraftNotice({})).toBe(true);
+    expect(shouldShowLegalDraftNotice({ LEGAL_REVIEWED: "true" })).toBe(false);
   });
 });

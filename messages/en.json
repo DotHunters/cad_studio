@@ -240,5 +240,14 @@
     "emailLabel": "Email",
     "serviceAreaLabel": "Service area",
     "quoteCta": "Get an instant quote"
+  },
+  "Legal": {
+    "privacyTitle": "Privacy policy",
+    "privacyDescription": "How Cad Studio collects, uses and protects your personal information under PIPEDA, Québec Law 25 and CASL.",
+    "termsTitle": "Terms of service",
+    "termsDescription": "Terms for using the Cad Studio website and booking our photography services.",
+    "lastUpdated": "Last updated {date}",
+    "draftNotice": "Draft — this page is pending legal review and may change before launch.",
+    "eyebrow": "Legal"
   }
 }

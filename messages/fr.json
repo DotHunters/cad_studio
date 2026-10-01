@@ -240,5 +240,14 @@
     "emailLabel": "Courriel",
     "serviceAreaLabel": "Zone desservie",
     "quoteCta": "Obtenir un devis instantané"
+  },
+  "Legal": {
+    "privacyTitle": "Politique de confidentialité",
+    "privacyDescription": "Comment Cad Studio recueille, utilise et protège vos renseignements personnels en vertu de la LPRPDE, de la Loi 25 du Québec et de la LCAP.",
+    "termsTitle": "Conditions d’utilisation",
+    "termsDescription": "Conditions d’utilisation du site Cad Studio et de réservation de nos services de photographie.",
+    "lastUpdated": "Dernière mise à jour : {date}",
+    "draftNotice": "Ébauche — cette page est en attente d’une révision juridique et peut changer avant le lancement.",
+    "eyebrow": "Juridique"
   }
 }
