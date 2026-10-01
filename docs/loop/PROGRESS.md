@@ -61,3 +61,10 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ · build ✅ · format ✅
 - Next: 1.7 (Prisma) — needs a Postgres for `migrate dev`; will use local Docker or generate migration SQL offline if unavailable.
 - Next: 1.7
+
+### 2026-10-01 — 1.7 Prisma schema
+- Branch: feat/m1-foundation
+- Done: Prisma 7.10 (pinned stable; npm `latest` is an 8.0 RC) with `prisma.config.ts` (loads `.env.local`), `prisma-client` generator → `src/generated/prisma` (gitignored, `postinstall` generates), `@prisma/adapter-pg`. Full schema for all §7 models + relations, `*Fr` columns, FAQs, consent/sample flags, `ReferenceCounter`, indexes. `src/lib/db.ts` server-only singleton. Scripts `db:generate`, `db:migrate`, `db:deploy`, `db:seed`, `db:studio`. Initial migration `20261001000000_init` (14 tables) generated offline with `prisma migrate diff`.
+- Checks: lint ✅ · typecheck ✅ · test ✅ · build ✅ · format ✅ · `prisma validate` ✅
+- Blockers: **no Postgres on this machine** (no Docker/psql) — migration not yet applied to a real DB. Need `DATABASE_URL` (local Postgres or Neon/Supabase) in `.env.local` to run `pnpm db:deploy` + seed.
+- Next: 1.8

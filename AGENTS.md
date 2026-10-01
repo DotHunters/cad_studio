@@ -239,6 +239,8 @@ pnpm db:studio        # Prisma Studio
 
 ## 7. Data model (Prisma, summary)
 
+> **Source of truth: `prisma/schema.prisma`** (Prisma 7, `prisma-client` generator → `src/generated/prisma`, `@prisma/adapter-pg`). The schema adds to this summary: relations, `*Fr` columns, `Package.faqs`, `AddOnUnit` enum, `Locale` enum, consent flags on `PortfolioProject`/`Image`, `Review.logoPermission`/`flagged`/`locale`, `ReferenceCounter` for `CAD-Q/B-YYYY-####`, `Customer.marketingConsentAt`, timestamps and indexes. Auth.js tables come with task 7.1, `AuditLog` with 7.9.
+
 ```prisma
 enum Category { CORPORATE WEDDING FAMILY GATHERING PROFESSIONAL PRODUCT }
 enum BookingStatus { PENDING CONFIRMED COMPLETED CANCELLED }
