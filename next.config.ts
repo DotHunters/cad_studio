@@ -9,6 +9,8 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       // Placeholder images until the owner uploads real work.
       { protocol: "https", hostname: "placehold.co" },
+      // Cloudinary images use a custom loader; allowed here for any direct use.
+      { protocol: "https", hostname: "res.cloudinary.com" },
     ],
   },
 };

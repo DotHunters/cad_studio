@@ -39,6 +39,7 @@ Run on every `/loop` tick. Goal: build the MVP in `AGENTS.md` (milestones 1–8)
    - Open **one PR per milestone** against `main` once the branch has its first commit. Title it `M<N>: <Milestone name>`. In the body, list the milestone's tasks as a checklist and keep it updated.
      - If `gh` is available: `gh pr create` / `gh pr edit`. On this machine, if `gh` is not on PATH, use `"/c/Program Files/GitHub CLI/gh.exe"` (authenticated).
      - If `gh` isn't installed: push anyway, then log the compare URL `https://github.com/DotHunters/cad_studio/compare/main...<branch>?expand=1` in `PROGRESS.md` so the user can open the PR.
+   - Before pushing to a milestone branch, check its PR is still open. If the owner already merged it, open a follow-up PR (`gh pr create --base main --head <branch>`) for any commits not yet in `main` (`git log main..<branch>`).
    - **Never merge PRs, force-push, or delete branches.** The user reviews and merges. Start the next milestone's branch from `main` after its PR is merged. If it isn't merged yet, branch from the previous milestone branch and say so in the PR body.
 
 ## Tooling pitfalls

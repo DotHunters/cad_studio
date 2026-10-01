@@ -2,6 +2,8 @@
  * Placeholder images until real work is uploaded (AGENTS.md §13). Uses placehold.co PNGs
  * in brand colours. Cloudinary delivery arrives with task 3.1.
  */
+import { cloudinaryUrl, solidBlurDataUrl } from "./cloudinary";
+
 const PLACEHOLDER_HOST = "https://placehold.co";
 
 type PlaceholderOptions = {
@@ -32,16 +34,33 @@ export type StoredImage = { publicId: string; width: number; height: number };
 const PLACEHOLDER_PREFIX = "placeholder/";
 const PLACEHOLDER_SHADES = ["1c1c1c", "231d16", "1a1a1a", "2a2118", "181818"];
 
+export function isPlaceholderId(publicId: string): boolean {
+  return publicId.startsWith(PLACEHOLDER_PREFIX);
+}
+
+function placeholderShade(publicId: string): string {
+  const index = Number(publicId.match(/-(\d+)$/)?.[1] ?? 0);
+  return PLACEHOLDER_SHADES[index % PLACEHOLDER_SHADES.length];
+}
+
+/** Blur placeholder matching a seeded placeholder image's shade. */
+export function placeholderBlur(publicId: string): string {
+  return solidBlurDataUrl(placeholderShade(publicId));
+}
+
 /**
- * URL for a stored image. Seeded samples use `placeholder/<slug>-<n>` ids and render as blank
- * brand-toned placeholders; real Cloudinary delivery is added in task 3.1.
+ * Full-size URL for a stored image (for Open Graph, JSON-LD and other non-<img> uses).
+ * Seeded samples use `placeholder/<slug>-<n>` ids and render as blank brand-toned
+ * placeholders; real ids are delivered by Cloudinary.
  */
-export function storedImageSrc(image: StoredImage): string {
-  if (image.publicId.startsWith(PLACEHOLDER_PREFIX)) {
-    const index = Number(image.publicId.match(/-(\d+)$/)?.[1] ?? 0);
-    const background = PLACEHOLDER_SHADES[index % PLACEHOLDER_SHADES.length];
-    return placeholderImage(image.width, image.height, { background });
+export function storedImageSrc(
+  image: StoredImage,
+  cloudName: string = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ?? "",
+): string {
+  if (isPlaceholderId(image.publicId)) {
+    return placeholderImage(image.width, image.height, {
+      background: placeholderShade(image.publicId),
+    });
   }
-  // TODO(3.1): Cloudinary URL with transformations.
-  throw new Error(`Cloudinary images are not wired up yet (task 3.1): ${image.publicId}`);
+  return cloudinaryUrl(image.publicId, { cloudName });
 }

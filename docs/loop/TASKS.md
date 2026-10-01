@@ -34,7 +34,7 @@ Legend: `[ ]` todo · `[x]` done · `BLOCKED(Q#)` waiting on `OPEN_QUESTIONS.md`
 
 ## M3 — Portfolio & Gallery · branch `feat/m3-portfolio-gallery`
 
-- [ ] 3.1 Cloudinary integration: image helper, `next/image` loader, blur placeholders, AVIF/WebP. — §2, §6.4, §10
+- [x] 3.1 Cloudinary integration: image helper, `next/image` loader, blur placeholders, AVIF/WebP. — §2, §6.4, §10
 - [ ] 3.2 Portfolio list: cards with Local/Global badge; filters for category, reach and year. — §6.3
 - [ ] 3.3 Portfolio detail `/portfolio/[slug]`: story, approach, image set, optional quote, CTA. — §6.3
 - [ ] 3.4 Gallery grid: masonry/justified, lazy load, load more, category and tag filters. — §6.4

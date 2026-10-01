@@ -1,16 +1,15 @@
 import { ArrowUpRight } from "lucide-react";
-import Image from "next/image";
 import { getLocale, getTranslations } from "next-intl/server";
 
 import { buttonVariants } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { slugFromCategory } from "@/lib/categories";
-import { storedImageSrc } from "@/lib/images";
 import { localize } from "@/lib/localize";
 import { cn } from "@/lib/utils";
 import { getFeaturedProjects } from "@/server/queries/home";
 
 import { Accent, SectionHeading } from "./section-heading";
+import { StoredImage } from "./stored-image";
 
 export async function FeaturedPortfolio() {
   const [t, locale, projects] = await Promise.all([
@@ -49,8 +48,8 @@ export async function FeaturedPortfolio() {
               <Link href={`/portfolio/${project.slug}`} className="group block">
                 <div className="bg-muted relative aspect-[4/5] overflow-hidden rounded-lg">
                   {project.cover && (
-                    <Image
-                      src={storedImageSrc(project.cover)}
+                    <StoredImage
+                      image={project.cover}
                       alt={localize(project.cover.alt, project.cover.altFr, locale)}
                       fill
                       sizes="(min-width: 768px) 33vw, 100vw"

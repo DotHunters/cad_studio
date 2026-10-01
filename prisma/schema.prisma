@@ -271,6 +271,8 @@ model Image {
   publicId         String            @unique
   width            Int
   height           Int
+  /// Tiny base64 preview for next/image placeholder="blur"; generated at upload (7.4).
+  blurDataUrl      String?
   /// Required, descriptive.
   alt              String
   altFr            String?

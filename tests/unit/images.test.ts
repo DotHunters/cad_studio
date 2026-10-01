@@ -36,7 +36,15 @@ describe("storedImageSrc", () => {
     expect(a).not.toBe(b);
   });
 
-  it("refuses real ids until Cloudinary is wired up", () => {
-    expect(() => storedImageSrc({ publicId: "cad/real", width: 10, height: 10 })).toThrow(/3\.1/);
+  it("delivers real ids through Cloudinary", () => {
+    expect(storedImageSrc({ publicId: "cad/real", width: 10, height: 10 }, "demo")).toBe(
+      "https://res.cloudinary.com/demo/image/upload/f_auto,q_auto/cad/real",
+    );
+  });
+
+  it("needs a cloud name for real ids", () => {
+    expect(() => storedImageSrc({ publicId: "cad/real", width: 10, height: 10 }, "")).toThrow(
+      /NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME/,
+    );
   });
 });
