@@ -35,7 +35,7 @@ Legend: `[ ]` todo · `[x]` done · `BLOCKED(Q#)` waiting on `OPEN_QUESTIONS.md`
 ## M3 — Portfolio & Gallery · branch `feat/m3-portfolio-gallery`
 
 - [x] 3.1 Cloudinary integration: image helper, `next/image` loader, blur placeholders, AVIF/WebP. — §2, §6.4, §10
-- [ ] 3.2 Portfolio list: cards with Local/Global badge; filters for category, reach and year. — §6.3
+- [x] 3.2 Portfolio list: cards with Local/Global badge; filters for category, reach and year. — §6.3
 - [ ] 3.3 Portfolio detail `/portfolio/[slug]`: story, approach, image set, optional quote, CTA. — §6.3
 - [ ] 3.4 Gallery grid: masonry/justified, lazy load, load more, category and tag filters. — §6.4
 - [ ] 3.5 Accessible lightbox: ←/→/Esc, swipe, focus trap, alt text on demand. Add the e2e test (scenario 6). — §6.4, §15

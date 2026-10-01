@@ -249,5 +249,22 @@
     "lastUpdated": "Last updated {date}",
     "draftNotice": "Draft — this page is pending legal review and may change before launch.",
     "eyebrow": "Legal"
+  },
+  "Portfolio": {
+    "metaTitle": "Portfolio",
+    "metaDescription": "Selected wedding, corporate, family, portrait and product photography by Cad Studio — in Toronto and around the world.",
+    "eyebrow": "Portfolio",
+    "title": "Stories we've <accent>told</accent>",
+    "intro": "Case studies from local celebrations to projects around the world.",
+    "filtersLabel": "Filter case studies",
+    "category": "Category",
+    "reach": "Where",
+    "year": "Year",
+    "all": "All",
+    "local": "Local",
+    "global": "Global",
+    "results": "{count, plural, =0 {No case studies} one {# case study} other {# case studies}}",
+    "empty": "No case studies match these filters yet.",
+    "clearFilters": "Clear filters"
   }
 }

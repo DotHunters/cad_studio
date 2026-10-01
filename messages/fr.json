@@ -249,5 +249,22 @@
     "lastUpdated": "Dernière mise à jour : {date}",
     "draftNotice": "Ébauche — cette page est en attente d’une révision juridique et peut changer avant le lancement.",
     "eyebrow": "Juridique"
+  },
+  "Portfolio": {
+    "metaTitle": "Portfolio",
+    "metaDescription": "Photographies de mariages, d’événements corporatifs, de familles, de portraits et de produits par Cad Studio — à Toronto et ailleurs.",
+    "eyebrow": "Portfolio",
+    "title": "Des histoires <accent>racontées</accent>",
+    "intro": "Des études de cas, des célébrations locales aux projets partout dans le monde.",
+    "filtersLabel": "Filtrer les études de cas",
+    "category": "Catégorie",
+    "reach": "Où",
+    "year": "Année",
+    "all": "Tous",
+    "local": "Local",
+    "global": "International",
+    "results": "{count, plural, =0 {Aucune étude de cas} one {# étude de cas} other {# études de cas}}",
+    "empty": "Aucune étude de cas ne correspond à ces filtres pour le moment.",
+    "clearFilters": "Effacer les filtres"
   }
 }

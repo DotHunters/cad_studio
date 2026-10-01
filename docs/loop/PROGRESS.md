@@ -180,3 +180,10 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (115) · e2e ✅ (126) · build ✅ · format ✅
 - Notes: no Cloudinary account yet — only placeholder images render until the owner sets `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` (+ API key/secret for uploads in 7.4). Blur data for real images is generated at upload (7.4).
 - Next: 3.2
+
+### 2026-10-01 — 3.2 Portfolio list
+- Branch: feat/m3-portfolio-gallery · PR #4 (stacked on #3)
+- Done: `/[locale]/portfolio` — published case studies (cached `getPublishedProjects`, sample flag in cache key, client names only with consent), filter groups for category / Local–Global / year (year only when >1 year exists) as links that keep the other filters (`src/lib/portfolio-filters.ts`: `parsePortfolioFilters`, `filterProjects`, `filterHref`, unit tested), live result count, empty state with "Clear filters", metadata. `ProjectCard` extracted and shared with the home page's featured section (now also shows the year). `/portfolio` added to the sitemap. Package pages' "See … in our portfolio" link now lands on a filtered view.
+- PR #3/#4: Vercel preview deployments are Ready (owner connected Vercel); previews are behind Vercel Authentication, so content couldn't be checked from here.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (121) · e2e ✅ (136) · build ✅ · format ✅
+- Next: 3.3

@@ -5,7 +5,7 @@ import { getActivePackages } from "@/server/queries/packages";
 
 // Public pages without a locale prefix ("" = home). Portfolio, gallery, reviews, quote and
 // booking are added as those milestones ship.
-const STATIC_PATHS = ["", "/packages", "/about", "/contact", "/privacy", "/terms"];
+const STATIC_PATHS = ["", "/packages", "/portfolio", "/about", "/contact", "/privacy", "/terms"];
 
 // Regenerate hourly so new or renamed packages appear without a deploy.
 export const revalidate = 3600;
