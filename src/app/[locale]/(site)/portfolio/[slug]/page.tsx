@@ -7,12 +7,16 @@ import type { ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 
 import { LightboxGrid } from "@/components/gallery/lightbox-grid";
+import { JsonLd } from "@/components/site/json-ld";
 import { Accent } from "@/components/site/section-heading";
 import { StoredImage } from "@/components/site/stored-image";
 import { buttonVariants } from "@/components/ui/button";
+import { siteConfig } from "@/config/site";
 import { Link } from "@/i18n/navigation";
 import { slugFromCategory } from "@/lib/categories";
+import { storedImageSrc } from "@/lib/images";
 import { localize } from "@/lib/localize";
+import { imageGalleryJsonLd } from "@/lib/seo/json-ld";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { cn } from "@/lib/utils";
 import { getProjectBySlug } from "@/server/queries/portfolio";
@@ -61,6 +65,21 @@ export default async function ProjectPage({ params }: Props) {
 
   return (
     <article className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
+      <JsonLd
+        data={imageGalleryJsonLd({
+          baseUrl: siteConfig.url,
+          locale,
+          path: `/portfolio/${project.slug}`,
+          name: title,
+          description: `${categoryName} · ${facts[2].value} · ${project.year}`,
+          images: project.images.map((image) => ({
+            url: storedImageSrc(image),
+            caption: localize(image.alt, image.altFr, locale),
+            width: image.width,
+            height: image.height,
+          })),
+        })}
+      />
       <Link
         href="/portfolio"
         className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-sm"

@@ -5,9 +5,11 @@ import type { ReactNode } from "react";
 
 import { LightboxGrid } from "@/components/gallery/lightbox-grid";
 import { FilterGroup } from "@/components/site/filter-group";
+import { JsonLd } from "@/components/site/json-ld";
 import { Accent, SectionHeading } from "@/components/site/section-heading";
 import { buttonVariants } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
+import { siteConfig } from "@/config/site";
 import { categorySlugs } from "@/lib/categories";
 import {
   filterGallery,
@@ -16,7 +18,9 @@ import {
   paginateGallery,
   parseGalleryFilters,
 } from "@/lib/gallery-filters";
+import { storedImageSrc } from "@/lib/images";
 import { localize } from "@/lib/localize";
+import { imageGalleryJsonLd } from "@/lib/seo/json-ld";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { cn } from "@/lib/utils";
 import { getGalleryImages } from "@/server/queries/gallery";
@@ -51,6 +55,21 @@ export default async function GalleryPage({ params, searchParams }: Props) {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
+      <JsonLd
+        data={imageGalleryJsonLd({
+          baseUrl: siteConfig.url,
+          locale,
+          path: "/gallery",
+          name: t("Gallery.metaTitle"),
+          description: t("Gallery.metaDescription"),
+          images: matching.map((image) => ({
+            url: storedImageSrc(image),
+            caption: localize(image.alt, image.altFr, locale),
+            width: image.width,
+            height: image.height,
+          })),
+        })}
+      />
       <SectionHeading
         as="h1"
         align="center"

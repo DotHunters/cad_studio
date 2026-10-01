@@ -4,15 +4,7 @@ import { unstable_cache } from "next/cache";
 
 import { db } from "@/lib/db";
 import { shouldShowSampleContent } from "@/lib/flags";
-
-/** Cache tags; admin edits call revalidateTag() with these (AGENTS.md §10). */
-export const CACHE_TAGS = {
-  portfolio: "portfolio",
-  reviews: "reviews",
-  gallery: "gallery",
-} as const;
-
-const REVALIDATE_SECONDS = 3600;
+import { CACHE_TAGS, CONTENT_REVALIDATE_SECONDS } from "@/server/cache";
 
 /** Excludes fictional sample rows unless sample content is enabled (never in production). */
 function sampleFilter(includeSamples: boolean) {
@@ -38,7 +30,7 @@ const cachedFeaturedProjects = unstable_cache(
     }));
   },
   ["home:featured-projects"],
-  { tags: [CACHE_TAGS.portfolio], revalidate: REVALIDATE_SECONDS },
+  { tags: [CACHE_TAGS.portfolio], revalidate: CONTENT_REVALIDATE_SECONDS },
 );
 
 const cachedHomeReviews = unstable_cache(
@@ -62,7 +54,7 @@ const cachedHomeReviews = unstable_cache(
     return { featured, ratings: ratings.map((review) => review.rating) };
   },
   ["home:reviews"],
-  { tags: [CACHE_TAGS.reviews], revalidate: REVALIDATE_SECONDS },
+  { tags: [CACHE_TAGS.reviews], revalidate: CONTENT_REVALIDATE_SECONDS },
 );
 
 /** Client names for the "trusted by" strip: consented, published projects. */
@@ -82,7 +74,7 @@ const cachedClientNames = unstable_cache(
     return projects.map((project) => project.clientName!);
   },
   ["home:client-names"],
-  { tags: [CACHE_TAGS.portfolio], revalidate: REVALIDATE_SECONDS },
+  { tags: [CACHE_TAGS.portfolio], revalidate: CONTENT_REVALIDATE_SECONDS },
 );
 
 export const getFeaturedProjects = (limit = 3) =>

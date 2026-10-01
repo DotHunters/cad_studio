@@ -207,3 +207,9 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Done: `LightboxGrid` client component — thumbnails are labelled buttons ("Open image N of M: <alt>", `aria-haspopup="dialog"`); native modal `<dialog>` (`showModal()` makes the page inert → focus contained; Escape closes natively), close button focused on open, focus returned to the opening thumbnail on close, ←/→ keys with wrap-around, prev/next buttons, swipe (touch/pen pointer, 50 px threshold), live "N / M" counter, "Show description" toggle (`aria-expanded`) revealing the alt text, solid black backdrop. Used by the gallery (masonry) and case-study image grids.
 - Checks: lint ✅ · typecheck ✅ · test ✅ · e2e ✅ (178, incl. §15 scenario 6: keyboard open/navigate/close, focus return, focus containment, alt on demand, swipe) · build ✅ · format ✅ · screenshot reviewed
 - Next: 3.6
+
+### 2026-10-01 — 3.6 ImageGallery JSON-LD + cache tags — **M3 Portfolio & Gallery complete**
+- Branch: feat/m3-portfolio-gallery · PR #4
+- Done: `imageGalleryJsonLd()` (ImageObject per image with caption, size, credit and copyright holder; capped at 30) on `/gallery` and every case study. Cache tags consolidated in `src/server/cache.ts` (`CACHE_TAGS` packages/portfolio/gallery/reviews/settings, `CONTENT_REVALIDATE_SECONDS`, `revalidateContent(...kinds)` for admin mutations in M7); all queries import from it.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (130) · e2e ✅ (180) · build ✅ · format ✅
+- Next: M4 → 4.1 (branch `feat/m4-quote`; stack on feat/m3-portfolio-gallery while PR #4 is open)

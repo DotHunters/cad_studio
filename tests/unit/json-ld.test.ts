@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { businessJsonLd, personJsonLd, serializeJsonLd, serviceJsonLd } from "@/lib/seo/json-ld";
+import {
+  businessJsonLd,
+  imageGalleryJsonLd,
+  personJsonLd,
+  serializeJsonLd,
+  serviceJsonLd,
+} from "@/lib/seo/json-ld";
 
 const base = "https://cadstudio.example";
 
@@ -70,5 +76,52 @@ describe("serializeJsonLd", () => {
     expect(json).toContain('"@context":"https://schema.org"');
     expect(json).not.toContain("</script>");
     expect(JSON.parse(json).name).toBe("</script><script>alert(1)");
+  });
+});
+
+describe("imageGalleryJsonLd", () => {
+  const images = Array.from({ length: 40 }, (_, i) => ({
+    url: `https://img.example/${i}.png`,
+    caption: `Image ${i}`,
+    width: 1600,
+    height: 1067,
+  }));
+
+  it("describes the gallery with image objects", () => {
+    const ld = imageGalleryJsonLd({
+      baseUrl: base,
+      locale: "en",
+      path: "/gallery",
+      name: "Gallery",
+      description: "Browse",
+      images: images.slice(0, 2),
+    });
+    expect(ld).toMatchObject({
+      "@type": "ImageGallery",
+      name: "Gallery",
+      url: `${base}/en/gallery`,
+      publisher: { name: "Cad Studio" },
+    });
+    expect(ld.image[0]).toEqual({
+      "@type": "ImageObject",
+      contentUrl: "https://img.example/0.png",
+      caption: "Image 0",
+      width: 1600,
+      height: 1067,
+      creditText: "Cad Studio",
+      copyrightHolder: { "@type": "ProfessionalService", name: "Cad Studio", url: `${base}/` },
+    });
+  });
+
+  it("caps the number of images to keep the page light", () => {
+    const ld = imageGalleryJsonLd({
+      baseUrl: base,
+      locale: "en",
+      path: "/gallery",
+      name: "G",
+      description: "",
+      images,
+    });
+    expect(ld.image).toHaveLength(30);
   });
 });

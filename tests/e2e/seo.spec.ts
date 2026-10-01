@@ -63,4 +63,16 @@ test.describe("SEO", () => {
     await page.goto("/en/contact");
     await expect(page).toHaveTitle("Contact | Cad Studio — Photography in Canada");
   });
+
+  test("gallery and case studies describe their images", async ({ page }) => {
+    await page.goto("/en/gallery");
+    const [gallery] = await jsonLd(page);
+    expect(gallery["@type"]).toBe("ImageGallery");
+    expect((gallery.image as unknown[]).length).toBe(25);
+
+    await page.goto("/en/portfolio/sample-northwind-annual-summit");
+    const [project] = await jsonLd(page);
+    expect(project).toMatchObject({ "@type": "ImageGallery", name: "Annual Leadership Summit" });
+    expect((project.image as unknown[]).length).toBe(6);
+  });
 });

@@ -5,7 +5,7 @@ import { unstable_cache } from "next/cache";
 import { db } from "@/lib/db";
 import { shouldShowSampleContent } from "@/lib/flags";
 
-import { CACHE_TAGS } from "./home";
+import { CACHE_TAGS, CONTENT_REVALIDATE_SECONDS } from "@/server/cache";
 
 const cachedPublishedProjects = unstable_cache(
   async (includeSamples: boolean) => {
@@ -22,7 +22,7 @@ const cachedPublishedProjects = unstable_cache(
     }));
   },
   ["portfolio:published"],
-  { tags: [CACHE_TAGS.portfolio], revalidate: 3600 },
+  { tags: [CACHE_TAGS.portfolio], revalidate: CONTENT_REVALIDATE_SECONDS },
 );
 
 /** All published case studies, newest first. The sample flag is part of the cache key. */
@@ -56,7 +56,7 @@ const cachedProjectBySlug = unstable_cache(
     return { ...project, clientName, recommendation };
   },
   ["portfolio:by-slug"],
-  { tags: [CACHE_TAGS.portfolio, CACHE_TAGS.reviews], revalidate: 3600 },
+  { tags: [CACHE_TAGS.portfolio, CACHE_TAGS.reviews], revalidate: CONTENT_REVALIDATE_SECONDS },
 );
 
 /** One published case study with all its images, or null (unknown, unpublished or hidden sample). */

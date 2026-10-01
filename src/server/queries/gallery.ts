@@ -5,7 +5,7 @@ import { unstable_cache } from "next/cache";
 import { db } from "@/lib/db";
 import { shouldShowSampleContent } from "@/lib/flags";
 
-import { CACHE_TAGS } from "./home";
+import { CACHE_TAGS, CONTENT_REVALIDATE_SECONDS } from "@/server/cache";
 
 const cachedGalleryImages = unstable_cache(
   async (includeSamples: boolean) =>
@@ -31,7 +31,7 @@ const cachedGalleryImages = unstable_cache(
       },
     }),
   ["gallery:images"],
-  { tags: [CACHE_TAGS.gallery, CACHE_TAGS.portfolio], revalidate: 3600 },
+  { tags: [CACHE_TAGS.gallery, CACHE_TAGS.portfolio], revalidate: CONTENT_REVALIDATE_SECONDS },
 );
 
 /** Gallery images in display order. The sample flag is part of the cache key. */

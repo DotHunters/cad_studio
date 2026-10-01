@@ -84,6 +84,38 @@ export function personJsonLd({ baseUrl, locale, jobTitle }: Base & { jobTitle: s
   } satisfies JsonLdObject;
 }
 
+const MAX_GALLERY_IMAGES = 30;
+
+type GalleryImageInput = { url: string; caption: string; width: number; height: number };
+
+/** ImageGallery for the gallery page and case studies (AGENTS.md §10). */
+export function imageGalleryJsonLd({
+  baseUrl,
+  locale,
+  path,
+  name,
+  description,
+  images,
+}: Base & { path: string; name: string; description: string; images: GalleryImageInput[] }) {
+  const owner = businessRef(baseUrl);
+  return {
+    "@type": "ImageGallery",
+    name,
+    description,
+    url: absolute(baseUrl, `/${locale}${path}`),
+    publisher: owner,
+    image: images.slice(0, MAX_GALLERY_IMAGES).map((image) => ({
+      "@type": "ImageObject",
+      contentUrl: image.url,
+      caption: image.caption,
+      width: image.width,
+      height: image.height,
+      creditText: siteConfig.name,
+      copyrightHolder: owner,
+    })),
+  } satisfies JsonLdObject;
+}
+
 /** JSON for a <script type="application/ld+json">, with "<" escaped so it can't end the tag. */
 export function serializeJsonLd(data: JsonLdObject): string {
   return JSON.stringify({ "@context": "https://schema.org", ...data }).replace(/</g, "\\u003c");

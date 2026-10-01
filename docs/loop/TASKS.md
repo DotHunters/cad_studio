@@ -39,7 +39,7 @@ Legend: `[ ]` todo · `[x]` done · `BLOCKED(Q#)` waiting on `OPEN_QUESTIONS.md`
 - [x] 3.3 Portfolio detail `/portfolio/[slug]`: story, approach, image set, optional quote, CTA. — §6.3
 - [x] 3.4 Gallery grid: masonry/justified, lazy load, load more, category and tag filters. — §6.4
 - [x] 3.5 Accessible lightbox: ←/→/Esc, swipe, focus trap, alt text on demand. Add the e2e test (scenario 6). — §6.4, §15
-- [ ] 3.6 `ImageGallery` JSON-LD; ISR tags for portfolio and gallery. — §10
+- [x] 3.6 `ImageGallery` JSON-LD; ISR tags for portfolio and gallery. — §10
 
 ## M4 — Quote engine · branch `feat/m4-quote`
 
