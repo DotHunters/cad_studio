@@ -25,9 +25,12 @@ if (!connectionString) {
 
 const db = new PrismaClient({ adapter: new PrismaPg({ connectionString }) });
 
+// Packages, add-ons, pricing rules and tax rates are starting values only: once they exist
+// the owner manages them in admin, so re-running the seed (e.g. to add the first admin) must
+// never overwrite them. Only missing rows are created.
 async function seedCatalogue() {
   for (const pkg of packages) {
-    await db.package.upsert({ where: { slug: pkg.slug }, update: pkg, create: pkg });
+    await db.package.upsert({ where: { slug: pkg.slug }, update: {}, create: pkg });
   }
 
   for (const addOn of addOns) {
@@ -36,7 +39,7 @@ async function seedCatalogue() {
     const connect = linked.map((p) => ({ slug: p.slug }));
     await db.addOn.upsert({
       where: { code: addOn.code },
-      update: { ...addOn, packages: { set: connect } },
+      update: {},
       create: { ...addOn, packages: { connect } },
     });
   }
@@ -44,11 +47,11 @@ async function seedCatalogue() {
 
 async function seedSettings() {
   for (const [key, value] of Object.entries(pricingRules)) {
-    await db.pricingRule.upsert({ where: { key }, update: { value }, create: { key, value } });
+    await db.pricingRule.upsert({ where: { key }, update: {}, create: { key, value } });
   }
 
   for (const rate of taxRates) {
-    await db.taxRate.upsert({ where: { province: rate.province }, update: rate, create: rate });
+    await db.taxRate.upsert({ where: { province: rate.province }, update: {}, create: rate });
   }
 
   // Only create — never overwrite text the owner has edited in admin.
