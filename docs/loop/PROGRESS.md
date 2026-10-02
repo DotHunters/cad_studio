@@ -552,3 +552,11 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (448) · e2e ✅ (426 incl. 80 a11y scans) · build ✅ · format ✅
 - Next: 8.3 SEO pass
 
+### 2026-10-03 — 8.3 SEO pass
+- Branch: feat/m8-hardening · PR #10
+- Audit: `tests/e2e/seo-audit.spec.ts` checks every public page in EN and FR as Googlebot — `lang`, title pattern, description length (50–200), canonical, `en-CA`/`fr-CA`/`x-default` alternates, Open Graph (title, description, absolute image, url = canonical), Twitter card, exactly one `h1`, indexable — plus `noindex` on private quote/booking pages. (Metadata, sitemap from the DB, robots and admin `noindex` already existed from earlier milestones.)
+- Findings and fixes: (1) **Next 15 streamed metadata into the body** for clients not on its "HTML-limited bots" list — Googlebot included — so on dynamic pages like home and About the description wasn't in the initial `<head>`; set `htmlLimitedBots: /.*/` so metadata always renders in the head. (2) Case-study descriptions were only "Category · City, Country · Year" (41 chars) → now that line plus a plain-text excerpt of the story, ≤ 160 chars (`src/lib/seo/excerpt.ts`, 3 unit tests).
+- Later (with real photos, Q18): per-page OG images (case-study covers) instead of the default brand image.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (451) · e2e ✅ (480 incl. 54 SEO checks) · build ✅ · format ✅
+- Next: 8.4 performance pass
+
