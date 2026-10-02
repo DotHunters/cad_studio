@@ -20,11 +20,12 @@ import { localize } from "@/lib/localize";
 import { sendQuoteEmails } from "@/server/emails/quote-emails";
 import { linkSecret } from "@/server/link-secret";
 import { getPricingContext } from "@/server/queries/pricing";
+import { isRateLimited } from "@/server/rate-limit";
 
 export type CreateQuoteResult =
   | { ok: true; reference: string; token: string; totalCents: number }
   | { ok: false; error: "validation"; fieldErrors: Record<string, string> }
-  | { ok: false; error: "captcha" | "unavailable" | "server" };
+  | { ok: false; error: "captcha" | "rateLimited" | "unavailable" | "server" };
 
 /**
  * Saves a quote (AGENTS.md §6.5). The price is always recomputed here from DB data —
@@ -52,6 +53,7 @@ export async function createQuote(
     return { ok: false, error: "validation", fieldErrors: { eventDate: "pastDate" } };
   }
 
+  if (await isRateLimited("quote")) return { ok: false, error: "rateLimited" };
   const requestHeaders = await headers();
   const ip = requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim();
   if (!(await verifyTurnstile(turnstileToken, ip))) return { ok: false, error: "captcha" };

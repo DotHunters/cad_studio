@@ -20,11 +20,14 @@ const isErrorKey = (key: string): key is (typeof ERROR_KEYS)[number] =>
 /** Reschedule / cancel request on the signed booking page (AGENTS.md §6.6). */
 export function ChangeRequestForm({ reference, token, today }: Props) {
   const t = useTranslations("ChangeRequest");
+  const tCommon = useTranslations("Common");
   const [type, setType] = useState<"RESCHEDULE" | "CANCEL">("RESCHEDULE");
   const [preferredDate, setPreferredDate] = useState("");
   const [message, setMessage] = useState("");
   const [pending, setPending] = useState(false);
-  const [state, setState] = useState<"idle" | "sent" | "closed" | "forbidden" | "error">("idle");
+  const [state, setState] = useState<
+    "idle" | "sent" | "closed" | "forbidden" | "rateLimited" | "error"
+  >("idle");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
   const errorFor = (field: string) => {
@@ -130,9 +133,9 @@ export function ChangeRequestForm({ reference, token, today }: Props) {
         )}
       </div>
 
-      {state === "error" && (
+      {(state === "error" || state === "rateLimited") && (
         <p role="alert" className="text-destructive text-sm">
-          {t("serverError")}
+          {state === "rateLimited" ? tCommon("tooManyRequests") : t("serverError")}
         </p>
       )}
 

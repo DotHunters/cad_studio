@@ -13,6 +13,7 @@ const ERRORS: Record<string, string> = {
   InvalidEmail: "Enter a valid email address.",
   AccessDenied: "This account can't sign in. Ask the studio owner for access.",
   Verification: "That sign-in link has expired or was already used. Request a new one.",
+  TooManyRequests: "Too many sign-in requests. Please wait a few minutes and try again.",
 };
 
 const first = (value: string | string[] | undefined) => (Array.isArray(value) ? value[0] : value);

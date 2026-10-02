@@ -6,11 +6,12 @@ import { siteConfig } from "@/config/site";
 import { adminNotifyAddress, sendEmail } from "@/lib/email/send";
 import { verifyTurnstile } from "@/lib/turnstile";
 import { contactSchema, type ContactInput } from "@/lib/validators/contact";
+import { isRateLimited } from "@/server/rate-limit";
 
 export type ContactResult =
   | { ok: true }
   | { ok: false; error: "validation"; fieldErrors: Partial<Record<keyof ContactInput, string>> }
-  | { ok: false; error: "captcha" | "server" };
+  | { ok: false; error: "captcha" | "rateLimited" | "server" };
 
 /** Contact form submission (AGENTS.md §6.9, §11). Always re-validated on the server. */
 export async function submitContact(
@@ -29,6 +30,7 @@ export async function submitContact(
     return { ok: false, error: "validation", fieldErrors };
   }
 
+  if (await isRateLimited("contact")) return { ok: false, error: "rateLimited" };
   const requestHeaders = await headers();
   const ip = requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim();
   if (!(await verifyTurnstile(turnstileToken, ip))) {

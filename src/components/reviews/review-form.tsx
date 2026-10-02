@@ -35,7 +35,7 @@ export function ReviewForm({ booking }: Props) {
   const [rating, setRating] = useState(0);
   const [pending, setPending] = useState(false);
   const [sent, setSent] = useState(false);
-  const [serverError, setServerError] = useState(false);
+  const [serverError, setServerError] = useState<false | "server" | "rateLimited">(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   // Lets e2e tests wait until the submit handler is attached.
   const [hydrated, setHydrated] = useState(false);
@@ -79,7 +79,7 @@ export function ReviewForm({ booking }: Props) {
       });
       if (result.ok) setSent(true);
       else if (result.error === "validation") setErrors(result.fieldErrors);
-      else setServerError(true);
+      else setServerError(result.error === "rateLimited" ? "rateLimited" : "server");
     } finally {
       setPending(false);
     }
@@ -229,7 +229,9 @@ export function ReviewForm({ booking }: Props) {
 
       {serverError && (
         <p role="alert" className="text-destructive text-sm">
-          {t("ReviewForm.serverError")}
+          {serverError === "rateLimited"
+            ? t("Common.tooManyRequests")
+            : t("ReviewForm.serverError")}
         </p>
       )}
 

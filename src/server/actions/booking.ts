@@ -8,11 +8,12 @@ import { verifyTurnstile } from "@/lib/turnstile";
 import { type BookingRequestInput, bookingRequestSchema } from "@/lib/validators/booking";
 import { placeBooking } from "@/server/booking/place-booking";
 import { notifyBookingPlaced } from "@/server/emails/booking-emails";
+import { isRateLimited } from "@/server/rate-limit";
 
 export type CreateBookingResult =
   | { ok: true; reference: string; token: string }
   | { ok: false; error: "validation"; fieldErrors: Record<string, string> }
-  | { ok: false; error: "unavailable" | "captcha" | "server" };
+  | { ok: false; error: "unavailable" | "captcha" | "rateLimited" | "server" };
 
 /** Booking request (AGENTS.md §6.6). Always re-validated and re-priced on the server. */
 export async function createBooking(
@@ -33,6 +34,7 @@ export async function createBooking(
     return { ok: false, error: "validation", fieldErrors: { eventDate: "invalidDate" } };
   }
 
+  if (await isRateLimited("booking")) return { ok: false, error: "rateLimited" };
   const requestHeaders = await headers();
   const ip = requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim();
   if (!(await verifyTurnstile(turnstileToken, ip))) return { ok: false, error: "captcha" };
