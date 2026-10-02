@@ -1,8 +1,9 @@
 "use client";
 
 import { Loader2, Plus, Trash2 } from "lucide-react";
-import { type FormEvent, type ReactNode, useEffect, useState, useTransition } from "react";
+import { type FormEvent, useEffect, useState, useTransition } from "react";
 
+import { adminFieldClass, Field } from "@/components/admin/form-field";
 import { Button } from "@/components/ui/button";
 import { savePackage } from "@/server/actions/admin/packages";
 
@@ -34,39 +35,6 @@ type Props = {
   defaults: PackageFormDefaults;
   categories: Array<{ value: string; label: string }>;
 };
-
-export const adminFieldClass =
-  "border-input bg-background focus-visible:border-ring focus-visible:ring-ring/40 mt-1.5 block w-full rounded-lg border px-3 py-2 text-sm focus-visible:ring-3 focus-visible:outline-none aria-invalid:border-destructive";
-
-/** Label + control + hint + error. Defined at module level so inputs keep their values. */
-function Field({
-  name,
-  label,
-  hint,
-  error,
-  children,
-}: {
-  name: string;
-  label: string;
-  hint?: string;
-  error?: string;
-  children: ReactNode;
-}) {
-  return (
-    <div>
-      <label htmlFor={`pkg-${name}`} className="text-sm font-medium">
-        {label}
-      </label>
-      {children}
-      {hint && <p className="text-muted-foreground mt-1 text-xs">{hint}</p>}
-      {error && (
-        <p id={`pkg-${name}-error`} className="text-destructive mt-1 text-xs">
-          {error}
-        </p>
-      )}
-    </div>
-  );
-}
 
 /** Create/edit a package with English and French side by side (AGENTS.md §6.10, §7). */
 export function PackageForm({ id, defaults, categories }: Props) {

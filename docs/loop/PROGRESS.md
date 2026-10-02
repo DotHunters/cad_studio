@@ -381,3 +381,11 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (339) · e2e ✅ (296) · build ✅ · format ✅
 - Next: 7.3b Add-ons
 
+### 2026-10-02 — 7.3b Admin add-ons
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Done: `/admin/add-ons` list (name, code, price + unit, services, active, order), create/edit with `AddOnForm` — code (set once; read-only on edit because saved quotes store add-ons by code), EN/FR name, price in dollars, unit (flat / per hour × duration / per item × quantity), services it's offered for (at least one), active, order. `saveAddOn` action: ADMIN only, Zod (`src/lib/validators/admin/add-on.ts`, 4 unit tests), duplicate code → field error, revalidates the packages tag (quote form, engine and package pages). Shared admin form pieces extracted: `src/lib/validators/admin/fields.ts` and `src/components/admin/form-field.tsx`. Nav gains "Add-ons" (ADMIN only).
+- Gotcha handled: `Object.fromEntries(FormData)` keeps only one value per name — the form sends `getAll("categories")`.
+- e2e: validation, create → quote form offers it for weddings but not family, code read-only on edit, hide → gone from quotes.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (343) · e2e ✅ (298) · build ✅ · format ✅
+- Next: 7.3c Pricing rules and tax rates
+
