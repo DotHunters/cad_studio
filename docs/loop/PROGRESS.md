@@ -464,3 +464,12 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (416) · e2e ✅ (326) · build ✅ · format ✅
 - Next: 7.6e assign photographers
 
+### 2026-10-02 — 7.6e Team management
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Split: assigning photographers needs a list of team members, and accounts could only be created by the seed. So 7.6e = team, 7.6f = assignment.
+- Done: `/admin/team` ("Team" in nav, ADMIN only): members (name/email, role, active/deactivated, last active, "(you)"), add form; `/admin/team/[id]` edit. `saveTeamMember`: emails normalized to lowercase (they're the sign-in identity), duplicate email → field error; nobody can change their own role or deactivate themselves; the studio always keeps ≥1 active admin (`teamChangeProblem`, 6 unit tests); runs in a serializable transaction with retries (new shared `withSerializableRetry`/`isSerializationFailure` in `src/server/serialization.ts`, also used by `placeBooking`); deactivating deletes the person's sessions; revalidates the admin layout so the redirected list is never a stale client-cache copy.
+- Debugging: the deactivate step failed only in full runs. Cause was the test, not the app: after clicking the member link, the hydration wait matched the list page's add form (which also has an "Active" box). Waits now check the edit page heading first (pitfall added to loop.md). Separately, one full run had a Playwright worker crash (0xC0000409) — environment.
+- e2e: validation, add (email lowercased), duplicate refused, deactivate → sessions gone; can't demote/deactivate yourself; staff can't open Team.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (422) · e2e ✅ (327 + 1 worker crash on rerun) · build ✅ · format ✅
+- Next: 7.6f assign photographers
+

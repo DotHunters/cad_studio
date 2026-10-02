@@ -90,7 +90,8 @@ Legend: `[ ]` todo · `[x]` done · `BLOCKED(Q#)` waiting on `OPEN_QUESTIONS.md`
   - [x] 7.6b Send payment request (PAYMENT_INSTRUCTIONS + optional link, client locale) and record deposit → CONFIRMED
   - [x] 7.6c Status changes: complete (+ review invite link) and cancel, with client emails; resolve change requests
   - [x] 7.6d Calendar view, CSV export, `.ics` download
-  - [ ] 7.6e Assign photographers (staff users) to bookings
+  - [x] 7.6e Team: add staff/admins, roles, deactivate (needed before assigning photographers)
+  - [ ] 7.6f Assign photographers (team members) to bookings, with same-day clash warning
 - [ ] 7.7 Quotes admin: list, convert to booking, adjust and re-send. — §6.10
 - [ ] 7.8 Blocked dates and capacity management. — §6.10, §8.3
 - [ ] 7.9 Audit log of admin changes. — §6.10

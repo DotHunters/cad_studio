@@ -16,6 +16,7 @@ import { counterKey, formatReference } from "@/lib/references";
 import type { BookingRequest } from "@/lib/validators/booking";
 import { getPricingContext } from "@/server/queries/pricing";
 import { getBookableQuote } from "@/server/queries/quotes";
+import { isSerializationFailure } from "@/server/serialization";
 
 export type PlaceBookingResult =
   | {
@@ -34,13 +35,6 @@ export type PlaceBookingResult =
 class SlotUnavailableError extends Error {}
 
 const MAX_ATTEMPTS = 3;
-
-/** Postgres serialization failure (40001) surfaced by Prisma. */
-function isSerializationFailure(error: unknown): boolean {
-  if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2034") return true;
-  const text = String((error as { message?: string })?.message ?? error);
-  return text.includes("40001") || /could not serialize access/i.test(text);
-}
 
 /**
  * Creates a PENDING booking (AGENTS.md §6.6, §8.3). Capacity is re-checked inside a
