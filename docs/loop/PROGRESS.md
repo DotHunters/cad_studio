@@ -406,3 +406,12 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (367) · e2e ✅ (300 + 3 skipped by design; 1 flake, rerun green) · build ✅ · format ✅
 - Next: 7.4 Portfolio and gallery admin
 
+### 2026-10-02 — 7.4a Admin portfolio projects
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Split 7.4 into 7.4a projects · 7.4b image metadata/order/consent · 7.4c upload (BLOCKED on Cloudinary credentials, new Q18).
+- Done: `/admin/portfolio` list (title + Sample badge, client or "Private client" with a "not named publicly" note when there's no consent, category · local/global, year, image count, draft/published/featured) and create/edit with `ProjectForm`: slug, category, local/global, year, city, country, client name + "client agreed to be named publicly", EN/FR title and story, published, featured. `saveProject` (ADMIN only) keeps the original publish date while published, sets it on first publish, clears it on unpublish (`nextPublishedAt`, unit tested); revalidates the portfolio tag. 4 unit tests.
+- e2e: create published without consent → public page says "Private client" and hides the name → consent → name shown → unpublish → 404; validation.
+- Test infra: a full e2e run died mid-way (server gone, ERR_CONNECTION_REFUSED everywhere; build and rerun fine). The leftover user then broke `admin-dashboard.spec`'s plain insert → it now uses the upserting `signInAsAdmin` helper.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (371) · e2e ✅ (305 + 3 skipped by design) · build ✅ · format ✅
+- Next: 7.4b image metadata
+

@@ -1,7 +1,6 @@
-import { randomBytes } from "node:crypto";
-
 import { expect, test, type TestInfo } from "@playwright/test";
 
+import { signInAsAdmin } from "./admin-session";
 import { queryDb } from "./db";
 
 // Per-project references in a year the app never issues (9998/9999 are used by other specs).
@@ -22,20 +21,7 @@ test("dashboard shows bookings, quotes, reviews, revenue and what needs attentio
   baseURL,
 }, testInfo) => {
   const reference = referenceFor(testInfo);
-  const [user] = await queryDb<{ id: string }>(
-    `insert into "User" (id, email, role, "updatedAt")
-     values (gen_random_uuid()::text, $1, 'ADMIN', now()) returning id`,
-    [emailFor(testInfo, "admin")],
-  );
-  const sessionToken = randomBytes(32).toString("hex");
-  await queryDb(
-    `insert into "Session" ("sessionToken", "userId", expires, "updatedAt")
-     values ($1, $2, now() + interval '1 day', now())`,
-    [sessionToken, user.id],
-  );
-  await context.addCookies([
-    { name: "authjs.session-token", value: sessionToken, url: baseURL!, sameSite: "Lax" },
-  ]);
+  await signInAsAdmin(context, baseURL!, emailFor(testInfo, "admin"));
 
   await queryDb(`delete from "Booking" where reference = $1`, [reference]);
   const [customer] = await queryDb<{ id: string }>(
