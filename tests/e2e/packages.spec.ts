@@ -1,10 +1,13 @@
-import { expect, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
+
+// admin-packages.spec.ts briefly creates "E2E Package …" entries; count only the seeded ones.
+const seededCards = (page: Page) => page.getByRole("article").filter({ hasNotText: "E2E Package" });
 
 test.describe("packages page", () => {
   test("lists all six packages with DB prices", async ({ page }) => {
     await page.goto("/en/packages");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Find the right package");
-    await expect(page.getByRole("article")).toHaveCount(6);
+    await expect(seededCards(page)).toHaveCount(6);
     const wedding = page.getByRole("article", { name: "Wedding" });
     await expect(wedding).toContainText("$2,800.00 CAD");
     await expect(wedding).toContainText("8 hours");
@@ -31,7 +34,7 @@ test.describe("packages page", () => {
 
   test("unknown categories fall back to all packages", async ({ page }) => {
     await page.goto("/en/packages?category=birthday");
-    await expect(page.getByRole("article")).toHaveCount(6);
+    await expect(seededCards(page)).toHaveCount(6);
   });
 
   test("cards link to the quote and booking flows with the package", async ({ page }) => {

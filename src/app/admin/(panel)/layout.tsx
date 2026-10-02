@@ -1,8 +1,10 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 
+import { AdminNav, type AdminNavItem } from "@/components/admin/admin-nav";
 import { Logo } from "@/components/site/logo";
 import { Button } from "@/components/ui/button";
+import { hasRole } from "@/lib/auth/roles";
 import { signOutAdmin } from "@/server/actions/admin-auth";
 import { requireAdminPage } from "@/server/auth/guards";
 
@@ -11,6 +13,11 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminPanelLayout({ children }: { children: ReactNode }) {
   const user = await requireAdminPage();
+  const nav: AdminNavItem[] = [
+    { href: "/admin", label: "Dashboard" },
+    // Catalogue and pricing are admin-only.
+    ...(hasRole(user.role, "ADMIN") ? [{ href: "/admin/packages", label: "Packages" }] : []),
+  ];
 
   return (
     <div className="min-h-dvh">
@@ -32,6 +39,7 @@ export default async function AdminPanelLayout({ children }: { children: ReactNo
           </div>
         </div>
       </header>
+      <AdminNav items={nav} />
       <main id="main-content" className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
         {children}
       </main>

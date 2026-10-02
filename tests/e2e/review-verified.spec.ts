@@ -44,7 +44,8 @@ async function createBooking(testInfo: TestInfo, n: number, status = "COMPLETED"
 
 async function submit(page: Page, testInfo: TestInfo) {
   const section = page.getByRole("region", { name: /Share your experience/ });
-  await expect(section.locator('form[data-hydrated="true"]')).toBeVisible();
+  // Hydration can take a while when the whole suite runs in parallel.
+  await expect(section.locator('form[data-hydrated="true"]')).toBeVisible({ timeout: 15_000 });
   await section.locator("label", { has: page.getByRole("radio", { name: "5 stars" }) }).click();
   await section.getByLabel("Your name").fill(nameFor(testInfo));
   await section.getByLabel("Your review").fill("Relaxed headshot session with beautiful results.");

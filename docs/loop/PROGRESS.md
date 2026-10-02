@@ -371,3 +371,13 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (334) · e2e ✅ (290) · build ✅ · format ✅
 - Next: 7.3 CRUD for packages, add-ons, pricing rules, tax rates, site settings
 
+### 2026-10-02 — 7.3a Admin packages
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Split 7.3 into 7.3a packages · 7.3b add-ons · 7.3c pricing rules + tax rates · 7.3d site settings.
+- Done: admin nav (`AdminNav`, current section marked; catalogue links only for ADMIN). `/admin/packages` list (name, slug, category, price, hours, active/hidden, order) + "Saved" notice; `/admin/packages/new` and `/admin/packages/[id]` with `PackageForm` — English and French side by side for name/summary/description/inclusions/exclusions (one per line), FAQ rows (EN/FR), price typed in dollars (stored as cents), hours, photographers, edited images, turnaround, active, sort order. `savePackage` server action: ADMIN only (`requireRole`), Zod (`src/lib/validators/admin/package.ts`, plain-English errors, 5 unit tests), duplicate slug → field error, `revalidateContent("packages")` so the site, quote engine and booking terms update at once. No delete — hiding keeps quotes/bookings intact.
+- Bug caught in review before testing: a `Field` component declared inside the form's render would remount inputs on every error and wipe what was typed; hoisted to module level and covered by an e2e check.
+- e2e: create (EN/FR + FAQ) → public EN/FR detail pages show it → hide → public 404; validation errors keep typed values; STAFF has no Packages link and is bounced to `/admin?error=forbidden`. `packages.spec.ts` counts now ignore "E2E Package" cards so parallel runs can't collide. New helper `tests/e2e/admin-session.ts`.
+- Flake: `review-verified` failed once under full-suite load waiting for hydration; passed alone and on a full rerun — hydration wait raised to 15 s.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (339) · e2e ✅ (296) · build ✅ · format ✅
+- Next: 7.3b Add-ons
+
