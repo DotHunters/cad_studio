@@ -534,3 +534,12 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (448) · e2e ✅ (346) · build ✅ · format ✅
 - Next: 8.1b Turnstile widget
 
+### 2026-10-03 — 8.1b Turnstile widget (8.1 complete) + PR housekeeping
+- Branch: feat/m8-hardening
+- Housekeeping: the owner merged #8 (M4–M7) into `main`, then #9 (8.1a) into `feat/m7-admin` — so 8.1a wasn't in `main`. Opened a follow-up PR `feat/m8-hardening` → `main` (per the loop rule). Resumed the 8.1b work that had been stashed when the user paused M8.
+- Done: `useTurnstile(action)` (`src/components/site/turnstile.tsx`): loads Cloudflare's script only when `NEXT_PUBLIC_TURNSTILE_SITE_KEY` is set, renders explicitly in the visitor's language with `appearance: "interaction-only"` (invisible unless Cloudflare is unsure), exposes the token and a `reset()` (tokens are single-use, reset after every submit). Wired into the contact, quote, booking and review forms, passing the token to the existing server check (`verifyTurnstile`, skipped without `TURNSTILE_SECRET_KEY`). The contact form's `TODO(8.1)` is gone. Change-request (signed link) and admin sign-in (rate limited, admins only) don't use it.
+- Not covered by e2e: needs Cloudflare keys and network; without keys nothing renders and forms behave as before (346 green).
+- Env: local Postgres wasn't running after a restart (build failed prerendering the sitemap) — started it per the memory note.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (448) · e2e ✅ (346 on rerun after one Windows worker crash) · build ✅ · format ✅
+- Next: 8.2 WCAG 2.1 AA audit
+

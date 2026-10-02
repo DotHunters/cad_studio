@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { categorySlugs } from "@/lib/categories";
 import { cn } from "@/lib/utils";
 import { submitReview } from "@/server/actions/review";
+import { useTurnstile } from "@/components/site/turnstile";
 
 type Props = {
   /** Signed booking link from a completed booking (6.3) — marks the review as verified. */
@@ -39,6 +40,7 @@ export function ReviewForm({ booking }: Props) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   // Lets e2e tests wait until the submit handler is attached.
   const [hydrated, setHydrated] = useState(false);
+  const turnstile = useTurnstile("review");
   useEffect(() => setHydrated(true), []);
 
   const errorText = (field: string) => {
@@ -63,20 +65,24 @@ export function ReviewForm({ booking }: Props) {
     setServerError(false);
     setErrors({});
     try {
-      const result = await submitReview({
-        type: asCompany ? "RECOMMENDATION" : "CUSTOMER",
-        authorName: String(form.get("authorName") ?? ""),
-        authorTitle: String(form.get("authorTitle") ?? ""),
-        company: String(form.get("company") ?? ""),
-        rating: asCompany ? "" : rating ? String(rating) : "",
-        category: String(form.get("category") ?? ""),
-        body: String(form.get("body") ?? ""),
-        consentToPublish: form.get("consentToPublish") === "on",
-        bookingReference: booking?.reference,
-        bookingToken: booking?.token,
-        bookingExp: booking?.exp,
-        website: String(form.get("website") ?? ""),
-      });
+      const result = await submitReview(
+        {
+          type: asCompany ? "RECOMMENDATION" : "CUSTOMER",
+          authorName: String(form.get("authorName") ?? ""),
+          authorTitle: String(form.get("authorTitle") ?? ""),
+          company: String(form.get("company") ?? ""),
+          rating: asCompany ? "" : rating ? String(rating) : "",
+          category: String(form.get("category") ?? ""),
+          body: String(form.get("body") ?? ""),
+          consentToPublish: form.get("consentToPublish") === "on",
+          bookingReference: booking?.reference,
+          bookingToken: booking?.token,
+          bookingExp: booking?.exp,
+          website: String(form.get("website") ?? ""),
+        },
+        turnstile.token,
+      );
+      turnstile.reset();
       if (result.ok) setSent(true);
       else if (result.error === "validation") setErrors(result.fieldErrors);
       else setServerError(result.error === "rateLimited" ? "rateLimited" : "server");
@@ -235,6 +241,7 @@ export function ReviewForm({ booking }: Props) {
         </p>
       )}
 
+      {turnstile.element}
       <Button type="submit" size="cta" disabled={pending}>
         {pending && <Loader2 className="size-4 animate-spin" aria-hidden />}
         {pending ? t("ReviewForm.sending") : t("ReviewForm.submit")}

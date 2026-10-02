@@ -25,6 +25,7 @@ import { createBooking } from "@/server/actions/booking";
 import type { PricingContext } from "@/server/queries/pricing";
 
 import { AvailabilityCalendar } from "./availability-calendar";
+import { useTurnstile } from "@/components/site/turnstile";
 
 export type BookingFormValues = {
   category: CategorySlug | "";
@@ -113,6 +114,7 @@ export function BookingWizard({ context, locale, today, monthsAhead, initial, qu
   const [pending, setPending] = useState(false);
   const router = useRouter();
   const [hydrated, setHydrated] = useState(false);
+  const turnstile = useTurnstile("booking");
   useEffect(() => setHydrated(true), []);
 
   const {
@@ -263,7 +265,8 @@ export function BookingWizard({ context, locale, today, monthsAhead, initial, qu
     }
     setPending(true);
     try {
-      const outcome = await createBooking(parsed.data);
+      const outcome = await createBooking(parsed.data, turnstile.token);
+      turnstile.reset();
       if (outcome.ok) {
         router.push({ pathname: `/book/${outcome.reference}`, query: { t: outcome.token } });
         return;
@@ -720,6 +723,7 @@ export function BookingWizard({ context, locale, today, monthsAhead, initial, qu
         ) : (
           <span />
         )}
+        {turnstile.element}
         <Button type="submit" size="cta" disabled={pending}>
           {pending && <Loader2 className="size-4 animate-spin" aria-hidden />}
           {step === "review" ? (pending ? t("Book.sending") : t("Book.submit")) : t("Book.next")}
