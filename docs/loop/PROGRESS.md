@@ -389,3 +389,11 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (343) · e2e ✅ (298) · build ✅ · format ✅
 - Next: 7.3c Pricing rules and tax rates
 
+### 2026-10-02 — 7.3c Admin pricing rules and tax rates
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Done: `/admin/pricing` (ADMIN only, nav "Pricing"). **Rules form** driven by `RULE_DEFINITIONS` (`src/lib/admin/pricing-rules.ts`): every quote/booking knob with label, help text and unit — extra hour/photographer rates, free travel km, $/km, custom-travel threshold, weekend/stat-holiday surcharge, off-season discount + months, deposit %, quote validity, guest hint, photographers/day, minimum notice, unpaid hold hours. Money typed in dollars → stored as cents; percentages and counts must be whole numbers (the engine's integer-cent rounding assumes whole percentages). **Sales tax table**: GST / PST-QST / HST % and label per province, typed as percentages ("9.975") and converted to the stored fractions with string/integer math (`src/lib/admin/tax-rates.ts`, no float drift); existing provinces only. Actions in `src/server/actions/admin/pricing.ts` (transactions, revalidate packages + settings tags). 19 unit tests, including "what the form saves is exactly what `parsePricingRules` reads".
+- Bugs found by the e2e: (1) `OFF_SEASON_DISCOUNT_PCT` isn't seeded, so its empty field blocked every save → optional rules have a `fallback` (0 = off); (2) admin-add-ons spec used a non-existent package slug (`family`), so its "not offered for family" check passed vacuously → uses `family-event` and asserts a family add-on is listed.
+- e2e (`admin-pricing.spec.ts`, chromium only + serial because settings are global; restores values afterwards): validation, saving the guest hint changes the quote form's suggestion, tax validation + saving Nunavut stores `0.05500`.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (362) · e2e ✅ (300 + 2 skipped by design) · build ✅ · format ✅
+- Next: 7.3d Site settings
+

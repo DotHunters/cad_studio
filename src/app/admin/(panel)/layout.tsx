@@ -20,6 +20,7 @@ export default async function AdminPanelLayout({ children }: { children: ReactNo
       ? [
           { href: "/admin/packages", label: "Packages" },
           { href: "/admin/add-ons", label: "Add-ons" },
+          { href: "/admin/pricing", label: "Pricing" },
         ]
       : []),
   ];

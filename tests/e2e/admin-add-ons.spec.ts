@@ -47,8 +47,11 @@ test("admins add an add-on that the quote calculator offers, then hide it", asyn
   await page.goto("/en/quote?package=wedding");
   await expect(page.locator('form[data-hydrated="true"]')).toBeVisible();
   await expect(page.getByRole("checkbox", { name })).toBeVisible();
-  await page.goto("/en/quote?package=family");
+  await page.goto("/en/quote?package=family-event");
   await expect(page.locator('form[data-hydrated="true"]')).toBeVisible();
+  await expect(page.getByLabel("Event type")).toHaveValue("family");
+  // Seeded add-ons for family events are listed, but not this wedding/corporate one.
+  await expect(page.getByRole("checkbox", { name: "Printed album" })).toBeVisible();
   await expect(page.getByRole("checkbox", { name })).toHaveCount(0);
 
   // The code is fixed once saved; hiding removes it from quotes.

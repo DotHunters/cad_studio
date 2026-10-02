@@ -78,7 +78,7 @@ Legend: `[ ]` todo · `[x]` done · `BLOCKED(Q#)` waiting on `OPEN_QUESTIONS.md`
 - [ ] 7.3 CRUD for packages, add-ons, pricing rules, tax rates and site settings (deposit %, cancellation policy, payment instructions); EN/FR fields side by side; `revalidateTag`. — §6.10, §7, §10
   - [x] 7.3a Packages: list, create, edit (EN/FR side by side, inclusions/exclusions, FAQs, active, order), `revalidateTag`, ADMIN only
   - [x] 7.3b Add-ons
-  - [ ] 7.3c Pricing rules and tax rates
+  - [x] 7.3c Pricing rules and tax rates
   - [ ] 7.3d Site settings (deposit %, cancellation policy, payment instructions)
 - [ ] 7.4 Portfolio and gallery admin: bulk upload, tags, reorder, required "Client consent to publish obtained" checkbox. — §6.10, §9
 - [ ] 7.5 Review moderation: approve, reject, feature, logo permission. Add the e2e test (scenario 5). — §6.10, §8.4, §15
