@@ -4,11 +4,13 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 
+import { PaymentPanel } from "@/components/admin/payment-panel";
 import { StatusBadge } from "@/components/admin/status-badge";
 import { formatTaxRate, parseStoredBreakdown } from "@/lib/admin/bookings";
+import { canTakePayment } from "@/lib/admin/payments";
 import { needsPaymentRequest } from "@/lib/booking/holds";
 import { slugFromCategory } from "@/lib/categories";
-import { formatInStudioTz } from "@/lib/dates";
+import { formatInStudioTz, studioDateKey } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { formatCAD } from "@/lib/money";
 import { lineItemLabel, type Translate } from "@/lib/pricing/line-labels";
@@ -88,6 +90,20 @@ export default async function AdminBookingPage({ params }: Props) {
         <p className="mt-4 rounded-lg border border-amber-300 bg-amber-50 p-3 text-sm text-amber-950 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-100">
           No payment request has been sent for over 24 hours.
         </p>
+      )}
+
+      {canTakePayment(booking) && (
+        <div className="mt-8">
+          <PaymentPanel
+            reference={booking.reference}
+            depositAmount={
+              booking.depositCents === null ? "" : (booking.depositCents / 100).toFixed(2)
+            }
+            paymentLinkUrl={booking.paymentLinkUrl ?? ""}
+            alreadyRequested={booking.paymentRequestedAt !== null}
+            today={studioDateKey(new Date())}
+          />
+        </div>
       )}
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">

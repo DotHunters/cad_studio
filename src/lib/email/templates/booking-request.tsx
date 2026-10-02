@@ -23,9 +23,11 @@ export type BookingRequestEmailProps = {
   referenceLabel: string;
   reference: string;
   facts: Array<{ label: string; value: string }>;
-  nextTitle: string;
-  nextSteps: string[];
-  icsNote: string;
+  /** Free text block, e.g. the studio's payment instructions (line breaks kept). */
+  details?: { title: string; text: string };
+  nextTitle?: string;
+  nextSteps?: string[];
+  icsNote?: string;
   cta: { label: string; url: string };
   footer: string;
 };
@@ -103,18 +105,45 @@ export function BookingRequestEmail(props: BookingRequestEmailProps) {
             </table>
           </Section>
 
-          <Heading
-            as="h2"
-            style={{ fontFamily: "Georgia, serif", fontWeight: 400, fontSize: 20, marginTop: 28 }}
-          >
-            {props.nextTitle}
-          </Heading>
-          {props.nextSteps.map((step, index) => (
-            <Text key={index} style={{ fontSize: 14, color: ink, margin: "6px 0" }}>
-              {index + 1}. {step}
-            </Text>
-          ))}
-          <Text style={{ fontSize: 13, color: muted }}>{props.icsNote}</Text>
+          {props.details && (
+            <>
+              <Heading
+                as="h2"
+                style={{
+                  fontFamily: "Georgia, serif",
+                  fontWeight: 400,
+                  fontSize: 20,
+                  marginTop: 28,
+                }}
+              >
+                {props.details.title}
+              </Heading>
+              <Text style={{ fontSize: 14, color: ink, whiteSpace: "pre-line" }}>
+                {props.details.text}
+              </Text>
+            </>
+          )}
+          {props.nextTitle && props.nextSteps && props.nextSteps.length > 0 && (
+            <>
+              <Heading
+                as="h2"
+                style={{
+                  fontFamily: "Georgia, serif",
+                  fontWeight: 400,
+                  fontSize: 20,
+                  marginTop: 28,
+                }}
+              >
+                {props.nextTitle}
+              </Heading>
+              {props.nextSteps.map((step, index) => (
+                <Text key={index} style={{ fontSize: 14, color: ink, margin: "6px 0" }}>
+                  {index + 1}. {step}
+                </Text>
+              ))}
+            </>
+          )}
+          {props.icsNote && <Text style={{ fontSize: 13, color: muted }}>{props.icsNote}</Text>}
 
           <Section style={{ textAlign: "center", margin: "24px 0" }}>
             <Button

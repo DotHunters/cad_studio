@@ -440,3 +440,10 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (389) · e2e ✅ (312) · build ✅ · format ✅
 - Next: 7.6b payment request + record deposit
 
+### 2026-10-02 — 7.6b Payment request and deposit
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Done: booking detail shows a `PaymentPanel` while the booking is PENDING without a deposit (`canTakePayment`). **Send payment request** (STAFF+): optional https-only payment link; refuses while `PAYMENT_INSTRUCTIONS` is missing/placeholder in the client's language ("Add your payment instructions … in Settings first"); emails the client in their language (deposit, event time, instructions block, "Pay online" button when a link is given, otherwise "View your booking"); only after a successful send sets `paymentRequestedAt` (starts the 48 h hold; re-sending restarts it) and stores the link. **Record deposit**: method (bank transfer / cash / payment link), amount (defaults to the requested deposit), date received (not in the future, stored at noon studio time) → CONFIRMED via a conditional update (no double confirmation), then a "Your booking is confirmed" email. `BookingRequestEmail` gained an optional details block; EN/FR email copy added (FR flagged for review like all agent French). Rules + parsing in `src/lib/admin/payments.ts` (7 unit tests).
+- e2e: link validation, placeholder instructions block sending (nothing stored), deposit validation → recorded → CONFIRMED, forms disappear, payment section updated; in the global settings spec, after real instructions are saved a French client's payment request is sent and stored. Email bodies aren't asserted in e2e (no mail provider in tests).
+- Checks: lint ✅ · typecheck ✅ · test ✅ (396) · e2e ✅ (316) · build ✅ · format ✅
+- Next: 7.6c complete/cancel + emails + review invites + change requests
+

@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 import { adminEmailFor, deleteAdmin, signInAsAdmin } from "./admin-session";
+import { createPendingBooking, deleteBookingFixture } from "./booking-fixture";
 import { queryDb } from "./db";
 
 // Settings are global: this runs in the "global" project after all other specs. Only payment
@@ -14,8 +15,12 @@ test.afterEach(async ({}, testInfo) => {
   await queryDb(`update "SiteSetting" set value = $1::jsonb where key = 'PAYMENT_INSTRUCTIONS'`, [
     JSON.stringify(SEEDED_PAYMENT),
   ]);
+  await deleteBookingFixture(testInfo, PAYMENT_REFERENCE);
   await deleteAdmin(adminEmailFor(testInfo));
 });
+
+// A year the app never issues; this spec runs once (global project).
+const PAYMENT_REFERENCE = "CAD-B-9995-2001";
 
 test("admins edit payment instructions in both languages", async ({
   page,
@@ -54,5 +59,24 @@ test("admins edit payment instructions in both languages", async ({
   await page.reload();
   await expect(page.getByRole("group", { name: "Payment instructions" })).not.toContainText(
     "Still placeholder text",
+  );
+
+  // With real instructions in place, payment requests go out (in the client's language).
+  await createPendingBooking(testInfo, PAYMENT_REFERENCE, { locale: "fr" });
+  await page.goto(`/admin/bookings/${PAYMENT_REFERENCE}`);
+  await expect(page.locator('[data-hydrated="true"]')).toBeVisible();
+  const request = page.getByRole("form", { name: /payment request/i });
+  await request.getByLabel("Payment link (optional)").fill("https://pay.example/cad-test");
+  await request.getByRole("button", { name: "Send payment request" }).click();
+  await expect(request.getByRole("status")).toHaveText("Payment request sent to the client.");
+  const [booking] = await queryDb<{ requested: Date | null; link: string | null }>(
+    `select "paymentRequestedAt" as requested, "paymentLinkUrl" as link from "Booking"
+     where reference = $1`,
+    [PAYMENT_REFERENCE],
+  );
+  expect(booking.requested).not.toBeNull();
+  expect(booking.link).toBe("https://pay.example/cad-test");
+  await expect(page.getByRole("region", { name: "Payment" })).toContainText(
+    "https://pay.example/cad-test",
   );
 });
