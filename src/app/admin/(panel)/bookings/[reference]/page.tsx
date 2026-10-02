@@ -85,6 +85,12 @@ export default async function AdminBookingPage({ params }: Props) {
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <h1 className="font-heading font-mono text-3xl">{booking.reference}</h1>
         <StatusBadge status={booking.status} />
+        <a
+          href={`/admin/bookings/${booking.reference}/ics`}
+          className="text-gold-text text-sm underline underline-offset-4"
+        >
+          Add to calendar (.ics)
+        </a>
       </div>
       <p className="text-muted-foreground mt-1 text-sm">
         Requested {when(booking.createdAt)}

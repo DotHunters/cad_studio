@@ -37,3 +37,9 @@ export async function requireRole(role: AdminRole): Promise<AdminUser> {
   if (!user || !hasRole(user.role, role)) throw new ForbiddenError();
   return user;
 }
+
+/** For admin route handlers (CSV, .ics): a 403 response when not allowed, else null. */
+export async function forbiddenUnlessRole(role: AdminRole): Promise<Response | null> {
+  const user = await currentAdmin();
+  return user && hasRole(user.role, role) ? null : new Response("Forbidden", { status: 403 });
+}

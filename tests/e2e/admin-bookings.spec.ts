@@ -5,7 +5,7 @@ import { queryDb } from "./db";
 
 // Per-project references in a year the app never issues (9997–9999 are used by other specs).
 const referenceFor = (testInfo: TestInfo) =>
-  `CAD-B-9996-${testInfo.project.name === "mobile" ? 1 : 0}001`;
+  `CAD-B-9996-${testInfo.project.name === "mobile" ? 1 : 0}${String(testInfo.line).padStart(3, "0")}`;
 const clientEmailFor = (testInfo: TestInfo) =>
   `e2e-bookings-${testInfo.project.name}-${testInfo.testId}@example.com`.toLowerCase();
 
@@ -94,4 +94,40 @@ test("staff find a booking and see its details, price and change requests", asyn
   await expect(page.getByRole("region", { name: "Change requests" })).toContainText(
     "Could we move a week later?",
   );
+});
+
+test("bookings export to CSV, download as .ics and show on the calendar", async ({
+  page,
+  context,
+  baseURL,
+}, testInfo) => {
+  const reference = await createBooking(testInfo);
+  await signInAsAdmin(context, baseURL!, adminEmailFor(testInfo, "staff"), "STAFF");
+
+  const csv = await page.request.get(`/admin/bookings/export?q=${reference}&when=all`);
+  expect(csv.headers()["content-type"]).toContain("text/csv");
+  const text = await csv.text();
+  expect(text).toContain("Reference,Status,Event date");
+  expect(text).toContain(`${reference},PENDING,2027-10-23,14:00,FAMILY,1,Booking Viewer`);
+  expect(text).toContain("1017.00");
+
+  const ics = await page.request.get(`/admin/bookings/${reference}/ics`);
+  expect(ics.headers()["content-type"]).toContain("text/calendar");
+  const event = await ics.text();
+  expect(event).toContain("STATUS:TENTATIVE");
+  expect(event).toContain(`SUMMARY:Booking Viewer — family (${reference})`);
+
+  await page.goto("/admin/bookings/calendar?month=2027-10");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("October 2027");
+  const day = page.locator('td[data-date="2027-10-23"]');
+  const link = day.locator(`a[href="/admin/bookings/${reference}"]`);
+  await expect(link).toContainText("2:00 PM Booking Viewer");
+  await link.click();
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(reference);
+});
+
+test("exports aren't available without signing in", async ({ request }) => {
+  const response = await request.get("/admin/bookings/export", { maxRedirects: 0 });
+  expect(response.status()).toBe(307);
+  expect(response.headers().location).toContain("/admin/sign-in");
 });

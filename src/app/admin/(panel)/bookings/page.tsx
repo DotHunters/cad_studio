@@ -3,7 +3,7 @@ import Link from "next/link";
 
 import { StatusBadge } from "@/components/admin/status-badge";
 import { adminFieldClass } from "@/components/admin/form-field";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { BOOKING_STATUSES, parseBookingFilters } from "@/lib/admin/bookings";
 import { needsPaymentRequest } from "@/lib/booking/holds";
 import { slugFromCategory } from "@/lib/categories";
@@ -31,7 +31,20 @@ export default async function AdminBookingsPage({ searchParams }: Props) {
 
   return (
     <>
-      <h1 className="font-heading text-4xl">Bookings</h1>
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <h1 className="font-heading text-4xl">Bookings</h1>
+        <div className="flex gap-2">
+          <Link href="/admin/bookings/calendar" className={buttonVariants({ variant: "outline" })}>
+            Calendar
+          </Link>
+          <a
+            href={`/admin/bookings/export?${new URLSearchParams({ status: filters.status, when: filters.when, q: filters.q })}`}
+            className={buttonVariants({ variant: "outline" })}
+          >
+            Export CSV
+          </a>
+        </div>
+      </div>
 
       <form
         method="get"

@@ -455,3 +455,12 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (399) · e2e ✅ (322; admin-booking-status 3× clean after one unexplained mobile failure during the colliding run) · build ✅ · format ✅
 - Next: 7.6d calendar, photographers, CSV, `.ics`
 
+### 2026-10-02 — 7.6d Calendar, CSV export, .ics
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Split: assigning photographers needs a new relation, so it's 7.6e.
+- Done: `/admin/bookings/calendar?month=YYYY-MM` — Sunday-first month table (accessible caption, weekday headers), bookings per studio-local day with status dots + screen-reader status, blocked days with reason, today highlighted, previous/this/next month; cancelled bookings left out. **Export CSV** (`/admin/bookings/export`, same filters as the list): UTF-8 BOM, CRLF, RFC 4180 quoting, formula-injection guard (`'` before cells starting with = + - @). **Add to calendar (.ics)** per booking (`/admin/bookings/[reference]/ics`): status TENTATIVE/CONFIRMED/CANCELLED, client contact and admin link, same UID as the client's invite. Route handlers use a new `forbiddenUnlessRole` guard (403); the middleware already redirects signed-out requests. Pure helpers `src/lib/admin/csv.ts`, `src/lib/admin/calendar.ts` + 17 unit tests.
+- Gotcha: the Write tool turned `﻿` into a literal BOM character — rewritten as an escape (Python `chr(92)`).
+- e2e: CSV content, .ics content, calendar day links to the booking, signed-out export redirects to sign-in. admin-bookings fixtures are now per test (two tests in one file had shared a reference).
+- Checks: lint ✅ · typecheck ✅ · test ✅ (416) · e2e ✅ (326) · build ✅ · format ✅
+- Next: 7.6e assign photographers
+
