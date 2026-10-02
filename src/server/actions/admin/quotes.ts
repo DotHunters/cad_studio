@@ -8,11 +8,15 @@ import { adjustmentSchema, applyQuoteAdjustment } from "@/lib/admin/quote-adjust
 import { storedQuoteResult } from "@/lib/admin/quotes";
 import type { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
+import { bookingRequestSchema, paymentMethods } from "@/lib/validators/booking";
 import { fieldErrorsOf } from "@/lib/validators/admin/fields";
 import { localize } from "@/lib/localize";
 import { signValue } from "@/lib/signing";
 import { requireRole } from "@/server/auth/guards";
+import { placeBooking } from "@/server/booking/place-booking";
+import { notifyBookingPlaced } from "@/server/emails/booking-emails";
 import { sendQuoteEmails } from "@/server/emails/quote-emails";
+import { getBookableQuote } from "@/server/queries/quotes";
 import { linkSecret } from "@/server/link-secret";
 
 export type ResendResult = { ok: true; expiresAt: string } | { ok: false; error: string };
@@ -145,4 +149,78 @@ export async function adjustQuote(reference: string, input: unknown): Promise<Ad
   });
   revalidatePath("/admin", "layout");
   return { ok: true };
+}
+
+const conversionSchema = z.object({
+  venue: z.string().trim().max(200, "Keep it under 200 characters.").optional(),
+  notes: z.string().trim().max(2000, "Keep it under 2000 characters.").optional(),
+  paymentMethod: z.enum(paymentMethods, "Choose how the client will pay."),
+  confirmed: z.literal("on", "Confirm the client asked to book and accepted the terms."),
+});
+
+export type ConvertResult =
+  | { ok: true; reference: string }
+  | { ok: false; fieldErrors: Record<string, string> }
+  | { ok: false; error: string };
+
+/**
+ * Books a valid quote for the client (AGENTS.md §6.10 "convert to booking"), e.g. after they
+ * confirm by phone. Same path as the website: capacity is re-checked and the quote's saved
+ * price applies; the client and studio get the usual booking emails. STAFF+.
+ */
+export async function convertQuoteToBooking(
+  reference: string,
+  input: unknown,
+): Promise<ConvertResult> {
+  await requireRole("STAFF");
+  const parsed = conversionSchema.safeParse(input);
+  if (!parsed.success) return { ok: false, fieldErrors: fieldErrorsOf(parsed.error) };
+
+  const quote = await db.quote.findUnique({
+    where: { reference: String(reference) },
+    include: { customer: true },
+  });
+  if (!quote) return { ok: false, error: "This quote no longer exists." };
+  const token = signValue(`quote:${quote.reference}`, linkSecret());
+  const prefill = await getBookableQuote(quote.reference, token);
+  if (!prefill) {
+    return {
+      ok: false,
+      error: "Only open quotes can be booked. Renew an expired quote with Re-send first.",
+    };
+  }
+
+  const request = bookingRequestSchema.safeParse({
+    ...prefill.values,
+    venue: parsed.data.venue,
+    notes: parsed.data.notes,
+    name: quote.customer.name,
+    email: quote.customer.email,
+    phone: quote.customer.phone ?? undefined,
+    paymentMethod: parsed.data.paymentMethod,
+    // Given by the client to the studio; recorded with the booking like on the website.
+    consentTerms: true,
+    consentPrivacy: true,
+    quoteReference: quote.reference,
+    quoteToken: token,
+  });
+  if (!request.success) {
+    console.error("[admin] quote → booking request invalid", request.error.issues);
+    return { ok: false, error: "This quote can't be booked as it is (check its date and time)." };
+  }
+
+  const locale = quote.customer.locale;
+  const result = await placeBooking(request.data, { locale });
+  if (!result.ok) {
+    return {
+      ok: false,
+      error:
+        result.error === "unavailable"
+          ? "That date is no longer available (fully booked, blocked or too soon)."
+          : "This quote can't be booked as it is.",
+    };
+  }
+  await notifyBookingPlaced(request.data, result, locale);
+  revalidatePath("/admin", "layout");
+  return { ok: true, reference: result.reference };
 }

@@ -10,7 +10,12 @@ import { formatInStudioTz } from "@/lib/dates";
 import { adminNotifyAddress, sendEmail } from "@/lib/email/send";
 import { BookingRequestEmail } from "@/lib/email/templates/booking-request";
 import { buildIcs } from "@/lib/ics";
+import { localize } from "@/lib/localize";
 import { formatCAD } from "@/lib/money";
+import { signValue } from "@/lib/signing";
+import type { BookingRequest } from "@/lib/validators/booking";
+import type { PlaceBookingResult } from "@/server/booking/place-booking";
+import { linkSecret } from "@/server/link-secret";
 
 export type BookingEmailData = {
   reference: string;
@@ -126,4 +131,39 @@ export async function sendBookingEmails(data: BookingEmailData) {
       .join("\n"),
     attachments: [attachment],
   });
+}
+
+/**
+ * After a booking is placed (public form or admin conversion): sends the client and studio
+ * emails (best-effort — the booking is saved either way) and returns the client link token.
+ */
+export async function notifyBookingPlaced(
+  request: BookingRequest,
+  result: Extract<PlaceBookingResult, { ok: true }>,
+  locale: Locale,
+): Promise<string> {
+  const token = signValue(`booking:${result.reference}`, linkSecret());
+  try {
+    await sendBookingEmails({
+      reference: result.reference,
+      token,
+      locale,
+      customer: { name: request.name, email: request.email, phone: request.phone },
+      category: request.category.toUpperCase(),
+      packageName: localize(result.packageName, result.packageNameFr, locale),
+      startAt: result.startAt,
+      endAt: result.endAt,
+      venue: [request.venue, request.city].filter(Boolean).join(", ") || undefined,
+      photographers: request.photographers,
+      guestCount: request.guestCount,
+      notes: request.notes,
+      totalCents: result.price.totalCents,
+      depositCents: result.price.depositCents,
+      paymentMethod: request.paymentMethod,
+      fromQuote: result.quoteReference,
+    });
+  } catch (error) {
+    console.error(`[booking] ${result.reference} saved but emails failed`, error);
+  }
+  return token;
 }

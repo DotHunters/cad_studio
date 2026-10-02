@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
 import { AdjustQuotePanel } from "@/components/admin/adjust-quote-panel";
+import { ConvertQuotePanel } from "@/components/admin/convert-quote-panel";
 import { Facts, PriceTable, Section } from "@/components/admin/detail-section";
 import { ResendQuotePanel } from "@/components/admin/resend-quote-panel";
 import { StatusBadge } from "@/components/admin/status-badge";
@@ -87,6 +88,11 @@ export default async function AdminQuotePage({ params }: Props) {
             expired={state === "EXPIRED"}
             validDays={typeof validDays?.value === "number" ? validDays.value : 14}
           />
+          {state === "OPEN" && (
+            <div className="mt-6">
+              <ConvertQuotePanel reference={quote.reference} />
+            </div>
+          )}
           {result && (
             <div className="mt-6">
               <AdjustQuotePanel

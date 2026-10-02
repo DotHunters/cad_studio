@@ -498,3 +498,11 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (436) · e2e ✅ (338) · build ✅ · format ✅
 - Next: 7.7c convert quote to booking
 
+### 2026-10-02 — 7.7c Convert quote to booking (7.7 complete)
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Done: **Book this quote** panel on open quotes (STAFF+) for clients who confirm by phone/email: venue, notes, deposit method, and a required "client asked to book and accepted the terms and privacy policy" box (stands in for the website consent checkboxes). `convertQuoteToBooking` goes through the same path as the website: `getBookableQuote` (open, unexpired quotes only — expired ones must be renewed with Re-send), `bookingRequestSchema`, `placeBooking` (capacity, lead time and the quote's saved price — including adjustments), then the usual client/studio booking emails via the new shared `notifyBookingPlaced` (also used by `createBooking`). Redirects to the new booking. Booked quotes no longer show book/adjust/re-send.
+- Limitation: conversions keep the quote's date and times (changing them would change the price); bookings inside the minimum notice period are refused like on the website.
+- e2e: validation, convert → booking page "from quote …" at $3,616.00 with the venue, quote ACCEPTED, no further quote actions; expired quote shows no booking panel. Quote fixtures now store `startTime` and use one Saturday per project.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (436) · e2e ✅ (342) · build ✅ · format ✅
+- Next: 7.8 blocked dates and capacity
+

@@ -11,6 +11,10 @@ const referenceFor = (testInfo: TestInfo) =>
   `CAD-Q-9991-${testInfo.project.name === "mobile" ? 1 : 0}${String(testInfo.line).padStart(3, "0")}`;
 
 test.afterEach(async ({}, testInfo) => {
+  await queryDb(
+    `delete from "Booking" where "quoteId" in (select id from "Quote" where reference = $1)`,
+    [referenceFor(testInfo)],
+  );
   await queryDb(`delete from "Quote" where reference = $1`, [referenceFor(testInfo)]);
   await queryDb(`delete from "Customer" where email = $1`, [bookingClientEmail(testInfo, "quote")]);
   await deleteAdmin(adminEmailFor(testInfo, "staff"));
@@ -34,15 +38,23 @@ async function createExpiredQuote(testInfo: TestInfo, { expired = true } = {}) {
     depositCents: 108_480,
     flags: { customTravelQuote: false, suggestedPhotographers: null },
     packageSlug: "wedding",
+    startTime: "13:00",
   };
   await queryDb(
     `insert into "Quote" (id, reference, category, "packageId", "eventDate", "durationHours",
        photographers, province, city, "distanceKm", "addOns", breakdown, "subtotalCents",
        "taxCents", "totalCents", status, "expiresAt", "customerId", "createdAt")
      values (gen_random_uuid()::text, $1, 'WEDDING', (select id from "Package" where slug = 'wedding'),
-       '2027-11-13 18:00', 10, 2, 'ON', 'Markham', 25, '[]'::jsonb, $2::jsonb, 320000, 41600,
+       $5::timestamp, 10, 2, 'ON', 'Markham', 25, '[]'::jsonb, $2::jsonb, 320000, 41600,
        361600, 'SENT', now() + $4::interval, $3, now() - interval '20 days')`,
-    [reference, JSON.stringify(breakdown), customer.id, expired ? "-2 days" : "10 days"],
+    [
+      reference,
+      JSON.stringify(breakdown),
+      customer.id,
+      expired ? "-2 days" : "10 days",
+      // 13:00 Toronto (EST), one Saturday per project so bookings can't compete for capacity.
+      testInfo.project.name === "mobile" ? "2027-11-20 18:00" : "2027-11-13 18:00",
+    ],
   );
   return reference;
 }
@@ -133,4 +145,54 @@ test("staff adjust a quote's price; the client's quote shows it", async ({
     "Adjustment removed.",
   );
   await expect(page.getByRole("region", { name: "Price" })).toContainText("$3,616.00");
+});
+
+test("staff book an open quote for the client at the quoted price", async ({
+  page,
+  context,
+  baseURL,
+}, testInfo) => {
+  const reference = await createExpiredQuote(testInfo, { expired: false });
+  await signInAsAdmin(context, baseURL!, adminEmailFor(testInfo, "staff"), "STAFF");
+  await page.goto(`/admin/quotes/${reference}`);
+  const convert = page.getByRole("form", { name: "Book this quote" });
+  await expect(convert.locator("xpath=self::*[@data-hydrated='true']")).toHaveCount(1);
+
+  await convert.getByRole("button", { name: "Create booking" }).click();
+  await expect(convert.getByText("Choose how the client will pay.")).toBeVisible();
+  await expect(convert.getByText(/Confirm the client asked to book/)).toBeVisible();
+
+  await convert.getByLabel("Venue").fill("Kortright Centre, Woodbridge");
+  await convert.getByLabel("Deposit paid by").selectOption("BANK_TRANSFER");
+  await convert.getByLabel(/client asked to book/).check();
+  await convert.getByRole("button", { name: "Create booking" }).click();
+
+  // Lands on the new booking, linked to the quote, at the quoted price.
+  await expect(page).toHaveURL(/\/admin\/bookings\/CAD-B-\d{4}-\d{4,}$/);
+  await expect(page.getByText(`from quote ${reference}`)).toBeVisible();
+  await expect(page.getByRole("region", { name: "Event" })).toContainText("Kortright Centre");
+  await expect(page.getByRole("region", { name: "Price" })).toContainText("$3,616.00");
+  const [quote] = await queryDb<{ status: string }>(
+    `select status from "Quote" where reference = $1`,
+    [reference],
+  );
+  expect(quote.status).toBe("ACCEPTED");
+
+  // Booked quotes can't be booked, adjusted or re-sent again.
+  await page.goto(`/admin/quotes/${reference}`);
+  await expect(
+    page.getByRole("form", { name: /Book this quote|Adjust price|Re-send quote/ }),
+  ).toHaveCount(0);
+});
+
+test("expired quotes must be renewed before booking", async ({
+  page,
+  context,
+  baseURL,
+}, testInfo) => {
+  const reference = await createExpiredQuote(testInfo);
+  await signInAsAdmin(context, baseURL!, adminEmailFor(testInfo, "staff"), "STAFF");
+  await page.goto(`/admin/quotes/${reference}`);
+  await expect(page.getByRole("form", { name: "Re-send quote" })).toBeVisible();
+  await expect(page.getByRole("form", { name: "Book this quote" })).toHaveCount(0);
 });

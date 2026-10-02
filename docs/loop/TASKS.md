@@ -92,10 +92,10 @@ Legend: `[ ]` todo · `[x]` done · `BLOCKED(Q#)` waiting on `OPEN_QUESTIONS.md`
   - [x] 7.6d Calendar view, CSV export, `.ics` download
   - [x] 7.6e Team: add staff/admins, roles, deactivate (needed before assigning photographers)
   - [x] 7.6f Assign photographers (team members) to bookings, with same-day clash warning
-- [ ] 7.7 Quotes admin: list, convert to booking, adjust and re-send. — §6.10
+- [x] 7.7 Quotes admin: list, convert to booking, adjust and re-send. — §6.10
   - [x] 7.7a Quotes list (open/booked/expired, search) and detail; re-send (optionally renewing validity)
   - [x] 7.7b Adjust a quote's price (discount/extra line, tax + deposit recalculated)
-  - [ ] 7.7c Convert a quote to a booking from admin
+  - [x] 7.7c Convert a quote to a booking from admin
 - [ ] 7.8 Blocked dates and capacity management. — §6.10, §8.3
 - [ ] 7.9 Audit log of admin changes. — §6.10
 
