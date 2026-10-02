@@ -249,5 +249,60 @@
     "lastUpdated": "Last updated {date}",
     "draftNotice": "Draft — this page is pending legal review and may change before launch.",
     "eyebrow": "Legal"
+  },
+  "Portfolio": {
+    "metaTitle": "Portfolio",
+    "metaDescription": "Selected wedding, corporate, family, portrait and product photography by Cad Studio — in Toronto and around the world.",
+    "eyebrow": "Portfolio",
+    "title": "Stories we've <accent>told</accent>",
+    "intro": "Case studies from local celebrations to projects around the world.",
+    "filtersLabel": "Filter case studies",
+    "category": "Category",
+    "reach": "Where",
+    "year": "Year",
+    "all": "All",
+    "local": "Local",
+    "global": "Global",
+    "results": "{count, plural, =0 {No case studies} one {# case study} other {# case studies}}",
+    "empty": "No case studies match these filters yet.",
+    "clearFilters": "Clear filters"
+  },
+  "Project": {
+    "back": "All work",
+    "client": "Client",
+    "category": "Category",
+    "location": "Location",
+    "year": "Year",
+    "reach": "Reach",
+    "gallery": "Images from this project",
+    "imageCount": "{count, plural, one {# image} other {# images}}",
+    "ctaTitle": "Planning something <accent>similar</accent>?",
+    "ctaBody": "Tell us about your event and get an instant estimate.",
+    "viewPackages": "View {category} packages"
+  },
+  "Gallery": {
+    "metaTitle": "Gallery",
+    "metaDescription": "Browse wedding, event, portrait and product photography by Cad Studio.",
+    "eyebrow": "Gallery",
+    "title": "Moments, <accent>framed</accent>",
+    "intro": "A selection of recent images. Filter by service or theme.",
+    "filtersLabel": "Filter images",
+    "category": "Service",
+    "tag": "Theme",
+    "all": "All",
+    "count": "Showing {shown} of {total, plural, one {# image} other {# images}}",
+    "loadMore": "Load more",
+    "empty": "No images match these filters yet.",
+    "clearFilters": "Clear filters"
+  },
+  "Lightbox": {
+    "open": "Open image {index} of {total}",
+    "dialog": "Image viewer",
+    "close": "Close",
+    "previous": "Previous image",
+    "next": "Next image",
+    "position": "{index} / {total}",
+    "showDescription": "Show description",
+    "hideDescription": "Hide description"
   }
 }

@@ -125,4 +125,13 @@ test.describe("home page", () => {
       page.getByRole("heading", { name: "Créons quelque chose d’intemporel" }),
     ).toBeVisible();
   });
+
+  test("portfolio images get a blur-up placeholder", async ({ page }) => {
+    await page.goto("/en");
+    const image = page
+      .getByRole("region", { name: /Stories we've told/ })
+      .getByRole("img")
+      .first();
+    await expect(image).toHaveAttribute("style", /data:image\/svg\+xml;base64/);
+  });
 });

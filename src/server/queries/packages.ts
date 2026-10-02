@@ -4,8 +4,7 @@ import { unstable_cache } from "next/cache";
 
 import { parseLocalizedText } from "@/lib/content";
 import { db } from "@/lib/db";
-
-export const PACKAGES_TAG = "packages";
+import { CACHE_TAGS, CONTENT_REVALIDATE_SECONDS } from "@/server/cache";
 
 /** Active packages in display order, with prices from the DB (never hardcoded — AGENTS.md §6.2). */
 export const getActivePackages = unstable_cache(
@@ -30,7 +29,7 @@ export const getActivePackages = unstable_cache(
       },
     }),
   ["packages:active"],
-  { tags: [PACKAGES_TAG], revalidate: 3600 },
+  { tags: [CACHE_TAGS.packages], revalidate: CONTENT_REVALIDATE_SECONDS },
 );
 
 export type PackageSummary = Awaited<ReturnType<typeof getActivePackages>>[number];
@@ -46,7 +45,7 @@ export const getPackageBySlug = unstable_cache(
       },
     }),
   ["packages:by-slug"],
-  { tags: [PACKAGES_TAG], revalidate: 3600 },
+  { tags: [CACHE_TAGS.packages], revalidate: CONTENT_REVALIDATE_SECONDS },
 );
 
 export type PackageDetail = NonNullable<Awaited<ReturnType<typeof getPackageBySlug>>>;
@@ -64,5 +63,5 @@ export const getBookingTerms = unstable_cache(
     };
   },
   ["packages:booking-terms"],
-  { tags: [PACKAGES_TAG, "settings"], revalidate: 3600 },
+  { tags: [CACHE_TAGS.packages, CACHE_TAGS.settings], revalidate: CONTENT_REVALIDATE_SECONDS },
 );

@@ -1,6 +1,5 @@
 import { ArrowUpRight, Check, ChevronRight, Minus } from "lucide-react";
 import type { Metadata } from "next";
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Locale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -8,13 +7,13 @@ import ReactMarkdown from "react-markdown";
 
 import { JsonLd } from "@/components/site/json-ld";
 import { Accent } from "@/components/site/section-heading";
+import { StoredImage } from "@/components/site/stored-image";
 import { buttonVariants } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { Link } from "@/i18n/navigation";
 import { slugFromCategory } from "@/lib/categories";
 import { parseFaqs, publishableText } from "@/lib/content";
 import { isPricingConfirmed } from "@/lib/flags";
-import { storedImageSrc } from "@/lib/images";
 import { localize } from "@/lib/localize";
 import { formatCAD } from "@/lib/money";
 import { serviceJsonLd } from "@/lib/seo/json-ld";
@@ -201,8 +200,8 @@ export default async function PackageDetailPage({ params }: Props) {
                     key={image.id}
                     className="bg-muted relative aspect-square overflow-hidden rounded-lg"
                   >
-                    <Image
-                      src={storedImageSrc(image)}
+                    <StoredImage
+                      image={image}
                       alt={localize(image.alt, image.altFr, locale)}
                       fill
                       sizes="(min-width: 640px) 33vw, 50vw"
