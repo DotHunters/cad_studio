@@ -45,6 +45,12 @@ test.describe("admin packages", () => {
     await page.getByRole("button", { name: "Save package" }).click();
 
     await expect(page.getByRole("status")).toContainText(`Saved “${slug}”`);
+    // Recorded in the audit log under the admin who made the change.
+    const [entry] = await queryDb<{ summary: string }>(
+      `select summary from "AuditLog" where "userEmail" = $1 and action = 'package.create'`,
+      [adminEmailFor(testInfo)],
+    );
+    expect(entry.summary).toBe(`Created ${nameFor(testInfo)} ($1,234.50)`);
     const row = page.getByRole("row", { name: new RegExp(nameFor(testInfo)) });
     await expect(row).toContainText("$1,234.50");
     await expect(row).toContainText("Active");

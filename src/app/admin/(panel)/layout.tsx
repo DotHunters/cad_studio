@@ -29,6 +29,7 @@ export default async function AdminPanelLayout({ children }: { children: ReactNo
           { href: "/admin/gallery", label: "Images" },
           { href: "/admin/settings", label: "Settings" },
           { href: "/admin/team", label: "Team" },
+          { href: "/admin/audit", label: "Audit log" },
         ]
       : []),
   ];

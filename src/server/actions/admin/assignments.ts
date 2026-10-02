@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
+import { audit } from "@/server/audit";
 import { requireRole } from "@/server/auth/guards";
 
 const inputSchema = z.object({
@@ -17,7 +18,7 @@ const inputSchema = z.object({
  * assigned; anyone else in the request is ignored. Works as a plain form action.
  */
 export async function assignPhotographers(formData: FormData): Promise<void> {
-  await requireRole("STAFF");
+  const actor = await requireRole("STAFF");
   const parsed = inputSchema.safeParse({
     reference: formData.get("reference"),
     assigneeIds: formData.getAll("assigneeIds"),
@@ -27,7 +28,7 @@ export async function assignPhotographers(formData: FormData): Promise<void> {
 
   const active = await db.user.findMany({
     where: { id: { in: assigneeIds }, isActive: true },
-    select: { id: true },
+    select: { id: true, name: true, email: true },
   });
   try {
     await db.booking.update({
@@ -40,5 +41,11 @@ export async function assignPhotographers(formData: FormData): Promise<void> {
       throw error;
     }
   }
+  await audit(actor, {
+    action: "booking.assign",
+    entityType: "Booking",
+    entityId: reference,
+    summary: `${reference}: photographers ${active.map((user) => user.name ?? user.email).join(", ") || "none"}`,
+  });
   revalidatePath("/admin", "layout");
 }

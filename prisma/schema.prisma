@@ -411,3 +411,22 @@ model VerificationToken {
 
   @@id([identifier, token])
 }
+
+/// Who changed what in admin (AGENTS.md §6.10). Append-only; the email is a snapshot so
+/// entries stay readable after an account is removed.
+model AuditLog {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  userId     String?
+  userEmail  String
+  /// e.g. "package.update", "booking.cancel", "review.approve"
+  action     String
+  entityType String
+  entityId   String?
+  /// One readable line, e.g. "Wedding: price $2,800.00 → $3,000.00".
+  summary    String
+  details    Json?
+
+  @@index([createdAt])
+  @@index([entityType, entityId])
+}

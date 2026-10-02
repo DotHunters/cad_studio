@@ -4,9 +4,12 @@ import { redirect } from "next/navigation";
 
 import { Prisma } from "@/generated/prisma/client";
 import { categoryFromSlug } from "@/lib/categories";
+import { auditSummary, describeChanges } from "@/lib/admin/audit";
 import { db } from "@/lib/db";
+import { formatCAD } from "@/lib/money";
 import { addOnFormSchema } from "@/lib/validators/admin/add-on";
 import { fieldErrorsOf } from "@/lib/validators/admin/fields";
+import { audit } from "@/server/audit";
 import { requireRole } from "@/server/auth/guards";
 import { revalidateContent } from "@/server/cache";
 
@@ -17,7 +20,7 @@ import type { SaveResult } from "./packages";
  * only set on creation — saved quotes refer to it. Add-ons are hidden, never deleted.
  */
 export async function saveAddOn(id: string | null, input: unknown): Promise<SaveResult> {
-  await requireRole("ADMIN");
+  const actor = await requireRole("ADMIN");
   const parsed = addOnFormSchema.safeParse(input);
   if (!parsed.success) return { ok: false, fieldErrors: fieldErrorsOf(parsed.error) };
 
@@ -29,6 +32,7 @@ export async function saveAddOn(id: string | null, input: unknown): Promise<Save
     categories: categories.map((slug) => categoryFromSlug(slug)!),
   };
 
+  const before = id ? await db.addOn.findUnique({ where: { id } }) : null;
   let savedCode: string;
   try {
     const saved = id
@@ -43,6 +47,27 @@ export async function saveAddOn(id: string | null, input: unknown): Promise<Save
     return { ok: false, error: "server" };
   }
 
+  await audit(actor, {
+    action: id ? "addon.update" : "addon.create",
+    entityType: "AddOn",
+    entityId: id,
+    summary: before
+      ? auditSummary(
+          `${data.name} (${savedCode})`,
+          describeChanges(before, data, {
+            name: { label: "name" },
+            priceCents: {
+              label: "price",
+              format: (value) => formatCAD(Number(value), "en", { suffix: false }),
+            },
+            unit: { label: "charged" },
+            categories: { label: "services" },
+            isActive: { label: "active", format: (value) => (value ? "yes" : "no") },
+          }),
+          "details updated",
+        )
+      : `Created ${data.name} (${savedCode}) at ${formatCAD(data.priceCents, "en", { suffix: false })}`,
+  });
   // Quote form, quote engine and package pages read add-ons under the packages tag.
   revalidateContent("packages");
   redirect(`/admin/add-ons?saved=${encodeURIComponent(savedCode)}`);

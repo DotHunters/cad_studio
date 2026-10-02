@@ -10,7 +10,9 @@ import { parseBookingRules } from "@/lib/booking/availability";
 import { parseLocalizedText } from "@/lib/content";
 import { studioDateKey } from "@/lib/dates";
 import { db } from "@/lib/db";
+import { formatCAD } from "@/lib/money";
 import { fieldErrorsOf } from "@/lib/validators/admin/fields";
+import { audit } from "@/server/audit";
 import { requireRole } from "@/server/auth/guards";
 import {
   sendBookingConfirmedEmail,
@@ -45,7 +47,7 @@ export async function sendPaymentRequest(
   reference: string,
   input: unknown,
 ): Promise<PaymentActionResult> {
-  await requireRole("STAFF");
+  const actor = await requireRole("STAFF");
   const parsed = paymentRequestSchema.safeParse(input);
   if (!parsed.success) return { ok: false, fieldErrors: fieldErrorsOf(parsed.error) };
 
@@ -85,6 +87,12 @@ export async function sendPaymentRequest(
     where: { id: booking.id },
     data: { paymentRequestedAt: new Date(), paymentLinkUrl: parsed.data.paymentLinkUrl },
   });
+  await audit(actor, {
+    action: "booking.payment-request",
+    entityType: "Booking",
+    entityId: booking.reference,
+    summary: `${booking.reference}: payment request sent${parsed.data.paymentLinkUrl ? " with payment link" : ""}`,
+  });
   revalidatePath("/admin", "layout");
   return { ok: true };
 }
@@ -94,7 +102,7 @@ export async function recordDeposit(
   reference: string,
   input: unknown,
 ): Promise<PaymentActionResult> {
-  await requireRole("STAFF");
+  const actor = await requireRole("STAFF");
   const parsed = depositSchema(studioDateKey(new Date())).safeParse(input);
   if (!parsed.success) return { ok: false, fieldErrors: fieldErrorsOf(parsed.error) };
   const { method, amount, paidOn } = parsed.data;
@@ -113,6 +121,12 @@ export async function recordDeposit(
     },
   });
   if (count === 0) return { ok: false, error: "This booking is no longer waiting for a deposit." };
+  await audit(actor, {
+    action: "booking.deposit",
+    entityType: "Booking",
+    entityId: booking.reference,
+    summary: `${booking.reference}: deposit ${formatCAD(amount, "en")} by ${method.toLowerCase().replace("_", " ")} on ${paidOn} → CONFIRMED`,
+  });
 
   try {
     await sendBookingConfirmedEmail({ ...booking, depositCents: amount }, amount);

@@ -6,6 +6,7 @@ import { z } from "zod";
 
 import { MODERATION_INTENTS, moderationUpdate } from "@/lib/admin/moderation";
 import { db } from "@/lib/db";
+import { audit } from "@/server/audit";
 import { requireRole } from "@/server/auth/guards";
 import { revalidateContent } from "@/server/cache";
 
@@ -20,14 +21,14 @@ const inputSchema = z.object({
  * Staff can moderate. Used as a plain form action so it works before JavaScript loads.
  */
 export async function moderateReview(formData: FormData): Promise<void> {
-  await requireRole("STAFF");
+  const actor = await requireRole("STAFF");
   const parsed = inputSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) redirect("/admin/reviews?error=invalid");
   const { id, intent, returnTo } = parsed.data;
 
   const review = await db.review.findUnique({
     where: { id },
-    select: { status: true, type: true, featured: true },
+    select: { status: true, type: true, featured: true, authorName: true },
   });
   if (!review) redirect(`/admin/reviews?status=${returnTo}&error=missing`);
 
@@ -36,6 +37,12 @@ export async function moderateReview(formData: FormData): Promise<void> {
     redirect(`/admin/reviews?status=${returnTo}&error=${encodeURIComponent(update.reason)}`);
   }
   await db.review.update({ where: { id }, data: update.data });
+  await audit(actor, {
+    action: `review.${intent}`,
+    entityType: "Review",
+    entityId: id,
+    summary: `${intent.replace("-", " ")}: review by ${review.authorName}`,
+  });
 
   // Reviews page, home carousel, case-study recommendations and the dashboard.
   revalidateContent("reviews");

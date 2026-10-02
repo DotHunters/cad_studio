@@ -3,9 +3,11 @@
 import { redirect } from "next/navigation";
 
 import { categoryFromSlug } from "@/lib/categories";
+import { auditSummary, describeChanges } from "@/lib/admin/audit";
 import { db } from "@/lib/db";
 import { fieldErrorsOf } from "@/lib/validators/admin/fields";
 import { imageFormSchema } from "@/lib/validators/admin/image";
+import { audit } from "@/server/audit";
 import { requireRole } from "@/server/auth/guards";
 import { revalidateContent } from "@/server/cache";
 
@@ -16,11 +18,12 @@ import type { SaveResult } from "./packages";
  * arrive by upload (7.4c); here the admin describes, files and approves them.
  */
 export async function saveImage(id: string, input: unknown): Promise<SaveResult> {
-  await requireRole("ADMIN");
+  const actor = await requireRole("ADMIN");
   const parsed = imageFormSchema.safeParse(input);
   if (!parsed.success) return { ok: false, fieldErrors: fieldErrorsOf(parsed.error) };
   const { category, isCover, projectId, ...rest } = parsed.data;
 
+  const before = await db.image.findUnique({ where: { id } });
   try {
     const result = await db.$transaction(async (tx) => {
       const current = await tx.image.findUnique({ where: { id }, select: { projectId: true } });
@@ -50,6 +53,27 @@ export async function saveImage(id: string, input: unknown): Promise<SaveResult>
     return { ok: false, error: "server" };
   }
 
+  await audit(actor, {
+    action: "image.update",
+    entityType: "Image",
+    entityId: id,
+    summary: auditSummary(
+      rest.alt.slice(0, 60),
+      before
+        ? describeChanges(
+            before,
+            { ...rest, projectId },
+            {
+              consentToPublish: { label: "consent", format: (value) => (value ? "yes" : "no") },
+              inGallery: { label: "in gallery", format: (value) => (value ? "yes" : "no") },
+              projectId: { label: "project" },
+              sortOrder: { label: "order" },
+            },
+          ).concat(isCover ? ["set as cover"] : [])
+        : [],
+      "description updated",
+    ),
+  });
   revalidateContent("gallery", "portfolio");
   redirect(`/admin/gallery?saved=${encodeURIComponent(id)}`);
 }

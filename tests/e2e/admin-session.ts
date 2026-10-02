@@ -37,7 +37,8 @@ export async function signInAsAdmin(
   return { userId: user.id, token };
 }
 
-/** Removes the user (sessions cascade). */
+/** Removes the user (sessions cascade) and the audit entries their test actions created. */
 export async function deleteAdmin(email: string) {
+  await queryDb(`delete from "AuditLog" where "userEmail" = $1`, [email]);
   await queryDb(`delete from "User" where email = $1`, [email]);
 }

@@ -8,10 +8,12 @@ import { adjustmentSchema, applyQuoteAdjustment } from "@/lib/admin/quote-adjust
 import { storedQuoteResult } from "@/lib/admin/quotes";
 import type { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
+import { formatCAD } from "@/lib/money";
 import { bookingRequestSchema, paymentMethods } from "@/lib/validators/booking";
 import { fieldErrorsOf } from "@/lib/validators/admin/fields";
 import { localize } from "@/lib/localize";
 import { signValue } from "@/lib/signing";
+import { audit } from "@/server/audit";
 import { requireRole } from "@/server/auth/guards";
 import { placeBooking } from "@/server/booking/place-booking";
 import { notifyBookingPlaced } from "@/server/emails/booking-emails";
@@ -31,7 +33,7 @@ const inputSchema = z.object({
  * the studio is happy to honour. STAFF+.
  */
 export async function resendQuote(reference: string, input: unknown): Promise<ResendResult> {
-  await requireRole("STAFF");
+  const actor = await requireRole("STAFF");
   const { extend } = inputSchema.parse(input ?? {});
   const quote = await db.quote.findUnique({
     where: { reference: String(reference) },
@@ -90,6 +92,12 @@ export async function resendQuote(reference: string, input: unknown): Promise<Re
     where: { id: quote.id },
     data: { expiresAt, ...(extend && { status: "SENT" }) },
   });
+  await audit(actor, {
+    action: "quote.resend",
+    entityType: "Quote",
+    entityId: quote.reference,
+    summary: `${quote.reference}: re-sent${extend ? `, valid until ${expiresAt.toISOString().slice(0, 10)}` : ""}`,
+  });
   revalidatePath("/admin", "layout");
   return { ok: true, expiresAt: expiresAt.toISOString() };
 }
@@ -103,7 +111,7 @@ export type AdjustResult =
  * emailed until the quote is re-sent. STAFF+.
  */
 export async function adjustQuote(reference: string, input: unknown): Promise<AdjustResult> {
-  await requireRole("STAFF");
+  const actor = await requireRole("STAFF");
   const remove = (input as { intent?: unknown } | null)?.intent === "remove";
   const parsed = remove ? null : adjustmentSchema.safeParse(input);
   if (parsed && !parsed.success) return { ok: false, fieldErrors: fieldErrorsOf(parsed.error) };
@@ -147,6 +155,16 @@ export async function adjustQuote(reference: string, input: unknown): Promise<Ad
       totalCents: adjusted.totalCents,
     },
   });
+  await audit(actor, {
+    action: parsed ? "quote.adjust" : "quote.adjust-remove",
+    entityType: "Quote",
+    entityId: quote.reference,
+    summary: `${quote.reference}: total ${formatCAD(quote.totalCents, "en", { suffix: false })} → ${formatCAD(adjusted.totalCents, "en", { suffix: false })}${
+      parsed?.success
+        ? ` (${parsed.data.direction} “${parsed.data.label}”)`
+        : " (adjustment removed)"
+    }`,
+  });
   revalidatePath("/admin", "layout");
   return { ok: true };
 }
@@ -172,7 +190,7 @@ export async function convertQuoteToBooking(
   reference: string,
   input: unknown,
 ): Promise<ConvertResult> {
-  await requireRole("STAFF");
+  const actor = await requireRole("STAFF");
   const parsed = conversionSchema.safeParse(input);
   if (!parsed.success) return { ok: false, fieldErrors: fieldErrorsOf(parsed.error) };
 
@@ -220,6 +238,12 @@ export async function convertQuoteToBooking(
           : "This quote can't be booked as it is.",
     };
   }
+  await audit(actor, {
+    action: "quote.convert",
+    entityType: "Quote",
+    entityId: quote.reference,
+    summary: `${quote.reference} booked as ${result.reference}`,
+  });
   await notifyBookingPlaced(request.data, result, locale);
   revalidatePath("/admin", "layout");
   return { ok: true, reference: result.reference };

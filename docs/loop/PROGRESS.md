@@ -514,3 +514,10 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (439) · e2e ✅ (344 on a clean rerun) · build ✅ · format ✅
 - Next: 7.9 Audit log
 
+### 2026-10-02 — 7.9 Audit log (M7 done except 7.4c, blocked on Q18)
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Done: migration `20261003020000_audit_log` (`AuditLog`: time, user id + email snapshot, action, entity type/id, one-line summary, optional details). `audit(actor, entry)` in `src/server/audit.ts` — written after a change succeeds, failures logged but never block the change. **Every admin mutation records an entry**: packages/add-ons (field diffs, e.g. "price $2,800.00 → $3,000.00"), pricing rules (old → new per key) and tax (per province), settings (which text/language changed — not the content, since payment instructions hold bank details), projects, images, review moderation, payment requests, deposits, complete/cancel, change requests, photographer assignment, quote re-send/adjust/convert, team changes, block/unblock dates. `describeChanges`/`auditSummary` in `src/lib/admin/audit.ts` (3 unit tests). `/admin/audit` ("Audit log", ADMIN only, read-only): newest 200, filter by area, search summary/email.
+- e2e: a staff member blocks a day (and can't open the audit log); an admin finds the entry with the staff email, action and summary; the package-create test asserts its audit summary. Test users' audit rows are removed with them.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (442) · e2e ✅ (346) · build ✅ · format ✅
+- Milestone 7 stays unticked: 7.4c (photo upload) is BLOCKED(Q18 Cloudinary). Next: M8 Hardening on `feat/m8-hardening` (stacked on M7).
+
