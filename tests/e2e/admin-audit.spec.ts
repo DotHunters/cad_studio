@@ -6,6 +6,12 @@ import { queryDb } from "./db";
 // April 2028 is reserved for this spec; one day per project.
 const dayFor = (project: string) => (project === "mobile" ? "2028-04-12" : "2028-04-05");
 
+// Also before: a crashed earlier run can leave this test's audit rows behind.
+test.beforeEach(async ({}, testInfo) => {
+  await deleteAdmin(adminEmailFor(testInfo, "staff"));
+  await deleteAdmin(adminEmailFor(testInfo));
+});
+
 test.afterEach(async ({}, testInfo) => {
   await queryDb(`delete from "BlockedDate" where date = $1::date`, [dayFor(testInfo.project.name)]);
   await deleteAdmin(adminEmailFor(testInfo, "staff"));
