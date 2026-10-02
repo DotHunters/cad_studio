@@ -62,8 +62,8 @@
     "sampleBadge": "Exemple",
     "reviewsEyebrow": "Témoignages",
     "reviewsTitle": "Ce que disent nos <accent>clients</accent>",
-    "averageRating": "{rating} sur 5 selon {count, plural, one {# avis} other {# avis}}",
-    "starsLabel": "{rating} étoiles sur 5",
+    "averageRating": "{rating, number} sur 5 selon {count, plural, one {# avis} other {# avis}}",
+    "starsLabel": "{rating, number} étoiles sur 5",
     "readAllReviews": "Lire tous les avis",
     "finalTitle": "Créons quelque chose d’<accent>intemporel</accent>",
     "finalBody": "Parlez-nous de votre événement et obtenez une estimation instantanée — ou choisissez une date et nous nous occupons du reste."
@@ -328,7 +328,7 @@
     "province": "Province ou territoire",
     "city": "Ville (facultatif)",
     "distanceKm": "Distance depuis Scarborough (km)",
-    "distanceHint": "Les {km} premiers km sont gratuits; au-delà, le déplacement est facturé aller-retour.",
+    "distanceHint": "Les {km, number} premiers km sont gratuits; au-delà, le déplacement est facturé aller-retour.",
     "international": "L’événement a lieu à l’extérieur du Canada",
     "internationalHint": "Les déplacements internationaux font l’objet d’un devis distinct.",
     "noAddOns": "Aucune option offerte pour ce type d’événement.",
@@ -339,11 +339,11 @@
     "incomplete": "Remplissez les détails de l’événement pour voir votre estimation.",
     "lines": {
       "base": "Forfait {name}",
-      "extraHours": "Heures supplémentaires ({hours} h)",
-      "extraShooters": "Photographes supplémentaires ({count} × {hours} h)",
+      "extraHours": "Heures supplémentaires ({hours, number} h)",
+      "extraShooters": "Photographes supplémentaires ({count} × {hours, number} h)",
       "addOn": "{name}",
       "addOnQty": "{name} × {qty}",
-      "travel": "Déplacement ({km} km au-delà de la zone gratuite, aller-retour)",
+      "travel": "Déplacement ({km, number} km au-delà de la zone gratuite, aller-retour)",
       "WEEKEND": "Supplément de fin de semaine",
       "STAT_HOLIDAY": "Supplément de jour férié",
       "OFF_SEASON": "Rabais hors saison"
@@ -403,7 +403,7 @@
     "greeting": "Bonjour {name},",
     "quoteIntro": "Merci de votre intérêt pour Cad Studio. Voici l’estimation que vous avez préparée sur notre site.",
     "reference": "Référence",
-    "eventLine": "{category} · {date} à {time} · {hours} h",
+    "eventLine": "{category} · {date} à {time} · {hours, number} h",
     "expires": "Ce devis est valide jusqu’au {date}.",
     "cta": "Réserver cette date",
     "footer": "Cad Studio · Scarborough, Toronto · Vous recevez ce courriel parce que vous avez demandé un devis sur notre site.",
@@ -437,7 +437,7 @@
     "expired": "Ce devis a expiré le {date}. Les prix ont peut-être changé — créez un nouveau devis pour obtenir les tarifs actuels.",
     "book": "Réserver ce devis",
     "newQuote": "Créer un nouveau devis",
-    "hours": "{count} h"
+    "hours": "{count, number} h"
   },
   "Book": {
     "metaTitle": "Réserver une date",
@@ -551,5 +551,55 @@
       "invalidDate": "Choisissez une date valide.",
       "tooLong": "Ce texte est trop long."
     }
+  },
+  "Reviews": {
+    "metaTitle": "Avis",
+    "metaDescription": "Avis et recommandations de clients de Cad Studio — mariages, événements, portraits et photos de produits.",
+    "eyebrow": "Avis",
+    "title": "De bons <accent>mots</accent>",
+    "intro": "Ce que disent les clients de leur expérience avec Cad Studio. Chaque avis est vérifié avant sa publication.",
+    "summary": "{rating, number} sur 5 selon {count, plural, one {# avis} other {# avis}}",
+    "noRatings": "Aucune note pour le moment.",
+    "customersTitle": "Avis de clients",
+    "recommendationsTitle": "Recommandations",
+    "filtersLabel": "Filtrer et trier les avis",
+    "category": "Service",
+    "sort": "Trier",
+    "all": "Tous",
+    "newest": "Plus récents",
+    "highest": "Mieux notés",
+    "verified": "Client vérifié",
+    "empty": "Aucun avis ici pour le moment.",
+    "writeCta": "Partagez votre expérience",
+    "eventOn": "{category} · {date}"
+  },
+  "ReviewForm": {
+    "title": "Votre titre (facultatif)",
+    "intro": "Votre avis est lu par notre équipe avant d’être publié.",
+    "verifiedNotice": "Merci d’avoir choisi Cad Studio ! Votre avis pour la réservation {reference} portera le badge « Client vérifié » une fois publié.",
+    "linkInvalid": "Ce lien d’avis a expiré ou a déjà été utilisé — vous pouvez tout de même partager un avis ci-dessous.",
+    "asCompany": "J’écris une recommandation au nom d’une entreprise",
+    "rating": "Votre note",
+    "star": "{count, plural, one {# étoile} other {# étoiles}}",
+    "name": "Votre nom",
+    "nameHint": "Affiché sous la forme prénom et initiale du nom.",
+    "company": "Entreprise",
+    "category": "Service (facultatif)",
+    "body": "Votre avis",
+    "consent": "J’accepte que Cad Studio publie cet avis sur son site.",
+    "submit": "Envoyer l’avis",
+    "sending": "Envoi…",
+    "successTitle": "Merci!",
+    "successBody": "Votre avis apparaîtra une fois vérifié par notre équipe.",
+    "serverError": "Une erreur s’est produite. Veuillez réessayer.",
+    "errors": {
+      "required": "Ce champ est obligatoire.",
+      "ratingRequired": "Choisissez une note de 1 à 5 étoiles.",
+      "bodyTooShort": "Veuillez écrire au moins 20 caractères.",
+      "tooLong": "Ce texte est trop long.",
+      "consentRequired": "Veuillez confirmer pour continuer.",
+      "spam": "Veuillez laisser ce champ vide."
+    },
+    "heading": "Partagez votre <accent>expérience</accent>"
   }
 }

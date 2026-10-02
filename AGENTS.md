@@ -610,7 +610,7 @@ At the end of each milestone: update the checklist below and summarize what chan
 - [x] 3 Portfolio & Gallery
 - [x] 4 Quote engine
 - [x] 5 Booking
-- [ ] 6 Reviews
+- [x] 6 Reviews
 - [ ] 7 Admin
 - [ ] 8 Hardening
 - [ ] 9 Phase 2

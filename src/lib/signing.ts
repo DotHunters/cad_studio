@@ -22,3 +22,24 @@ export function verifySignedValue(
   const actual = Buffer.from(signature);
   return actual.length === expected.length && timingSafeEqual(actual, expected);
 }
+
+/**
+ * Expiring signed links (AGENTS.md §11): the signature covers the value and the expiry
+ * (Unix seconds), so neither can be changed and old links stop working.
+ */
+export function signExpiring(value: string, expiresAt: Date, secret: string) {
+  const exp = Math.floor(expiresAt.getTime() / 1000);
+  return { exp, signature: signValue(`${value}|${exp}`, secret) };
+}
+
+export function verifyExpiring(
+  value: string,
+  exp: number | string | undefined,
+  signature: string | undefined,
+  secret: string,
+  now: Date = new Date(),
+): boolean {
+  const expiry = Number(exp);
+  if (!Number.isInteger(expiry) || expiry * 1000 <= now.getTime()) return false;
+  return verifySignedValue(`${value}|${expiry}`, signature, secret);
+}

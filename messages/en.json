@@ -62,8 +62,8 @@
     "sampleBadge": "Sample",
     "reviewsEyebrow": "Kind words",
     "reviewsTitle": "What our <accent>clients</accent> say",
-    "averageRating": "{rating} out of 5 from {count, plural, one {# review} other {# reviews}}",
-    "starsLabel": "{rating} out of 5 stars",
+    "averageRating": "{rating, number} out of 5 from {count, plural, one {# review} other {# reviews}}",
+    "starsLabel": "{rating, number} out of 5 stars",
     "readAllReviews": "Read all reviews",
     "finalTitle": "Let's create something <accent>timeless</accent>",
     "finalBody": "Tell us about your event and get an instant estimate — or pick a date and we'll take it from there."
@@ -328,7 +328,7 @@
     "province": "Province or territory",
     "city": "City (optional)",
     "distanceKm": "Distance from Scarborough (km)",
-    "distanceHint": "First {km} km free; travel beyond is charged both ways.",
+    "distanceHint": "First {km, number} km free; travel beyond is charged both ways.",
     "international": "The event is outside Canada",
     "internationalHint": "International travel is quoted separately.",
     "noAddOns": "No add-ons available for this event type.",
@@ -339,11 +339,11 @@
     "incomplete": "Complete the event details to see your estimate.",
     "lines": {
       "base": "{name} package",
-      "extraHours": "Extra hours ({hours} h)",
-      "extraShooters": "Extra photographers ({count} × {hours} h)",
+      "extraHours": "Extra hours ({hours, number} h)",
+      "extraShooters": "Extra photographers ({count} × {hours, number} h)",
       "addOn": "{name}",
       "addOnQty": "{name} × {qty}",
-      "travel": "Travel ({km} km beyond free radius, round trip)",
+      "travel": "Travel ({km, number} km beyond free radius, round trip)",
       "WEEKEND": "Weekend surcharge",
       "STAT_HOLIDAY": "Statutory holiday surcharge",
       "OFF_SEASON": "Off-season discount"
@@ -403,7 +403,7 @@
     "greeting": "Hi {name},",
     "quoteIntro": "Thank you for your interest in Cad Studio. Here is the estimate you prepared on our website.",
     "reference": "Reference",
-    "eventLine": "{category} · {date} at {time} · {hours} h",
+    "eventLine": "{category} · {date} at {time} · {hours, number} h",
     "expires": "This quote is valid until {date}.",
     "cta": "Book this date",
     "footer": "Cad Studio · Scarborough, Toronto · You received this email because you requested a quote on our website.",
@@ -437,7 +437,7 @@
     "expired": "This quote expired on {date}. Prices may have changed — create a new quote for current pricing.",
     "book": "Book this quote",
     "newQuote": "Create a new quote",
-    "hours": "{count} h"
+    "hours": "{count, number} h"
   },
   "Book": {
     "metaTitle": "Book a Date",
@@ -551,5 +551,55 @@
       "invalidDate": "Choose a valid date.",
       "tooLong": "This is too long."
     }
+  },
+  "Reviews": {
+    "metaTitle": "Reviews",
+    "metaDescription": "Reviews and recommendations from Cad Studio clients — weddings, events, portraits and product photography.",
+    "eyebrow": "Reviews",
+    "title": "Kind <accent>words</accent>",
+    "intro": "What clients say about working with Cad Studio. Every review is checked before it’s published.",
+    "summary": "{rating, number} out of 5 from {count, plural, one {# review} other {# reviews}}",
+    "noRatings": "No ratings yet.",
+    "customersTitle": "Client reviews",
+    "recommendationsTitle": "Recommendations",
+    "filtersLabel": "Filter and sort reviews",
+    "category": "Service",
+    "sort": "Sort",
+    "all": "All",
+    "newest": "Newest",
+    "highest": "Highest rated",
+    "verified": "Verified client",
+    "empty": "No reviews here yet.",
+    "writeCta": "Share your experience",
+    "eventOn": "{category} · {date}"
+  },
+  "ReviewForm": {
+    "title": "Your title (optional)",
+    "intro": "Your review is read by our team before it’s published.",
+    "verifiedNotice": "Thank you for choosing Cad Studio! Your review for booking {reference} will carry a “Verified client” badge once published.",
+    "linkInvalid": "This review link has expired or was already used — you’re still welcome to share a review below.",
+    "asCompany": "I’m writing a recommendation on behalf of a company",
+    "rating": "Your rating",
+    "star": "{count, plural, one {# star} other {# stars}}",
+    "name": "Your name",
+    "nameHint": "Shown as first name and last initial.",
+    "company": "Company",
+    "category": "Service (optional)",
+    "body": "Your review",
+    "consent": "I agree that Cad Studio may publish this review on its website.",
+    "submit": "Submit review",
+    "sending": "Sending…",
+    "successTitle": "Thank you!",
+    "successBody": "Your review will appear once our team has checked it.",
+    "serverError": "Something went wrong. Please try again.",
+    "errors": {
+      "required": "This field is required.",
+      "ratingRequired": "Choose a rating from 1 to 5 stars.",
+      "bodyTooShort": "Please write at least 20 characters.",
+      "tooLong": "This is too long.",
+      "consentRequired": "Please confirm to continue.",
+      "spam": "Please leave this field empty."
+    },
+    "heading": "Share your <accent>experience</accent>"
   }
 }

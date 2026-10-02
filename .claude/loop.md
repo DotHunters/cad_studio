@@ -46,6 +46,7 @@ Run on every `/loop` tick. Goal: build the MVP in `AGENTS.md` (milestones 1–8)
 
 - **Backslash escapes get collapsed** by shell heredocs and by the Edit tool: a double backslash (e.g. `\\.` or `\\u003c` inside a TS string) can arrive as a single one. This caused the i18n middleware bug. After writing any regex or string escape, `grep` the line to verify; if it is wrong, rewrite it from Python using `chr(92)` for the backslash. Prefer a unit test that would fail if the escape is lost.
 - **e2e tests that write to the database run in parallel** (8 workers × desktop + mobile). `beforeAll`/`afterAll` run once per worker, not once per file. Give each test its own data (email/reference from `testInfo.project.name` + `testInfo.testId`) and clean up in `afterEach`; for shared fixtures use `test.describe.configure({ mode: "serial" })`, and name API-only specs `*-api.spec.ts` (the mobile project ignores them). Raw SQL timestamps must be UTC wall time (`... at time zone 'UTC'`): the local Postgres session zone is Asia/Colombo.
+- **`unstable_cache` returns JSON**: Dates become strings on a cache hit (the first, uncached call hides this). Revive dates in the query wrapper before returning (see `src/server/queries/reviews.ts`).
 - Long multi-file heredoc commands sometimes fail with "unexpected EOF"; use the Write tool for new files instead.
 
 ## Hard rules (from AGENTS.md §9, §11, §13)

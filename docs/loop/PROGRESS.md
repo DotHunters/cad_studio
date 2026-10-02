@@ -324,3 +324,32 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Done: §15 scenario 4 e2e (`book-blocked.spec.ts`): a date blocked in the DB is disabled in the booking calendar (navigates to next month if needed), can't be selected, and shows as "full" in the public API; serial file, per-project dates. Scenario 2 (book a quote → CAD-B, capacity decreases) was added in 5.4/5.5; scenario 3 (concurrent last slot) is the DB integration test from 5.4. Added the parallel-DB-test rules to `.claude/loop.md` (third time this bit).
 - Checks: lint ✅ · typecheck ✅ · test ✅ (273 incl. integration) · e2e ✅ (248) · build ✅ · format ✅
 - Next: M6 Reviews → 6.1 (branch `feat/m6-reviews`; stack on feat/m5-booking while PRs #4–#6 are open)
+
+### 2026-10-02 — 6.1 Reviews page
+- Branch: feat/m6-reviews (stacked on feat/m5-booking / PR #6)
+- Done: `/[locale]/reviews` — average rating + count, client reviews and recommendations sections, category filter + newest/highest sort as links (`src/lib/review-display.ts`: `customerDisplayName` "Alex Martin" → "Alex M.", `parseReviewFilters`, `applyReviewFilters`, `reviewsHref`; unit tested), empty states, metadata, sitemap. Cached `getPublishedReviews` (APPROVED + consent, samples gated). Shared `ReviewCard` (stars with text label, verified badge, category + month, Sample badge) now also used by the home carousel, which showed full customer names before (against §6.7).
+- Bugs found by tests: (1) `unstable_cache` returns JSON, so `createdAt` was a string on cache hits → sort crashed; dates are revived in the query wrapper (pitfall added to loop.md). (2) French ratings rendered "4.7" — ICU needs `{rating, number}`; fixed for ratings, hours and km everywhere (incl. the home carousel and quote lines) + a unit test forbidding bare numeric placeholders.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (287) · e2e ✅ (258) · build ✅ · format ✅
+- Next: 6.2 (submit-review form)
+
+### 2026-10-02 — 6.2 Submit-review form
+- Branch: feat/m6-reviews · PR #7 (stacked on #6)
+- Done: "Share your experience" section on `/reviews` — `ReviewForm` (accessible star rating as a radio group, name with "first name + last initial" hint, optional service, review text, publish consent, "on behalf of a company" toggle → recommendation with title + company and no rating, honeypot, success state). `submitReview` server action (input typed `unknown`, validated server-side) always stores PENDING, sets `flagged` via `flagForModeration` (links, shouting, 7+ repeated characters, small EN/FR profanity list with word boundaries), stores locale, notifies the studio. No email is collected (Review has no email field — data minimisation). `src/lib/validators/review.ts` + 17 unit tests.
+- Bugs found by tests: (1) Zod skips `superRefine` when base fields fail, so the rating/company errors only appeared on a second submit → `reviewFieldErrors` re-applies them so all errors show at once; (2) duplicate message key `ReviewForm.title` (section heading vs. "Your title" field) — the second silently overwrote the first; heading is now `ReviewForm.heading`.
+- e2e: pending + not public (§15 scenario 5, first half; approval is 7.5), spam flagged, validation shows all errors, recommendation requires a company.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (304) · e2e ✅ (266) · build ✅ · format ✅
+- Next: 6.3 (verified-client tokens)
+
+### 2026-10-02 — 6.3 Verified-client review links
+- Branch: feat/m6-reviews · PR #7 (stacked on #6)
+- Done: expiring signed links (`signExpiring`/`verifyExpiring` in `src/lib/signing.ts`; the signature covers purpose `review:<reference>` and the expiry, so the expiry can't be extended). `src/server/review-links.ts`: `reviewInviteUrl(reference, locale)` (90 days; emailed from admin in 7.6) and `getVerifiedBooking` — valid only when the link is unexpired, the booking exists, is COMPLETED and has no verified review yet. `/reviews?booking=…&exp=…&t=…` shows a "Verified client" notice and preselects the booking's service; invalid/expired/used links show a friendly note and still allow an unverified review. `submitReview` re-verifies server-side and saves `verified = true`, `bookingId` and the booking's category (still PENDING for moderation). `ReviewForm` gained a `data-hydrated` marker for e2e.
+- e2e: verified via signed link (+ second use rejected), expired and tampered links unverified, non-completed booking rejected.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (306) · e2e ✅ (272) · build ✅ · format ✅
+- Next: 6.4 (AggregateRating/Review JSON-LD)
+
+### 2026-10-02 — 6.4 Review structured data — **M6 Reviews complete**
+- Branch: feat/m6-reviews · PR #7 (stacked on #6)
+- Done: `reviewsJsonLd` in `src/lib/seo/json-ld.ts` → `ProfessionalService` with `AggregateRating` (average, count, best/worst) and up to 20 newest `Review`s (author as first name + last initial, date, body, rating) on `/reviews`. Built from approved reviews only (the query already filters APPROVED + consent); **sample reviews are always excluded**, as are unrated recommendations, so search engines never see invented ratings. No markup at all until there's a real rated review.
+- e2e: with sample-only data the reviews page shows the average but emits no rating markup. A "real approved review appears in JSON-LD" e2e needs cache revalidation from the admin approve action — add it with 7.5 (§15 scenario 5, second half).
+- Checks: lint ✅ · typecheck ✅ · test ✅ (309) · e2e (seo + reviews) ✅ · build ✅ · format ✅
+- Next: M7 Admin (7.1 Auth.js), new branch `feat/m7-admin` stacked on `feat/m6-reviews`
