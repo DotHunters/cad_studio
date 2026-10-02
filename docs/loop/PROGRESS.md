@@ -577,3 +577,9 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (451) · e2e ✅ (480) · build ✅ · format ✅
 - Next: 8.4b pre-launch content check
 
+### 2026-10-03 — 8.4b Pre-launch content check
+- Branch: feat/m8-hardening · PR #10
+- Done: `docs/PRE_LAUNCH.md` — the owner's checklist: environment/accounts (domain, email, secrets, first admin, Upstash, Turnstile, Cloudinary, the sample/pricing/legal flags as they actually behave), studio facts in code, prices/rules/tax/payment instructions in admin, photos and real clients, legal review, French review, final checks. `pnpm prelaunch` (`scripts/prelaunch-check.mjs`) lists every remaining `TODO(owner)`, `TODO(owner-fr)` and `cadstudio.example` with file:line and exits 1 until none are left; currently 21 + 4 + 3. A comment in `src/lib/content.ts` that only described the mechanism was reworded so it isn't reported. Sample clients and reviews are DB rows (`isSample`) that never render on Vercel production. Placeholder list added to PR #10.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (451) · build ✅ · format ✅ (no UI change; e2e not rerun)
+- Next: 8.5 full e2e in EN + FR, empty/skeleton states
+

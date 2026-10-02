@@ -23,7 +23,7 @@ export function parseFaqs(
   );
 }
 
-/** Hides seeded placeholder copy ("TODO(owner): …") until the owner replaces it in admin. */
+/** Hides seeded placeholder copy (text starting with "TODO(") until the owner replaces it in admin. */
 export function publishableText(text: string | null | undefined): string | null {
   const trimmed = text?.trim();
   if (!trimmed || trimmed.startsWith("TODO(")) return null;
