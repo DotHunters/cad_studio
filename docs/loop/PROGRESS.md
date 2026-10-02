@@ -506,3 +506,11 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (436) · e2e ✅ (342) · build ✅ · format ✅
 - Next: 7.8 blocked dates and capacity
 
+### 2026-10-02 — 7.8 Blocked dates and capacity
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Done: `/admin/availability` ("Availability" in nav; STAFF+): block a day or a range (from/to, optional internal reason; not in the past, at most a year at a time — `blockDatesSchema`, `dateRange`, 3 unit tests); already-blocked days are skipped and reported. Upcoming blocked days list with **Unblock** and a warning + links when PENDING/CONFIRMED bookings already sit on a blocked day (they're kept — blocking never cancels). Daily capacity shown, with a link to Pricing for admins (it was already editable there in 7.3c). Public availability (uncached API) and booking pick it up immediately.
+- e2e: reversed range rejected, 3 days blocked → public API "full", clashing booking linked, re-block reports "already blocked", unblock → "available". March 2028 reserved for this spec.
+- Test robustness: Playwright workers crashed twice more (0xC0000409, environment); a crashed worker leaves its fixtures behind, so user fixtures in admin-auth/admin-assignments now upsert instead of plain inserts.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (439) · e2e ✅ (344 on a clean rerun) · build ✅ · format ✅
+- Next: 7.9 Audit log
+

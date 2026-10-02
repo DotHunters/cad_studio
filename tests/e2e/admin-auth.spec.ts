@@ -13,7 +13,10 @@ const emailFor = (testInfo: TestInfo, label = "admin") =>
 async function createUser(email: string, { role = "ADMIN", isActive = true } = {}) {
   const [user] = await queryDb<{ id: string }>(
     `insert into "User" (id, email, role, "isActive", "updatedAt")
-     values (gen_random_uuid()::text, $1, $2::"Role", $3, now()) returning id`,
+     values (gen_random_uuid()::text, $1, $2::"Role", $3, now())
+     -- A crashed earlier run may have left this user behind.
+     on conflict (email) do update set role = excluded.role, "isActive" = excluded."isActive"
+     returning id`,
     [email, role, isActive],
   );
   return user.id;

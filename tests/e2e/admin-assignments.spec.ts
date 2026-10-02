@@ -35,7 +35,9 @@ test("staff assign photographers and see same-day clashes", async ({
     const { name, email } = photographer(testInfo, who);
     const [user] = await queryDb<{ id: string }>(
       `insert into "User" (id, name, email, role, "updatedAt")
-       values (gen_random_uuid()::text, $1, $2, 'STAFF', now()) returning id`,
+       values (gen_random_uuid()::text, $1, $2, 'STAFF', now())
+       on conflict (email) do update set name = excluded.name, "isActive" = true
+       returning id`,
       [name, email],
     );
     ids[who] = user.id;

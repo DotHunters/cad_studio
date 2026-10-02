@@ -96,7 +96,7 @@ Legend: `[ ]` todo · `[x]` done · `BLOCKED(Q#)` waiting on `OPEN_QUESTIONS.md`
   - [x] 7.7a Quotes list (open/booked/expired, search) and detail; re-send (optionally renewing validity)
   - [x] 7.7b Adjust a quote's price (discount/extra line, tax + deposit recalculated)
   - [x] 7.7c Convert a quote to a booking from admin
-- [ ] 7.8 Blocked dates and capacity management. — §6.10, §8.3
+- [x] 7.8 Blocked dates and capacity management. — §6.10, §8.3
 - [ ] 7.9 Audit log of admin changes. — §6.10
 
 ## M8 — Hardening · branch `feat/m8-hardening`
