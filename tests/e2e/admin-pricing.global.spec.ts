@@ -3,14 +3,10 @@ import { expect, test } from "@playwright/test";
 import { adminEmailFor, deleteAdmin, signInAsAdmin } from "./admin-session";
 import { queryDb } from "./db";
 
-// Pricing rules and tax rates are global. This spec only changes values no other spec
-// depends on (guest hint, Nunavut), runs on one project, and restores them afterwards.
+// Pricing rules and tax rates are global: this runs in the "global" project after all other
+// specs, changes values no other spec depends on (guest hint, Nunavut) and restores them.
 // Serial, so one test's clean-up can't reset the other's change mid-test.
 test.describe.configure({ mode: "serial" });
-test.beforeEach(({}, testInfo) => {
-  test.skip(testInfo.project.name !== "chromium", "Edits global settings — run once.");
-});
-
 test.afterEach(async ({}, testInfo) => {
   await queryDb(
     `update "PricingRule" set value = '100'::jsonb where key = 'GUESTS_PER_PHOTOGRAPHER_HINT'`,

@@ -424,3 +424,11 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (378) · e2e ✅ (309 + 3 skipped by design) · build ✅ · format ✅
 - Next: 7.4c is BLOCKED(Q18) → 7.5 Review moderation
 
+### 2026-10-02 — 7.5 Review moderation (§15 scenario 5 complete)
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Done: `/admin/reviews` ("Reviews" in nav; STAFF and ADMIN): status tabs with counts (Pending / Approved / Rejected), flagged reviews first with a "possible spam" badge, Verified-client badge with booking reference, Sample/Featured badges, locale and date. Plain form actions (work before JS loads): Approve, Reject, Back to pending, Feature/Unfeature (approved only), "Logo permission received"/remove (recommendations only). Rules in `src/lib/admin/moderation.ts` (3 unit tests); `moderateReview` validates input, revalidates the reviews tag and the admin layout; only known messages are shown from the query string.
+- e2e infra: new **`global` Playwright project** for `*.global.spec.ts` that runs after chromium + mobile (pricing and settings specs moved there; their chromium-only skips removed). The e2e web server now clears `.next/cache/fetch-cache` before building (`scripts/clear-data-cache.mjs`) so runs never start from an earlier run's cached pages.
+- e2e `admin-reviews.global.spec.ts` (AGENTS.md §15 scenario 5): submit 1★ → hidden, average still 4.7 from 3 → staff approve → visible, "3.8 out of 5 from 4 reviews", JSON-LD `AggregateRating` from the real review only (1 review, 1★) → feature → reject → gone, average back to 4.7.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (381) · e2e ✅ (310, no skips) · build ✅ · format ✅
+- Next: 7.6 Bookings admin
+

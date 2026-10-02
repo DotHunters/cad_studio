@@ -3,16 +3,12 @@ import { expect, test } from "@playwright/test";
 import { adminEmailFor, deleteAdmin, signInAsAdmin } from "./admin-session";
 import { queryDb } from "./db";
 
-// Settings are global. Only payment instructions (never shown on the site) are changed; the
-// cancellation policy keeps its placeholder, which package-detail.spec.ts relies on.
+// Settings are global: this runs in the "global" project after all other specs. Only payment
+// instructions (never shown on the site) are changed, and they're restored afterwards.
 const SEEDED_PAYMENT = {
   en: "TODO(owner): bank transfer details.",
   fr: "TODO(owner): coordonnées pour le virement bancaire.",
 };
-
-test.beforeEach(({}, testInfo) => {
-  test.skip(testInfo.project.name !== "chromium", "Edits global settings — run once.");
-});
 
 test.afterEach(async ({}, testInfo) => {
   await queryDb(`update "SiteSetting" set value = $1::jsonb where key = 'PAYMENT_INSTRUCTIONS'`, [
