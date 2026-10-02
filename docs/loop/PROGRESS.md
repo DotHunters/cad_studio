@@ -560,3 +560,12 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (451) · e2e ✅ (480 incl. 54 SEO checks) · build ✅ · format ✅
 - Next: 8.4 performance pass
 
+### 2026-10-03 — 8.4.1 Performance: measurement, fonts, heading order
+- Branch: feat/m8-hardening · PR #10
+- Split 8.4 into 8.4.1 (this) · 8.4.2 cut client JS on the form pages.
+- Measured: `lighthouse` (dev dependency) + `scripts/lighthouse.mjs` → `pnpm perf` (mobile preset, 10 pages, against `BASE_URL`, default `http://localhost:3300`). Core Web Vitals under Lighthouse-like throttling (Playwright, observed): LCP 1.0–2.3 s, CLS ≈ 0 on every page — targets met.
+- Fixed: Cormorant was loaded in 4 weights × 2 styles × 2 subsets (16 files) → 3 weights (400/500/600) × 2 styles, `latin` only (it covers French incl. œ); Inter `latin` only. Home 82 → 86–89. `display: "optional"` was tried and reverted: no LCP gain, and it would sometimes show a fallback instead of the brand serif. `/portfolio` card titles were `h3` straight under the `h1` (heading-order) → `ProjectCard` takes `headingLevel`, h2 on that page.
+- Local Lighthouse now: performance 90 on packages/portfolio/gallery/reviews/about, 86–89 on home/fr, **82–83 on quote/book/contact** (JS: form libraries, calendar — TBT 190–230 ms), accessibility 100, best practices 100, SEO 92 (only failure: canonical points to `cadstudio.example` while testing on localhost — fine on the real domain). Local numbers are pessimistic (no CDN/HTTP 2); a Vercel preview should be measured too.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (451) · e2e ✅ (480, rerun after a Windows worker crash) · build ✅ · format ✅
+- Next: 8.4.2
+
