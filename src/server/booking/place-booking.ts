@@ -17,6 +17,7 @@ import type { BookingRequest } from "@/lib/validators/booking";
 import { getPricingContext } from "@/server/queries/pricing";
 import { getBookableQuote } from "@/server/queries/quotes";
 import { isSerializationFailure } from "@/server/serialization";
+import { storedQuoteResult } from "@/lib/admin/quotes";
 
 export type PlaceBookingResult =
   | {
@@ -73,7 +74,16 @@ export async function placeBooking(
   };
   const useQuote = quote !== null && matchesQuote(fingerprint, quote.fingerprint);
   if (useQuote) {
-    price = { ...price, totalCents: quote.totalCents, depositCents: quote.depositCents };
+    // Book at the quote's full saved price (lines, tax, totals) so the booking's breakdown
+    // always adds up to its total — including any adjustment the studio made to the quote.
+    const saved = await db.quote.findUnique({
+      where: { reference: quote.reference },
+      select: { breakdown: true, subtotalCents: true, taxCents: true, totalCents: true },
+    });
+    const quoted = saved ? storedQuoteResult(saved) : null;
+    price = quoted
+      ? { ...quoted, flags: price.flags }
+      : { ...price, totalCents: quote.totalCents, depositCents: quote.depositCents };
   }
 
   const startAt = fromZonedTime(

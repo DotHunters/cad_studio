@@ -146,13 +146,26 @@ test.describe("booking wizard", () => {
     // Wedding takes 2 of 3 photographers → the day is now "limited".
     await expect.poll(status).toBe("limited");
 
-    const [booking] = await queryDb<{ status: string; totalCents: number; quoteStatus: string }>(
-      `select b.status, b."totalCents", q.status as "quoteStatus"
+    const [booking] = await queryDb<{
+      status: string;
+      totalCents: number;
+      quoteStatus: string;
+      samePrice: boolean;
+    }>(
+      `select b.status, b."totalCents", q.status as "quoteStatus",
+         (b."subtotalCents" = q."subtotalCents" and b."taxCents" = q."taxCents"
+          and b.breakdown->'lineItems' = q.breakdown->'lineItems'
+          and b.breakdown->'taxLines' = q.breakdown->'taxLines') as "samePrice"
          from "Booking" b join "Quote" q on q.id = b."quoteId" where b.reference = $1`,
       [reference],
     );
-    // Booked at the quoted price; the quote is now accepted.
-    expect(booking).toEqual({ status: "PENDING", totalCents: 316400, quoteStatus: "ACCEPTED" });
+    // Booked at the quoted price — every line, not just the total; the quote is now accepted.
+    expect(booking).toEqual({
+      status: "PENDING",
+      totalCents: 316400,
+      quoteStatus: "ACCEPTED",
+      samePrice: true,
+    });
   });
 
   test("books from a quote, keeping the quoted price until details change", async ({
