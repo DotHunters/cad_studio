@@ -36,4 +36,11 @@ describe("UI messages", () => {
     // tag as text. Use the typographic apostrophe (’) instead.
     for (const text of [...leaves(en), ...leaves(fr)]) expect(text).not.toMatch(/'[<{]/);
   });
+
+  it("formats decimal values (ratings, hours, km) for the locale", () => {
+    // A bare {rating} prints "4.7" in French; {rating, number} prints "4,7".
+    for (const text of [...leaves(en), ...leaves(fr)]) {
+      expect(text).not.toMatch(/\{(rating|hours|km)\}/);
+    }
+  });
 });

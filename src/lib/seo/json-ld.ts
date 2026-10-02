@@ -3,6 +3,8 @@
  * rendered by <JsonLd>. Only owner-confirmed facts go in here.
  */
 import { type Locale, siteConfig } from "@/config/site";
+import { customerDisplayName } from "@/lib/review-display";
+import { averageRating } from "@/lib/reviews";
 
 type JsonLdObject = { "@type": string } & Record<string, unknown>;
 type Base = { baseUrl: string; locale: Locale };
@@ -113,6 +115,56 @@ export function imageGalleryJsonLd({
       creditText: siteConfig.name,
       copyrightHolder: owner,
     })),
+  } satisfies JsonLdObject;
+}
+
+const MAX_REVIEWS = 20;
+
+type ReviewInput = {
+  type: "CUSTOMER" | "RECOMMENDATION";
+  authorName: string;
+  rating: number | null;
+  body: string;
+  isSample: boolean;
+  createdAt: Date;
+};
+
+/**
+ * AggregateRating + Review for the reviews page (AGENTS.md §6.7, §10). Callers pass approved
+ * reviews only; sample reviews are always left out so search engines never see invented
+ * ratings. Null when there are no real rated reviews yet.
+ */
+export function reviewsJsonLd({
+  baseUrl,
+  locale,
+  reviews,
+}: Base & { reviews: ReadonlyArray<ReviewInput> }) {
+  const rated = reviews.filter(
+    (review): review is ReviewInput & { rating: number } =>
+      !review.isSample && review.type === "CUSTOMER" && review.rating !== null,
+  );
+  const average = averageRating(rated.map((review) => review.rating));
+  if (average === null) return null;
+  return {
+    ...businessRef(baseUrl),
+    url: absolute(baseUrl, `/${locale}/reviews`),
+    aggregateRating: {
+      "@type": "AggregateRating",
+      ratingValue: average,
+      reviewCount: rated.length,
+      bestRating: 5,
+      worstRating: 1,
+    },
+    review: [...rated]
+      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime())
+      .slice(0, MAX_REVIEWS)
+      .map((review) => ({
+        "@type": "Review",
+        author: { "@type": "Person", name: customerDisplayName(review.authorName) },
+        datePublished: review.createdAt.toISOString().slice(0, 10),
+        reviewBody: review.body,
+        reviewRating: { "@type": "Rating", ratingValue: review.rating, bestRating: 5 },
+      })),
   } satisfies JsonLdObject;
 }
 

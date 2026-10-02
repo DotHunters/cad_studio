@@ -442,6 +442,13 @@ tax           = by province (see 8.2)
 total         = subtotal + tax
 deposit       = round(total × DEPOSIT_PCT)
 ```
+Implemented in `src/lib/pricing/calculate-quote.ts` (+ `holidays.ts` for Ontario statutory holidays). Interpretations of the formula — **owner to confirm**:
+- Weekend and stat-holiday surcharges don't stack; the higher applies.
+- Surcharges and discounts apply to the service (base + extra hours + extra shooters), not add-ons or travel.
+- Per-hour add-ons (e.g. videographer) are charged for the full event duration.
+- Duration is in half-hour steps; travel beyond the free radius is charged for the round trip.
+- Sales tax is charged on the whole subtotal, including travel.
+
 Return an itemized `lineItems[]` so the UI can render the breakdown. Round each line to whole cents using banker-safe integer math.
 
 **All prices, rules, deposit % and the cancellation policy are owner-managed from the admin dashboard** (`Package`, `AddOn`, `PricingRule`, `SiteSetting`). Seeds are only starting values; nothing pricing-related may be hardcoded.
@@ -485,7 +492,7 @@ Add a comment in the seed file: `// Verify current rates and service applicabili
 - `MAX_PHOTOGRAPHERS_PER_DAY` (rule, default **3**, owner confirmed) defines daily capacity.
 - A date is **unavailable** if it's in `BlockedDate`, in the past, within `MIN_LEAD_DAYS` (default 3), or the sum of photographers on `PENDING`+`CONFIRMED` bookings that day ≥ capacity.
 - `createBooking` runs inside a **serializable transaction**: re-check capacity, then insert. Return a friendly error if the slot was taken.
-- `PENDING` bookings expire `PENDING_HOLD_HOURS` (default 48) **after the payment request was sent** if no deposit is recorded — use a cron (Vercel Cron) to release them. Bookings with no payment request after 24 h are highlighted on the admin dashboard (never auto-expired).
+- `PENDING` bookings expire `PENDING_HOLD_HOURS` (default 48) **after the payment request was sent** if no deposit is recorded — use a cron (Vercel Cron) to release them. Bookings with no payment request after 24 h are highlighted on the admin dashboard (never auto-expired). Implemented as `GET /api/cron/release-holds` (`Authorization: Bearer $CRON_SECRET`), scheduled in `vercel.json` daily at 13:00 UTC (9 AM Toronto in summer) because Vercel Hobby allows one run per day; on Vercel Pro switch to hourly (`0 * * * *`). Released bookings become CANCELLED and the client gets a polite email.
 - Generate `.ics` attachment for confirmation emails.
 - Public availability endpoint returns only `{date, status: available|limited|full}` — never other clients' details.
 
@@ -535,6 +542,7 @@ See `.env.example` (source of truth, with comments). Summary:
 DATABASE_URL=
 AUTH_SECRET=
 AUTH_RESEND_KEY=
+SEED_ADMIN_EMAIL=                    # first ADMIN user, created by pnpm db:seed (sign-in is magic link only)
 RESEND_API_KEY=
 EMAIL_FROM="Cad Studio <bookings@cadstudio.example>"   # dummy domain until owner provides one
 ADMIN_NOTIFY_EMAIL=
@@ -601,9 +609,9 @@ At the end of each milestone: update the checklist below and summarize what chan
 - [x] 1 Foundation
 - [x] 2 Content pages
 - [x] 3 Portfolio & Gallery
-- [ ] 4 Quote engine
-- [ ] 5 Booking
-- [ ] 6 Reviews
+- [x] 4 Quote engine
+- [x] 5 Booking
+- [x] 6 Reviews
 - [ ] 7 Admin
 - [ ] 8 Hardening
 - [ ] 9 Phase 2

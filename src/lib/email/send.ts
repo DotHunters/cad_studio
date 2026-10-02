@@ -8,7 +8,10 @@ export type EmailMessage = {
   to: string | string[];
   subject: string;
   text: string;
+  /** Optional HTML version (rendered React Email). */
+  html?: string;
   replyTo?: string;
+  attachments?: Array<{ filename: string; content: string; contentType: string }>;
 };
 
 export type SendResult = { sent: true; id: string } | { sent: false; reason: "not-configured" };
@@ -34,6 +37,8 @@ export async function sendEmail(message: EmailMessage): Promise<SendResult> {
     to: message.to,
     subject: message.subject,
     text: message.text,
+    ...(message.html && { html: message.html }),
+    ...(message.attachments && { attachments: message.attachments }),
     replyTo: message.replyTo,
   });
   if (error || !data) {

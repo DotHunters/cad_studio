@@ -185,6 +185,15 @@
   }
 }
 
+/* Booking calendar (react-day-picker): brand colours. Two classes beat the library's
+   own `.rdp-root` defaults, which load after this file. */
+.cad-calendar.rdp-root {
+  --rdp-accent-color: var(--gold-text);
+  --rdp-accent-background-color: color-mix(in oklab, var(--brand-gold-light) 35%, transparent);
+  --rdp-today-color: var(--gold-text);
+  --rdp-selected-border: 2px solid var(--gold-text);
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

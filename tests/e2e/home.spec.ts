@@ -105,7 +105,7 @@ test.describe("home page", () => {
   test("portfolio and reviews are localized in French", async ({ page }) => {
     await page.goto("/fr");
     await expect(page.getByRole("heading", { name: "Mariage au jardin" })).toBeVisible();
-    await expect(page.getByText(/sur 5 selon 3 avis/)).toBeVisible();
+    await expect(page.getByText(/4,7 sur 5 selon 3 avis/)).toBeVisible();
   });
 
   test("final call to action links to quote and booking", async ({ page }) => {
@@ -127,6 +127,12 @@ test.describe("home page", () => {
   });
 
   test("portfolio images get a blur-up placeholder", async ({ page }) => {
+    // Next.js drops the blur style once an image loads; hold image responses so the
+    // placeholder state is observable regardless of network speed.
+    await page.route("**/_next/image**", async (route) => {
+      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await route.continue();
+    });
     await page.goto("/en");
     const image = page
       .getByRole("region", { name: /Stories we've told/ })

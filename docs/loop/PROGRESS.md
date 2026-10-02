@@ -213,3 +213,316 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Done: `imageGalleryJsonLd()` (ImageObject per image with caption, size, credit and copyright holder; capped at 30) on `/gallery` and every case study. Cache tags consolidated in `src/server/cache.ts` (`CACHE_TAGS` packages/portfolio/gallery/reviews/settings, `CONTENT_REVALIDATE_SECONDS`, `revalidateContent(...kinds)` for admin mutations in M7); all queries import from it.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (130) · e2e ✅ (180) · build ✅ · format ✅
 - Next: M4 → 4.1 (branch `feat/m4-quote`; stack on feat/m3-portfolio-gallery while PR #4 is open)
+
+### 2026-10-01 — 4.1 Canadian sales tax
+- Branch: feat/m4-quote (stacked on feat/m3-portfolio-gallery / PR #4)
+- Done (TDD): `src/lib/tax.ts` — `parseRate` (Decimal string/Prisma Decimal → integer parts per 100,000; rejects >5 decimals, negatives, ≥100%), `calculateTax(subtotalCents, rate)` → `{ lines: [{code GST|PST|QST|HST, rate "9.975%", amountCents}], taxCents }` with each line on the pre-tax subtotal (QST not on GST) and half-up rounding to the cent, `findTaxRate` (case-insensitive, throws for unknown regions). 12 tests: ON HST, QC GST+QST, GST-only, Atlantic HST, INTL, rounding edges, invalid input. Coverage: 100% lines/branches.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (142) · format ✅ after a follow-up formatting commit (the first commit was pushed with format:check failing — always run `pnpm format` before committing)
+- Next: 4.2
+
+### 2026-10-01 — 4.2 Quote engine
+- Branch: feat/m4-quote · PR #5 (stacked on #4)
+- Done (TDD): `src/lib/pricing/calculate-quote.ts` — `calculateQuote(input, {rules, addOns, taxRates})` → itemized `lineItems` (base, extraHours, extraShooters, surcharge, discount, addOn, travel), subtotal, tax lines (via `calculateTax`), total, deposit, flags (custom travel quote, suggested photographers). Integer cents with half-up rounding; validation (duration 0–24 in half hours, 1–10 photographers, distance ≥ 0, real calendar date, known region, add-on offered for the category). `src/lib/pricing/holidays.ts` — Ontario statutory holidays incl. Easter-based Good Friday. 34 new tests (every §8.1 case: base, extra hours/shooters, each add-on unit, travel threshold/round trip/custom, weekend, stat holiday, non-stacking, off-season discount, each tax regime, rounding, deposit, guest hint, validation). Coverage: calculate-quote 100% lines / 95% branches; holidays + tax 100%.
+- Interpretations recorded in AGENTS.md §8.1 and new Q16 for owner confirmation.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (176) · format ✅ (pure logic; no UI change)
+- Next: 4.3
+
+### 2026-10-01 — 4.3 Quote schema
+- Branch: feat/m4-quote · PR #5
+- Done (TDD): `src/lib/validators/quote.ts` — `quoteDetailsSchema` (category slug, optional package, real calendar date, HH:MM start, duration in half hours ≤ 24, 1–10 photographers, optional guest count ≤ 5000, province/territory or INTL, optional city, distance 0–20,000 km, international toggle forcing INTL + no distance, add-ons with whole quantities and zero-qty filtering; coerces form strings) for the live estimate without personal data; `quoteContactSchema` (name, email, optional phone, CASL opt-in defaulting to false, honeypot); `quoteRequestSchema` = both. Error messages are translation keys. 8 tests.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (184) · format ✅
+- Next: 4.4
+
+### 2026-10-01 — 4.4 /quote UI with live breakdown
+- Branch: feat/m4-quote · PR #5 (stacked on #4)
+- Done: `/[locale]/quote` — single form with sections (event, coverage, location, add-ons) + sticky live breakdown (spec allows this instead of steps). `?package=` prefills category/package/hours/photographers; `?category=` starts from the cheapest package. Every change runs the shared `quoteDetailsSchema` + `calculateQuote` in the browser; past dates (studio TZ) are ignored. `QuoteBreakdown` (translated line items, tax lines with rates, total in an `aria-live` region, deposit, custom-travel notice, "Estimate only" disclaimer), guest-count hint, international toggle. Server: cached `getPricingContext()` (packages, add-ons, parsed rules, tax rates as strings). `src/lib/pricing/rules.ts`: `parsePricingRules` (throws on missing/invalid rules), `resolvePackage` (chosen package or category's cheapest), unit tested. Province names EN/FR. `/quote` in sitemap.
+- Found + fixed: e2e typed into the form before hydration (React Hook Form missed the change → flaky failures); form now exposes `data-hydrated` and tests wait for it. Verified with `--repeat-each=3` (54/54).
+- Checks: lint ✅ · typecheck ✅ · test ✅ (190) · e2e ✅ (198; totals hand-computed: base, extra hours, add-on, weekend, travel, QC tax, international) · build ✅ · format ✅ · screenshot reviewed
+- Next: 4.5 (contact fields + createQuote server action)
+
+### 2026-10-01 — 4.5 createQuote server action
+- Branch: feat/m4-quote · PR #5 (stacked on #4)
+- Done: `src/server/actions/quote.ts` `createQuote` — re-validates with `quoteRequestSchema`, rejects past dates (studio TZ), Turnstile when configured, honeypot → fake success (nothing saved), re-prices from `getPricingContext()` (client price never sent), then in one transaction: atomic per-year counter (`ReferenceCounter` native upsert) → `CAD-Q-YYYY-####`, customer upsert by lower-cased email (records new marketing consent with timestamp, never silently withdraws it — CASL), quote row (event start converted from Toronto time to UTC, breakdown JSON incl. line items/tax/deposit/flags, status SENT, expiry = now + QUOTE_VALID_DAYS). Quote form gains a "Your details" section (name, email, phone, unchecked marketing opt-in, honeypot, privacy notice), client-side validation with inline translated errors (`aria-invalid`/`aria-describedby`, focus first error, toast), loading state and success state with reference + total. Helpers: `src/lib/references.ts` (format/parse/counter key) and `src/lib/pricing/engine-input.ts` (`toEngineInput`, shared by browser and server), both unit tested.
+- e2e: submission saves a quote whose DB total equals the server's price (145092 cents), reference format, marketing opt-in false; inline errors; CASL checkbox unchecked. New `tests/e2e/db.ts` helper queries the DB. Note: e2e runs add test quotes/customers (`e2e-quote-…@example.com`) to the local DB.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (196) · e2e ✅ (204) · build ✅ · format ✅
+- Next: 4.6 (quote emails)
+
+### 2026-10-01 — 4.6 Quote emails
+- Branch: feat/m4-quote · PR #5 (stacked on #4)
+- Done: React Email template `src/lib/email/templates/quote-summary.tsx` (logo header, reference, event line, itemized breakdown, tax lines, total, deposit, custom-travel note, validity date, "Book this date" link to `/{locale}/quote/{reference}`, disclaimer, transactional footer; all copy passed in translated). `src/server/emails/quote-emails.ts` renders HTML + plain text in the client's locale and sends it, plus a plain-text English studio notification (reply-to = client) with the full breakdown. `sendEmail` accepts HTML. `createQuote` sends after the transaction commits; email failures are logged, never lose the saved quote. Line-item labels extracted to `src/lib/pricing/line-labels.ts` and shared by the live breakdown and both emails. Vitest compiles JSX via `oxc.jsx.runtime = "automatic"`.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (208; label mapping + template render HTML/plain text/conditional travel note) · e2e ✅ (204; server log confirms both emails are built per quote and skipped only for the missing RESEND_API_KEY) · build ✅ · format ✅ · email screenshot reviewed
+- Next: 4.7 (result page `/quote/[reference]` + e2e scenario 1)
+
+### 2026-10-02 — 4.7 Private quote page + scenario 1 — **M4 Quote engine complete**
+- Branch: feat/m4-quote · PR #5 (stacked on #4)
+- Done: `/[locale]/quote/[reference]?t=…` — references are sequential, so the page requires an HMAC signature (`src/lib/signing.ts`: `signValue`/`verifySignedValue`, purpose-prefixed `quote:<ref>`, timing-safe compare; `src/server/link-secret.ts`: `LINK_TOKEN_SECRET`, dev fallback only outside Vercel). Missing/invalid/swapped signatures → 404 (doesn't reveal existence); `noindex`. Shows event facts, stored breakdown (not re-priced), validity / expired notice, "Book this quote" → `/book?quote=REF&t=…` (hidden when expired), "Create a new quote". `createQuote` returns the token; the form redirects there after saving; the client email links there with the token.
+- e2e: §15 scenario 1 (package page → Customize quote → prefilled → hours 10 + 3 photographers → $4,972.00 → submit → reference page with same total); signature checks (no token, bad token, neighbour reference with a valid token → 404); noindex; expired quote hides booking.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (212) · e2e ✅ (214) · build ✅ · format ✅
+- Notes: the result page labels the deposit with the current DEPOSIT_PCT; the stored deposit amount is what was quoted.
+- Next: M5 → 5.1 (branch `feat/m5-booking`; stack on feat/m4-quote while PRs #4/#5 are open)
+
+### 2026-10-02 — 5.1 Availability logic
+- Branch: feat/m5-booking (stacked on feat/m4-quote / PR #5)
+- Done (TDD): `src/lib/booking/availability.ts` — `dayAvailability` (past / too-soon within MIN_LEAD_DAYS / blocked / open / full with remaining capacity; only PENDING + CONFIRMED bookings hold capacity; capacity from MAX_PHOTOGRAPHERS_PER_DAY, never negative), `publicStatus` (available / limited / full only — blocked, past and too-soon look "full" so no reason leaks), `canBook(date, photographers)`, `monthAvailability(year, month)` (leap years), `addDaysToKey`. All on studio-local "YYYY-MM-DD" keys. 14 tests, 100% lines/branches.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (222) · format ✅ (pure logic)
+- Next: 5.2 (public availability endpoint)
+
+### 2026-10-02 — 5.2 Public availability endpoint
+- Branch: feat/m5-booking · PR #6 (stacked on #5 → #4)
+- Done: `GET /api/availability?month=YYYY-MM` → `{ month, days: [{date, status}] }` (available/limited/full only; 400 for malformed or out-of-range months — current month to +18; 503 on failure; `s-maxage=60`). `getAvailabilityContext(start, end)` (not cached): rules from PricingRule, blocked dates, PENDING/CONFIRMED bookings in the studio-local range (Toronto day bounds → UTC), each mapped to its studio-local day. Pure helpers + tests: `parseMonthParam`, `monthBounds`, `parseBookingRules`.
+- e2e (`availability-api.spec.ts`, serial, desktop project only via `testIgnore: /-api\.spec\.ts$/` on mobile): DB fixtures for a blocked day, a 2-of-3 booking (limited), an 11:30 PM Toronto booking (counts for that day, not the next UTC day) and a cancelled booking (ignored); response has only `date` + `status`; bad months → 400; fixtures cleaned up.
+- Found while testing: raw SQL fixtures must convert to UTC explicitly — the local Postgres session time zone is Asia/Colombo, and casting `timestamptz` → `timestamp` used it. App writes go through Prisma (UTC) and are unaffected; noted for future raw SQL.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (227) · e2e ✅ (216) · build ✅ · format ✅
+- Next: 5.3 (/book stepper)
+
+### 2026-10-02 — 5.3a Booking schema (5.3 split into a/b)
+- Branch: feat/m5-booking · PR #6
+- Done (TDD): `src/lib/validators/booking.ts` — `bookingDetailsSchema` (category/package, real date, start + end on half-hour steps with end after start → derived `durationHours`, 1–10 photographers, guests, venue/city/province/distance or international → INTL, notes ≤ 2000, add-ons), `bookingContactSchema` (name/email/phone, deposit method BANK_TRANSFER | CASH, required terms + privacy consent, CASL opt-in default false, honeypot), `bookingRequestSchema` (+ optional `quoteReference`/`quoteToken`), `durationFromTimes`. 10 tests. Installed react-day-picker 10 (calendar for 5.3b).
+- Checks: lint ✅ · typecheck ✅ · test ✅ (237) · format ✅
+- Next: 5.3b
+
+### 2026-10-02 — 5.3b Booking wizard UI
+- Branch: feat/m5-booking · PR #6
+- Done: `/[locale]/book` — `BookingWizard` (5 steps: service → date & time → event details → your details → review), step indicator (`aria-current="step"`), per-step validation with the shared schema (only that step's fields; inline translated errors; focus first error; heading focused on step change), Back keeps answers. `AvailabilityCalendar` (react-day-picker 10, `enCA`/`frCA`, fetches `/api/availability` per month, full/unknown days disabled while loading, limited days marked + legend, current month → +18 months, brand colours via `.cad-calendar.rdp-root`). Half-hour start/end selects. Contact step: bank transfer / cash, required terms + privacy consent (links), unticked CASL opt-in, honeypot. Review: summary + price — the quoted price while nothing price-relevant changed (`matchesQuote`, shared with 5.4), otherwise a fresh estimate with breakdown; deposit note. Prefill: `?package=` or signed `?quote=&t=` via `getBookableQuote` (valid signature, SENT, not expired; `addHoursToTime` → end time). Submit button is wired in 5.4.
+- Also fixed: `/quote` (from 4.4) and `/book` were missing from the sitemap — the 4.4 `sed` silently matched nothing; SEO e2e now asserts both.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (250) · e2e ✅ (230 full run; 7 wizard tests) · build ✅ · format ✅ · screenshot reviewed (calendar recoloured after first look)
+- Next: 5.4 (createBooking in a serializable transaction)
+
+### 2026-10-02 — 5.4 createBooking (serializable) + confirmation page
+- Branch: feat/m5-booking · PR #6
+- Done: `src/server/booking/place-booking.ts` `placeBooking` — re-prices from DB (quoted price only if the signed quote is valid and `matchesQuote`), then a SERIALIZABLE transaction re-checks capacity for the studio-local day (blocked date, lead time, PENDING+CONFIRMED photographers), increments the `B-YYYY` counter → `CAD-B-YYYY-####`, upserts the customer (terms/privacy `consentAt`; CASL opt-in recorded, never withdrawn), creates a PENDING booking (price, breakdown, deposit, payment method, quote link) and marks the quote ACCEPTED (one booking per quote). Serialization failures (P2034/40001) retry up to 3× and then report "unavailable". `src/server/actions/booking.ts` `createBooking` (validation, honeypot, past-date, Turnstile, signed `booking:` token). Wizard submits and handles unavailable (back to the date step), validation (jumps to the step) and server errors. `/[locale]/book/[reference]?t=…` confirmation (signed, noindex): status, when, package, total, deposit, payment method, next steps for bank transfer vs cash.
+- Schema: `Booking` gains `subtotalCents`, `taxCents`, `totalCents`, `breakdown` (migration `20261002000000_booking_price`) — the agreed price wasn't stored before.
+- Tests: Vitest integration test against the real DB (`tests/integration/booking-concurrency.test.ts`, skipped without `DATABASE_URL`; `server-only` stubbed, `unstable_cache` passthrough, files run serially) — §15 scenario 3: two simultaneous requests for the last slot → exactly one succeeds (5/5 repeated runs), then the day is full; stored price/deposit/reference checked. e2e §15 scenario 2: book a quote → CAD-B reference, day goes available → limited, booking at the quoted price, quote ACCEPTED; wizard submit → confirmation page.
+- Found while testing: per-worker `afterAll` cleanup deleted another test's booking mid-run → per-test emails + `afterEach` cleanup.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (252 incl. 2 integration) · e2e ✅ (232) · build ✅ · format ✅
+- Next: 5.5 (booking emails + .ics)
+
+### 2026-10-02 — 5.5 Booking emails + .ics
+- Branch: feat/m5-booking · PR #6
+- Done: `src/lib/ics.ts` — RFC 5545 VEVENT builder (UTC times, TEXT escaping, CRLF lines, 75-octet folding without splitting multi-byte characters, TENTATIVE while pending, SEQUENCE for future reschedules); 8 tests. React Email `booking-request.tsx` (reference, status, when, package, total, deposit, payment method, next steps for bank transfer vs cash, calendar note, "View your booking" signed link). `src/server/emails/booking-emails.ts` sends it in the client's locale + a plain-text studio notification (reply-to client; reminds the studio to send the payment request), both with `CAD-B-….ics` attached. `sendEmail` supports attachments. `createBooking` sends after the booking is saved (best-effort, logged on failure).
+- Test fixes: §15 scenario 2 now uses a different Wednesday per Playwright project (desktop and mobile raced on one date's capacity); the blur-placeholder test holds `/_next/image` responses so the pre-load state is observable (was timing-dependent) — verified with `--repeat-each=3`.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (262) · e2e ✅ (232; server log shows client + studio booking emails built per booking) · build ✅ · format ✅
+- Next: 5.6 (signed reschedule/cancel links)
+
+### 2026-10-02 — 5.6 Reschedule / cancel requests
+- Branch: feat/m5-booking · PR #6
+- Done: clients request changes from the signed booking page; nothing changes automatically (cancellation/refund policy is owner-defined, Q15). New `BookingChangeRequest` model (type RESCHEDULE|CANCEL, preferred date, message, status OPEN|RESOLVED; migration `20261002010000_booking_change_requests`) for admin (M7). `src/lib/validators/change-request.ts`: `changeRequestSchema` (reschedule needs a preferred date or a note) + `canRequestChange` (PENDING/CONFIRMED, upcoming, < 3 open requests) — unit tested. `requestBookingChange` server action verifies the `booking:` signature, checks eligibility, stores the request and emails the studio (reply-to client). `ChangeRequestForm` on `/book/[reference]` (only when changeable); booking email mentions the link.
+- e2e: reschedule recorded (DB row), cancellation request leaves the booking PENDING, 4th open request refused, no form for cancelled bookings, unsigned/bad links 404. Fixtures use per-project `CAD-B-9999-…` references and per-test emails.
+- Notes: one full run lost its web server (Playwright reused a leftover server that then stopped) and one hit a transient ECONNRESET; reruns pass. `--repeat-each` on the booking scenario must use `--workers=1` (parallel repeats legitimately compete for the same date's capacity).
+- Checks: lint ✅ · typecheck ✅ · test ✅ (267) · e2e ✅ (242 on rerun) · build ✅ · format ✅
+- Next: 5.7 (cron to release unpaid holds)
+
+### 2026-10-02 — 5.7 Release unpaid holds (cron)
+- Branch: feat/m5-booking · PR #6
+- Done: `src/lib/booking/holds.ts` (`isHoldExpired`: PENDING, no deposit, payment request ≥ PENDING_HOLD_HOURS ago; never for bookings without a payment request; `overdueCutoff`; `needsPaymentRequest` for the admin 24 h warning) — 7 tests. `GET /api/cron/release-holds` (timing-safe `Bearer $CRON_SECRET`, 401 otherwise) cancels overdue holds with the condition re-checked in the update (a just-recorded deposit wins), emails each client a localized "hold released" note, returns `{ released }`; idempotent. `vercel.json` schedules it daily at 13:00 UTC (Hobby-safe; hourly on Pro — noted in AGENTS.md §8.3). Playwright web server gets `CRON_SECRET=e2e-cron-secret`.
+- e2e (`cron-api.spec.ts`): no/wrong secret → 401; of four fixtures only the unpaid, 49-h-old request is released; second run releases nothing.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (273) · e2e ✅ (244) · build ✅ · format ✅
+- Next: 5.8 (remaining e2e: scenario 4 blocked date not selectable)
+
+### 2026-10-02 — 5.8 Booking scenarios — **M5 Booking complete**
+- Branch: feat/m5-booking · PR #6 (stacked on #5 → #4)
+- Done: §15 scenario 4 e2e (`book-blocked.spec.ts`): a date blocked in the DB is disabled in the booking calendar (navigates to next month if needed), can't be selected, and shows as "full" in the public API; serial file, per-project dates. Scenario 2 (book a quote → CAD-B, capacity decreases) was added in 5.4/5.5; scenario 3 (concurrent last slot) is the DB integration test from 5.4. Added the parallel-DB-test rules to `.claude/loop.md` (third time this bit).
+- Checks: lint ✅ · typecheck ✅ · test ✅ (273 incl. integration) · e2e ✅ (248) · build ✅ · format ✅
+- Next: M6 Reviews → 6.1 (branch `feat/m6-reviews`; stack on feat/m5-booking while PRs #4–#6 are open)
+
+### 2026-10-02 — 6.1 Reviews page
+- Branch: feat/m6-reviews (stacked on feat/m5-booking / PR #6)
+- Done: `/[locale]/reviews` — average rating + count, client reviews and recommendations sections, category filter + newest/highest sort as links (`src/lib/review-display.ts`: `customerDisplayName` "Alex Martin" → "Alex M.", `parseReviewFilters`, `applyReviewFilters`, `reviewsHref`; unit tested), empty states, metadata, sitemap. Cached `getPublishedReviews` (APPROVED + consent, samples gated). Shared `ReviewCard` (stars with text label, verified badge, category + month, Sample badge) now also used by the home carousel, which showed full customer names before (against §6.7).
+- Bugs found by tests: (1) `unstable_cache` returns JSON, so `createdAt` was a string on cache hits → sort crashed; dates are revived in the query wrapper (pitfall added to loop.md). (2) French ratings rendered "4.7" — ICU needs `{rating, number}`; fixed for ratings, hours and km everywhere (incl. the home carousel and quote lines) + a unit test forbidding bare numeric placeholders.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (287) · e2e ✅ (258) · build ✅ · format ✅
+- Next: 6.2 (submit-review form)
+
+### 2026-10-02 — 6.2 Submit-review form
+- Branch: feat/m6-reviews · PR #7 (stacked on #6)
+- Done: "Share your experience" section on `/reviews` — `ReviewForm` (accessible star rating as a radio group, name with "first name + last initial" hint, optional service, review text, publish consent, "on behalf of a company" toggle → recommendation with title + company and no rating, honeypot, success state). `submitReview` server action (input typed `unknown`, validated server-side) always stores PENDING, sets `flagged` via `flagForModeration` (links, shouting, 7+ repeated characters, small EN/FR profanity list with word boundaries), stores locale, notifies the studio. No email is collected (Review has no email field — data minimisation). `src/lib/validators/review.ts` + 17 unit tests.
+- Bugs found by tests: (1) Zod skips `superRefine` when base fields fail, so the rating/company errors only appeared on a second submit → `reviewFieldErrors` re-applies them so all errors show at once; (2) duplicate message key `ReviewForm.title` (section heading vs. "Your title" field) — the second silently overwrote the first; heading is now `ReviewForm.heading`.
+- e2e: pending + not public (§15 scenario 5, first half; approval is 7.5), spam flagged, validation shows all errors, recommendation requires a company.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (304) · e2e ✅ (266) · build ✅ · format ✅
+- Next: 6.3 (verified-client tokens)
+
+### 2026-10-02 — 6.3 Verified-client review links
+- Branch: feat/m6-reviews · PR #7 (stacked on #6)
+- Done: expiring signed links (`signExpiring`/`verifyExpiring` in `src/lib/signing.ts`; the signature covers purpose `review:<reference>` and the expiry, so the expiry can't be extended). `src/server/review-links.ts`: `reviewInviteUrl(reference, locale)` (90 days; emailed from admin in 7.6) and `getVerifiedBooking` — valid only when the link is unexpired, the booking exists, is COMPLETED and has no verified review yet. `/reviews?booking=…&exp=…&t=…` shows a "Verified client" notice and preselects the booking's service; invalid/expired/used links show a friendly note and still allow an unverified review. `submitReview` re-verifies server-side and saves `verified = true`, `bookingId` and the booking's category (still PENDING for moderation). `ReviewForm` gained a `data-hydrated` marker for e2e.
+- e2e: verified via signed link (+ second use rejected), expired and tampered links unverified, non-completed booking rejected.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (306) · e2e ✅ (272) · build ✅ · format ✅
+- Next: 6.4 (AggregateRating/Review JSON-LD)
+
+### 2026-10-02 — 6.4 Review structured data — **M6 Reviews complete**
+- Branch: feat/m6-reviews · PR #7 (stacked on #6)
+- Done: `reviewsJsonLd` in `src/lib/seo/json-ld.ts` → `ProfessionalService` with `AggregateRating` (average, count, best/worst) and up to 20 newest `Review`s (author as first name + last initial, date, body, rating) on `/reviews`. Built from approved reviews only (the query already filters APPROVED + consent); **sample reviews are always excluded**, as are unrated recommendations, so search engines never see invented ratings. No markup at all until there's a real rated review.
+- e2e: with sample-only data the reviews page shows the average but emits no rating markup. A "real approved review appears in JSON-LD" e2e needs cache revalidation from the admin approve action — add it with 7.5 (§15 scenario 5, second half).
+- Checks: lint ✅ · typecheck ✅ · test ✅ (309) · e2e (seo + reviews) ✅ · build ✅ · format ✅
+- Next: M7 Admin (7.1 Auth.js), new branch `feat/m7-admin` stacked on `feat/m6-reviews`
+
+### 2026-10-02 — 7.1 Admin auth
+- Branch: feat/m7-admin · PR #8 (stacked on #7 — M3–M6 PRs not merged yet)
+- Done: Auth.js v5 (`next-auth@5.0.0-beta.32`, `@auth/prisma-adapter`) in `src/auth.ts` — email magic link (Resend provider, 15-min single-use links, sent through `sendEmail`; printed to the server log when no email key in dev/test), database sessions (7 days). Migration `20261003000000_admin_auth` adds `User` (role `ADMIN`/`STAFF`, `isActive`), `Account`, `Session`, `VerificationToken`. **No sign-up**: only existing active users get a link; unknown addresses see the same "check your email" page and nothing is sent (no account discovery). `pnpm db:seed` creates the first ADMIN from `SEED_ADMIN_EMAIL` (Q17).
+- Access: middleware redirects to `/admin/sign-in?callbackUrl=…` without a session cookie (cheap, edge); `(panel)/layout.tsx` and every page call `requireAdminPage(role)`; actions call `requireRole(role)` (throws `ForbiddenError`). Pure rules in `src/lib/auth/roles.ts` (`hasRole` — ADMIN ⊇ STAFF, `adminGuardRedirect`, `safeCallbackUrl` against open redirects) + 17 unit tests. Deactivating a user ends access on the next request. Admin root layout is English-only, `noindex`.
+- e2e (scenario 7 + more): redirect with callback, forged cookie rejected, noindex, links only for known users (same page for strangers), real magic-link callback with an Auth.js-hashed token (single use), staff session + sign out deletes the session, deactivated user loses access.
+- Not yet: rate limiting / Turnstile on the sign-in form (8.3); dashboard content (7.2).
+- Checks: lint ✅ · typecheck ✅ · test ✅ (327) · e2e ✅ (288) · build ✅ · format ✅
+- Next: 7.2 Dashboard
+
+### 2026-10-02 — 7.2 Admin dashboard
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Done: `/admin` shows stat cards (upcoming pending+confirmed bookings, quotes in the last 7 days, pending reviews with flagged count, revenue estimate for the current studio-local month — confirmed/completed vs pending, before tax, unpriced bookings counted not guessed), a "Needs attention" box (PENDING bookings with no payment request after 24 h — §8.3 — and open reschedule/cancel requests), the next 8 bookings and the 5 latest quotes. Pure helpers `studioMonthRange` (Toronto month incl. DST and year rollover) and `revenueEstimate` in `src/lib/admin/dashboard.ts` + 7 unit tests; live (uncached) query in `src/server/queries/admin-dashboard.ts`.
+- Lists don't link anywhere yet — the bookings/quotes/reviews admin pages arrive in 7.5–7.7.
+- e2e: signed-in admin sees a flagged unrequested booking in "Needs attention" and in upcoming bookings, plus all stat cards.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (334) · e2e ✅ (290) · build ✅ · format ✅
+- Next: 7.3 CRUD for packages, add-ons, pricing rules, tax rates, site settings
+
+### 2026-10-02 — 7.3a Admin packages
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Split 7.3 into 7.3a packages · 7.3b add-ons · 7.3c pricing rules + tax rates · 7.3d site settings.
+- Done: admin nav (`AdminNav`, current section marked; catalogue links only for ADMIN). `/admin/packages` list (name, slug, category, price, hours, active/hidden, order) + "Saved" notice; `/admin/packages/new` and `/admin/packages/[id]` with `PackageForm` — English and French side by side for name/summary/description/inclusions/exclusions (one per line), FAQ rows (EN/FR), price typed in dollars (stored as cents), hours, photographers, edited images, turnaround, active, sort order. `savePackage` server action: ADMIN only (`requireRole`), Zod (`src/lib/validators/admin/package.ts`, plain-English errors, 5 unit tests), duplicate slug → field error, `revalidateContent("packages")` so the site, quote engine and booking terms update at once. No delete — hiding keeps quotes/bookings intact.
+- Bug caught in review before testing: a `Field` component declared inside the form's render would remount inputs on every error and wipe what was typed; hoisted to module level and covered by an e2e check.
+- e2e: create (EN/FR + FAQ) → public EN/FR detail pages show it → hide → public 404; validation errors keep typed values; STAFF has no Packages link and is bounced to `/admin?error=forbidden`. `packages.spec.ts` counts now ignore "E2E Package" cards so parallel runs can't collide. New helper `tests/e2e/admin-session.ts`.
+- Flake: `review-verified` failed once under full-suite load waiting for hydration; passed alone and on a full rerun — hydration wait raised to 15 s.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (339) · e2e ✅ (296) · build ✅ · format ✅
+- Next: 7.3b Add-ons
+
+### 2026-10-02 — 7.3b Admin add-ons
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Done: `/admin/add-ons` list (name, code, price + unit, services, active, order), create/edit with `AddOnForm` — code (set once; read-only on edit because saved quotes store add-ons by code), EN/FR name, price in dollars, unit (flat / per hour × duration / per item × quantity), services it's offered for (at least one), active, order. `saveAddOn` action: ADMIN only, Zod (`src/lib/validators/admin/add-on.ts`, 4 unit tests), duplicate code → field error, revalidates the packages tag (quote form, engine and package pages). Shared admin form pieces extracted: `src/lib/validators/admin/fields.ts` and `src/components/admin/form-field.tsx`. Nav gains "Add-ons" (ADMIN only).
+- Gotcha handled: `Object.fromEntries(FormData)` keeps only one value per name — the form sends `getAll("categories")`.
+- e2e: validation, create → quote form offers it for weddings but not family, code read-only on edit, hide → gone from quotes.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (343) · e2e ✅ (298) · build ✅ · format ✅
+- Next: 7.3c Pricing rules and tax rates
+
+### 2026-10-02 — 7.3c Admin pricing rules and tax rates
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Done: `/admin/pricing` (ADMIN only, nav "Pricing"). **Rules form** driven by `RULE_DEFINITIONS` (`src/lib/admin/pricing-rules.ts`): every quote/booking knob with label, help text and unit — extra hour/photographer rates, free travel km, $/km, custom-travel threshold, weekend/stat-holiday surcharge, off-season discount + months, deposit %, quote validity, guest hint, photographers/day, minimum notice, unpaid hold hours. Money typed in dollars → stored as cents; percentages and counts must be whole numbers (the engine's integer-cent rounding assumes whole percentages). **Sales tax table**: GST / PST-QST / HST % and label per province, typed as percentages ("9.975") and converted to the stored fractions with string/integer math (`src/lib/admin/tax-rates.ts`, no float drift); existing provinces only. Actions in `src/server/actions/admin/pricing.ts` (transactions, revalidate packages + settings tags). 19 unit tests, including "what the form saves is exactly what `parsePricingRules` reads".
+- Bugs found by the e2e: (1) `OFF_SEASON_DISCOUNT_PCT` isn't seeded, so its empty field blocked every save → optional rules have a `fallback` (0 = off); (2) admin-add-ons spec used a non-existent package slug (`family`), so its "not offered for family" check passed vacuously → uses `family-event` and asserts a family add-on is listed.
+- e2e (`admin-pricing.spec.ts`, chromium only + serial because settings are global; restores values afterwards): validation, saving the guest hint changes the quote form's suggestion, tax validation + saving Nunavut stores `0.05500`.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (362) · e2e ✅ (300 + 2 skipped by design) · build ✅ · format ✅
+- Next: 7.3d Site settings
+
+### 2026-10-02 — 7.3d Site settings (7.3 complete)
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Done: `/admin/settings` (ADMIN only, nav "Settings") edits the bilingual `SiteSetting` texts — cancellation policy (package pages, booking emails) and payment instructions (sent with payment requests in 7.6, never on the site). English and French side by side, both required; warns while text is still a `TODO(…)` placeholder (placeholders are never shown to clients). Definitions + parsing in `src/lib/admin/site-settings.ts` (5 unit tests), `saveSiteSettings` action revalidates the settings tag.
+- **Fix (separate commit):** `pnpm db:seed` overwrote packages, add-ons, pricing rules and tax rates on every run — now that admins edit them (and the owner is told to run the seed to create the first admin), those are create-only like site settings.
+- e2e (`admin-settings.spec.ts`, chromium only, restores afterwards): placeholder warning, both languages required, save persists `{ en, fr }`. Only payment instructions are changed because `package-detail.spec.ts` relies on the placeholder policy staying hidden.
+- Flake: `home.spec` "blur-up placeholder" failed once in a slow full run (3.3 min vs ~1.6); passed 6/6 alone. Timing-based (holds images 3 s); watch it.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (367) · e2e ✅ (300 + 3 skipped by design; 1 flake, rerun green) · build ✅ · format ✅
+- Next: 7.4 Portfolio and gallery admin
+
+### 2026-10-02 — 7.4a Admin portfolio projects
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Split 7.4 into 7.4a projects · 7.4b image metadata/order/consent · 7.4c upload (BLOCKED on Cloudinary credentials, new Q18).
+- Done: `/admin/portfolio` list (title + Sample badge, client or "Private client" with a "not named publicly" note when there's no consent, category · local/global, year, image count, draft/published/featured) and create/edit with `ProjectForm`: slug, category, local/global, year, city, country, client name + "client agreed to be named publicly", EN/FR title and story, published, featured. `saveProject` (ADMIN only) keeps the original publish date while published, sets it on first publish, clears it on unpublish (`nextPublishedAt`, unit tested); revalidates the portfolio tag. 4 unit tests.
+- e2e: create published without consent → public page says "Private client" and hides the name → consent → name shown → unpublish → 404; validation.
+- Test infra: a full e2e run died mid-way (server gone, ERR_CONNECTION_REFUSED everywhere; build and rerun fine). The leftover user then broke `admin-dashboard.spec`'s plain insert → it now uses the upserting `signInAsAdmin` helper.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (371) · e2e ✅ (305 + 3 skipped by design) · build ✅ · format ✅
+- Next: 7.4b image metadata
+
+### 2026-10-02 — 7.4b Admin images
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- **Fix (separate commit):** portfolio list, case study and home queries showed project images **without** checking `consentToPublish` (only the gallery checked) → shared `publicProjectImages` include; cover lookup only searched the first image (`take: 1`) and the case study ignored `coverId` → `pickCover` (unit tested) used everywhere.
+- Done: `/admin/gallery` ("Images" in nav, ADMIN only): thumbnail grid with project, cover, order, Sample/Gallery/Consent badges and a count of images hidden for missing consent. `/admin/gallery/[id]`: preview + `ImageForm` — EN/FR alt text, category, tags (comma-separated → lowercased, de-duplicated), project, order, "Client consent to publish obtained", show in gallery, use as project cover. Showing an image in the gallery or a project requires consent (`imageFormSchema`, 4 unit tests). `saveImage` keeps covers consistent (a cover always belongs to its project; unticking clears it) in one transaction; revalidates gallery + portfolio.
+- e2e: unconsented project images never appear on the case study; consent required before filing; describe + tag + consent + cover → stored and leads the public case study.
+- Test infra lesson (added to loop.md pitfalls): `.next/cache` survives runs, so SQL-created fixtures need per-run unique slugs.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (378) · e2e ✅ (309 + 3 skipped by design) · build ✅ · format ✅
+- Next: 7.4c is BLOCKED(Q18) → 7.5 Review moderation
+
+### 2026-10-02 — 7.5 Review moderation (§15 scenario 5 complete)
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Done: `/admin/reviews` ("Reviews" in nav; STAFF and ADMIN): status tabs with counts (Pending / Approved / Rejected), flagged reviews first with a "possible spam" badge, Verified-client badge with booking reference, Sample/Featured badges, locale and date. Plain form actions (work before JS loads): Approve, Reject, Back to pending, Feature/Unfeature (approved only), "Logo permission received"/remove (recommendations only). Rules in `src/lib/admin/moderation.ts` (3 unit tests); `moderateReview` validates input, revalidates the reviews tag and the admin layout; only known messages are shown from the query string.
+- e2e infra: new **`global` Playwright project** for `*.global.spec.ts` that runs after chromium + mobile (pricing and settings specs moved there; their chromium-only skips removed). The e2e web server now clears `.next/cache/fetch-cache` before building (`scripts/clear-data-cache.mjs`) so runs never start from an earlier run's cached pages.
+- e2e `admin-reviews.global.spec.ts` (AGENTS.md §15 scenario 5): submit 1★ → hidden, average still 4.7 from 3 → staff approve → visible, "3.8 out of 5 from 4 reviews", JSON-LD `AggregateRating` from the real review only (1 review, 1★) → feature → reject → gone, average back to 4.7.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (381) · e2e ✅ (310, no skips) · build ✅ · format ✅
+- Next: 7.6 Bookings admin
+
+### 2026-10-02 — 7.6a Bookings list and detail
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Split 7.6 into 7.6a list/detail · 7.6b payment request + deposit · 7.6c complete/cancel + emails + review invites + change requests · 7.6d calendar, photographers, CSV, `.ics`.
+- Done: `/admin/bookings` ("Bookings" in nav; STAFF+): GET filter form (status, upcoming/past/all, search by reference/name/email), table with event date, client, service, total + payment state, status badge and "Send payment request" / "Change requested" hints; capped at 200 rows with a notice. `/admin/bookings/[reference]`: Event, Client (mailto, language, marketing opt-in), itemized Price from the stored breakdown (same labels as the quote form via `lineItemLabel`, tax lines with rates), Payment, Change requests; 24 h no-payment-request warning. Dashboard references now link here; `StatusBadge` extracted to `src/components/admin/status-badge.tsx`. Pure helpers in `src/lib/admin/bookings.ts` (filters, safe breakdown parser, tax rate label) + 8 unit tests.
+- e2e: search → row details → status filter narrows → detail shows event, client language, itemized price with HST 13 %, deposit, change request.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (389) · e2e ✅ (312) · build ✅ · format ✅
+- Next: 7.6b payment request + record deposit
+
+### 2026-10-02 — 7.6b Payment request and deposit
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Done: booking detail shows a `PaymentPanel` while the booking is PENDING without a deposit (`canTakePayment`). **Send payment request** (STAFF+): optional https-only payment link; refuses while `PAYMENT_INSTRUCTIONS` is missing/placeholder in the client's language ("Add your payment instructions … in Settings first"); emails the client in their language (deposit, event time, instructions block, "Pay online" button when a link is given, otherwise "View your booking"); only after a successful send sets `paymentRequestedAt` (starts the 48 h hold; re-sending restarts it) and stores the link. **Record deposit**: method (bank transfer / cash / payment link), amount (defaults to the requested deposit), date received (not in the future, stored at noon studio time) → CONFIRMED via a conditional update (no double confirmation), then a "Your booking is confirmed" email. `BookingRequestEmail` gained an optional details block; EN/FR email copy added (FR flagged for review like all agent French). Rules + parsing in `src/lib/admin/payments.ts` (7 unit tests).
+- e2e: link validation, placeholder instructions block sending (nothing stored), deposit validation → recorded → CONFIRMED, forms disappear, payment section updated; in the global settings spec, after real instructions are saved a French client's payment request is sent and stored. Email bodies aren't asserted in e2e (no mail provider in tests).
+- Checks: lint ✅ · typecheck ✅ · test ✅ (396) · e2e ✅ (316) · build ✅ · format ✅
+- Next: 7.6c complete/cancel + emails + review invites + change requests
+
+### 2026-10-02 — 7.6c Complete / cancel bookings, change requests
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Done: `BookingStatusPanel` on the booking page (STAFF+): **Mark as completed** (confirmed bookings whose event has started) with an optional thank-you email carrying the signed verified-review link (`reviewInviteUrl`, 90 days — closes the loop from 6.3); **Cancel booking** (pending/confirmed) behind a required "Yes, cancel CAD-B-…" checkbox, with an optional polite cancellation email; cancelled bookings stop counting toward capacity and lose the payment forms. Conditional updates (no double change). Change requests get **Mark as handled**. Rules in `src/lib/admin/booking-status.ts` (3 unit tests). EN/FR email copy; `payment-emails.ts` renamed `admin-booking-emails.ts`.
+- **Test fixes (separate commit + this one):** `review-verified` (6.3) shared `CAD-B-9998-000x` with `cron-api`, so the two deleted each other's rows when they overlapped; and the new admin-bookings fixture sat on 2027-09-18, which `availability-api` asserts is free. Registry of fixture years/dates now at the top of `tests/e2e/booking-fixture.ts` and in loop.md pitfalls. Multi-panel pages: hydration waits use `.first()`.
+- e2e: complete a past confirmed booking (email option on by default) → Completed, no actions left; future booking can't be completed; cancel blocked until confirmed → Cancelled, payment forms gone; change request → handled.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (399) · e2e ✅ (322; admin-booking-status 3× clean after one unexplained mobile failure during the colliding run) · build ✅ · format ✅
+- Next: 7.6d calendar, photographers, CSV, `.ics`
+
+### 2026-10-02 — 7.6d Calendar, CSV export, .ics
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Split: assigning photographers needs a new relation, so it's 7.6e.
+- Done: `/admin/bookings/calendar?month=YYYY-MM` — Sunday-first month table (accessible caption, weekday headers), bookings per studio-local day with status dots + screen-reader status, blocked days with reason, today highlighted, previous/this/next month; cancelled bookings left out. **Export CSV** (`/admin/bookings/export`, same filters as the list): UTF-8 BOM, CRLF, RFC 4180 quoting, formula-injection guard (`'` before cells starting with = + - @). **Add to calendar (.ics)** per booking (`/admin/bookings/[reference]/ics`): status TENTATIVE/CONFIRMED/CANCELLED, client contact and admin link, same UID as the client's invite. Route handlers use a new `forbiddenUnlessRole` guard (403); the middleware already redirects signed-out requests. Pure helpers `src/lib/admin/csv.ts`, `src/lib/admin/calendar.ts` + 17 unit tests.
+- Gotcha: the Write tool turned `﻿` into a literal BOM character — rewritten as an escape (Python `chr(92)`).
+- e2e: CSV content, .ics content, calendar day links to the booking, signed-out export redirects to sign-in. admin-bookings fixtures are now per test (two tests in one file had shared a reference).
+- Checks: lint ✅ · typecheck ✅ · test ✅ (416) · e2e ✅ (326) · build ✅ · format ✅
+- Next: 7.6e assign photographers
+
+### 2026-10-02 — 7.6e Team management
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Split: assigning photographers needs a list of team members, and accounts could only be created by the seed. So 7.6e = team, 7.6f = assignment.
+- Done: `/admin/team` ("Team" in nav, ADMIN only): members (name/email, role, active/deactivated, last active, "(you)"), add form; `/admin/team/[id]` edit. `saveTeamMember`: emails normalized to lowercase (they're the sign-in identity), duplicate email → field error; nobody can change their own role or deactivate themselves; the studio always keeps ≥1 active admin (`teamChangeProblem`, 6 unit tests); runs in a serializable transaction with retries (new shared `withSerializableRetry`/`isSerializationFailure` in `src/server/serialization.ts`, also used by `placeBooking`); deactivating deletes the person's sessions; revalidates the admin layout so the redirected list is never a stale client-cache copy.
+- Debugging: the deactivate step failed only in full runs. Cause was the test, not the app: after clicking the member link, the hydration wait matched the list page's add form (which also has an "Active" box). Waits now check the edit page heading first (pitfall added to loop.md). Separately, one full run had a Playwright worker crash (0xC0000409) — environment.
+- e2e: validation, add (email lowercased), duplicate refused, deactivate → sessions gone; can't demote/deactivate yourself; staff can't open Team.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (422) · e2e ✅ (327 + 1 worker crash on rerun) · build ✅ · format ✅
+- Next: 7.6f assign photographers
+
+### 2026-10-02 — 7.6f Assign photographers (7.6 complete)
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Done: migration `20261003010000_booking_assignees` (implicit many-to-many `Booking.assignees` ↔ `User.assignedBookings`). Booking page "Photographers" section (not for cancelled bookings): active team members as checkboxes, "N of M assigned" with a staffing note (`staffingNote`), and "Also on CAD-B-… that day" for anyone already covering another non-cancelled booking that studio day (`sameDayClashes`) — warnings only, never blocking. `assignPhotographers` (plain form action, STAFF+) only keeps active members. Bookings list shows who's assigned. 5 unit tests.
+- **Mobile bug found by the e2e:** the booking page's facts grid used `1fr`, so a long unbreakable email made the cards wider than a phone screen (horizontal scroll, and mis-targeted taps in emulation). Now `minmax(0,1fr)` + `overflow-wrap:anywhere`; regression check (no horizontal overflow) added to the booking detail e2e.
+- e2e: clash warning shown, assign two → "2 of 1 · 1 more than the 1 booked", stored; deactivated member disappears and drops off on save; list shows assignee.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (427) · e2e ✅ (334) · build ✅ · format ✅
+- Next: 7.7 Quotes admin
+
+### 2026-10-02 — 7.7a Quotes list, detail, re-send
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Split 7.7 into 7.7a list/detail/re-send · 7.7b adjust price + convert to booking.
+- Done: `/admin/quotes` ("Quotes" in nav; STAFF+): Open / Booked / Expired / All (a SENT quote past its date counts as expired — `quoteState`), search, table with client, event, total, status and validity or "Booked as CAD-B-…". `/admin/quotes/[reference]`: Event (incl. city, province, km), Client, itemized Price (shared `PriceTable`) with deposit, link to the booking. **Re-send quote** (not for booked quotes): emails the same quote and price in the client's language (existing quote email; new `notifyStudio: false` skips the studio copy), optionally renewing validity for QUOTE_VALID_DAYS from today (pre-ticked for expired quotes) — only after the email is sent. `storedQuoteResult` rebuilds the engine result from the saved breakdown; booking and quote pages now share `Section`/`Facts`/`PriceTable` (`src/components/admin/detail-section.tsx`). Dashboard quote references link to the detail page. 4 unit tests.
+- e2e: expired quote hidden from Open, shown under Expired; detail price lines, deposit and location; re-send with renewal → stored validity ≥ 13 days, badge back to Sent.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (431) · e2e ✅ (336) · build ✅ · format ✅
+- Next: 7.7b adjust + convert
+
+### 2026-10-02 — 7.7b Adjust quote price (+ two fixes)
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- **Fix 1 (separate commit):** stored tax lines already hold the rate as a label ("13%"), but the admin pages re-parsed it as a fraction → real bookings/quotes would have shown "HST (NaN%)". The e2e fixtures had used the wrong format ("0.13"), so tests didn't catch it; fixtures now use the real format and the pages show the stored label.
+- **Fix 2 (separate commit):** booking from a valid quote only took the quote's total and deposit; lines, subtotal and tax were recalculated, so a booking could store lines that don't add up to its total. `placeBooking` now uses the quote's whole saved price (`storedQuoteResult`); the book-from-quote e2e asserts subtotal, tax and every line match the quote.
+- Done: new line kind `adjustment` (label + signed amount; `lineItemLabel` shows the label — on the client's quote page and emails too). **Adjust price** panel on the quote page (STAFF+, not for booked quotes): discount or extra charge with a client-facing label; replace or remove. `applyQuoteAdjustment` recalculates tax at the rates the quote was taxed at (parsed from the stored "13%" labels with the same half-up rounding as tax.ts) and the deposit at the current %; refuses a negative subtotal. The client isn't emailed until the quote is re-sent. 8 unit tests.
+- e2e: validation, −$200 "Returning client" → $3,390.00 total, $1,017.00 deposit; the client's French quote page shows the line and total; remove → back to $3,616.00.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (436) · e2e ✅ (338) · build ✅ · format ✅
+- Next: 7.7c convert quote to booking
+
+### 2026-10-02 — 7.7c Convert quote to booking (7.7 complete)
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Done: **Book this quote** panel on open quotes (STAFF+) for clients who confirm by phone/email: venue, notes, deposit method, and a required "client asked to book and accepted the terms and privacy policy" box (stands in for the website consent checkboxes). `convertQuoteToBooking` goes through the same path as the website: `getBookableQuote` (open, unexpired quotes only — expired ones must be renewed with Re-send), `bookingRequestSchema`, `placeBooking` (capacity, lead time and the quote's saved price — including adjustments), then the usual client/studio booking emails via the new shared `notifyBookingPlaced` (also used by `createBooking`). Redirects to the new booking. Booked quotes no longer show book/adjust/re-send.
+- Limitation: conversions keep the quote's date and times (changing them would change the price); bookings inside the minimum notice period are refused like on the website.
+- e2e: validation, convert → booking page "from quote …" at $3,616.00 with the venue, quote ACCEPTED, no further quote actions; expired quote shows no booking panel. Quote fixtures now store `startTime` and use one Saturday per project.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (436) · e2e ✅ (342) · build ✅ · format ✅
+- Next: 7.8 blocked dates and capacity
+
+### 2026-10-02 — 7.8 Blocked dates and capacity
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Done: `/admin/availability` ("Availability" in nav; STAFF+): block a day or a range (from/to, optional internal reason; not in the past, at most a year at a time — `blockDatesSchema`, `dateRange`, 3 unit tests); already-blocked days are skipped and reported. Upcoming blocked days list with **Unblock** and a warning + links when PENDING/CONFIRMED bookings already sit on a blocked day (they're kept — blocking never cancels). Daily capacity shown, with a link to Pricing for admins (it was already editable there in 7.3c). Public availability (uncached API) and booking pick it up immediately.
+- e2e: reversed range rejected, 3 days blocked → public API "full", clashing booking linked, re-block reports "already blocked", unblock → "available". March 2028 reserved for this spec.
+- Test robustness: Playwright workers crashed twice more (0xC0000409, environment); a crashed worker leaves its fixtures behind, so user fixtures in admin-auth/admin-assignments now upsert instead of plain inserts.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (439) · e2e ✅ (344 on a clean rerun) · build ✅ · format ✅
+- Next: 7.9 Audit log
+
+### 2026-10-02 — 7.9 Audit log (M7 done except 7.4c, blocked on Q18)
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Done: migration `20261003020000_audit_log` (`AuditLog`: time, user id + email snapshot, action, entity type/id, one-line summary, optional details). `audit(actor, entry)` in `src/server/audit.ts` — written after a change succeeds, failures logged but never block the change. **Every admin mutation records an entry**: packages/add-ons (field diffs, e.g. "price $2,800.00 → $3,000.00"), pricing rules (old → new per key) and tax (per province), settings (which text/language changed — not the content, since payment instructions hold bank details), projects, images, review moderation, payment requests, deposits, complete/cancel, change requests, photographer assignment, quote re-send/adjust/convert, team changes, block/unblock dates. `describeChanges`/`auditSummary` in `src/lib/admin/audit.ts` (3 unit tests). `/admin/audit` ("Audit log", ADMIN only, read-only): newest 200, filter by area, search summary/email.
+- e2e: a staff member blocks a day (and can't open the audit log); an admin finds the entry with the staff email, action and summary; the package-create test asserts its audit summary. Test users' audit rows are removed with them.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (442) · e2e ✅ (346) · build ✅ · format ✅
+- Milestone 7 stays unticked: 7.4c (photo upload) is BLOCKED(Q18 Cloudinary). Next: M8 Hardening on `feat/m8-hardening` (stacked on M7).
+
+### 2026-10-02 — PR housekeeping: M4–M6 weren't in main
+- Found: PRs #5–#7 were merged into their base branches (`feat/m3-portfolio-gallery`, `feat/m4-quote`, `feat/m5-booking`) after #4 had been merged into `main`, so `main` only has M1–M3. `feat/m7-admin` contains every M4–M7 commit (the merged branches only add merge commits).
+- Done: retargeted PR #8 to `main`, renamed it "M4–M7: Quote engine, Booking, Reviews, Admin", explained why in its body, and listed the deploy steps (migrations, env vars, first admin). GitHub reports it mergeable/clean. Loop rule added for this case.
+- Next: M8 Hardening on `feat/m8-hardening`, branched from `feat/m7-admin` (stacked on #8).
+

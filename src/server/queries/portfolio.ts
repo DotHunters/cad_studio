@@ -4,21 +4,23 @@ import { unstable_cache } from "next/cache";
 
 import { db } from "@/lib/db";
 import { shouldShowSampleContent } from "@/lib/flags";
+import { pickCover } from "@/lib/images";
 
 import { CACHE_TAGS, CONTENT_REVALIDATE_SECONDS } from "@/server/cache";
+import { publicProjectImages } from "@/server/queries/project-images";
 
 const cachedPublishedProjects = unstable_cache(
   async (includeSamples: boolean) => {
     const projects = await db.portfolioProject.findMany({
       where: { publishedAt: { not: null }, ...(includeSamples ? {} : { isSample: false }) },
       orderBy: [{ year: "desc" }, { publishedAt: "desc" }],
-      include: { images: { orderBy: { sortOrder: "asc" }, take: 1 } },
+      include: { images: publicProjectImages },
     });
     return projects.map(({ images, ...project }) => ({
       ...project,
       // Client names appear only with consent (AGENTS.md §13).
       clientName: project.consentToPublish ? project.clientName : null,
-      cover: images.find((image) => image.id === project.coverId) ?? images[0] ?? null,
+      cover: pickCover(images, project.coverId),
     }));
   },
   ["portfolio:published"],
@@ -34,7 +36,7 @@ const cachedProjectBySlug = unstable_cache(
   async (slug: string, includeSamples: boolean) => {
     const project = await db.portfolioProject.findFirst({
       where: { slug, publishedAt: { not: null }, ...(includeSamples ? {} : { isSample: false }) },
-      include: { images: { orderBy: { sortOrder: "asc" } } },
+      include: { images: publicProjectImages },
     });
     if (!project) return null;
 

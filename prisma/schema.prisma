@@ -63,6 +63,16 @@ enum PaymentMethod {
   STRIPE
 }
 
+enum ChangeRequestType {
+  RESCHEDULE
+  CANCEL
+}
+
+enum ChangeRequestStatus {
+  OPEN
+  RESOLVED
+}
+
 enum AddOnUnit {
   FLAT
   PER_HOUR
@@ -200,13 +210,13 @@ model Quote {
 }
 
 model Booking {
-  id                 String         @id @default(cuid())
-  reference          String         @unique
+  id                 String                 @id @default(cuid())
+  reference          String                 @unique
   category           Category
   packageId          String?
-  package            Package?       @relation(fields: [packageId], references: [id], onDelete: SetNull)
-  quoteId            String?        @unique
-  quote              Quote?         @relation(fields: [quoteId], references: [id], onDelete: SetNull)
+  package            Package?               @relation(fields: [packageId], references: [id], onDelete: SetNull)
+  quoteId            String?                @unique
+  quote              Quote?                 @relation(fields: [quoteId], references: [id], onDelete: SetNull)
   /// UTC
   startAt            DateTime
   /// UTC
@@ -215,7 +225,13 @@ model Booking {
   guestCount         Int?
   venue              String?
   notes              String?
-  status             BookingStatus  @default(PENDING)
+  status             BookingStatus          @default(PENDING)
+  /// Agreed price at booking time (quoted price if booked from a matching quote).
+  subtotalCents      Int?
+  taxCents           Int?
+  totalCents         Int?
+  /// Line items, tax lines and flags as priced at booking time.
+  breakdown          Json?
   depositCents       Int?
   paymentMethod      PaymentMethod?
   /// Admin sent the payment request email.
@@ -225,10 +241,13 @@ model Booking {
   /// Set by admin when payment is received.
   depositPaidAt      DateTime?
   customerId         String
-  customer           Customer       @relation(fields: [customerId], references: [id])
+  customer           Customer               @relation(fields: [customerId], references: [id])
   reviews            Review[]
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
+  changeRequests     BookingChangeRequest[]
+  /// Photographers/staff assigned to cover the event (admin, 7.6f).
+  assignees          User[]                 @relation("BookingAssignees")
+  createdAt          DateTime               @default(now())
+  updatedAt          DateTime               @updatedAt
 
   @@index([startAt])
   @@index([status, startAt])
@@ -320,4 +339,94 @@ model Review {
   createdAt        DateTime     @default(now())
 
   @@index([status, type, createdAt])
+}
+
+/// Client request (via the signed booking link) to reschedule or cancel. Handled by the studio
+/// in admin; nothing changes automatically (cancellation policy is owner-defined).
+model BookingChangeRequest {
+  id            String              @id @default(cuid())
+  bookingId     String
+  booking       Booking             @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  type          ChangeRequestType
+  /// Studio-local "YYYY-MM-DD" the client would prefer (reschedules).
+  preferredDate String?
+  message       String?
+  status        ChangeRequestStatus @default(OPEN)
+  createdAt     DateTime            @default(now())
+
+  @@index([bookingId, status])
+}
+
+// --- Admin auth (Auth.js v5, Prisma adapter; AGENTS.md §2, §11) ---
+
+/// Admin/staff account. Sign-in is by email magic link and only for existing, active users —
+/// nobody can sign themselves up.
+model User {
+  id               String    @id @default(cuid())
+  name             String?
+  email            String    @unique
+  emailVerified    DateTime?
+  image            String?
+  role             Role      @default(STAFF)
+  isActive         Boolean   @default(true)
+  accounts         Account[]
+  sessions         Session[]
+  assignedBookings Booking[] @relation("BookingAssignees")
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+/// Who changed what in admin (AGENTS.md §6.10). Append-only; the email is a snapshot so
+/// entries stay readable after an account is removed.
+model AuditLog {
+  id         String   @id @default(cuid())
+  createdAt  DateTime @default(now())
+  userId     String?
+  userEmail  String
+  /// e.g. "package.update", "booking.cancel", "review.approve"
+  action     String
+  entityType String
+  entityId   String?
+  /// One readable line, e.g. "Wedding: price $2,800.00 → $3,000.00".
+  summary    String
+  details    Json?
+
+  @@index([createdAt])
+  @@index([entityType, entityId])
 }

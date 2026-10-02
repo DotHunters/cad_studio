@@ -40,11 +40,19 @@ Run on every `/loop` tick. Goal: build the MVP in `AGENTS.md` (milestones 1–8)
      - If `gh` is available: `gh pr create` / `gh pr edit`. On this machine, if `gh` is not on PATH, use `"/c/Program Files/GitHub CLI/gh.exe"` (authenticated).
      - If `gh` isn't installed: push anyway, then log the compare URL `https://github.com/DotHunters/cad_studio/compare/main...<branch>?expand=1` in `PROGRESS.md` so the user can open the PR.
    - Before pushing to a milestone branch, check its PR is still open. If the owner already merged it, open a follow-up PR (`gh pr create --base main --head <branch>`) for any commits not yet in `main` (`git log main..<branch>`).
+   - Stacked PRs: if base PRs get merged into *their base branches* rather than `main` (so `git log main..<top-branch>` still shows earlier milestones), retarget the top open PR to `main` (`gh pr edit <n> --base main`) and explain in its body that it now carries those milestones too.
    - **Never merge PRs, force-push, or delete branches.** The user reviews and merges. Start the next milestone's branch from `main` after its PR is merged. If it isn't merged yet, branch from the previous milestone branch and say so in the PR body.
 
 ## Tooling pitfalls
 
 - **Backslash escapes get collapsed** by shell heredocs and by the Edit tool: a double backslash (e.g. `\\.` or `\\u003c` inside a TS string) can arrive as a single one. This caused the i18n middleware bug. After writing any regex or string escape, `grep` the line to verify; if it is wrong, rewrite it from Python using `chr(92)` for the backslash. Prefer a unit test that would fail if the escape is lost.
+- **e2e tests that write to the database run in parallel** (8 workers × desktop + mobile). `beforeAll`/`afterAll` run once per worker, not once per file. Give each test its own data (email/reference from `testInfo.project.name` + `testInfo.testId`) and clean up in `afterEach`; for shared fixtures use `test.describe.configure({ mode: "serial" })`, and name API-only specs `*-api.spec.ts` (the mobile project ignores them). Raw SQL timestamps must be UTC wall time (`... at time zone 'UTC'`): the local Postgres session zone is Asia/Colombo.
+- **`unstable_cache` returns JSON**: Dates become strings on a cache hit (the first, uncached call hides this). Revive dates in the query wrapper before returning (see `src/server/queries/reviews.ts`).
+- **Fixture booking references and dates**: each spec gets its own unused reference year (registry at the top of `tests/e2e/booking-fixture.ts`), and fixture events avoid September 2027, which `availability-api.spec.ts` asserts day by day. Two specs sharing a year deleted each other's rows.
+- **Navigating between two pages that both have a hydrated form**: after clicking a link, wait for something unique to the new page (its heading) before `form[data-hydrated="true"]`, or the wait matches the old page and later actions hit the wrong form.
+- **"worker process exited unexpectedly (code=3221226505)"** or every test failing with ERR_CONNECTION_REFUSED is a Windows process crash (environment), not a test failure — rerun.
+- **Specs that change site-wide data** (pricing rules, settings, approving reviews) go in `*.global.spec.ts`: the `global` Playwright project runs them after chromium + mobile finish, so they can't break count/average assertions elsewhere. They must restore what they change.
+- **The Next data cache survives between e2e runs** (`.next/cache`, kept by `pnpm build`). Rows written with raw SQL don't revalidate it, so a page keyed by a slug reused from an earlier run can serve stale data. Give SQL-created fixtures a per-run unique key (e.g. `Date.now().toString(36)` in the slug) or change data through the app.
 - Long multi-file heredoc commands sometimes fail with "unexpected EOF"; use the Write tool for new files instead.
 
 ## Hard rules (from AGENTS.md §9, §11, §13)
