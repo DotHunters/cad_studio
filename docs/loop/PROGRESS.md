@@ -260,3 +260,67 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (212) · e2e ✅ (214) · build ✅ · format ✅
 - Notes: the result page labels the deposit with the current DEPOSIT_PCT; the stored deposit amount is what was quoted.
 - Next: M5 → 5.1 (branch `feat/m5-booking`; stack on feat/m4-quote while PRs #4/#5 are open)
+
+### 2026-10-02 — 5.1 Availability logic
+- Branch: feat/m5-booking (stacked on feat/m4-quote / PR #5)
+- Done (TDD): `src/lib/booking/availability.ts` — `dayAvailability` (past / too-soon within MIN_LEAD_DAYS / blocked / open / full with remaining capacity; only PENDING + CONFIRMED bookings hold capacity; capacity from MAX_PHOTOGRAPHERS_PER_DAY, never negative), `publicStatus` (available / limited / full only — blocked, past and too-soon look "full" so no reason leaks), `canBook(date, photographers)`, `monthAvailability(year, month)` (leap years), `addDaysToKey`. All on studio-local "YYYY-MM-DD" keys. 14 tests, 100% lines/branches.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (222) · format ✅ (pure logic)
+- Next: 5.2 (public availability endpoint)
+
+### 2026-10-02 — 5.2 Public availability endpoint
+- Branch: feat/m5-booking · PR #6 (stacked on #5 → #4)
+- Done: `GET /api/availability?month=YYYY-MM` → `{ month, days: [{date, status}] }` (available/limited/full only; 400 for malformed or out-of-range months — current month to +18; 503 on failure; `s-maxage=60`). `getAvailabilityContext(start, end)` (not cached): rules from PricingRule, blocked dates, PENDING/CONFIRMED bookings in the studio-local range (Toronto day bounds → UTC), each mapped to its studio-local day. Pure helpers + tests: `parseMonthParam`, `monthBounds`, `parseBookingRules`.
+- e2e (`availability-api.spec.ts`, serial, desktop project only via `testIgnore: /-api\.spec\.ts$/` on mobile): DB fixtures for a blocked day, a 2-of-3 booking (limited), an 11:30 PM Toronto booking (counts for that day, not the next UTC day) and a cancelled booking (ignored); response has only `date` + `status`; bad months → 400; fixtures cleaned up.
+- Found while testing: raw SQL fixtures must convert to UTC explicitly — the local Postgres session time zone is Asia/Colombo, and casting `timestamptz` → `timestamp` used it. App writes go through Prisma (UTC) and are unaffected; noted for future raw SQL.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (227) · e2e ✅ (216) · build ✅ · format ✅
+- Next: 5.3 (/book stepper)
+
+### 2026-10-02 — 5.3a Booking schema (5.3 split into a/b)
+- Branch: feat/m5-booking · PR #6
+- Done (TDD): `src/lib/validators/booking.ts` — `bookingDetailsSchema` (category/package, real date, start + end on half-hour steps with end after start → derived `durationHours`, 1–10 photographers, guests, venue/city/province/distance or international → INTL, notes ≤ 2000, add-ons), `bookingContactSchema` (name/email/phone, deposit method BANK_TRANSFER | CASH, required terms + privacy consent, CASL opt-in default false, honeypot), `bookingRequestSchema` (+ optional `quoteReference`/`quoteToken`), `durationFromTimes`. 10 tests. Installed react-day-picker 10 (calendar for 5.3b).
+- Checks: lint ✅ · typecheck ✅ · test ✅ (237) · format ✅
+- Next: 5.3b
+
+### 2026-10-02 — 5.3b Booking wizard UI
+- Branch: feat/m5-booking · PR #6
+- Done: `/[locale]/book` — `BookingWizard` (5 steps: service → date & time → event details → your details → review), step indicator (`aria-current="step"`), per-step validation with the shared schema (only that step's fields; inline translated errors; focus first error; heading focused on step change), Back keeps answers. `AvailabilityCalendar` (react-day-picker 10, `enCA`/`frCA`, fetches `/api/availability` per month, full/unknown days disabled while loading, limited days marked + legend, current month → +18 months, brand colours via `.cad-calendar.rdp-root`). Half-hour start/end selects. Contact step: bank transfer / cash, required terms + privacy consent (links), unticked CASL opt-in, honeypot. Review: summary + price — the quoted price while nothing price-relevant changed (`matchesQuote`, shared with 5.4), otherwise a fresh estimate with breakdown; deposit note. Prefill: `?package=` or signed `?quote=&t=` via `getBookableQuote` (valid signature, SENT, not expired; `addHoursToTime` → end time). Submit button is wired in 5.4.
+- Also fixed: `/quote` (from 4.4) and `/book` were missing from the sitemap — the 4.4 `sed` silently matched nothing; SEO e2e now asserts both.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (250) · e2e ✅ (230 full run; 7 wizard tests) · build ✅ · format ✅ · screenshot reviewed (calendar recoloured after first look)
+- Next: 5.4 (createBooking in a serializable transaction)
+
+### 2026-10-02 — 5.4 createBooking (serializable) + confirmation page
+- Branch: feat/m5-booking · PR #6
+- Done: `src/server/booking/place-booking.ts` `placeBooking` — re-prices from DB (quoted price only if the signed quote is valid and `matchesQuote`), then a SERIALIZABLE transaction re-checks capacity for the studio-local day (blocked date, lead time, PENDING+CONFIRMED photographers), increments the `B-YYYY` counter → `CAD-B-YYYY-####`, upserts the customer (terms/privacy `consentAt`; CASL opt-in recorded, never withdrawn), creates a PENDING booking (price, breakdown, deposit, payment method, quote link) and marks the quote ACCEPTED (one booking per quote). Serialization failures (P2034/40001) retry up to 3× and then report "unavailable". `src/server/actions/booking.ts` `createBooking` (validation, honeypot, past-date, Turnstile, signed `booking:` token). Wizard submits and handles unavailable (back to the date step), validation (jumps to the step) and server errors. `/[locale]/book/[reference]?t=…` confirmation (signed, noindex): status, when, package, total, deposit, payment method, next steps for bank transfer vs cash.
+- Schema: `Booking` gains `subtotalCents`, `taxCents`, `totalCents`, `breakdown` (migration `20261002000000_booking_price`) — the agreed price wasn't stored before.
+- Tests: Vitest integration test against the real DB (`tests/integration/booking-concurrency.test.ts`, skipped without `DATABASE_URL`; `server-only` stubbed, `unstable_cache` passthrough, files run serially) — §15 scenario 3: two simultaneous requests for the last slot → exactly one succeeds (5/5 repeated runs), then the day is full; stored price/deposit/reference checked. e2e §15 scenario 2: book a quote → CAD-B reference, day goes available → limited, booking at the quoted price, quote ACCEPTED; wizard submit → confirmation page.
+- Found while testing: per-worker `afterAll` cleanup deleted another test's booking mid-run → per-test emails + `afterEach` cleanup.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (252 incl. 2 integration) · e2e ✅ (232) · build ✅ · format ✅
+- Next: 5.5 (booking emails + .ics)
+
+### 2026-10-02 — 5.5 Booking emails + .ics
+- Branch: feat/m5-booking · PR #6
+- Done: `src/lib/ics.ts` — RFC 5545 VEVENT builder (UTC times, TEXT escaping, CRLF lines, 75-octet folding without splitting multi-byte characters, TENTATIVE while pending, SEQUENCE for future reschedules); 8 tests. React Email `booking-request.tsx` (reference, status, when, package, total, deposit, payment method, next steps for bank transfer vs cash, calendar note, "View your booking" signed link). `src/server/emails/booking-emails.ts` sends it in the client's locale + a plain-text studio notification (reply-to client; reminds the studio to send the payment request), both with `CAD-B-….ics` attached. `sendEmail` supports attachments. `createBooking` sends after the booking is saved (best-effort, logged on failure).
+- Test fixes: §15 scenario 2 now uses a different Wednesday per Playwright project (desktop and mobile raced on one date's capacity); the blur-placeholder test holds `/_next/image` responses so the pre-load state is observable (was timing-dependent) — verified with `--repeat-each=3`.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (262) · e2e ✅ (232; server log shows client + studio booking emails built per booking) · build ✅ · format ✅
+- Next: 5.6 (signed reschedule/cancel links)
+
+### 2026-10-02 — 5.6 Reschedule / cancel requests
+- Branch: feat/m5-booking · PR #6
+- Done: clients request changes from the signed booking page; nothing changes automatically (cancellation/refund policy is owner-defined, Q15). New `BookingChangeRequest` model (type RESCHEDULE|CANCEL, preferred date, message, status OPEN|RESOLVED; migration `20261002010000_booking_change_requests`) for admin (M7). `src/lib/validators/change-request.ts`: `changeRequestSchema` (reschedule needs a preferred date or a note) + `canRequestChange` (PENDING/CONFIRMED, upcoming, < 3 open requests) — unit tested. `requestBookingChange` server action verifies the `booking:` signature, checks eligibility, stores the request and emails the studio (reply-to client). `ChangeRequestForm` on `/book/[reference]` (only when changeable); booking email mentions the link.
+- e2e: reschedule recorded (DB row), cancellation request leaves the booking PENDING, 4th open request refused, no form for cancelled bookings, unsigned/bad links 404. Fixtures use per-project `CAD-B-9999-…` references and per-test emails.
+- Notes: one full run lost its web server (Playwright reused a leftover server that then stopped) and one hit a transient ECONNRESET; reruns pass. `--repeat-each` on the booking scenario must use `--workers=1` (parallel repeats legitimately compete for the same date's capacity).
+- Checks: lint ✅ · typecheck ✅ · test ✅ (267) · e2e ✅ (242 on rerun) · build ✅ · format ✅
+- Next: 5.7 (cron to release unpaid holds)
+
+### 2026-10-02 — 5.7 Release unpaid holds (cron)
+- Branch: feat/m5-booking · PR #6
+- Done: `src/lib/booking/holds.ts` (`isHoldExpired`: PENDING, no deposit, payment request ≥ PENDING_HOLD_HOURS ago; never for bookings without a payment request; `overdueCutoff`; `needsPaymentRequest` for the admin 24 h warning) — 7 tests. `GET /api/cron/release-holds` (timing-safe `Bearer $CRON_SECRET`, 401 otherwise) cancels overdue holds with the condition re-checked in the update (a just-recorded deposit wins), emails each client a localized "hold released" note, returns `{ released }`; idempotent. `vercel.json` schedules it daily at 13:00 UTC (Hobby-safe; hourly on Pro — noted in AGENTS.md §8.3). Playwright web server gets `CRON_SECRET=e2e-cron-secret`.
+- e2e (`cron-api.spec.ts`): no/wrong secret → 401; of four fixtures only the unpaid, 49-h-old request is released; second run releases nothing.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (273) · e2e ✅ (244) · build ✅ · format ✅
+- Next: 5.8 (remaining e2e: scenario 4 blocked date not selectable)
+
+### 2026-10-02 — 5.8 Booking scenarios — **M5 Booking complete**
+- Branch: feat/m5-booking · PR #6 (stacked on #5 → #4)
+- Done: §15 scenario 4 e2e (`book-blocked.spec.ts`): a date blocked in the DB is disabled in the booking calendar (navigates to next month if needed), can't be selected, and shows as "full" in the public API; serial file, per-project dates. Scenario 2 (book a quote → CAD-B, capacity decreases) was added in 5.4/5.5; scenario 3 (concurrent last slot) is the DB integration test from 5.4. Added the parallel-DB-test rules to `.claude/loop.md` (third time this bit).
+- Checks: lint ✅ · typecheck ✅ · test ✅ (273 incl. integration) · e2e ✅ (248) · build ✅ · format ✅
+- Next: M6 Reviews → 6.1 (branch `feat/m6-reviews`; stack on feat/m5-booking while PRs #4–#6 are open)

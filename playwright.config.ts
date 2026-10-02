@@ -15,7 +15,12 @@ export default defineConfig({
   },
   projects: [
     { name: "chromium", use: { ...devices["Desktop Chrome"] } },
-    { name: "mobile", use: { ...devices["Pixel 7"] } },
+    {
+      name: "mobile",
+      use: { ...devices["Pixel 7"] },
+      // API specs don't depend on the browser and share DB fixtures; run them once.
+      testIgnore: /-api\.spec\.ts$/,
+    },
   ],
   webServer: {
     command: `pnpm build && pnpm start --port ${PORT}`,
@@ -23,6 +28,6 @@ export default defineConfig({
     reuseExistingServer: !process.env.CI,
     timeout: 180_000,
     // Seeded sample clients/reviews fill the home page sections under test.
-    env: { SHOW_SAMPLE_CONTENT: "true" },
+    env: { SHOW_SAMPLE_CONTENT: "true", CRON_SECRET: "e2e-cron-secret" },
   },
 });

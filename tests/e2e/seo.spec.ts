@@ -19,6 +19,8 @@ test.describe("SEO", () => {
     const xml = await response.text();
     expect(xml).toContain("/en/packages/wedding</loc>");
     expect(xml).toContain("/en/privacy</loc>");
+    expect(xml).toContain("/en/quote</loc>");
+    expect(xml).toContain("/en/book</loc>");
     expect(xml).toMatch(/hreflang="fr-CA"\s+href="[^"]+\/fr\/packages\/wedding"/);
   });
 

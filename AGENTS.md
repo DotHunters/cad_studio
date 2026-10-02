@@ -492,7 +492,7 @@ Add a comment in the seed file: `// Verify current rates and service applicabili
 - `MAX_PHOTOGRAPHERS_PER_DAY` (rule, default **3**, owner confirmed) defines daily capacity.
 - A date is **unavailable** if it's in `BlockedDate`, in the past, within `MIN_LEAD_DAYS` (default 3), or the sum of photographers on `PENDING`+`CONFIRMED` bookings that day ≥ capacity.
 - `createBooking` runs inside a **serializable transaction**: re-check capacity, then insert. Return a friendly error if the slot was taken.
-- `PENDING` bookings expire `PENDING_HOLD_HOURS` (default 48) **after the payment request was sent** if no deposit is recorded — use a cron (Vercel Cron) to release them. Bookings with no payment request after 24 h are highlighted on the admin dashboard (never auto-expired).
+- `PENDING` bookings expire `PENDING_HOLD_HOURS` (default 48) **after the payment request was sent** if no deposit is recorded — use a cron (Vercel Cron) to release them. Bookings with no payment request after 24 h are highlighted on the admin dashboard (never auto-expired). Implemented as `GET /api/cron/release-holds` (`Authorization: Bearer $CRON_SECRET`), scheduled in `vercel.json` daily at 13:00 UTC (9 AM Toronto in summer) because Vercel Hobby allows one run per day; on Vercel Pro switch to hourly (`0 * * * *`). Released bookings become CANCELLED and the client gets a polite email.
 - Generate `.ics` attachment for confirmation emails.
 - Public availability endpoint returns only `{date, status: available|limited|full}` — never other clients' details.
 
@@ -609,7 +609,7 @@ At the end of each milestone: update the checklist below and summarize what chan
 - [x] 2 Content pages
 - [x] 3 Portfolio & Gallery
 - [x] 4 Quote engine
-- [ ] 5 Booking
+- [x] 5 Booking
 - [ ] 6 Reviews
 - [ ] 7 Admin
 - [ ] 8 Hardening

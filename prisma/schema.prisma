@@ -63,6 +63,16 @@ enum PaymentMethod {
   STRIPE
 }
 
+enum ChangeRequestType {
+  RESCHEDULE
+  CANCEL
+}
+
+enum ChangeRequestStatus {
+  OPEN
+  RESOLVED
+}
+
 enum AddOnUnit {
   FLAT
   PER_HOUR
@@ -200,13 +210,13 @@ model Quote {
 }
 
 model Booking {
-  id                 String         @id @default(cuid())
-  reference          String         @unique
+  id                 String                 @id @default(cuid())
+  reference          String                 @unique
   category           Category
   packageId          String?
-  package            Package?       @relation(fields: [packageId], references: [id], onDelete: SetNull)
-  quoteId            String?        @unique
-  quote              Quote?         @relation(fields: [quoteId], references: [id], onDelete: SetNull)
+  package            Package?               @relation(fields: [packageId], references: [id], onDelete: SetNull)
+  quoteId            String?                @unique
+  quote              Quote?                 @relation(fields: [quoteId], references: [id], onDelete: SetNull)
   /// UTC
   startAt            DateTime
   /// UTC
@@ -215,7 +225,13 @@ model Booking {
   guestCount         Int?
   venue              String?
   notes              String?
-  status             BookingStatus  @default(PENDING)
+  status             BookingStatus          @default(PENDING)
+  /// Agreed price at booking time (quoted price if booked from a matching quote).
+  subtotalCents      Int?
+  taxCents           Int?
+  totalCents         Int?
+  /// Line items, tax lines and flags as priced at booking time.
+  breakdown          Json?
   depositCents       Int?
   paymentMethod      PaymentMethod?
   /// Admin sent the payment request email.
@@ -225,10 +241,11 @@ model Booking {
   /// Set by admin when payment is received.
   depositPaidAt      DateTime?
   customerId         String
-  customer           Customer       @relation(fields: [customerId], references: [id])
+  customer           Customer               @relation(fields: [customerId], references: [id])
   reviews            Review[]
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
+  changeRequests     BookingChangeRequest[]
+  createdAt          DateTime               @default(now())
+  updatedAt          DateTime               @updatedAt
 
   @@index([startAt])
   @@index([status, startAt])
@@ -320,4 +337,20 @@ model Review {
   createdAt        DateTime     @default(now())
 
   @@index([status, type, createdAt])
+}
+
+/// Client request (via the signed booking link) to reschedule or cancel. Handled by the studio
+/// in admin; nothing changes automatically (cancellation policy is owner-defined).
+model BookingChangeRequest {
+  id            String              @id @default(cuid())
+  bookingId     String
+  booking       Booking             @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  type          ChangeRequestType
+  /// Studio-local "YYYY-MM-DD" the client would prefer (reschedules).
+  preferredDate String?
+  message       String?
+  status        ChangeRequestStatus @default(OPEN)
+  createdAt     DateTime            @default(now())
+
+  @@index([bookingId, status])
 }
