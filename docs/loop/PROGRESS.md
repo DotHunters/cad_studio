@@ -526,3 +526,11 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Done: retargeted PR #8 to `main`, renamed it "M4–M7: Quote engine, Booking, Reviews, Admin", explained why in its body, and listed the deploy steps (migrations, env vars, first admin). GitHub reports it mergeable/clean. Loop rule added for this case.
 - Next: M8 Hardening on `feat/m8-hardening`, branched from `feat/m7-admin` (stacked on #8).
 
+### 2026-10-02 — 8.1a Rate limiting
+- Branch: feat/m8-hardening (stacked on #8 → main)
+- Split 8.1 into 8.1a rate limiting · 8.1b Turnstile widget.
+- Done: `@upstash/ratelimit` + `@upstash/redis`. Sliding-window limits per client IP (`src/lib/rate-limit.ts`: contact 5/10 min, quote 10/10 min, booking 5/10 min, review 3/10 min, change request 5/10 min, admin sign-in 5/15 min per IP **and** per email). `isRateLimited(bucket, key?)` in `src/server/rate-limit.ts`: no Upstash env → no limiting (dev/tests; logged once as an error in production); Upstash errors fail open (Turnstile/honeypot still apply). Wired into `submitContact`, `createQuote`, `createBooking`, `submitReview`, `requestBookingChange` (new `rateLimited` result) and `requestSignInLink` (`?error=TooManyRequests`). Forms show "Too many attempts…" (EN/FR, `Common.tooManyRequests`). 6 unit tests (IP parsing, policy coverage, wiring with a mocked Upstash client, fail-open).
+- Not covered by e2e: limiting needs Upstash; e2e runs without it (346 green, behaviour unchanged).
+- Checks: lint ✅ · typecheck ✅ · test ✅ (448) · e2e ✅ (346) · build ✅ · format ✅
+- Next: 8.1b Turnstile widget
+

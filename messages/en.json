@@ -5,6 +5,7 @@
     "description": "Cad Studio — event, wedding, portrait and product photography in Toronto and beyond."
   },
   "Common": {
+    "tooManyRequests": "Too many attempts. Please wait a few minutes and try again.",
     "skipToContent": "Skip to content",
     "language": "Language",
     "switchToLocale": "Français",

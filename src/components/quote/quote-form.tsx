@@ -242,7 +242,9 @@ export function QuoteForm({ context, locale, today, initialPackage, initialCateg
           ? t("Quote.captchaError")
           : outcome.error === "unavailable"
             ? t("Quote.unavailable")
-            : t("Quote.serverError"),
+            : outcome.error === "rateLimited"
+              ? t("Common.tooManyRequests")
+              : t("Quote.serverError"),
       );
     });
   };

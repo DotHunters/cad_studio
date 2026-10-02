@@ -283,7 +283,13 @@ export function BookingWizard({ context, locale, today, monthsAhead, initial, qu
         toast.error(t("Book.fixErrors"));
         return;
       }
-      toast.error(outcome.error === "captcha" ? t("Quote.captchaError") : t("Quote.serverError"));
+      toast.error(
+        outcome.error === "captcha"
+          ? t("Quote.captchaError")
+          : outcome.error === "rateLimited"
+            ? t("Common.tooManyRequests")
+            : t("Quote.serverError"),
+      );
     } finally {
       setPending(false);
     }

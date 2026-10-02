@@ -31,6 +31,7 @@ const fieldClass =
 
 export function ContactForm() {
   const t = useTranslations("Contact");
+  const tCommon = useTranslations("Common");
   const [sent, setSent] = useState(false);
   const [pending, startTransition] = useTransition();
 
@@ -61,7 +62,13 @@ export function ContactForm() {
         if (fields[0]) setFocus(fields[0][0]);
         return;
       }
-      toast.error(result.error === "captcha" ? t("captchaError") : t("serverError"));
+      toast.error(
+        result.error === "captcha"
+          ? t("captchaError")
+          : result.error === "rateLimited"
+            ? tCommon("tooManyRequests")
+            : t("serverError"),
+      );
     });
 
   if (sent) {
