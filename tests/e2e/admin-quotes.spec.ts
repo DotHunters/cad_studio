@@ -28,7 +28,7 @@ async function createExpiredQuote(testInfo: TestInfo) {
       { kind: "base", amountCents: 280_000 },
       { kind: "extraHours", hours: 2, amountCents: 40_000 },
     ],
-    taxLines: [{ code: "HST", rate: "0.13", amountCents: 41_600 }],
+    taxLines: [{ code: "HST", rate: "13%", amountCents: 41_600 }],
     depositCents: 108_480,
     flags: { customTravelQuote: false, suggestedPhotographers: null },
     packageSlug: "wedding",

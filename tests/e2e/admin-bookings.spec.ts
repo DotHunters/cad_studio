@@ -29,7 +29,7 @@ async function createBooking(testInfo: TestInfo) {
       { kind: "base", amountCents: 60_000 },
       { kind: "addOn", code: "DRONE", quantity: 1, amountCents: 30_000 },
     ],
-    taxLines: [{ code: "HST", rate: "0.13", amountCents: 11_700 }],
+    taxLines: [{ code: "HST", rate: "13%", amountCents: 11_700 }],
     flags: { customTravelQuote: false },
   };
   const [booking] = await queryDb<{ id: string }>(

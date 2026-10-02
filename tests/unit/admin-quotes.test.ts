@@ -32,7 +32,7 @@ describe("storedQuoteResult", () => {
   const stored = {
     breakdown: {
       lineItems: [{ kind: "base", amountCents: 280_000 }],
-      taxLines: [{ code: "HST", rate: "0.13", amountCents: 36_400 }],
+      taxLines: [{ code: "HST", rate: "13%", amountCents: 36_400 }],
       depositCents: 94_920,
       flags: { customTravelQuote: false, suggestedPhotographers: 3 },
       packageSlug: "wedding",
@@ -45,7 +45,7 @@ describe("storedQuoteResult", () => {
   it("rebuilds the engine result", () => {
     expect(storedQuoteResult(stored)).toEqual({
       lineItems: [{ kind: "base", amountCents: 280_000 }],
-      taxLines: [{ code: "HST", rate: "0.13", amountCents: 36_400 }],
+      taxLines: [{ code: "HST", rate: "13%", amountCents: 36_400 }],
       subtotalCents: 280_000,
       taxCents: 36_400,
       totalCents: 316_400,

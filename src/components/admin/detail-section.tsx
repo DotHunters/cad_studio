@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 
-import { formatTaxRate } from "@/lib/admin/bookings";
 import { formatCAD } from "@/lib/money";
 import type { LineItem } from "@/lib/pricing/calculate-quote";
 import type { TaxLine } from "@/lib/tax";
@@ -64,7 +63,7 @@ export function PriceTable({
         {taxLines.map((line) => (
           <tr key={line.code}>
             <td className="py-1">
-              {line.code} ({formatTaxRate(line.rate)})
+              {line.code} ({line.rate})
             </td>
             <td className="py-1 text-right tabular-nums">{money(line.amountCents)}</td>
           </tr>

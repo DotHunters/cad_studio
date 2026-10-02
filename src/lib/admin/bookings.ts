@@ -56,9 +56,3 @@ export function parseStoredBreakdown(value: unknown): StoredBreakdown | null {
   }
   return { lineItems, taxLines };
 }
-
-/** "0.13" → "13%", "0.09975" → "9.975%". */
-export function formatTaxRate(rate: string): string {
-  const percent = Math.round(Number(rate) * 100_000) / 1000;
-  return `${percent}%`;
-}
