@@ -15,7 +15,7 @@ test.afterEach(async ({}, testInfo) => {
 
 async function open(page: Page, reference: string) {
   await page.goto(`/admin/bookings/${reference}`);
-  await expect(page.locator('[data-hydrated="true"]')).toBeVisible();
+  await expect(page.locator('[data-hydrated="true"]').first()).toBeVisible();
 }
 
 test("payment requests need real payment instructions and an https link", async ({

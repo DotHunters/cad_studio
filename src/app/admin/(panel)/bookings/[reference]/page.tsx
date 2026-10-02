@@ -4,9 +4,12 @@ import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 
+import { BookingStatusPanel } from "@/components/admin/booking-status-panel";
 import { PaymentPanel } from "@/components/admin/payment-panel";
 import { StatusBadge } from "@/components/admin/status-badge";
+import { Button } from "@/components/ui/button";
 import { formatTaxRate, parseStoredBreakdown } from "@/lib/admin/bookings";
+import { availableStatusIntents } from "@/lib/admin/booking-status";
 import { canTakePayment } from "@/lib/admin/payments";
 import { needsPaymentRequest } from "@/lib/booking/holds";
 import { slugFromCategory } from "@/lib/categories";
@@ -15,6 +18,7 @@ import { db } from "@/lib/db";
 import { formatCAD } from "@/lib/money";
 import { lineItemLabel, type Translate } from "@/lib/pricing/line-labels";
 import { requireAdminPage } from "@/server/auth/guards";
+import { resolveChangeRequest } from "@/server/actions/admin/booking-status";
 import { getBookingForAdmin } from "@/server/queries/admin-bookings";
 
 type Props = { params: Promise<{ reference: string }> };
@@ -71,6 +75,7 @@ export default async function AdminBookingPage({ params }: Props) {
     addOnNames: Object.fromEntries(addOns.map((addOn) => [addOn.code, addOn.name])),
   };
   const { customer } = booking;
+  const statusIntents = availableStatusIntents(booking, new Date());
 
   return (
     <>
@@ -103,6 +108,12 @@ export default async function AdminBookingPage({ params }: Props) {
             alreadyRequested={booking.paymentRequestedAt !== null}
             today={studioDateKey(new Date())}
           />
+        </div>
+      )}
+
+      {statusIntents.length > 0 && (
+        <div className="mt-6">
+          <BookingStatusPanel reference={booking.reference} intents={statusIntents} />
         </div>
       )}
 
@@ -223,6 +234,13 @@ export default async function AdminBookingPage({ params }: Props) {
                   </span>{" "}
                   · {request.status === "OPEN" ? "Open" : "Resolved"} · {when(request.createdAt)}
                   {request.preferredDate && ` · preferred date ${request.preferredDate}`}
+                  {request.status === "OPEN" && (
+                    <form action={resolveChangeRequest.bind(null, request.id)} className="mt-2">
+                      <Button type="submit" size="sm" variant="outline">
+                        Mark as handled
+                      </Button>
+                    </form>
+                  )}
                   {request.message && (
                     <p className="text-muted-foreground mt-1 whitespace-pre-line">
                       {request.message}

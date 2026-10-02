@@ -12,7 +12,10 @@ import { studioDateKey } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { fieldErrorsOf } from "@/lib/validators/admin/fields";
 import { requireRole } from "@/server/auth/guards";
-import { sendBookingConfirmedEmail, sendPaymentRequestEmail } from "@/server/emails/payment-emails";
+import {
+  sendBookingConfirmedEmail,
+  sendPaymentRequestEmail,
+} from "@/server/emails/admin-booking-emails";
 
 import type { SettingsResult } from "./pricing";
 

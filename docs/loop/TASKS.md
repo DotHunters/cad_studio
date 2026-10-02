@@ -88,7 +88,7 @@ Legend: `[ ]` todo · `[x]` done · `BLOCKED(Q#)` waiting on `OPEN_QUESTIONS.md`
 - [ ] 7.6 Bookings admin: list and calendar views, **Send payment request** (email prefilled from `PAYMENT_INSTRUCTIONS` + optional payment link, client locale), record deposit (method, amount, date) → `CONFIRMED`, flag bookings with no request after 24 h, status transitions, assign photographers, CSV export, `.ics`. — §6.6, §6.10
   - [x] 7.6a Bookings list (status/when filters, search) and detail (event, client, itemized price, payment, change requests)
   - [x] 7.6b Send payment request (PAYMENT_INSTRUCTIONS + optional link, client locale) and record deposit → CONFIRMED
-  - [ ] 7.6c Status changes: complete (+ review invite link) and cancel, with client emails; resolve change requests
+  - [x] 7.6c Status changes: complete (+ review invite link) and cancel, with client emails; resolve change requests
   - [ ] 7.6d Calendar view, assign photographers, CSV export, `.ics` download
 - [ ] 7.7 Quotes admin: list, convert to booking, adjust and re-send. — §6.10
 - [ ] 7.8 Blocked dates and capacity management. — §6.10, §8.3

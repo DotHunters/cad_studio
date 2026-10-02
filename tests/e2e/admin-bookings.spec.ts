@@ -38,7 +38,7 @@ async function createBooking(testInfo: TestInfo) {
        "depositCents", "paymentMethod", "customerId", "updatedAt")
      values (gen_random_uuid()::text, $1, 'FAMILY',
        (select id from "Package" where slug = 'family-event'),
-       '2027-09-18 18:00', '2027-09-18 20:00', 1, 40, 'Rouge Park, Scarborough',
+       '2027-10-23 18:00', '2027-10-23 20:00', 1, 40, 'Rouge Park, Scarborough',
        'Grandma''s 90th birthday', 'PENDING', 90000, 11700, 101700, $2::jsonb, 30510,
        'BANK_TRANSFER', $3, now())
      returning id`,

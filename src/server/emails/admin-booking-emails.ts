@@ -11,6 +11,7 @@ import { BookingRequestEmail } from "@/lib/email/templates/booking-request";
 import { formatCAD } from "@/lib/money";
 import { signValue } from "@/lib/signing";
 import { linkSecret } from "@/server/link-secret";
+import { reviewInviteUrl } from "@/server/review-links";
 
 type BookingForEmail = {
   reference: string;
@@ -115,6 +116,50 @@ export async function sendBookingConfirmedEmail(booking: BookingForEmail, paidCe
         { label: tConfirmed("when"), value: when },
       ],
       cta: { label: t("bookingCta"), url: bookingUrl(booking.reference, locale) },
+    },
+  );
+}
+
+/** Thank-you after the event, with the signed review invitation (AGENTS.md §6.7, 6.3). */
+export async function sendBookingCompletedEmail(booking: BookingForEmail) {
+  const { t, tConfirmed, when, base, locale } = await common(booking);
+  return renderAndSend(
+    booking.customer.email,
+    t("completedSubject", { reference: booking.reference }),
+    {
+      ...base,
+      preview: t("completedPreview"),
+      heading: t("completedHeading"),
+      intro: t("completedIntro"),
+      facts: [
+        { label: tConfirmed("status"), value: t("completedStatus") },
+        { label: tConfirmed("when"), value: when },
+      ],
+      icsNote: t("completedNote"),
+      cta: { label: t("completedCta"), url: reviewInviteUrl(booking.reference, locale) },
+    },
+  );
+}
+
+/** Polite notice when the studio cancels a booking. */
+export async function sendBookingCancelledEmail(booking: BookingForEmail) {
+  const { t, tConfirmed, date, when, base, locale } = await common(booking);
+  return renderAndSend(
+    booking.customer.email,
+    t("cancelledSubject", { reference: booking.reference }),
+    {
+      ...base,
+      preview: t("cancelledPreview", { date }),
+      heading: t("cancelledHeading"),
+      intro: t("cancelledIntro", { date }),
+      facts: [
+        { label: tConfirmed("status"), value: t("cancelledStatus") },
+        { label: tConfirmed("when"), value: when },
+      ],
+      cta: {
+        label: t("cancelledCta"),
+        url: new URL(`/${locale}/book`, siteConfig.url).toString(),
+      },
     },
   );
 }

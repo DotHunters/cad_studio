@@ -64,7 +64,7 @@ test("admins edit payment instructions in both languages", async ({
   // With real instructions in place, payment requests go out (in the client's language).
   await createPendingBooking(testInfo, PAYMENT_REFERENCE, { locale: "fr" });
   await page.goto(`/admin/bookings/${PAYMENT_REFERENCE}`);
-  await expect(page.locator('[data-hydrated="true"]')).toBeVisible();
+  await expect(page.locator('[data-hydrated="true"]').first()).toBeVisible();
   const request = page.getByRole("form", { name: /payment request/i });
   await request.getByLabel("Payment link (optional)").fill("https://pay.example/cad-test");
   await request.getByRole("button", { name: "Send payment request" }).click();

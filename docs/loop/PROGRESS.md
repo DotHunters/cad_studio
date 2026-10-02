@@ -447,3 +447,11 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (396) · e2e ✅ (316) · build ✅ · format ✅
 - Next: 7.6c complete/cancel + emails + review invites + change requests
 
+### 2026-10-02 — 7.6c Complete / cancel bookings, change requests
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Done: `BookingStatusPanel` on the booking page (STAFF+): **Mark as completed** (confirmed bookings whose event has started) with an optional thank-you email carrying the signed verified-review link (`reviewInviteUrl`, 90 days — closes the loop from 6.3); **Cancel booking** (pending/confirmed) behind a required "Yes, cancel CAD-B-…" checkbox, with an optional polite cancellation email; cancelled bookings stop counting toward capacity and lose the payment forms. Conditional updates (no double change). Change requests get **Mark as handled**. Rules in `src/lib/admin/booking-status.ts` (3 unit tests). EN/FR email copy; `payment-emails.ts` renamed `admin-booking-emails.ts`.
+- **Test fixes (separate commit + this one):** `review-verified` (6.3) shared `CAD-B-9998-000x` with `cron-api`, so the two deleted each other's rows when they overlapped; and the new admin-bookings fixture sat on 2027-09-18, which `availability-api` asserts is free. Registry of fixture years/dates now at the top of `tests/e2e/booking-fixture.ts` and in loop.md pitfalls. Multi-panel pages: hydration waits use `.first()`.
+- e2e: complete a past confirmed booking (email option on by default) → Completed, no actions left; future booking can't be completed; cancel blocked until confirmed → Cancelled, payment forms gone; change request → handled.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (399) · e2e ✅ (322; admin-booking-status 3× clean after one unexplained mobile failure during the colliding run) · build ✅ · format ✅
+- Next: 7.6d calendar, photographers, CSV, `.ics`
+
