@@ -52,7 +52,8 @@
   --muted-foreground: var(--brand-muted);
   --accent: var(--brand-sand);
   --accent-foreground: var(--brand-ink);
-  --destructive: oklch(0.577 0.245 27.325);
+  /* Darker than shadcn's default red, which was 4.49:1 on paper (axe, task 8.2): 5.8:1. */
+  --destructive: #c70009;
   --border: var(--brand-line);
   --input: var(--brand-line);
   --ring: var(--brand-gold);
@@ -203,4 +204,16 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/*
+ * Sonner's "rich colors" text is below 4.5:1 on its own tinted backgrounds (axe, task 8.2).
+ * Darker text keeps the same hues: error 6.5:1, warning 6.6:1, info 6.5:1, success ≥ 6:1.
+ * `html` raises specificity above Sonner's injected stylesheet.
+ */
+html [data-sonner-toaster][data-sonner-theme="light"] {
+  --error-text: #b3000a;
+  --warning-text: #8a4b00;
+  --info-text: #0b56b5;
+  --success-text: #0d6b30;
 }

@@ -104,7 +104,7 @@ Legend: `[ ]` todo · `[x]` done · `BLOCKED(Q#)` waiting on `OPEN_QUESTIONS.md`
 - [x] 8.1 Upstash rate limiting on all public forms; real Turnstile wiring. — §11
   - [x] 8.1a Upstash rate limiting on contact, quote, booking, review, change-request and admin sign-in
   - [x] 8.1b Cloudflare Turnstile widget on public forms (token passed to the existing server check)
-- [ ] 8.2 WCAG 2.1 AA audit and fixes (contrast, focus, labels, announced errors, reduced motion). — §5, §9
+- [x] 8.2 WCAG 2.1 AA audit and fixes (contrast, focus, labels, announced errors, reduced motion). — §5, §9
 - [ ] 8.3 SEO pass: metadata, OG images, noindex on admin, sitemap built from the DB. — §10
 - [ ] 8.4 Performance pass: Lighthouse ≥ 90 on mobile, LCP < 2.5 s, CLS < 0.1. — §10
 - [ ] 8.4b Pre-launch content check: list every `isSample`, `TODO(owner)` and `cadstudio.example` occurrence in the PR so the owner can replace them. — §13

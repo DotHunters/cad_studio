@@ -543,3 +543,12 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (448) · e2e ✅ (346 on rerun after one Windows worker crash) · build ✅ · format ✅
 - Next: 8.2 WCAG 2.1 AA audit
 
+### 2026-10-03 — 8.2 Accessibility audit (WCAG 2.1 AA)
+- Branch: feat/m8-hardening · PR #10
+- Done: `@axe-core/playwright` (dev only) and `tests/e2e/a11y.spec.ts` — axe with WCAG 2.0/2.1 A + AA rules on every public page (EN, FR samples, 404), dark mode on four pages, interactive states (mobile menu open, gallery lightbox open, contact/quote/review forms showing errors), the admin sign-in and 15 admin screens; desktop and mobile. Sanity-checked that the harness does flag a deliberately broken page.
+- Findings and fixes: (1) error text `--destructive` #e7000b was 4.49:1 on paper → #c70009 (5.8:1); (2) Sonner's rich toast colours were 3.1–4.4:1 on their tinted backgrounds → darker error/warning/info/success text (6.3–6.6:1, computed); (3) the admin calendar's sideways-scrolling area wasn't reachable by keyboard on mobile → focusable labelled region. Everything else already passed (labels, names, landmarks, contrast, ARIA).
+- Not automatable: a manual screen-reader pass (NVDA/VoiceOver) and real keyboard walk-through should be done by the tester before launch (added to the PR). Focus visibility, reduced motion and keyboard-operable lightbox were built and tested in earlier milestones.
+- Test infra (separate commit): admin-images/admin-portfolio publish projects that change public portfolio counts → moved to the global project; admin-images cleanup now removes rows left by crashed runs (and a cleanup-pattern bug that matched the other test in the file was caught by the full run).
+- Checks: lint ✅ · typecheck ✅ · test ✅ (448) · e2e ✅ (426 incl. 80 a11y scans) · build ✅ · format ✅
+- Next: 8.3 SEO pass
+
