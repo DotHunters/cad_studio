@@ -4,7 +4,9 @@ import { unstable_cache } from "next/cache";
 
 import { db } from "@/lib/db";
 import { shouldShowSampleContent } from "@/lib/flags";
+import { pickCover } from "@/lib/images";
 import { CACHE_TAGS, CONTENT_REVALIDATE_SECONDS } from "@/server/cache";
+import { publicProjectImages } from "@/server/queries/project-images";
 
 /** Excludes fictional sample rows unless sample content is enabled (never in production). */
 function sampleFilter(includeSamples: boolean) {
@@ -20,13 +22,13 @@ const cachedFeaturedProjects = unstable_cache(
       where: { featured: true, publishedAt: { not: null }, ...sampleFilter(includeSamples) },
       orderBy: [{ year: "desc" }, { publishedAt: "desc" }],
       take: limit,
-      include: { images: { orderBy: { sortOrder: "asc" }, take: 1 } },
+      include: { images: publicProjectImages },
     });
     return projects.map((project) => ({
       ...project,
       // Client names appear only with consent (AGENTS.md §13).
       clientName: project.consentToPublish ? project.clientName : null,
-      cover: project.images.find((image) => image.id === project.coverId) ?? project.images[0],
+      cover: pickCover(project.images, project.coverId),
     }));
   },
   ["home:featured-projects"],

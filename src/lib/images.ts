@@ -64,3 +64,11 @@ export function storedImageSrc(
   }
   return cloudinaryUrl(image.publicId, { cloudName });
 }
+
+/** The project's chosen cover if it's among its publishable images, else the first one. */
+export function pickCover<T extends { id: string }>(
+  images: readonly T[],
+  coverId: string | null,
+): T | null {
+  return images.find((image) => image.id === coverId) ?? images[0] ?? null;
+}

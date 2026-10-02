@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { placeholderImage, storedImageSrc } from "@/lib/images";
+import { pickCover, placeholderImage, storedImageSrc } from "@/lib/images";
 
 describe("placeholderImage", () => {
   it("builds a blank PNG by default (text colour matches background)", () => {
@@ -46,5 +46,22 @@ describe("storedImageSrc", () => {
     expect(() => storedImageSrc({ publicId: "cad/real", width: 10, height: 10 }, "")).toThrow(
       /NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME/,
     );
+  });
+});
+
+describe("pickCover", () => {
+  const images = [{ id: "a" }, { id: "b" }, { id: "c" }];
+
+  it("uses the chosen cover wherever it is in the list", () => {
+    expect(pickCover(images, "c")).toEqual({ id: "c" });
+  });
+
+  it("falls back to the first image when the cover is missing or not publishable", () => {
+    expect(pickCover(images, null)).toEqual({ id: "a" });
+    expect(pickCover(images, "hidden")).toEqual({ id: "a" });
+  });
+
+  it("is null without images", () => {
+    expect(pickCover([], "a")).toBeNull();
   });
 });

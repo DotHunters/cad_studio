@@ -15,6 +15,7 @@ import { siteConfig } from "@/config/site";
 import { Link } from "@/i18n/navigation";
 import { slugFromCategory } from "@/lib/categories";
 import { storedImageSrc } from "@/lib/images";
+import { pickCover } from "@/lib/images";
 import { localize } from "@/lib/localize";
 import { imageGalleryJsonLd } from "@/lib/seo/json-ld";
 import { pageMetadata } from "@/lib/seo/metadata";
@@ -47,7 +48,9 @@ export default async function ProjectPage({ params }: Props) {
   const title = localize(project.title, project.titleFr, locale);
   const categorySlug = slugFromCategory(project.category);
   const categoryName = t(`Categories.${categorySlug}.name`);
-  const [lead, ...rest] = project.images;
+  // The chosen cover leads; the remaining images follow in order.
+  const lead = pickCover(project.images, project.coverId);
+  const rest = project.images.filter((image) => image !== lead);
   const facts = [
     { label: t("Project.client"), value: project.clientName ?? t("Home.privateClient") },
     { label: t("Project.category"), value: categoryName },
