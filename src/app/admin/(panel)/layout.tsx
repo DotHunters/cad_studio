@@ -16,6 +16,7 @@ export default async function AdminPanelLayout({ children }: { children: ReactNo
   const nav: AdminNavItem[] = [
     { href: "/admin", label: "Dashboard" },
     { href: "/admin/bookings", label: "Bookings" },
+    { href: "/admin/quotes", label: "Quotes" },
     { href: "/admin/reviews", label: "Reviews" },
     // Catalogue and pricing are admin-only.
     ...(hasRole(user.role, "ADMIN")

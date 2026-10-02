@@ -172,8 +172,13 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
                   <span className="min-w-0 flex-1 text-sm">
                     {quote.customer.name}
                     <span className="text-muted-foreground block text-xs">
-                      <span className="font-mono">{quote.reference}</span> ·{" "}
-                      {category(quote.category)} · event{" "}
+                      <Link
+                        href={`/admin/quotes/${quote.reference}`}
+                        className="font-mono underline-offset-4 hover:underline"
+                      >
+                        {quote.reference}
+                      </Link>{" "}
+                      · {category(quote.category)} · event{" "}
                       {formatInStudioTz(quote.eventDate, "MMM d, yyyy")}
                     </span>
                   </span>

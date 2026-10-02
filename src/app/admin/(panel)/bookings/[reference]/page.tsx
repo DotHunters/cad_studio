@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
-import type { ReactNode } from "react";
 
 import { BookingStatusPanel } from "@/components/admin/booking-status-panel";
 import { PaymentPanel } from "@/components/admin/payment-panel";
+import { Facts, PriceTable, Section } from "@/components/admin/detail-section";
 import { StatusBadge } from "@/components/admin/status-badge";
 import { Button } from "@/components/ui/button";
 import { sameDayClashes, staffingNote } from "@/lib/admin/assignments";
-import { formatTaxRate, parseStoredBreakdown } from "@/lib/admin/bookings";
+import { parseStoredBreakdown } from "@/lib/admin/bookings";
 import { availableStatusIntents } from "@/lib/admin/booking-status";
 import { canTakePayment } from "@/lib/admin/payments";
 import { needsPaymentRequest } from "@/lib/booking/holds";
@@ -31,31 +31,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 const money = (cents: number) => formatCAD(cents, "en", { suffix: false });
 const when = (date: Date) => formatInStudioTz(date, "EEE MMM d, yyyy · h:mm a");
-
-function Section({ title, children }: { title: string; children: ReactNode }) {
-  const id = `section-${title.toLowerCase().replace(/[^a-z]+/g, "-")}`;
-  return (
-    <section aria-labelledby={id} className="bg-card min-w-0 rounded-xl border p-5">
-      <h2 id={id} className="mb-3 text-lg font-medium">
-        {title}
-      </h2>
-      {children}
-    </section>
-  );
-}
-
-function Facts({ rows }: { rows: Array<[string, ReactNode]> }) {
-  return (
-    <dl className="grid grid-cols-[minmax(7rem,auto)_minmax(0,1fr)] gap-x-4 gap-y-2 text-sm">
-      {rows.map(([term, value]) => (
-        <div key={term} className="contents">
-          <dt className="text-muted-foreground">{term}</dt>
-          <dd className="min-w-0 [overflow-wrap:anywhere]">{value}</dd>
-        </div>
-      ))}
-    </dl>
-  );
-}
 
 export default async function AdminBookingPage({ params }: Props) {
   await requireAdminPage();
@@ -170,36 +145,13 @@ export default async function AdminBookingPage({ params }: Props) {
 
         <Section title="Price">
           {breakdown ? (
-            <table className="w-full text-sm">
-              <tbody>
-                {breakdown.lineItems.map((item, index) => (
-                  <tr key={index}>
-                    <td className="py-1">
-                      {lineItemLabel(item, tQuote as unknown as Translate, names)}
-                    </td>
-                    <td className="py-1 text-right tabular-nums">{money(item.amountCents)}</td>
-                  </tr>
-                ))}
-                <tr className="border-t">
-                  <td className="py-1 font-medium">Subtotal</td>
-                  <td className="py-1 text-right tabular-nums">
-                    {money(booking.subtotalCents ?? 0)}
-                  </td>
-                </tr>
-                {breakdown.taxLines.map((line) => (
-                  <tr key={line.code}>
-                    <td className="py-1">
-                      {line.code} ({formatTaxRate(line.rate)})
-                    </td>
-                    <td className="py-1 text-right tabular-nums">{money(line.amountCents)}</td>
-                  </tr>
-                ))}
-                <tr className="border-t font-medium">
-                  <td className="py-1">Total</td>
-                  <td className="py-1 text-right tabular-nums">{money(booking.totalCents ?? 0)}</td>
-                </tr>
-              </tbody>
-            </table>
+            <PriceTable
+              lineItems={breakdown.lineItems}
+              taxLines={breakdown.taxLines}
+              subtotalCents={booking.subtotalCents ?? 0}
+              totalCents={booking.totalCents ?? 0}
+              label={(item) => lineItemLabel(item, tQuote as unknown as Translate, names)}
+            />
           ) : (
             <p className="text-muted-foreground text-sm">
               {booking.totalCents === null

@@ -29,6 +29,8 @@ export type QuoteEmailData = {
   quote: QuoteResult;
   depositPct: number;
   expiresAt: Date;
+  /** False when the studio re-sends a quote from admin (no "new quote" notification). */
+  notifyStudio?: boolean;
 };
 
 /** Client summary (in their locale) + admin notification. Failures are logged by the caller. */
@@ -93,6 +95,7 @@ export async function sendQuoteEmails(data: QuoteEmailData) {
   });
 
   // Studio notification: plain text, always in English, reply goes to the client.
+  if (data.notifyStudio === false) return;
   const location = [data.city, data.province].filter(Boolean).join(", ");
   await sendEmail({
     to: adminNotifyAddress(),

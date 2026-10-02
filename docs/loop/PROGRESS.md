@@ -481,3 +481,11 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (427) · e2e ✅ (334) · build ✅ · format ✅
 - Next: 7.7 Quotes admin
 
+### 2026-10-02 — 7.7a Quotes list, detail, re-send
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Split 7.7 into 7.7a list/detail/re-send · 7.7b adjust price + convert to booking.
+- Done: `/admin/quotes` ("Quotes" in nav; STAFF+): Open / Booked / Expired / All (a SENT quote past its date counts as expired — `quoteState`), search, table with client, event, total, status and validity or "Booked as CAD-B-…". `/admin/quotes/[reference]`: Event (incl. city, province, km), Client, itemized Price (shared `PriceTable`) with deposit, link to the booking. **Re-send quote** (not for booked quotes): emails the same quote and price in the client's language (existing quote email; new `notifyStudio: false` skips the studio copy), optionally renewing validity for QUOTE_VALID_DAYS from today (pre-ticked for expired quotes) — only after the email is sent. `storedQuoteResult` rebuilds the engine result from the saved breakdown; booking and quote pages now share `Section`/`Facts`/`PriceTable` (`src/components/admin/detail-section.tsx`). Dashboard quote references link to the detail page. 4 unit tests.
+- e2e: expired quote hidden from Open, shown under Expired; detail price lines, deposit and location; re-send with renewal → stored validity ≥ 13 days, badge back to Sent.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (431) · e2e ✅ (336) · build ✅ · format ✅
+- Next: 7.7b adjust + convert
+
