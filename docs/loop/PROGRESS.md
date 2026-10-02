@@ -397,3 +397,12 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (362) · e2e ✅ (300 + 2 skipped by design) · build ✅ · format ✅
 - Next: 7.3d Site settings
 
+### 2026-10-02 — 7.3d Site settings (7.3 complete)
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Done: `/admin/settings` (ADMIN only, nav "Settings") edits the bilingual `SiteSetting` texts — cancellation policy (package pages, booking emails) and payment instructions (sent with payment requests in 7.6, never on the site). English and French side by side, both required; warns while text is still a `TODO(…)` placeholder (placeholders are never shown to clients). Definitions + parsing in `src/lib/admin/site-settings.ts` (5 unit tests), `saveSiteSettings` action revalidates the settings tag.
+- **Fix (separate commit):** `pnpm db:seed` overwrote packages, add-ons, pricing rules and tax rates on every run — now that admins edit them (and the owner is told to run the seed to create the first admin), those are create-only like site settings.
+- e2e (`admin-settings.spec.ts`, chromium only, restores afterwards): placeholder warning, both languages required, save persists `{ en, fr }`. Only payment instructions are changed because `package-detail.spec.ts` relies on the placeholder policy staying hidden.
+- Flake: `home.spec` "blur-up placeholder" failed once in a slow full run (3.3 min vs ~1.6); passed 6/6 alone. Timing-based (holds images 3 s); watch it.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (367) · e2e ✅ (300 + 3 skipped by design; 1 flake, rerun green) · build ✅ · format ✅
+- Next: 7.4 Portfolio and gallery admin
+
