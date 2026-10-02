@@ -1,3 +1,5 @@
+import { createHmac } from "node:crypto";
+
 import { expect, test, type TestInfo } from "@playwright/test";
 
 import { adminEmailFor, deleteAdmin, signInAsAdmin } from "./admin-session";
@@ -14,7 +16,7 @@ test.afterEach(async ({}, testInfo) => {
   await deleteAdmin(adminEmailFor(testInfo, "staff"));
 });
 
-async function createExpiredQuote(testInfo: TestInfo) {
+async function createExpiredQuote(testInfo: TestInfo, { expired = true } = {}) {
   const reference = referenceFor(testInfo);
   await queryDb(`delete from "Quote" where reference = $1`, [reference]);
   const [customer] = await queryDb<{ id: string }>(
@@ -39,8 +41,8 @@ async function createExpiredQuote(testInfo: TestInfo) {
        "taxCents", "totalCents", status, "expiresAt", "customerId", "createdAt")
      values (gen_random_uuid()::text, $1, 'WEDDING', (select id from "Package" where slug = 'wedding'),
        '2027-11-13 18:00', 10, 2, 'ON', 'Markham', 25, '[]'::jsonb, $2::jsonb, 320000, 41600,
-       361600, 'SENT', now() - interval '2 days', $3, now() - interval '20 days')`,
-    [reference, JSON.stringify(breakdown), customer.id],
+       361600, 'SENT', now() + $4::interval, $3, now() - interval '20 days')`,
+    [reference, JSON.stringify(breakdown), customer.id, expired ? "-2 days" : "10 days"],
   );
   return reference;
 }
@@ -85,4 +87,50 @@ test("staff review an expired quote and re-send it with a fresh validity", async
   expect(quote.valid).toBe(true);
   await page.reload();
   await expect(page.getByText("Sent", { exact: true })).toBeVisible();
+});
+
+// Same signing as src/lib/signing.ts with the local development secret.
+const quoteToken = (reference: string) =>
+  createHmac("sha256", "cad-studio-local-development-link-secret")
+    .update(`quote:${reference}`)
+    .digest("base64url")
+    .slice(0, 32);
+
+test("staff adjust a quote's price; the client's quote shows it", async ({
+  page,
+  context,
+  baseURL,
+}, testInfo) => {
+  const reference = await createExpiredQuote(testInfo, { expired: false });
+  await signInAsAdmin(context, baseURL!, adminEmailFor(testInfo, "staff"), "STAFF");
+  await page.goto(`/admin/quotes/${reference}`);
+  const adjust = page.getByRole("form", { name: "Adjust price" });
+  await expect(adjust.locator("xpath=self::*[@data-hydrated='true']")).toHaveCount(1);
+
+  await adjust.getByRole("button", { name: "Apply adjustment" }).click();
+  await expect(adjust.getByText("Required.")).toHaveCount(2); // label and amount
+
+  await adjust.getByLabel("Shown as").fill("Returning client");
+  await adjust.getByLabel("Amount (CAD, before tax)").fill("200");
+  await adjust.getByRole("button", { name: "Apply adjustment" }).click();
+  await expect(adjust.getByRole("status")).toContainText("Price updated");
+
+  // $3,200 − $200 = $3,000 + 13 % HST = $3,390; deposit 30 % = $1,017.
+  const price = page.getByRole("region", { name: "Price" });
+  await expect(price).toContainText("Returning client");
+  await expect(price).toContainText("-$200.00");
+  await expect(price).toContainText("$3,390.00");
+  await expect(price).toContainText("Deposit $1,017.00");
+
+  // The client's private quote page shows the same price.
+  await page.goto(`/fr/quote/${reference}?t=${quoteToken(reference)}`);
+  await expect(page.getByText("Returning client")).toBeVisible();
+  await expect(page.getByText(/3\s390,00/).first()).toBeVisible();
+
+  await page.goto(`/admin/quotes/${reference}`);
+  await page.getByRole("button", { name: "Remove adjustment" }).click();
+  await expect(page.getByRole("form", { name: "Adjust price" }).getByRole("status")).toHaveText(
+    "Adjustment removed.",
+  );
+  await expect(page.getByRole("region", { name: "Price" })).toContainText("$3,616.00");
 });

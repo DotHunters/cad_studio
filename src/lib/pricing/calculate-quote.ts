@@ -69,7 +69,9 @@ export type LineItem =
   | { kind: "addOn"; code: string; quantity: number; amountCents: number }
   | { kind: "travel"; km: number; amountCents: number }
   | { kind: "surcharge"; code: "WEEKEND" | "STAT_HOLIDAY"; amountCents: number }
-  | { kind: "discount"; code: "OFF_SEASON"; amountCents: number };
+  | { kind: "discount"; code: "OFF_SEASON"; amountCents: number }
+  /** Manual change by the studio in admin (negative = discount). Never produced by the engine. */
+  | { kind: "adjustment"; label: string; amountCents: number };
 
 export type QuoteResult = {
   lineItems: LineItem[];

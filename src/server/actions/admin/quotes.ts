@@ -4,8 +4,11 @@ import { addDays } from "date-fns";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
+import { adjustmentSchema, applyQuoteAdjustment } from "@/lib/admin/quote-adjustment";
 import { storedQuoteResult } from "@/lib/admin/quotes";
+import type { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";
+import { fieldErrorsOf } from "@/lib/validators/admin/fields";
 import { localize } from "@/lib/localize";
 import { signValue } from "@/lib/signing";
 import { requireRole } from "@/server/auth/guards";
@@ -85,4 +88,61 @@ export async function resendQuote(reference: string, input: unknown): Promise<Re
   });
   revalidatePath("/admin", "layout");
   return { ok: true, expiresAt: expiresAt.toISOString() };
+}
+
+export type AdjustResult =
+  { ok: true } | { ok: false; fieldErrors: Record<string, string> } | { ok: false; error: string };
+
+/**
+ * Adds, replaces or removes the studio's price adjustment on a quote (AGENTS.md §6.10). Tax
+ * and deposit are recalculated; booking from the quote then uses this price. The client isn't
+ * emailed until the quote is re-sent. STAFF+.
+ */
+export async function adjustQuote(reference: string, input: unknown): Promise<AdjustResult> {
+  await requireRole("STAFF");
+  const remove = (input as { intent?: unknown } | null)?.intent === "remove";
+  const parsed = remove ? null : adjustmentSchema.safeParse(input);
+  if (parsed && !parsed.success) return { ok: false, fieldErrors: fieldErrorsOf(parsed.error) };
+
+  const quote = await db.quote.findUnique({ where: { reference: String(reference) } });
+  if (!quote) return { ok: false, error: "This quote no longer exists." };
+  if (quote.status === "ACCEPTED") return { ok: false, error: "This quote was already booked." };
+  const current = storedQuoteResult(quote);
+  if (!current) return { ok: false, error: "This quote's price details couldn't be read." };
+
+  const rule = await db.pricingRule.findUnique({ where: { key: "DEPOSIT_PCT" } });
+  const depositPct = typeof rule?.value === "number" ? rule.value : 30;
+  let adjusted;
+  try {
+    adjusted = applyQuoteAdjustment(
+      current,
+      parsed?.success
+        ? {
+            label: parsed.data.label,
+            amountCents:
+              parsed.data.direction === "discount" ? -parsed.data.amount : parsed.data.amount,
+          }
+        : null,
+      depositPct,
+    );
+  } catch {
+    return { ok: false, fieldErrors: { amount: "The discount can't be more than the subtotal." } };
+  }
+
+  await db.quote.update({
+    where: { id: quote.id },
+    data: {
+      breakdown: {
+        ...(quote.breakdown as Record<string, unknown>),
+        lineItems: adjusted.lineItems,
+        taxLines: adjusted.taxLines,
+        depositCents: adjusted.depositCents,
+      } as Prisma.InputJsonValue,
+      subtotalCents: adjusted.subtotalCents,
+      taxCents: adjusted.taxCents,
+      totalCents: adjusted.totalCents,
+    },
+  });
+  revalidatePath("/admin", "layout");
+  return { ok: true };
 }

@@ -489,3 +489,12 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (431) · e2e ✅ (336) · build ✅ · format ✅
 - Next: 7.7b adjust + convert
 
+### 2026-10-02 — 7.7b Adjust quote price (+ two fixes)
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- **Fix 1 (separate commit):** stored tax lines already hold the rate as a label ("13%"), but the admin pages re-parsed it as a fraction → real bookings/quotes would have shown "HST (NaN%)". The e2e fixtures had used the wrong format ("0.13"), so tests didn't catch it; fixtures now use the real format and the pages show the stored label.
+- **Fix 2 (separate commit):** booking from a valid quote only took the quote's total and deposit; lines, subtotal and tax were recalculated, so a booking could store lines that don't add up to its total. `placeBooking` now uses the quote's whole saved price (`storedQuoteResult`); the book-from-quote e2e asserts subtotal, tax and every line match the quote.
+- Done: new line kind `adjustment` (label + signed amount; `lineItemLabel` shows the label — on the client's quote page and emails too). **Adjust price** panel on the quote page (STAFF+, not for booked quotes): discount or extra charge with a client-facing label; replace or remove. `applyQuoteAdjustment` recalculates tax at the rates the quote was taxed at (parsed from the stored "13%" labels with the same half-up rounding as tax.ts) and the deposit at the current %; refuses a negative subtotal. The client isn't emailed until the quote is re-sent. 8 unit tests.
+- e2e: validation, −$200 "Returning client" → $3,390.00 total, $1,017.00 deposit; the client's French quote page shows the line and total; remove → back to $3,616.00.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (436) · e2e ✅ (338) · build ✅ · format ✅
+- Next: 7.7c convert quote to booking
+

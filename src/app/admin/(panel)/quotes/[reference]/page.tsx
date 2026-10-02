@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
+import { AdjustQuotePanel } from "@/components/admin/adjust-quote-panel";
 import { Facts, PriceTable, Section } from "@/components/admin/detail-section";
 import { ResendQuotePanel } from "@/components/admin/resend-quote-panel";
 import { StatusBadge } from "@/components/admin/status-badge";
@@ -45,6 +46,8 @@ export default async function AdminQuotePage({ params }: Props) {
     addOnNames: Object.fromEntries(addOns.map((addOn) => [addOn.code, addOn.name])),
   };
   const state = quoteState(quote, new Date());
+  const adjustment = result?.lineItems.find((item) => item.kind === "adjustment") as
+    { label: string; amountCents: number } | undefined;
   const when = (date: Date) => formatInStudioTz(date, "EEE MMM d, yyyy · h:mm a");
   const province =
     quote.isInternational || quote.province === "INTL"
@@ -78,12 +81,27 @@ export default async function AdminQuotePage({ params }: Props) {
       </p>
 
       {!quote.booking && state !== "ACCEPTED" && (
-        <div className="mt-8 max-w-xl">
+        <div className="mt-8 max-w-3xl">
           <ResendQuotePanel
             reference={quote.reference}
             expired={state === "EXPIRED"}
             validDays={typeof validDays?.value === "number" ? validDays.value : 14}
           />
+          {result && (
+            <div className="mt-6">
+              <AdjustQuotePanel
+                reference={quote.reference}
+                current={
+                  adjustment
+                    ? {
+                        label: adjustment.label,
+                        amount: formatCAD(adjustment.amountCents, "en", { suffix: false }),
+                      }
+                    : null
+                }
+              />
+            </div>
+          )}
         </div>
       )}
 

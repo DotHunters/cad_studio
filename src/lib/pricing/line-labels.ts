@@ -30,5 +30,7 @@ export function lineItemLabel(
     case "surcharge":
     case "discount":
       return t(`lines.${item.code}`);
+    case "adjustment":
+      return item.label;
   }
 }
