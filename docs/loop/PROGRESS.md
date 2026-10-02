@@ -415,3 +415,12 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (371) · e2e ✅ (305 + 3 skipped by design) · build ✅ · format ✅
 - Next: 7.4b image metadata
 
+### 2026-10-02 — 7.4b Admin images
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- **Fix (separate commit):** portfolio list, case study and home queries showed project images **without** checking `consentToPublish` (only the gallery checked) → shared `publicProjectImages` include; cover lookup only searched the first image (`take: 1`) and the case study ignored `coverId` → `pickCover` (unit tested) used everywhere.
+- Done: `/admin/gallery` ("Images" in nav, ADMIN only): thumbnail grid with project, cover, order, Sample/Gallery/Consent badges and a count of images hidden for missing consent. `/admin/gallery/[id]`: preview + `ImageForm` — EN/FR alt text, category, tags (comma-separated → lowercased, de-duplicated), project, order, "Client consent to publish obtained", show in gallery, use as project cover. Showing an image in the gallery or a project requires consent (`imageFormSchema`, 4 unit tests). `saveImage` keeps covers consistent (a cover always belongs to its project; unticking clears it) in one transaction; revalidates gallery + portfolio.
+- e2e: unconsented project images never appear on the case study; consent required before filing; describe + tag + consent + cover → stored and leads the public case study.
+- Test infra lesson (added to loop.md pitfalls): `.next/cache` survives runs, so SQL-created fixtures need per-run unique slugs.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (378) · e2e ✅ (309 + 3 skipped by design) · build ✅ · format ✅
+- Next: 7.4c is BLOCKED(Q18) → 7.5 Review moderation
+

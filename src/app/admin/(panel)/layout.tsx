@@ -22,6 +22,7 @@ export default async function AdminPanelLayout({ children }: { children: ReactNo
           { href: "/admin/add-ons", label: "Add-ons" },
           { href: "/admin/pricing", label: "Pricing" },
           { href: "/admin/portfolio", label: "Portfolio" },
+          { href: "/admin/gallery", label: "Images" },
           { href: "/admin/settings", label: "Settings" },
         ]
       : []),

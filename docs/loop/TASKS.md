@@ -82,7 +82,7 @@ Legend: `[ ]` todo · `[x]` done · `BLOCKED(Q#)` waiting on `OPEN_QUESTIONS.md`
   - [x] 7.3d Site settings (deposit %, cancellation policy, payment instructions)
 - [ ] 7.4 Portfolio and gallery admin: bulk upload, tags, reorder, required "Client consent to publish obtained" checkbox. — §6.10, §9
   - [x] 7.4a Portfolio projects: list, create, edit (EN/FR, client name + consent, local/global, published, featured)
-  - [ ] 7.4b Images: alt EN/FR, category, tags, in gallery, order, project/cover, required consent checkbox
+  - [x] 7.4b Images: alt EN/FR, category, tags, in gallery, order, project/cover, required consent checkbox
   - [ ] 7.4c Bulk upload to Cloudinary with blur placeholders — BLOCKED(Q18) until Cloudinary credentials exist
 - [ ] 7.5 Review moderation: approve, reject, feature, logo permission. Add the e2e test (scenario 5). — §6.10, §8.4, §15
 - [ ] 7.6 Bookings admin: list and calendar views, **Send payment request** (email prefilled from `PAYMENT_INSTRUCTIONS` + optional payment link, client locale), record deposit (method, amount, date) → `CONFIRMED`, flag bookings with no request after 24 h, status transitions, assign photographers, CSV export, `.ics`. — §6.6, §6.10
