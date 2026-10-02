@@ -213,3 +213,50 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Done: `imageGalleryJsonLd()` (ImageObject per image with caption, size, credit and copyright holder; capped at 30) on `/gallery` and every case study. Cache tags consolidated in `src/server/cache.ts` (`CACHE_TAGS` packages/portfolio/gallery/reviews/settings, `CONTENT_REVALIDATE_SECONDS`, `revalidateContent(...kinds)` for admin mutations in M7); all queries import from it.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (130) · e2e ✅ (180) · build ✅ · format ✅
 - Next: M4 → 4.1 (branch `feat/m4-quote`; stack on feat/m3-portfolio-gallery while PR #4 is open)
+
+### 2026-10-01 — 4.1 Canadian sales tax
+- Branch: feat/m4-quote (stacked on feat/m3-portfolio-gallery / PR #4)
+- Done (TDD): `src/lib/tax.ts` — `parseRate` (Decimal string/Prisma Decimal → integer parts per 100,000; rejects >5 decimals, negatives, ≥100%), `calculateTax(subtotalCents, rate)` → `{ lines: [{code GST|PST|QST|HST, rate "9.975%", amountCents}], taxCents }` with each line on the pre-tax subtotal (QST not on GST) and half-up rounding to the cent, `findTaxRate` (case-insensitive, throws for unknown regions). 12 tests: ON HST, QC GST+QST, GST-only, Atlantic HST, INTL, rounding edges, invalid input. Coverage: 100% lines/branches.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (142) · format ✅ after a follow-up formatting commit (the first commit was pushed with format:check failing — always run `pnpm format` before committing)
+- Next: 4.2
+
+### 2026-10-01 — 4.2 Quote engine
+- Branch: feat/m4-quote · PR #5 (stacked on #4)
+- Done (TDD): `src/lib/pricing/calculate-quote.ts` — `calculateQuote(input, {rules, addOns, taxRates})` → itemized `lineItems` (base, extraHours, extraShooters, surcharge, discount, addOn, travel), subtotal, tax lines (via `calculateTax`), total, deposit, flags (custom travel quote, suggested photographers). Integer cents with half-up rounding; validation (duration 0–24 in half hours, 1–10 photographers, distance ≥ 0, real calendar date, known region, add-on offered for the category). `src/lib/pricing/holidays.ts` — Ontario statutory holidays incl. Easter-based Good Friday. 34 new tests (every §8.1 case: base, extra hours/shooters, each add-on unit, travel threshold/round trip/custom, weekend, stat holiday, non-stacking, off-season discount, each tax regime, rounding, deposit, guest hint, validation). Coverage: calculate-quote 100% lines / 95% branches; holidays + tax 100%.
+- Interpretations recorded in AGENTS.md §8.1 and new Q16 for owner confirmation.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (176) · format ✅ (pure logic; no UI change)
+- Next: 4.3
+
+### 2026-10-01 — 4.3 Quote schema
+- Branch: feat/m4-quote · PR #5
+- Done (TDD): `src/lib/validators/quote.ts` — `quoteDetailsSchema` (category slug, optional package, real calendar date, HH:MM start, duration in half hours ≤ 24, 1–10 photographers, optional guest count ≤ 5000, province/territory or INTL, optional city, distance 0–20,000 km, international toggle forcing INTL + no distance, add-ons with whole quantities and zero-qty filtering; coerces form strings) for the live estimate without personal data; `quoteContactSchema` (name, email, optional phone, CASL opt-in defaulting to false, honeypot); `quoteRequestSchema` = both. Error messages are translation keys. 8 tests.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (184) · format ✅
+- Next: 4.4
+
+### 2026-10-01 — 4.4 /quote UI with live breakdown
+- Branch: feat/m4-quote · PR #5 (stacked on #4)
+- Done: `/[locale]/quote` — single form with sections (event, coverage, location, add-ons) + sticky live breakdown (spec allows this instead of steps). `?package=` prefills category/package/hours/photographers; `?category=` starts from the cheapest package. Every change runs the shared `quoteDetailsSchema` + `calculateQuote` in the browser; past dates (studio TZ) are ignored. `QuoteBreakdown` (translated line items, tax lines with rates, total in an `aria-live` region, deposit, custom-travel notice, "Estimate only" disclaimer), guest-count hint, international toggle. Server: cached `getPricingContext()` (packages, add-ons, parsed rules, tax rates as strings). `src/lib/pricing/rules.ts`: `parsePricingRules` (throws on missing/invalid rules), `resolvePackage` (chosen package or category's cheapest), unit tested. Province names EN/FR. `/quote` in sitemap.
+- Found + fixed: e2e typed into the form before hydration (React Hook Form missed the change → flaky failures); form now exposes `data-hydrated` and tests wait for it. Verified with `--repeat-each=3` (54/54).
+- Checks: lint ✅ · typecheck ✅ · test ✅ (190) · e2e ✅ (198; totals hand-computed: base, extra hours, add-on, weekend, travel, QC tax, international) · build ✅ · format ✅ · screenshot reviewed
+- Next: 4.5 (contact fields + createQuote server action)
+
+### 2026-10-01 — 4.5 createQuote server action
+- Branch: feat/m4-quote · PR #5 (stacked on #4)
+- Done: `src/server/actions/quote.ts` `createQuote` — re-validates with `quoteRequestSchema`, rejects past dates (studio TZ), Turnstile when configured, honeypot → fake success (nothing saved), re-prices from `getPricingContext()` (client price never sent), then in one transaction: atomic per-year counter (`ReferenceCounter` native upsert) → `CAD-Q-YYYY-####`, customer upsert by lower-cased email (records new marketing consent with timestamp, never silently withdraws it — CASL), quote row (event start converted from Toronto time to UTC, breakdown JSON incl. line items/tax/deposit/flags, status SENT, expiry = now + QUOTE_VALID_DAYS). Quote form gains a "Your details" section (name, email, phone, unchecked marketing opt-in, honeypot, privacy notice), client-side validation with inline translated errors (`aria-invalid`/`aria-describedby`, focus first error, toast), loading state and success state with reference + total. Helpers: `src/lib/references.ts` (format/parse/counter key) and `src/lib/pricing/engine-input.ts` (`toEngineInput`, shared by browser and server), both unit tested.
+- e2e: submission saves a quote whose DB total equals the server's price (145092 cents), reference format, marketing opt-in false; inline errors; CASL checkbox unchecked. New `tests/e2e/db.ts` helper queries the DB. Note: e2e runs add test quotes/customers (`e2e-quote-…@example.com`) to the local DB.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (196) · e2e ✅ (204) · build ✅ · format ✅
+- Next: 4.6 (quote emails)
+
+### 2026-10-01 — 4.6 Quote emails
+- Branch: feat/m4-quote · PR #5 (stacked on #4)
+- Done: React Email template `src/lib/email/templates/quote-summary.tsx` (logo header, reference, event line, itemized breakdown, tax lines, total, deposit, custom-travel note, validity date, "Book this date" link to `/{locale}/quote/{reference}`, disclaimer, transactional footer; all copy passed in translated). `src/server/emails/quote-emails.ts` renders HTML + plain text in the client's locale and sends it, plus a plain-text English studio notification (reply-to = client) with the full breakdown. `sendEmail` accepts HTML. `createQuote` sends after the transaction commits; email failures are logged, never lose the saved quote. Line-item labels extracted to `src/lib/pricing/line-labels.ts` and shared by the live breakdown and both emails. Vitest compiles JSX via `oxc.jsx.runtime = "automatic"`.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (208; label mapping + template render HTML/plain text/conditional travel note) · e2e ✅ (204; server log confirms both emails are built per quote and skipped only for the missing RESEND_API_KEY) · build ✅ · format ✅ · email screenshot reviewed
+- Next: 4.7 (result page `/quote/[reference]` + e2e scenario 1)
+
+### 2026-10-02 — 4.7 Private quote page + scenario 1 — **M4 Quote engine complete**
+- Branch: feat/m4-quote · PR #5 (stacked on #4)
+- Done: `/[locale]/quote/[reference]?t=…` — references are sequential, so the page requires an HMAC signature (`src/lib/signing.ts`: `signValue`/`verifySignedValue`, purpose-prefixed `quote:<ref>`, timing-safe compare; `src/server/link-secret.ts`: `LINK_TOKEN_SECRET`, dev fallback only outside Vercel). Missing/invalid/swapped signatures → 404 (doesn't reveal existence); `noindex`. Shows event facts, stored breakdown (not re-priced), validity / expired notice, "Book this quote" → `/book?quote=REF&t=…` (hidden when expired), "Create a new quote". `createQuote` returns the token; the form redirects there after saving; the client email links there with the token.
+- e2e: §15 scenario 1 (package page → Customize quote → prefilled → hours 10 + 3 photographers → $4,972.00 → submit → reference page with same total); signature checks (no token, bad token, neighbour reference with a valid token → 404); noindex; expired quote hides booking.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (212) · e2e ✅ (214) · build ✅ · format ✅
+- Notes: the result page labels the deposit with the current DEPOSIT_PCT; the stored deposit amount is what was quoted.
+- Next: M5 → 5.1 (branch `feat/m5-booking`; stack on feat/m4-quote while PRs #4/#5 are open)
