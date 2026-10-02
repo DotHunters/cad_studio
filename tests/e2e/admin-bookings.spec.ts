@@ -94,6 +94,11 @@ test("staff find a booking and see its details, price and change requests", asyn
   await expect(page.getByRole("region", { name: "Change requests" })).toContainText(
     "Could we move a week later?",
   );
+  // Long client emails wrap instead of widening the page (mobile regression).
+  const overflow = await page.evaluate(
+    () => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+  );
+  expect(overflow).toBeLessThanOrEqual(0);
 });
 
 test("bookings export to CSV, download as .ics and show on the calendar", async ({

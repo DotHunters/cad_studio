@@ -135,6 +135,8 @@ export default async function AdminBookingsPage({ searchParams }: Props) {
                     <span className="text-muted-foreground block text-xs">
                       {booking.photographers}{" "}
                       {booking.photographers === 1 ? "photographer" : "photographers"}
+                      {booking.assignees.length > 0 &&
+                        ` · ${booking.assignees.map((person) => person.name ?? person.email).join(", ")}`}
                     </span>
                   </td>
                   <td className="px-4 py-3 tabular-nums">

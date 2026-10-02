@@ -1,8 +1,12 @@
 import "server-only";
 
+import { fromZonedTime } from "date-fns-tz";
+
+import { siteConfig } from "@/config/site";
 import type { Prisma } from "@/generated/prisma/client";
 import type { BookingFilters } from "@/lib/admin/bookings";
 import { db } from "@/lib/db";
+import { studioDateKey } from "@/lib/dates";
 
 const LIST_LIMIT = 200;
 
@@ -37,6 +41,7 @@ export async function listBookingsForAdmin(filters: BookingFilters, now: Date = 
       createdAt: true,
       customer: { select: { name: true, email: true } },
       _count: { select: { changeRequests: { where: { status: "OPEN" } } } },
+      assignees: { select: { name: true, email: true } },
     },
   });
   return { bookings: bookings.slice(0, LIST_LIMIT), truncated: bookings.length > LIST_LIMIT };
@@ -52,7 +57,40 @@ export const getBookingForAdmin = (reference: string) =>
       quote: { select: { reference: true } },
       changeRequests: { orderBy: { createdAt: "desc" } },
       reviews: { select: { id: true, status: true, rating: true } },
+      assignees: { select: { id: true } },
     },
   });
 
 export type AdminBooking = NonNullable<Awaited<ReturnType<typeof getBookingForAdmin>>>;
+
+/**
+ * Who could cover this booking: active team members, plus other bookings on the same
+ * studio-local day with their assignees (for clash warnings).
+ */
+export async function getStaffingContext(bookingId: string, startAt: Date) {
+  const day = studioDateKey(startAt);
+  const dayStart = fromZonedTime(`${day}T00:00:00`, siteConfig.timezone);
+  const dayEnd = new Date(dayStart.getTime() + 36 * 3_600_000); // covers DST; filtered below
+  const [team, nearby] = await Promise.all([
+    db.user.findMany({
+      where: { isActive: true },
+      orderBy: [{ name: "asc" }, { email: "asc" }],
+      select: { id: true, name: true, email: true, role: true },
+    }),
+    db.booking.findMany({
+      where: {
+        id: { not: bookingId },
+        status: { not: "CANCELLED" },
+        startAt: { gte: dayStart, lt: dayEnd },
+      },
+      select: { reference: true, startAt: true, assignees: { select: { id: true } } },
+    }),
+  ]);
+  const sameDay = nearby
+    .filter((booking) => studioDateKey(booking.startAt) === day)
+    .map((booking) => ({
+      reference: booking.reference,
+      assigneeIds: booking.assignees.map((assignee) => assignee.id),
+    }));
+  return { team, sameDay };
+}

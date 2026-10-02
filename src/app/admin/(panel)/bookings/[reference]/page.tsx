@@ -8,6 +8,7 @@ import { BookingStatusPanel } from "@/components/admin/booking-status-panel";
 import { PaymentPanel } from "@/components/admin/payment-panel";
 import { StatusBadge } from "@/components/admin/status-badge";
 import { Button } from "@/components/ui/button";
+import { sameDayClashes, staffingNote } from "@/lib/admin/assignments";
 import { formatTaxRate, parseStoredBreakdown } from "@/lib/admin/bookings";
 import { availableStatusIntents } from "@/lib/admin/booking-status";
 import { canTakePayment } from "@/lib/admin/payments";
@@ -18,8 +19,9 @@ import { db } from "@/lib/db";
 import { formatCAD } from "@/lib/money";
 import { lineItemLabel, type Translate } from "@/lib/pricing/line-labels";
 import { requireAdminPage } from "@/server/auth/guards";
+import { assignPhotographers } from "@/server/actions/admin/assignments";
 import { resolveChangeRequest } from "@/server/actions/admin/booking-status";
-import { getBookingForAdmin } from "@/server/queries/admin-bookings";
+import { getBookingForAdmin, getStaffingContext } from "@/server/queries/admin-bookings";
 
 type Props = { params: Promise<{ reference: string }> };
 
@@ -33,7 +35,7 @@ const when = (date: Date) => formatInStudioTz(date, "EEE MMM d, yyyy · h:mm a")
 function Section({ title, children }: { title: string; children: ReactNode }) {
   const id = `section-${title.toLowerCase().replace(/[^a-z]+/g, "-")}`;
   return (
-    <section aria-labelledby={id} className="bg-card rounded-xl border p-5">
+    <section aria-labelledby={id} className="bg-card min-w-0 rounded-xl border p-5">
       <h2 id={id} className="mb-3 text-lg font-medium">
         {title}
       </h2>
@@ -44,11 +46,11 @@ function Section({ title, children }: { title: string; children: ReactNode }) {
 
 function Facts({ rows }: { rows: Array<[string, ReactNode]> }) {
   return (
-    <dl className="grid grid-cols-[minmax(7rem,auto)_1fr] gap-x-4 gap-y-2 text-sm">
+    <dl className="grid grid-cols-[minmax(7rem,auto)_minmax(0,1fr)] gap-x-4 gap-y-2 text-sm">
       {rows.map(([term, value]) => (
         <div key={term} className="contents">
           <dt className="text-muted-foreground">{term}</dt>
-          <dd>{value}</dd>
+          <dd className="min-w-0 [overflow-wrap:anywhere]">{value}</dd>
         </div>
       ))}
     </dl>
@@ -65,11 +67,14 @@ export default async function AdminBookingPage({ params }: Props) {
   const addOnCodes = (breakdown?.lineItems ?? []).flatMap((item) =>
     item.kind === "addOn" ? [item.code] : [],
   );
-  const [tQuote, tCategories, addOns] = await Promise.all([
+  const [tQuote, tCategories, addOns, staffing] = await Promise.all([
     getTranslations({ locale: "en", namespace: "Quote" }),
     getTranslations({ locale: "en", namespace: "Categories" }),
     db.addOn.findMany({ where: { code: { in: addOnCodes } }, select: { code: true, name: true } }),
+    getStaffingContext(booking.id, booking.startAt),
   ]);
+  const assignedIds = new Set(booking.assignees.map((assignee) => assignee.id));
+  const note = staffingNote(assignedIds.size, booking.photographers);
   const names = {
     packageName: booking.package?.name ?? "Base",
     addOnNames: Object.fromEntries(addOns.map((addOn) => [addOn.code, addOn.name])),
@@ -228,6 +233,52 @@ export default async function AdminBookingPage({ params }: Props) {
           />
         </Section>
       </div>
+
+      {booking.status !== "CANCELLED" && (
+        <div className="mt-6">
+          <Section title="Photographers">
+            <form action={assignPhotographers} className="space-y-3">
+              <input type="hidden" name="reference" value={booking.reference} />
+              <p className="text-sm">
+                {assignedIds.size} of {booking.photographers} assigned
+                {note && <span className="text-amber-800 dark:text-amber-300"> · {note}</span>}
+              </p>
+              <fieldset>
+                <legend className="sr-only">Team members covering this event</legend>
+                <ul className="grid gap-2 sm:grid-cols-2">
+                  {staffing.team.map((member) => {
+                    const clashes = sameDayClashes(member.id, staffing.sameDay);
+                    return (
+                      <li key={member.id} className="min-w-0">
+                        <label className="flex items-start gap-2 text-sm">
+                          <input
+                            type="checkbox"
+                            name="assigneeIds"
+                            value={member.id}
+                            defaultChecked={assignedIds.has(member.id)}
+                            className="accent-gold mt-0.5 size-4"
+                          />
+                          <span className="min-w-0 [overflow-wrap:anywhere]">
+                            {member.name ?? member.email}
+                            {clashes.length > 0 && (
+                              <span className="block text-xs text-amber-800 dark:text-amber-300">
+                                Also on {clashes.join(", ")} that day
+                              </span>
+                            )}
+                          </span>
+                        </label>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </fieldset>
+              <Button type="submit" size="sm" variant="outline">
+                Save photographers
+              </Button>
+            </form>
+          </Section>
+        </div>
+      )}
 
       {booking.changeRequests.length > 0 && (
         <div className="mt-6">

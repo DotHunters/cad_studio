@@ -473,3 +473,11 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (422) · e2e ✅ (327 + 1 worker crash on rerun) · build ✅ · format ✅
 - Next: 7.6f assign photographers
 
+### 2026-10-02 — 7.6f Assign photographers (7.6 complete)
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Done: migration `20261003010000_booking_assignees` (implicit many-to-many `Booking.assignees` ↔ `User.assignedBookings`). Booking page "Photographers" section (not for cancelled bookings): active team members as checkboxes, "N of M assigned" with a staffing note (`staffingNote`), and "Also on CAD-B-… that day" for anyone already covering another non-cancelled booking that studio day (`sameDayClashes`) — warnings only, never blocking. `assignPhotographers` (plain form action, STAFF+) only keeps active members. Bookings list shows who's assigned. 5 unit tests.
+- **Mobile bug found by the e2e:** the booking page's facts grid used `1fr`, so a long unbreakable email made the cards wider than a phone screen (horizontal scroll, and mis-targeted taps in emulation). Now `minmax(0,1fr)` + `overflow-wrap:anywhere`; regression check (no horizontal overflow) added to the booking detail e2e.
+- e2e: clash warning shown, assign two → "2 of 1 · 1 more than the 1 booked", stored; deactivated member disappears and drops off on save; list shows assignee.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (427) · e2e ✅ (334) · build ✅ · format ✅
+- Next: 7.7 Quotes admin
+
