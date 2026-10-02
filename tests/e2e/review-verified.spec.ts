@@ -9,9 +9,9 @@ const SECRET = "cad-studio-local-development-link-secret";
 const sign = (value: string) =>
   createHmac("sha256", SECRET).update(value).digest("base64url").slice(0, 32);
 
-// Per-project references in a year the app never issues (9999 is used by change requests).
+// Per-project references in a year the app never issues (see booking-fixture.ts for the list).
 const referenceFor = (testInfo: TestInfo, n: number) =>
-  `CAD-B-9998-${testInfo.project.name === "mobile" ? 1 : 0}${String(n).padStart(3, "0")}`;
+  `CAD-B-9993-${testInfo.project.name === "mobile" ? 1 : 0}${String(n).padStart(3, "0")}`;
 const emailFor = (testInfo: TestInfo) =>
   `e2e-review-${testInfo.project.name}-${testInfo.testId}@example.com`;
 const nameFor = (testInfo: TestInfo) => `E2E verified ${testInfo.project.name} ${testInfo.testId}`;
