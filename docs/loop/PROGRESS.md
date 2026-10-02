@@ -521,3 +521,8 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (442) · e2e ✅ (346) · build ✅ · format ✅
 - Milestone 7 stays unticked: 7.4c (photo upload) is BLOCKED(Q18 Cloudinary). Next: M8 Hardening on `feat/m8-hardening` (stacked on M7).
 
+### 2026-10-02 — PR housekeeping: M4–M6 weren't in main
+- Found: PRs #5–#7 were merged into their base branches (`feat/m3-portfolio-gallery`, `feat/m4-quote`, `feat/m5-booking`) after #4 had been merged into `main`, so `main` only has M1–M3. `feat/m7-admin` contains every M4–M7 commit (the merged branches only add merge commits).
+- Done: retargeted PR #8 to `main`, renamed it "M4–M7: Quote engine, Booking, Reviews, Admin", explained why in its body, and listed the deploy steps (migrations, env vars, first admin). GitHub reports it mergeable/clean. Loop rule added for this case.
+- Next: M8 Hardening on `feat/m8-hardening`, branched from `feat/m7-admin` (stacked on #8).
+
