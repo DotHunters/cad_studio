@@ -432,3 +432,11 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (381) · e2e ✅ (310, no skips) · build ✅ · format ✅
 - Next: 7.6 Bookings admin
 
+### 2026-10-02 — 7.6a Bookings list and detail
+- Branch: feat/m7-admin · PR #8 (stacked on #7)
+- Split 7.6 into 7.6a list/detail · 7.6b payment request + deposit · 7.6c complete/cancel + emails + review invites + change requests · 7.6d calendar, photographers, CSV, `.ics`.
+- Done: `/admin/bookings` ("Bookings" in nav; STAFF+): GET filter form (status, upcoming/past/all, search by reference/name/email), table with event date, client, service, total + payment state, status badge and "Send payment request" / "Change requested" hints; capped at 200 rows with a notice. `/admin/bookings/[reference]`: Event, Client (mailto, language, marketing opt-in), itemized Price from the stored breakdown (same labels as the quote form via `lineItemLabel`, tax lines with rates), Payment, Change requests; 24 h no-payment-request warning. Dashboard references now link here; `StatusBadge` extracted to `src/components/admin/status-badge.tsx`. Pure helpers in `src/lib/admin/bookings.ts` (filters, safe breakdown parser, tax rate label) + 8 unit tests.
+- e2e: search → row details → status filter narrows → detail shows event, client language, itemized price with HST 13 %, deposit, change request.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (389) · e2e ✅ (312) · build ✅ · format ✅
+- Next: 7.6b payment request + record deposit
+

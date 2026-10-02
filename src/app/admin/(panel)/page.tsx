@@ -1,42 +1,19 @@
 import { AlertTriangle } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 
+import { StatusBadge } from "@/components/admin/status-badge";
 import { slugFromCategory } from "@/lib/categories";
 import { formatInStudioTz } from "@/lib/dates";
 import { formatCAD } from "@/lib/money";
-import { cn } from "@/lib/utils";
 import { requireAdminPage } from "@/server/auth/guards";
 import { getDashboardData } from "@/server/queries/admin-dashboard";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
-
-const STATUS_STYLES: Record<string, string> = {
-  PENDING: "bg-amber-100 text-amber-900 dark:bg-amber-950 dark:text-amber-200",
-  CONFIRMED: "bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200",
-  COMPLETED: "bg-sky-100 text-sky-900 dark:bg-sky-950 dark:text-sky-200",
-  CANCELLED: "bg-muted text-muted-foreground",
-  SENT: "bg-sky-100 text-sky-900 dark:bg-sky-950 dark:text-sky-200",
-  ACCEPTED: "bg-emerald-100 text-emerald-900 dark:bg-emerald-950 dark:text-emerald-200",
-  EXPIRED: "bg-muted text-muted-foreground",
-  DRAFT: "bg-muted text-muted-foreground",
-};
-
-function StatusBadge({ status }: { status: string }) {
-  return (
-    <span
-      className={cn(
-        "rounded-full px-2 py-0.5 text-xs font-medium",
-        STATUS_STYLES[status] ?? "bg-muted",
-      )}
-    >
-      {status.charAt(0) + status.slice(1).toLowerCase()}
-    </span>
-  );
-}
 
 function StatCard({ label, value, detail }: { label: string; value: ReactNode; detail?: string }) {
   return (
@@ -98,8 +75,14 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
           <ul className="mt-2 space-y-1 text-sm">
             {data.awaitingPaymentRequest.map((booking) => (
               <li key={booking.id}>
-                <span className="font-mono">{booking.reference}</span> ({booking.customer.name}) —
-                no payment request sent since {formatInStudioTz(booking.createdAt, "MMM d, h:mm a")}
+                <Link
+                  href={`/admin/bookings/${booking.reference}`}
+                  className="font-mono underline-offset-4 hover:underline"
+                >
+                  {booking.reference}
+                </Link>{" "}
+                ({booking.customer.name}) — no payment request sent since{" "}
+                {formatInStudioTz(booking.createdAt, "MMM d, h:mm a")}
               </li>
             ))}
             {data.openChangeRequests > 0 && (
@@ -160,8 +143,13 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
                   <span className="min-w-0 flex-1 text-sm">
                     {booking.customer.name}
                     <span className="text-muted-foreground block text-xs">
-                      <span className="font-mono">{booking.reference}</span> ·{" "}
-                      {category(booking.category)} · {booking.photographers} ph.
+                      <Link
+                        href={`/admin/bookings/${booking.reference}`}
+                        className="font-mono underline-offset-4 hover:underline"
+                      >
+                        {booking.reference}
+                      </Link>{" "}
+                      · {category(booking.category)} · {booking.photographers} ph.
                     </span>
                   </span>
                   <StatusBadge status={booking.status} />
