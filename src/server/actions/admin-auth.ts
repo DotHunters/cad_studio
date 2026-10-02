@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { z } from "zod";
+import * as z from "zod";
 
 import { signIn, signOut } from "@/auth";
 import { safeCallbackUrl, SIGN_IN_PATH } from "@/lib/auth/roles";

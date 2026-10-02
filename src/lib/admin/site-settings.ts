@@ -2,7 +2,7 @@
  * Admin-editable text settings (AGENTS.md §6.6, §7 `SiteSetting`). Stored as `{ en, fr }`.
  * Both languages are required: clients read these in their own language.
  */
-import { z } from "zod";
+import * as z from "zod";
 
 import { parseLocalizedText } from "@/lib/content";
 

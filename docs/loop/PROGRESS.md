@@ -569,3 +569,11 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (451) · e2e ✅ (480, rerun after a Windows worker crash) · build ✅ · format ✅
 - Next: 8.4.2
 
+### 2026-10-03 — 8.4.2 Less JavaScript on the form pages
+- Branch: feat/m8-hardening · PR #10
+- Found (build manifests, gzipped sizes): one shared 94 KB chunk on the quote/booking/contact pages contained **all of Zod's error-message locales and its JSON-Schema generator** — `import { z } from "zod"` (a re-exported namespace) wasn't tree-shaken by Turbopack. Switched all 22 imports to `import * as z from "zod"` (the form Zod's docs recommend): page-specific JS contact 111 → 50 KB, quote 115 → 54 KB, booking 143 → 82 KB; locales gone.
+- Lighthouse (local, mobile): quote 82 → 88, contact 83 → 88, booking 82 → 86, blocking time 190–230 → 70–140 ms; other pages 86–91; a11y/best practices 100, SEO 92 (localhost canonical only). The remaining gap is the ~3.5–4 s simulated LCP that every page shares, including the lightest ones — it tracks the local server (no CDN, HTTP 2 or Brotli) more than page code. Confirming ≥ 90 needs the deployed site → 8.4.3 BLOCKED(Q19).
+- Test fixes (separate commit): the private-pages noindex check had relied on references from an earlier run → it now creates its own quote and booking; the audit-log spec also cleans up first. `review-verified` failed once under load (second use of a link not rejected) and passed 4/4 when rerun — watch it.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (451) · e2e ✅ (480) · build ✅ · format ✅
+- Next: 8.4b pre-launch content check
+

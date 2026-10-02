@@ -2,7 +2,7 @@
  * Blocking days off (AGENTS.md §6.10, §8.3): blocked days are unavailable to book online.
  * Existing bookings on a blocked day are kept — the admin page warns about them. Pure.
  */
-import { z } from "zod";
+import * as z from "zod";
 
 import { optionalText } from "@/lib/validators/admin/fields";
 

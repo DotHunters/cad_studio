@@ -3,7 +3,7 @@
  * `PricingRule` key drives the form, its validation and how values are stored:
  * money in CAD cents, percentages as numbers (30 = 30%), everything else as whole numbers.
  */
-import { z } from "zod";
+import * as z from "zod";
 
 import { toCents } from "@/lib/money";
 

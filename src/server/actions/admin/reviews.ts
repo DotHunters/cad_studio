@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { z } from "zod";
+import * as z from "zod";
 
 import { MODERATION_INTENTS, moderationUpdate } from "@/lib/admin/moderation";
 import { db } from "@/lib/db";

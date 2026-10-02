@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
+import * as z from "zod";
 
 import { STATUS_INTENTS, statusChange } from "@/lib/admin/booking-status";
 import { db } from "@/lib/db";
