@@ -48,7 +48,7 @@ test.describe("SEO", () => {
     await page.goto("/fr/packages");
     await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
       "content",
-      "Forfaits | Cad Studio",
+      "Forfaits | CAD Studio Photography",
     );
     await expect(page.locator('meta[property="og:locale"]')).toHaveAttribute("content", "fr_CA");
     await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
@@ -63,7 +63,7 @@ test.describe("SEO", () => {
 
   test("every page title follows the brand pattern", async ({ page }) => {
     await page.goto("/en/contact");
-    await expect(page).toHaveTitle("Contact | Cad Studio — Photography in Canada");
+    await expect(page).toHaveTitle("Contact | CAD Studio Photography");
   });
 
   test("gallery and case studies describe their images", async ({ page }) => {

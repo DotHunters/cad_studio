@@ -138,7 +138,9 @@ test.describe("scénarios clés en français", () => {
     await form.locator("label", { has: page.getByRole("radio", { name: "5 étoiles" }) }).click();
     await form.getByLabel("Votre nom").fill(name);
     await form.getByLabel("Votre avis").fill(body);
-    await form.getByRole("checkbox", { name: /J’accepte que Cad Studio publie cet avis/ }).check();
+    await form
+      .getByRole("checkbox", { name: /J’accepte que CAD Studio Photography publie cet avis/ })
+      .check();
     await form.getByRole("button", { name: "Envoyer l’avis" }).click();
     await expect(form.getByRole("status")).toContainText("Merci");
 

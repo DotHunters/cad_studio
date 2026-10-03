@@ -1,4 +1,4 @@
-# Loop instructions — Cad Studio website
+# Loop instructions — CAD Studio Photography website
 
 Run on every `/loop` tick. Goal: build the MVP in `AGENTS.md` (milestones 1–8) one small, verified task at a time. Phase 2 (milestone 9) is out of scope for the loop.
 
@@ -58,7 +58,7 @@ Run on every `/loop` tick. Goal: build the MVP in `AGENTS.md` (milestones 1–8)
 
 ## Hard rules (from AGENTS.md §9, §11, §13)
 
-- Never invent facts about Cad Studio, I. Rukshan, clients, awards, or stats. Use `TODO(owner): …` and add the question to `OPEN_QUESTIONS.md`.
+- Never invent facts about CAD Studio Photography, I. Rukshan, clients, awards, or stats. Use `TODO(owner): …` and add the question to `OPEN_QUESTIONS.md`.
 - Never fabricate reviews or testimonials. Sample seed reviews are marked `[SAMPLE]` and stay `PENDING`.
 - Never commit client photos, `.env*`, or secrets.
 - Never hardcode prices or tax rates in components; they come from the DB.

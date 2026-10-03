@@ -10,7 +10,7 @@ const props = {
   preview: "Your date is held",
   heading: "Your booking request is in",
   greeting: "Hi Alex,",
-  intro: "Thank you for choosing Cad Studio.",
+  intro: "Thank you for choosing CAD Studio Photography.",
   referenceLabel: "Reference",
   reference: "CAD-B-2026-0001",
   facts: [
@@ -21,7 +21,7 @@ const props = {
   nextSteps: ["We'll email you the bank transfer details.", "We'll confirm once received."],
   icsNote: "A calendar invitation is attached.",
   cta: { label: "View your booking", url: "https://cadstudio.example/en/book/CAD-B-2026-0001?t=x" },
-  footer: "Cad Studio · Scarborough, Toronto",
+  footer: "CAD Studio Photography · Toronto",
 };
 
 describe("BookingRequestEmail", () => {

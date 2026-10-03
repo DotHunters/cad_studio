@@ -18,7 +18,7 @@ describe("resolveTimezone", () => {
 
 describe("siteConfig", () => {
   it("uses the owner-confirmed brand name", () => {
-    expect(siteConfig.name).toBe("Cad Studio");
+    expect(siteConfig.name).toBe("CAD Studio Photography");
   });
 
   it("supports English and French", () => {

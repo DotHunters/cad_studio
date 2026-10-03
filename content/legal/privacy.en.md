@@ -3,11 +3,11 @@
   Items marked TODO(owner) need decisions before launch. HTML comments are not rendered.
 -->
 
-Cad Studio ("we", "us") respects your privacy. This policy explains what personal information we collect, why we collect it, how we use and protect it, and the choices you have. It applies to this website and to the services we provide.
+CAD Studio Photography ("we", "us") respects your privacy. This policy explains what personal information we collect, why we collect it, how we use and protect it, and the choices you have. It applies to this website and to the services we provide.
 
 ## Who we are
 
-Cad Studio (Collection Art Design) is a photography studio based in Scarborough, Toronto, Ontario, Canada. You can reach us about privacy at any time through our [contact form](/contact) by choosing **Privacy request**, or by email at the address shown on our contact page.
+CAD Studio Photography (Collection Art Design) is a photography studio based in Toronto, Ontario, Canada. You can reach us about privacy at any time through our [contact form](/contact) by choosing **Privacy request**, or by email at the address shown on our contact page.
 
 <!-- TODO(owner): name and title of the person responsible for privacy (required under Québec Law 25). -->
 

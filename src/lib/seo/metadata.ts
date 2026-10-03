@@ -9,7 +9,7 @@ type Options = {
   locale: Locale;
   /** Path without the locale prefix, e.g. "/packages" or "" for home. */
   path: string;
-  /** Page title (the layout template adds "| Cad Studio — …"); omit to use the default. */
+  /** Page title (the layout template adds "| CAD Studio Photography"); omit to use the default. */
   title?: string;
   description: string;
   /** Absolute social title; defaults to the page title. */

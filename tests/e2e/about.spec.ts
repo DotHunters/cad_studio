@@ -6,14 +6,23 @@ test.describe("about page", () => {
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Behind the lens");
     const owner = page.getByRole("region", { name: "I. Rukshan" });
     await expect(owner).toContainText("Founder & Lead Photographer");
-    await expect(owner).toContainText("10+");
-    await expect(owner).toContainText("Event management");
-    await expect(owner).toContainText("Scarborough, Toronto");
+    await expect(owner).toContainText("2014");
+    await expect(owner).toContainText("2,000+");
+    await expect(owner).toContainText("Canada · Sri Lanka");
   });
 
-  test("explains how event management benefits clients", async ({ page }) => {
+  test("tells the studio story and lists what the team brings", async ({ page }) => {
     await page.goto("/en/about");
-    const approach = page.getByRole("region", { name: /Why event experience matters/ });
+    const story = page.getByRole("region", { name: "From Sri Lanka to Canada" });
+    await expect(story).toContainText("Our journey began in Sri Lanka");
+    await expect(story.getByRole("listitem")).toHaveCount(5);
+  });
+
+  test("explains how the studio works with clients", async ({ page }) => {
+    await page.goto("/en/about");
+    const approach = page.getByRole("region", {
+      name: /From first consultation to final delivery/,
+    });
     await expect(approach.getByRole("listitem")).toHaveCount(3);
   });
 

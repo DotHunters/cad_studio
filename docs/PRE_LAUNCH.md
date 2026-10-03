@@ -1,4 +1,4 @@
-# Pre-launch checklist — Cad Studio
+# Pre-launch checklist — CAD Studio Photography
 
 Everything that is still a placeholder or a sample, and what to do about it. Run
 `pnpm prelaunch` at any time to list what's left in the code; it reports zero when the code
@@ -27,9 +27,8 @@ Then run `prisma migrate deploy` (Vercel's build command already does) and seed 
 - Business email and phone (Q6) — `site.ts`, footer, contact page.
 - Social profile URLs — `site.ts`.
 - Business hours — `site.ts`, contact page.
-- Stats: events photographed, countries worked in (Q7) — `site.ts`; the "why us" band hides stats until they're real.
 - WhatsApp number for a chat button, if wanted (Q14).
-- About page: studio story, team, equipment (`about/page.tsx`).
+- About page: team member profiles, equipment (`about/page.tsx`). Story and stats are done.
 
 ## 3. Prices, rules and payment (Admin)
 

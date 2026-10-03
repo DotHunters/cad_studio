@@ -1,4 +1,4 @@
-// Cad Studio data model — AGENTS.md §7.
+// CAD Studio Photography data model — AGENTS.md §7.
 // Money: integer CAD cents. Times: UTC. Translatable text: `*Fr` companion columns
 // (nullable, fall back to English). Auth.js tables arrive with task 7.1.
 

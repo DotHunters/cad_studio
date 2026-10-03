@@ -56,7 +56,12 @@ export function BookingRequestEmail(props: BookingRequestEmailProps) {
           <Section
             style={{ backgroundColor: ink, borderRadius: 12, padding: "24px", textAlign: "center" }}
           >
-            <Img src={props.logoUrl} alt="Cad Studio" width={180} style={{ margin: "0 auto" }} />
+            <Img
+              src={props.logoUrl}
+              alt="CAD Studio Photography"
+              width={180}
+              style={{ margin: "0 auto" }}
+            />
           </Section>
 
           <Heading

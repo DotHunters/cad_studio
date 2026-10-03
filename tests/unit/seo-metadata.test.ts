@@ -23,15 +23,15 @@ describe("pageMetadata", () => {
 
   it("sets Open Graph and Twitter cards with the page title and locale", () => {
     expect(meta.openGraph).toMatchObject({
-      title: "Forfaits | Cad Studio",
+      title: "Forfaits | CAD Studio Photography",
       locale: "fr_CA",
       alternateLocale: ["en_CA"],
       url: "/fr/packages",
-      siteName: "Cad Studio",
+      siteName: "CAD Studio Photography",
     });
     expect(meta.twitter).toMatchObject({
       card: "summary_large_image",
-      title: "Forfaits | Cad Studio",
+      title: "Forfaits | CAD Studio Photography",
     });
   });
 

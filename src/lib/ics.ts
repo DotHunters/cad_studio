@@ -63,7 +63,7 @@ export function buildIcs(event: IcsEvent): string {
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Cad Studio//Booking//EN",
+    "PRODID:-//CAD Studio//Booking//EN",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
     "BEGIN:VEVENT",

@@ -1,5 +1,5 @@
 import { CalendarCheck, Camera, Globe2 } from "lucide-react";
-import { getTranslations } from "next-intl/server";
+import { getFormatter, getTranslations } from "next-intl/server";
 
 import { buttonVariants } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
@@ -12,7 +12,7 @@ import { Accent, SectionHeading } from "./section-heading";
 
 /** Dark "why us" band: reasons, owner-confirmed stats, trusted-by names and a booking bar. */
 export async function WhyUs() {
-  const t = await getTranslations();
+  const [t, format] = await Promise.all([getTranslations(), getFormatter()]);
   const clientNames = await getClientNames();
 
   const reasons = [
@@ -24,10 +24,11 @@ export async function WhyUs() {
   // Only owner-confirmed numbers are shown (AGENTS.md §13).
   const { stats } = siteConfig;
   const statItems = [
-    { value: stats.yearsExperience, label: t("Home.statYears") },
-    { value: stats.eventsPhotographed, label: t("Home.statEvents") },
-    { value: stats.countries, label: t("Home.statCountries") },
-  ].filter((stat): stat is { value: number; label: string } => stat.value !== null);
+    { value: stats.yearsExperience, plus: true, label: t("Home.statYears") },
+    { value: stats.eventsPhotographed, plus: true, label: t("Home.statEvents") },
+    // An exact count, so no "+".
+    { value: stats.countries, plus: false, label: t("Home.statCountries") },
+  ].filter((stat): stat is { value: number; plus: boolean; label: string } => stat.value !== null);
 
   return (
     <section aria-labelledby="why-title" className="bg-ink text-paper relative overflow-hidden">
@@ -63,7 +64,8 @@ export async function WhyUs() {
                   {stat.label}
                 </dt>
                 <dd className="font-heading text-gold-light order-1 text-5xl lining-nums">
-                  {stat.value}+
+                  {format.number(stat.value)}
+                  {stat.plus && "+"}
                 </dd>
               </div>
             ))}

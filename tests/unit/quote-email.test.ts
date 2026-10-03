@@ -23,9 +23,9 @@ const props: QuoteSummaryEmailProps = {
   total: { label: "Estimated total", amount: "$3,164.00 CAD" },
   depositLine: "Deposit to confirm (30%): $949.20 CAD",
   expiresLine: "This quote is valid until October 15, 2026.",
-  disclaimer: "Estimate only. Final price confirmed by Cad Studio.",
+  disclaimer: "Estimate only. Final price confirmed by CAD Studio Photography.",
   cta: { label: "Book this date", url: "https://cadstudio.example/en/quote/CAD-Q-2026-0001" },
-  footer: "Cad Studio · Scarborough, Toronto",
+  footer: "CAD Studio Photography · Toronto",
 };
 
 describe("QuoteSummaryEmail", () => {
@@ -36,7 +36,7 @@ describe("QuoteSummaryEmail", () => {
     expect(html).toContain("HST (13%)");
     expect(html).toContain("$3,164.00 CAD");
     expect(html).toContain('href="https://cadstudio.example/en/quote/CAD-Q-2026-0001"');
-    expect(html).toContain("Estimate only. Final price confirmed by Cad Studio.");
+    expect(html).toContain("Estimate only. Final price confirmed by CAD Studio Photography.");
   });
 
   it("has a plain-text version", async () => {

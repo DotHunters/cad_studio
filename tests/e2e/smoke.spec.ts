@@ -4,19 +4,19 @@ test("root redirects to the English home page", async ({ page }) => {
   await page.goto("/");
   await expect(page).toHaveURL(/\/en$/);
   await expect(page.locator("html")).toHaveAttribute("lang", "en-CA");
-  await expect(page).toHaveTitle(/Cad Studio/);
+  await expect(page).toHaveTitle(/CAD Studio Photography/);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Your moments, beautifully kept.",
+    "Your story. Our lens. Timeless memories.",
   );
 });
 
 test("French home page is served under /fr", async ({ page }) => {
   await page.goto("/fr");
   await expect(page.locator("html")).toHaveAttribute("lang", "fr-CA");
-  await expect(page).toHaveTitle(/Photographie au Canada/);
+  await expect(page).toHaveTitle("CAD Studio Photography — Toronto (Canada)");
   // Content (not just metadata) must be French — guards the middleware matcher.
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(
-    "Vos moments, magnifiquement préservés.",
+    "Votre histoire. Notre regard. Des souvenirs intemporels.",
   );
   await expect(page.getByRole("link", { name: "View the site in English" })).toBeVisible();
 });

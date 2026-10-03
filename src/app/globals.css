@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * Cad Studio palette (AGENTS.md §5). Brand tokens are prefixed `--brand-*` so they
+ * CAD Studio Photography palette (AGENTS.md §5). Brand tokens are prefixed `--brand-*` so they
  * don't collide with shadcn's semantic tokens (`--accent`, `--muted`, …), which are
  * mapped onto them below. Contrast (WCAG): ink on gold 7.2:1, muted on paper 5.0:1,
  * gold-text on paper 5.0:1. Plain gold on paper is 2.5:1 — never use it for text.

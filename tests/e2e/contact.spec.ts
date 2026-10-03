@@ -4,7 +4,7 @@ test.describe("contact page", () => {
   test("shows the service area and no street address", async ({ page }) => {
     await page.goto("/en/contact");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Tell us about your story");
-    await expect(page.locator("main")).toContainText("Based in Scarborough, Toronto");
+    await expect(page.locator("main")).toContainText("Based in Toronto");
     await expect(page.locator("main iframe")).toHaveCount(0);
   });
 

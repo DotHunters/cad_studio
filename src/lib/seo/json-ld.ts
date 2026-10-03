@@ -35,7 +35,8 @@ export function businessJsonLd({ baseUrl, locale }: Base) {
       addressRegion: siteConfig.location.province,
       addressCountry: siteConfig.location.country,
     },
-    areaServed: ["Greater Toronto Area", "Canada", "Worldwide"],
+    areaServed: ["Greater Toronto Area", "Canada", "Sri Lanka", "Worldwide"],
+    foundingDate: String(siteConfig.foundedYear),
     founder: { "@type": "Person", name: siteConfig.owner.name },
     knowsLanguage: ["en", "fr"],
   } satisfies JsonLdObject;

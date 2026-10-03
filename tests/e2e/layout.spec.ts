@@ -3,8 +3,8 @@ import { expect, test } from "@playwright/test";
 test.describe("site layout", () => {
   test("shows the logo, footer and pricing banner", async ({ page }) => {
     await page.goto("/en");
-    await expect(page.getByRole("link", { name: "Cad Studio home" })).toBeVisible();
-    await expect(page.getByRole("contentinfo")).toContainText("Scarborough");
+    await expect(page.getByRole("link", { name: "CAD Studio Photography home" })).toBeVisible();
+    await expect(page.getByRole("contentinfo")).toContainText("Based in Toronto");
     await expect(page.getByRole("status")).toContainText("Pricing pending owner confirmation");
   });
 

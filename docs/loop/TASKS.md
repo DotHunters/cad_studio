@@ -1,4 +1,4 @@
-# Loop backlog — Cad Studio MVP
+# Loop backlog — CAD Studio Photography MVP
 
 Derived from `AGENTS.md` §14. Do tasks top to bottom unless a dependency says otherwise.
 Every task is done only when `pnpm lint && pnpm typecheck && pnpm test && pnpm build` passes.
