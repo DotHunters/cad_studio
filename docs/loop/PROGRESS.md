@@ -583,3 +583,13 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (451) · build ✅ · format ✅ (no UI change; e2e not rerun)
 - Next: 8.5 full e2e in EN + FR, empty/skeleton states
 
+### 2026-10-03 — 8.5a Loading skeletons
+- Branch: feat/m8-hardening · PR #10
+- Split 8.5 into 8.5a skeletons · 8.5b French scenario runs.
+- Done: shadcn `Skeleton`, `CardGridSkeleton` (public lists, localized "Loading…"/"Chargement…") and `TableSkeleton` (admin), announced once via `role="status"`/`aria-busy`, blocks `aria-hidden`, pulse off for reduced motion (global rule). `loading.tsx` on public packages, portfolio, gallery, reviews and admin bookings, quotes, packages, add-ons, portfolio, gallery, audit. Empty states already existed on every list page.
+- Bugs caught by the existing suite while doing this: (1) a `loading.tsx` also wraps child routes, and once a segment streams `notFound()` answers **200 instead of 404** (soft 404 for unknown packages/case studies) → list pages moved into `(list)` route groups so detail routes aren't wrapped; (2) on admin pages whose own form actions redirect back to the same page (reviews, availability, team) the page intermittently came back blank/stale → no skeleton there. Both noted in loop.md pitfalls.
+- Test infra: Playwright local workers capped at 6 — the default 8 crashed Windows test workers (0xC0000409) most runs now that the suite is ~480 tests; 6 gave two clean runs in a row. `admin-availability` also cleans up before running.
+- e2e: slowed client navigation to the gallery shows the skeleton and then the page; unit test for the skeleton markup (2 tests).
+- Checks: lint ✅ · typecheck ✅ · test ✅ (453) · e2e ✅ (481, twice) · build ✅ · format ✅
+- Next: 8.5b French scenarios
+

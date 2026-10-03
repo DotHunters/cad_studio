@@ -53,6 +53,7 @@ Run on every `/loop` tick. Goal: build the MVP in `AGENTS.md` (milestones 1–8)
 - **"worker process exited unexpectedly (code=3221226505)"** or every test failing with ERR_CONNECTION_REFUSED is a Windows process crash (environment), not a test failure — rerun.
 - **Specs that change site-wide data** (pricing rules, settings, approving reviews) go in `*.global.spec.ts`: the `global` Playwright project runs them after chromium + mobile finish, so they can't break count/average assertions elsewhere. They must restore what they change.
 - **The Next data cache survives between e2e runs** (`.next/cache`, kept by `pnpm build`). Rows written with raw SQL don't revalidate it, so a page keyed by a slug reused from an earlier run can serve stale data. Give SQL-created fixtures a per-run unique key (e.g. `Date.now().toString(36)` in the slug) or change data through the app.
+- **`loading.tsx` wraps child routes and breaks 404s**: once a segment streams, `notFound()` in a child page returns 200 (soft 404). Put list skeletons in a `(list)` route group next to `[slug]` so only the list is wrapped. Also skip skeletons on pages whose own form actions redirect back to the same page (admin reviews, availability, team) — the page sometimes stayed blank or stale after the action.
 - Long multi-file heredoc commands sometimes fail with "unexpected EOF"; use the Write tool for new files instead.
 
 ## Hard rules (from AGENTS.md §9, §11, §13)
