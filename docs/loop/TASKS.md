@@ -114,7 +114,7 @@ Legend: `[ ]` todo · `[x]` done · `BLOCKED(Q#)` waiting on `OPEN_QUESTIONS.md`
 - [x] 8.5 Full e2e suite green (§15 scenarios 1–7, run in both `en` and `fr`); empty and skeleton states on every list page. — §12, §15
   - [x] 8.5a Loading skeletons on list pages (empty states already exist)
   - [x] 8.5b §15 scenarios also in French (quote → book, review, blocked date, lightbox)
-- [ ] 8.6 French completeness check: no missing FR keys, every `*Fr` seed field filled, list all `TODO(owner-fr)` items in the PR for review. — §9, Q12
+- [x] 8.6 French completeness check: no missing FR keys, every `*Fr` seed field filled, list all `TODO(owner-fr)` items in the PR for review. — §9, Q12
 
 ## Out of scope for the loop
 

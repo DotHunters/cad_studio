@@ -53,7 +53,28 @@ All editable in the admin — nothing pricing-related is in the code.
 
 ## 6. French review (Q12)
 
-All French text was drafted by an agent: UI messages (`messages/fr.json`), emails, legal pages and French seed content (package and portfolio text, which can also be edited in admin). A fluent reviewer should read it before launch (task 8.6 lists the items).
+All French was drafted by an agent and needs a fluent reviewer. Automated checks already
+guarantee that nothing is missing: every English key has a French version, every package,
+add-on and sample project has French text, the French pages show no English UI text, and
+apostrophes are typographic (’). Canadian French conventions are used: `3 616,00 $`, no space
+before `!`/`?`/`;` (Office québécois de la langue française), « guillemets ».
+
+What to read, in order of importance:
+
+1. **Website text** — `messages/fr.json`, 549 strings (26 sections: home, packages, quote,
+   booking, reviews, contact, about, legal notices, navigation…). Easiest to review on the
+   site itself at `/fr`.
+2. **Emails** — the `Email` section of `messages/fr.json` (47 strings): quote summary,
+   booking request, deposit request, booking confirmed, thank-you with review link,
+   cancellation, released hold. Send yourself a French quote and booking to see them.
+3. **Legal pages** — `content/legal/privacy.fr.md` (~950 words) and `terms.fr.md`
+   (~500 words), reviewed together with the legal review (Q15).
+4. **Package and add-on text** — French names, summaries, descriptions and inclusions;
+   editable in **Admin → Packages / Add-ons**.
+5. Sample project stories and reviews — only shown on previews; replaced by real content.
+
+Strings that are intentionally identical in both languages (names, Ontario, Portfolio,
+Contact, Total…) are listed in `tests/unit/messages.test.ts`.
 
 ## 7. Final checks
 

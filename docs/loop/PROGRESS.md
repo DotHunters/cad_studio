@@ -600,3 +600,12 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (453) · e2e ✅ (491, twice) · build ✅ · format ✅
 - Next: 8.6 French completeness check
 
+### 2026-10-03 — 8.6 French completeness check
+- Branch: feat/m8-hardening · PR #10
+- Correction to 8.5b: "Merci!" is right for **Canadian** French — the Office québécois de la langue française puts no space before `!`, `?` or `;` (only before `:`), so there's nothing to fix.
+- Found and fixed: 24 French strings (30 occurrences) used the straight `'` while the rest used `’` → all typographic now (also avoids ICU's quoting rules, which caused an earlier bug).
+- New checks: unit — French apostrophes typographic; every French string differs from English except an explicit allow-list of 33 names/cognates/formats (Ontario, Portfolio, Total, `{index} / {total}`…); every add-on has a French name; every sample project has a French title and a translated story (packages were already covered; colon spacing scanned clean). e2e `french-pages.spec.ts` — 14 French pages (incl. legal and 404) show none of the ~500 English UI sentences that have a different French version, with a control proving the scan finds English on an English page.
+- `docs/PRE_LAUNCH.md` §6 now lists what the French reviewer should read, in order: website text (549 strings), emails (47), legal pages (~1,450 words), package/add-on text (editable in admin), samples.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (457) · e2e ✅ (521 on rerun after a Windows worker crash) · build ✅ · format ✅
+- Status: every remaining task is BLOCKED on the owner — 7.4c (Q18 Cloudinary) and 8.4.3 (Q19 measure Lighthouse on the deployed site). Milestones 7 and 8 stay unticked until those are done. Loop stops here.
+

@@ -43,6 +43,18 @@ describe("seed packages", () => {
     }
   });
 
+  it("has French names for every add-on", () => {
+    for (const addOn of addOns) expect(addOn.nameFr?.trim(), addOn.code).toBeTruthy();
+  });
+
+  it("has French titles and stories for every sample project", () => {
+    for (const project of sampleProjects) {
+      expect(project.titleFr.trim(), project.slug).toBeTruthy();
+      expect(project.storyFr.trim(), project.slug).toBeTruthy();
+      expect(project.storyFr, project.slug).not.toBe(project.story);
+    }
+  });
+
   it("has unique slugs and add-on codes", () => {
     expect(new Set(packages.map((p) => p.slug)).size).toBe(packages.length);
     expect(new Set(addOns.map((a) => a.code)).size).toBe(addOns.length);
