@@ -593,3 +593,10 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (453) · e2e ✅ (481, twice) · build ✅ · format ✅
 - Next: 8.5b French scenarios
 
+### 2026-10-03 — 8.5b §15 scenarios in French (8.5 complete)
+- Branch: feat/m8-hardening · PR #10
+- Done: `tests/e2e/scenarios-fr.spec.ts` (desktop + mobile, own data per test): (1) wedding package → "Personnaliser le devis" → prefilled → hours 10 → total updates in Canadian French format (3 164,00 $ → 3 616,00 $) → `CAD-Q-` reference; (2) "Réserver ce devis" → booking → `CAD-B-` page, the day's capacity drops to "limited", the customer is stored with locale `fr` (emails in French); (4) a blocked day is disabled in the French calendar, navigating months via its French label "Aller au mois suivant"; (5, public half) a French review is stored PENDING with locale `fr` and not shown; (6) the gallery viewer opens, moves and closes with the keyboard, returning focus. Scenario 7 and the admin half of 5 are English-only admin screens covered by `admin-auth`/`admin-reviews.global`. All passed first time.
+- For the French review (8.6): the review success title is "Merci!" — French typography wants a space before "!" ("Merci !").
+- Checks: lint ✅ · typecheck ✅ · test ✅ (453) · e2e ✅ (491, twice) · build ✅ · format ✅
+- Next: 8.6 French completeness check
+
