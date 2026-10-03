@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { heroSlideCount } from "./photo-counts";
+
 test.describe("home page", () => {
   test("hero has both calls to action", async ({ page }) => {
     await page.goto("/en");
@@ -47,7 +49,7 @@ test.describe("home page", () => {
 
   test("slide indicators switch images", async ({ page }) => {
     await page.goto("/en");
-    const second = page.getByRole("button", { name: "Show image 2 of 4" });
+    const second = page.getByRole("button", { name: `Show image 2 of ${heroSlideCount}` });
     await second.click();
     await expect(second).toHaveAttribute("aria-current", "true");
   });
@@ -85,11 +87,11 @@ test.describe("home page", () => {
     await expect(band.getByText("Northwind Corp (Sample)")).toBeVisible();
   });
 
-  test("featured portfolio lists sample projects with badges", async ({ page }) => {
+  test("featured portfolio shows the studio's real work before samples", async ({ page }) => {
     await page.goto("/en");
     const portfolio = page.getByRole("region", { name: /Stories we've told/ });
     await expect(portfolio.getByRole("listitem")).toHaveCount(3);
-    await expect(portfolio.getByText("Sample").first()).toBeVisible();
+    await expect(portfolio.getByText("Sample", { exact: true })).toHaveCount(0);
     await expect(portfolio.getByRole("link", { name: "View all work" })).toHaveAttribute(
       "href",
       "/en/portfolio",
@@ -105,7 +107,7 @@ test.describe("home page", () => {
 
   test("portfolio and reviews are localized in French", async ({ page }) => {
     await page.goto("/fr");
-    await expect(page.getByRole("heading", { name: "Mariage au jardin" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Mariage hindou" })).toBeVisible();
     await expect(page.getByText(/4,7 sur 5 selon 3 avis/)).toBeVisible();
   });
 
@@ -137,6 +139,6 @@ test.describe("home page", () => {
       .getByRole("region", { name: /Stories we've told/ })
       .getByRole("img")
       .first();
-    await expect(image).toHaveAttribute("style", /data:image\/svg\+xml;base64/);
+    await expect(image).toHaveAttribute("style", /data:image\/(svg\+xml|webp);base64/);
   });
 });

@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { buttonVariants } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { Link } from "@/i18n/navigation";
-import { placeholderImage } from "@/lib/images";
+import { photos } from "@/lib/photos";
 import { cn } from "@/lib/utils";
 
 import { Accent } from "./section-heading";
@@ -31,13 +31,16 @@ export function HomeIntro() {
 
         <div className="border-border border-y py-8">
           <div className="flex items-start gap-5">
-            {/* TODO(owner): portrait of I. Rukshan. */}
+            {/* Decorative: the owner's name follows right below. */}
             <Image
-              src={placeholderImage(160, 160, { background: "2a2118" })}
+              src={photos.owner[0].src}
               alt=""
               width={80}
               height={80}
-              className="size-20 shrink-0 rounded-full object-cover"
+              sizes="80px"
+              placeholder="blur"
+              blurDataURL={photos.owner[0].blurDataUrl}
+              className="size-20 shrink-0 rounded-full object-cover object-top"
             />
             <p className="text-muted-foreground leading-relaxed">{t("introBody")}</p>
           </div>

@@ -1,10 +1,15 @@
 import { expect, test } from "@playwright/test";
 
+import { caseStudies, portfolioCounts } from "./photo-counts";
+
 test.describe("portfolio page", () => {
-  test("lists all published sample case studies", async ({ page }) => {
+  test("lists all published case studies, real and sample", async ({ page }) => {
     await page.goto("/en/portfolio");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Stories we've told");
-    await expect(page.getByRole("main").getByRole("status")).toHaveText("4 case studies");
+    await expect(page.getByRole("main").getByRole("status")).toHaveText(
+      caseStudies(portfolioCounts.total),
+    );
+    await expect(page.getByRole("heading", { name: "Sinhala Wedding" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Cultural Festival" })).toBeVisible();
   });
 
@@ -13,11 +18,15 @@ test.describe("portfolio page", () => {
     const filters = page.getByRole("navigation", { name: "Filter case studies" });
     await filters.getByRole("link", { name: "Local", exact: true }).click();
     await expect(page).toHaveURL(/\?reach=local$/);
-    await expect(page.getByRole("main").getByRole("status")).toHaveText("3 case studies");
+    await expect(page.getByRole("main").getByRole("status")).toHaveText(
+      caseStudies(portfolioCounts.local),
+    );
 
     await filters.getByRole("link", { name: "2024" }).click();
     await expect(page).toHaveURL(/reach=local&year=2024/);
-    await expect(page.getByRole("main").getByRole("status")).toHaveText("1 case study");
+    await expect(page.getByRole("main").getByRole("status")).toHaveText(
+      caseStudies(portfolioCounts.local2024),
+    );
     await expect(filters.getByRole("link", { name: "2024" })).toHaveAttribute(
       "aria-current",
       "true",
@@ -25,7 +34,8 @@ test.describe("portfolio page", () => {
   });
 
   test("shows an empty state with a way to clear filters", async ({ page }) => {
-    await page.goto("/en/portfolio?category=family");
+    // The only corporate work is a local sample.
+    await page.goto("/en/portfolio?category=corporate&reach=global");
     await expect(page.getByText("No case studies match these filters yet.")).toBeVisible();
     await page.getByRole("link", { name: "Clear filters" }).click();
     await expect(page).toHaveURL(/\/en\/portfolio$/);
@@ -35,7 +45,9 @@ test.describe("portfolio page", () => {
     await page.goto("/en/packages/wedding");
     await page.getByRole("link", { name: "See Weddings in our portfolio" }).click();
     await expect(page).toHaveURL(/\/en\/portfolio\?category=wedding$/);
-    await expect(page.getByRole("main").getByRole("status")).toHaveText("1 case study");
+    await expect(page.getByRole("main").getByRole("status")).toHaveText(
+      caseStudies(portfolioCounts.wedding),
+    );
   });
 
   test("is localized in French", async ({ page }) => {

@@ -157,7 +157,7 @@ export async function placeBooking(
           });
 
           const packageRow = await tx.package.findUnique({
-            where: { slug: pkg.slug },
+            where: { slug: pkg.packageSlug },
             select: { id: true },
           });
           const quoteRow =
@@ -191,6 +191,8 @@ export async function placeBooking(
                 taxLines: price.taxLines,
                 flags: price.flags,
                 packageSlug: pkg.slug,
+                packageName: pkg.name,
+                packageNameFr: pkg.nameFr,
                 fromQuote: useQuote,
               },
               depositCents: price.depositCents,

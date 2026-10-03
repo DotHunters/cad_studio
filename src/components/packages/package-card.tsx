@@ -7,6 +7,7 @@ import { Link } from "@/i18n/navigation";
 import { slugFromCategory } from "@/lib/categories";
 import { localize } from "@/lib/localize";
 import { formatCAD } from "@/lib/money";
+import { startingPriceCents } from "@/lib/pricing/options";
 import { cn } from "@/lib/utils";
 import type { PackageSummary } from "@/server/queries/packages";
 
@@ -44,17 +45,27 @@ export function PackageCard({ pkg, locale }: { pkg: PackageSummary; locale: Loca
           {t("Packages.from")}
         </span>
         <span className="font-heading text-4xl lining-nums">
-          {formatCAD(pkg.basePriceCents, locale)}
+          {formatCAD(startingPriceCents(pkg), locale)}
         </span>
       </p>
 
-      <ul className="text-muted-foreground mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm">
-        <li>{t("Packages.hours", { count: pkg.includedHours })}</li>
-        <li>{t("Packages.photographers", { count: pkg.includedShooters })}</li>
-        {pkg.editedImages !== null && (
-          <li>{t("Packages.editedImages", { count: pkg.editedImages })}</li>
-        )}
-      </ul>
+      {pkg.tiers.length > 0 ? (
+        // Coverage differs per option; the package page compares them.
+        <p className="text-muted-foreground mt-4 text-sm">
+          {t("Packages.options", {
+            count: pkg.tiers.length,
+            names: pkg.tiers.map((tier) => localize(tier.name, tier.nameFr, locale)).join(" · "),
+          })}
+        </p>
+      ) : (
+        <ul className="text-muted-foreground mt-4 flex flex-wrap gap-x-4 gap-y-1 text-sm">
+          <li>{t("Packages.hours", { count: pkg.includedHours })}</li>
+          <li>{t("Packages.photographers", { count: pkg.includedShooters })}</li>
+          {pkg.editedImages !== null && (
+            <li>{t("Packages.editedImages", { count: pkg.editedImages })}</li>
+          )}
+        </ul>
+      )}
 
       <div className="border-border mt-6 flex-1 border-t pt-6">
         <p className="sr-only">{t("Packages.includes")}</p>

@@ -31,6 +31,14 @@ describe("businessJsonLd", () => {
     expect(ld.logo).toBe(`${base}/brand/logo-gold.png`);
     expect(ld.founder).toMatchObject({ "@type": "Person", name: "I. Rukshan" });
   });
+
+  it("lists the studio phone and social profiles", () => {
+    expect(ld.telephone).toBe("+14372236197");
+    expect(ld.sameAs).toEqual([
+      "https://www.instagram.com/cadstudio/",
+      "https://www.facebook.com/cad.photos.54",
+    ]);
+  });
 });
 
 describe("serviceJsonLd", () => {

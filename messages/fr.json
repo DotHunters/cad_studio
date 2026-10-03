@@ -23,7 +23,6 @@
     "tagline": "Collection Art Design",
     "heroTitle": "Votre histoire. Notre <accent>regard.</accent> Des souvenirs intemporels.",
     "heroSubtitle": "Photographie et vidéographie de mariages, d’événements, de portraits et de produits — par une équipe créative dévouée. Basés à Toronto, au service du Canada et du Sri Lanka.",
-    "heroImageAlt": "Photographie d’exemple {index} sur {total}",
     "pauseSlideshow": "Mettre le diaporama en pause",
     "playSlideshow": "Lancer le diaporama",
     "categoriesTitle": "Des services <accent>sur mesure</accent>",
@@ -91,6 +90,7 @@
     "tagline": "Capturer des moments, créer des liens, bâtir des souvenirs.",
     "serviceArea": "Basé à Toronto — au service du Grand Toronto, de tout le Canada, du Sri Lanka et du monde entier.",
     "email": "Courriel",
+    "phone": "Téléphone",
     "rights": "© {year} CAD Studio Photography. Tous droits réservés."
   },
   "PricingBanner": {
@@ -140,7 +140,8 @@
     "details": "Voir les détails",
     "empty": "Aucun forfait dans cette catégorie pour le moment.",
     "emptyCta": "Voir tous les forfaits",
-    "taxNote": "Prix en dollars canadiens, avant taxes et frais de déplacement applicables."
+    "taxNote": "Prix en dollars canadiens, avant taxes et frais de déplacement applicables.",
+    "options": "{count, plural, one {# formule} other {# formules}} : {names}"
   },
   "PackageDetail": {
     "breadcrumb": "Fil d’Ariane",
@@ -165,7 +166,10 @@
     "deposit": "Un acompte de {percent} % confirme votre date.",
     "seePortfolio": "Voir {category} dans notre portfolio",
     "ctaTitle": "Faites-en <accent>le vôtre</accent>",
-    "ctaBody": "Ajustez les heures, les photographes et les options pour voir votre prix instantanément."
+    "ctaBody": "Ajustez les heures, les photographes et les options pour voir votre prix instantanément.",
+    "optionsTitle": "Comparez les formules",
+    "optionsIntro": "Chaque formule a son propre prix et sa propre couverture. Choisissez-en une pour personnaliser votre devis ou réserver.",
+    "optionPrice": "{price} avant taxes"
   },
   "About": {
     "metaTitle": "À propos",
@@ -253,6 +257,8 @@
     "detailsTitle": "Coordonnées du studio",
     "emailLabel": "Courriel",
     "serviceAreaLabel": "Zone desservie",
+    "phoneLabel": "Téléphone",
+    "followLabel": "Suivez-nous",
     "quoteCta": "Obtenir un devis instantané"
   },
   "Legal": {
@@ -475,7 +481,8 @@
     "expired": "Ce devis a expiré le {date}. Les prix ont peut-être changé — créez un nouveau devis pour obtenir les tarifs actuels.",
     "book": "Réserver ce devis",
     "newQuote": "Créer un nouveau devis",
-    "hours": "{count, number} h"
+    "hours": "{count, number} h",
+    "cancelled": "Ce devis a été annulé. Écrivez-nous ou créez un nouveau devis aux prix actuels."
   },
   "Book": {
     "metaTitle": "Réserver une date",

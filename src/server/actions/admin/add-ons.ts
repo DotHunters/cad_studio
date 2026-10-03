@@ -1,9 +1,11 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { Prisma } from "@/generated/prisma/client";
 import { categoryFromSlug } from "@/lib/categories";
+import type { ActionResult } from "@/lib/admin/action-result";
 import { auditSummary, describeChanges } from "@/lib/admin/audit";
 import { db } from "@/lib/db";
 import { formatCAD } from "@/lib/money";
@@ -12,12 +14,14 @@ import { fieldErrorsOf } from "@/lib/validators/admin/fields";
 import { audit } from "@/server/audit";
 import { requireRole } from "@/server/auth/guards";
 import { revalidateContent } from "@/server/cache";
+import { addOnUsage, inUseMessage } from "@/server/queries/usage";
 
 import type { SaveResult } from "./packages";
 
 /**
  * Creates (no id) or updates an add-on (AGENTS.md §6.10, §8.1). ADMIN only. The code is
- * only set on creation — saved quotes refer to it. Add-ons are hidden, never deleted.
+ * only set on creation — saved quotes refer to it. Unused add-ons can be deleted; used ones
+ * only disabled (see `deleteAddOn`).
  */
 export async function saveAddOn(id: string | null, input: unknown): Promise<SaveResult> {
   const actor = await requireRole("ADMIN");
@@ -71,4 +75,40 @@ export async function saveAddOn(id: string | null, input: unknown): Promise<Save
   // Quote form, quote engine and package pages read add-ons under the packages tag.
   revalidateContent("packages");
   redirect(`/admin/add-ons?saved=${encodeURIComponent(savedCode)}`);
+}
+
+/** Shows or hides an add-on in the quote calculator (ADMIN only). */
+export async function setAddOnActive(id: string, isActive: boolean): Promise<ActionResult> {
+  const actor = await requireRole("ADMIN");
+  const addOn = await db.addOn.findUnique({ where: { id }, select: { name: true, code: true } });
+  if (!addOn) return { ok: false, error: "This add-on no longer exists." };
+  await db.addOn.update({ where: { id }, data: { isActive } });
+  await audit(actor, {
+    action: "addon.update",
+    entityType: "AddOn",
+    entityId: id,
+    summary: `${addOn.name} (${addOn.code}): ${isActive ? "enabled" : "disabled"}`,
+  });
+  revalidateContent("packages");
+  revalidatePath("/admin", "layout");
+  return { ok: true };
+}
+
+/** Deletes an add-on that no quote or booking uses (ADMIN only); used ones are disabled instead. */
+export async function deleteAddOn(id: string): Promise<ActionResult> {
+  const actor = await requireRole("ADMIN");
+  const addOn = await db.addOn.findUnique({ where: { id }, select: { name: true, code: true } });
+  if (!addOn) return { ok: false, error: "This add-on no longer exists." };
+  const used = await addOnUsage(addOn.code);
+  if (used > 0) return { ok: false, error: inUseMessage(used, "Disable it instead.") };
+  await db.addOn.delete({ where: { id } });
+  await audit(actor, {
+    action: "addon.delete",
+    entityType: "AddOn",
+    entityId: id,
+    summary: `Deleted ${addOn.name} (${addOn.code})`,
+  });
+  revalidateContent("packages");
+  revalidatePath("/admin", "layout");
+  return { ok: true };
 }

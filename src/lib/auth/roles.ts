@@ -13,6 +13,7 @@ export function hasRole(role: AdminRole | null | undefined, required: AdminRole)
 
 export const ADMIN_HOME = "/admin";
 export const SIGN_IN_PATH = "/admin/sign-in";
+export const CHANGE_PASSWORD_PATH = "/admin/account/password";
 
 /** Auth.js session cookie names (the `__Secure-` one is used over HTTPS). */
 export const SESSION_COOKIES = ["authjs.session-token", "__Secure-authjs.session-token"] as const;
@@ -39,5 +40,7 @@ export function safeCallbackUrl(value: string | null | undefined): string {
   if (!value || !isAdminPath(value) || value.includes("\\") || value.includes("//")) {
     return ADMIN_HOME;
   }
-  return value.startsWith(SIGN_IN_PATH) ? ADMIN_HOME : value;
+  return value.startsWith(SIGN_IN_PATH) || value.startsWith(CHANGE_PASSWORD_PATH)
+    ? ADMIN_HOME
+    : value;
 }

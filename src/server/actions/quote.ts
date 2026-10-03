@@ -111,7 +111,7 @@ export async function createQuote(
       });
 
       const packageRow = await tx.package.findUnique({
-        where: { slug: pkg.slug },
+        where: { slug: pkg.packageSlug },
         select: { id: true },
       });
 
@@ -135,6 +135,9 @@ export async function createQuote(
             depositCents: quote.depositCents,
             flags: quote.flags,
             packageSlug: pkg.slug,
+            // Kept so the quote still says "Wedding — Gold" if the option is renamed later.
+            packageName: pkg.name,
+            packageNameFr: pkg.nameFr,
             startTime: request.startTime,
           },
           subtotalCents: quote.subtotalCents,

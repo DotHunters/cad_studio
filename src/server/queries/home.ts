@@ -20,7 +20,12 @@ const cachedFeaturedProjects = unstable_cache(
   async (limit: number, includeSamples: boolean) => {
     const projects = await db.portfolioProject.findMany({
       where: { featured: true, publishedAt: { not: null }, ...sampleFilter(includeSamples) },
-      orderBy: [{ year: "desc" }, { publishedAt: "desc" }],
+      // Real work before samples; projects without a confirmed year last.
+      orderBy: [
+        { isSample: "asc" },
+        { year: { sort: "desc", nulls: "last" } },
+        { publishedAt: "desc" },
+      ],
       take: limit,
       include: { images: publicProjectImages },
     });

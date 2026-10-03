@@ -36,15 +36,18 @@ export const siteConfig = {
   },
   timezone: resolveTimezone(process.env.STUDIO_TIMEZONE),
   contact: {
-    // TODO(owner): real business email and phone (Q6).
-    email: "hello@cadstudio.example",
+    // Owner-supplied (2026-10). Sending addresses stay on the dummy domain until a real one is
+    // verified in Resend (Q6); replies and admin notifications go to `email`.
+    email: "cadstudio01@gmail.com",
     bookingsEmail: "bookings@cadstudio.example",
-    phone: null as string | null,
+    phones: [
+      { country: "CA", display: "+1 437-223-6197", tel: "+14372236197" },
+      { country: "LK", display: "+94 77 184 4347", tel: "+94771844347" },
+    ],
   },
-  // TODO(owner): social profile URLs.
   socials: {
-    instagram: null as string | null,
-    facebook: null as string | null,
+    instagram: "https://www.instagram.com/cadstudio/" as string | null,
+    facebook: "https://www.facebook.com/cad.photos.54" as string | null,
     tiktok: null as string | null,
   },
   // Trust-strip stats. Only owner-confirmed numbers; null hides the stat (AGENTS.md §13).

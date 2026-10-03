@@ -5,6 +5,7 @@ import { type FormEvent, useEffect, useState, useTransition } from "react";
 
 import { adminFieldClass, Field } from "@/components/admin/form-field";
 import { Button } from "@/components/ui/button";
+import { PASSWORD_MIN_LENGTH } from "@/lib/auth/password-rules";
 import { saveTeamMember } from "@/server/actions/admin/team";
 
 export type TeamMemberDefaults = {
@@ -61,7 +62,7 @@ export function TeamMemberForm({
           name="email"
           idPrefix="member-"
           label="Email"
-          hint="Sign-in links are sent here."
+          hint="Used to sign in."
           error={errors.email}
         >
           <input
@@ -83,6 +84,19 @@ export function TeamMemberForm({
             <option value="STAFF">Staff</option>
             <option value="ADMIN">Admin</option>
           </select>
+        </Field>
+        <Field
+          name="password"
+          idPrefix="member-"
+          label={id ? "New password" : "Temporary password"}
+          hint={
+            id
+              ? "Leave empty to keep the current password. A new one signs them out; they choose their own at next sign-in."
+              : `At least ${PASSWORD_MIN_LENGTH} characters. Share it privately; they choose their own at first sign-in.`
+          }
+          error={errors.password}
+        >
+          <input {...control("password")} type="password" autoComplete="new-password" />
         </Field>
       </div>
       <label className="flex items-center gap-2 text-sm">

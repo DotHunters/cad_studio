@@ -15,6 +15,7 @@ import { localize } from "@/lib/localize";
 import { parseReference } from "@/lib/references";
 import { verifySignedValue } from "@/lib/signing";
 import { cn } from "@/lib/utils";
+import { savedOptionName } from "@/lib/pricing/options";
 import { linkSecret } from "@/server/link-secret";
 import { getPricingContext } from "@/server/queries/pricing";
 import { getQuoteByReference } from "@/server/queries/quotes";
@@ -54,12 +55,12 @@ export default async function QuoteResultPage({ params, searchParams }: Props) {
   ]);
   if (!quote) notFound();
 
-  const expired = quote.expiresAt < new Date();
+  const cancelled = quote.status === "CANCELLED";
+  // A cancelled quote reads like an expired one: no booking, a nudge to quote again.
+  const expired = cancelled || quote.expiresAt < new Date();
   const firstName = quote.customer.name.split(/\s+/)[0];
   const { breakdown } = quote;
-  const packageName = quote.package
-    ? localize(quote.package.name, quote.package.nameFr, locale)
-    : "";
+  const packageName = savedOptionName(breakdown, quote.package, locale) ?? "—";
   const location = quote.isInternational
     ? t("Provinces.INTL")
     : [quote.city, t(`Provinces.${quote.province as "ON"}`)].filter(Boolean).join(", ");
@@ -112,11 +113,15 @@ export default async function QuoteResultPage({ params, searchParams }: Props) {
             )}
           >
             <CalendarClock className="text-gold-text mt-0.5 size-4 shrink-0" aria-hidden />
-            {expired
-              ? t("QuoteResult.expired", { date: formatInStudioTz(quote.expiresAt, "PPP", locale) })
-              : t("QuoteResult.validUntil", {
-                  date: formatInStudioTz(quote.expiresAt, "PPP", locale),
-                })}
+            {cancelled
+              ? t("QuoteResult.cancelled")
+              : expired
+                ? t("QuoteResult.expired", {
+                    date: formatInStudioTz(quote.expiresAt, "PPP", locale),
+                  })
+                : t("QuoteResult.validUntil", {
+                    date: formatInStudioTz(quote.expiresAt, "PPP", locale),
+                  })}
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -132,7 +137,10 @@ export default async function QuoteResultPage({ params, searchParams }: Props) {
             <Link
               href={{
                 pathname: "/quote",
-                query: quote.package ? { package: quote.package.slug } : {},
+                // The option it was priced with ("wedding:gold"); findOption understands it.
+                query: quote.package
+                  ? { package: breakdown.packageSlug || quote.package.slug }
+                  : {},
               }}
               className={cn(
                 buttonVariants({ variant: expired ? "default" : "outline", size: "cta" }),

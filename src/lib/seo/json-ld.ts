@@ -28,6 +28,8 @@ export function businessJsonLd({ baseUrl, locale }: Base) {
     logo: absolute(baseUrl, "/brand/logo-gold.png"),
     image: absolute(baseUrl, "/brand/og-default.png"),
     email: siteConfig.contact.email,
+    telephone: siteConfig.contact.phones[0].tel,
+    sameAs: Object.values(siteConfig.socials).filter((url): url is string => Boolean(url)),
     // Service area only — no street address is published (owner decision).
     address: {
       "@type": "PostalAddress",

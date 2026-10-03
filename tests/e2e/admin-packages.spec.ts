@@ -67,14 +67,14 @@ test.describe("admin packages", () => {
 
     // Hide it again.
     await page.goto("/admin/packages");
-    await page.getByRole("link", { name: nameFor(testInfo) }).click();
+    await page.getByRole("link", { name: nameFor(testInfo), exact: true }).click();
     await expect(page.locator('form[data-hydrated="true"]')).toBeVisible();
     await expect(page.getByLabel("Starting price (CAD)")).toHaveValue("1234.50");
     await page.getByLabel("Active (shown on the site)").uncheck();
     await page.getByRole("button", { name: "Save package" }).click();
-    await expect(page.getByRole("row", { name: new RegExp(nameFor(testInfo)) })).toContainText(
-      "Hidden",
-    );
+    await expect(
+      page.getByRole("switch", { name: `Active: ${nameFor(testInfo)}` }),
+    ).toHaveAttribute("aria-checked", "false");
     const response = await page.goto(`/en/packages/${slug}`);
     expect(response?.status()).toBe(404);
   });
@@ -106,4 +106,74 @@ test.describe("admin packages", () => {
     await expect(page).toHaveURL(/\/admin\?error=forbidden$/);
     await expect(page.getByText("You don't have permission to open that page.")).toBeVisible();
   });
+});
+
+test("package rows: deactivate, refuse to delete while quoted, delete once unused", async ({
+  page,
+  context,
+  baseURL,
+}, testInfo) => {
+  const slug = slugFor(testInfo);
+  const name = `E2E Package row ${testInfo.project.name}`;
+  const reference = `CAD-Q-9988-${testInfo.project.name === "mobile" ? 1 : 0}002`;
+  const email = `e2e-pkg-row-${testInfo.project.name}-${testInfo.testId}@example.com`.toLowerCase();
+  await signInAsAdmin(context, baseURL!, adminEmailFor(testInfo));
+  await queryDb(`delete from "Quote" where reference = $1`, [reference]);
+  const [pkg] = await queryDb<{ id: string }>(
+    `insert into "Package" (id, slug, category, name, summary, description, "basePriceCents",
+       "includedHours", "updatedAt")
+     values (gen_random_uuid()::text, $1, 'FAMILY', $2, 'Row test', 'Row test', 50000, 2, now())
+     returning id`,
+    [slug, name],
+  );
+  const [customer] = await queryDb<{ id: string }>(
+    `insert into "Customer" (id, name, email) values (gen_random_uuid()::text, 'Package Tester', $1)
+     on conflict (email) do update set name = excluded.name returning id`,
+    [email],
+  );
+  await queryDb(
+    `insert into "Quote" (id, reference, category, "packageId", "eventDate", "durationHours",
+       photographers, province, "addOns", breakdown, "subtotalCents", "taxCents", "totalCents",
+       status, "expiresAt", "customerId")
+     values (gen_random_uuid()::text, $1, 'FAMILY', $2, '2027-10-16 18:00', 2, 1, 'ON',
+       '[]'::jsonb, '{"lineItems":[]}'::jsonb, 50000, 6500, 56500, 'SENT',
+       now() + interval '10 days', $3)`,
+    [reference, pkg.id, customer.id],
+  );
+
+  try {
+    await page.goto("/admin/packages");
+    const row = page.getByRole("row", { name: new RegExp(name) });
+    const active = row.getByRole("switch", { name: `Active: ${name}` });
+    await expect(active).toHaveAttribute("aria-checked", "true");
+    await active.click();
+    await expect
+      .poll(
+        async () =>
+          (
+            await queryDb<{ isActive: boolean }>(`select "isActive" from "Package" where id = $1`, [
+              pkg.id,
+            ])
+          )[0].isActive,
+      )
+      .toBe(false);
+    // The refreshed list (not just the optimistic switch) shows it inactive.
+    await page.reload();
+    await expect(active).toHaveAttribute("aria-checked", "false");
+    expect((await page.goto(`/en/packages/${slug}`))?.status()).toBe(404);
+
+    await page.goto("/admin/packages");
+    await row.getByRole("button", { name: `Delete ${name}` }).click();
+    await row.getByRole("button", { name: "Yes, delete" }).click();
+    await expect(row.getByRole("alert")).toContainText("Used by 1 quote or booking");
+
+    await queryDb(`delete from "Quote" where reference = $1`, [reference]);
+    await row.getByRole("button", { name: `Delete ${name}` }).click();
+    await row.getByRole("button", { name: "Yes, delete" }).click();
+    await expect(page.getByRole("row", { name: new RegExp(name) })).toHaveCount(0);
+    expect(await queryDb(`select 1 from "Package" where id = $1`, [pkg.id])).toHaveLength(0);
+  } finally {
+    await queryDb(`delete from "Quote" where reference = $1`, [reference]);
+    await queryDb(`delete from "Customer" where email = $1`, [email]);
+  }
 });

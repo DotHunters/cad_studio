@@ -16,6 +16,13 @@ describe("parseQuoteFilters", () => {
 });
 
 describe("quoteState", () => {
+  it("keeps cancelled quotes cancelled, whatever their expiry", () => {
+    expect(quoteState({ status: "CANCELLED", expiresAt: new Date("2026-10-10") }, now)).toBe(
+      "CANCELLED",
+    );
+    expect(parseQuoteFilters({ view: "cancelled" }).view).toBe("CANCELLED");
+  });
+
   it("treats sent quotes past their expiry as expired", () => {
     expect(quoteState({ status: "SENT", expiresAt: new Date("2026-10-10") }, now)).toBe("OPEN");
     expect(quoteState({ status: "SENT", expiresAt: new Date("2026-09-30") }, now)).toBe("EXPIRED");

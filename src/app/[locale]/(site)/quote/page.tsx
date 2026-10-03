@@ -6,13 +6,18 @@ import type { ReactNode } from "react";
 import { QuoteForm } from "@/components/quote/quote-form";
 import { Accent, SectionHeading } from "@/components/site/section-heading";
 import { type CategorySlug, categoryFromSlug } from "@/lib/categories";
+import { findOption } from "@/lib/pricing/options";
 import { studioDateKey } from "@/lib/dates";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { getPricingContext } from "@/server/queries/pricing";
 
 type Props = {
   params: Promise<{ locale: Locale }>;
-  searchParams: Promise<{ package?: string | string[]; category?: string | string[] }>;
+  searchParams: Promise<{
+    package?: string | string[];
+    tier?: string | string[];
+    category?: string | string[];
+  }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -26,15 +31,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
 }
 
-/** Quote generator (AGENTS.md §6.5). `?package=` prefills from a package card. */
+/** Quote generator (AGENTS.md §6.5). `?package=` (and `&tier=`) prefills from a package card. */
 export default async function QuotePage({ params, searchParams }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
   const query = await searchParams;
-  const packageSlug = typeof query.package === "string" ? query.package : undefined;
+  const single = (value: string | string[] | undefined) =>
+    typeof value === "string" ? value : undefined;
   const categoryParam = typeof query.category === "string" ? query.category : undefined;
 
   const [t, context] = await Promise.all([getTranslations("Quote"), getPricingContext()]);
+  // `?package=wedding&tier=gold` → the "wedding:gold" option (lib/pricing/options.ts).
+  const packageSlug = findOption(context.packages, single(query.package), single(query.tier))?.slug;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">

@@ -1,8 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { ActionSwitch, ConfirmDeleteButton } from "@/components/admin/row-actions";
 import { buttonVariants } from "@/components/ui/button";
 import { slugFromCategory } from "@/lib/categories";
+import {
+  deleteProject,
+  setProjectFeatured,
+  setProjectPublished,
+} from "@/server/actions/admin/projects";
 import { requireAdminPage } from "@/server/auth/guards";
 import { adminCategoryOptions } from "@/server/queries/admin-packages";
 import { listProjectsForAdmin } from "@/server/queries/admin-projects";
@@ -43,6 +49,7 @@ export default async function AdminPortfolioPage({ searchParams }: Props) {
         </p>
       )}
 
+      {/* No loading skeleton: it would stop the row actions from refreshing this page. */}
       {projects.length === 0 ? (
         <p className="text-muted-foreground mt-8">No projects yet.</p>
       ) : (
@@ -66,7 +73,13 @@ export default async function AdminPortfolioPage({ searchParams }: Props) {
                   Images
                 </th>
                 <th scope="col" className="px-4 py-3 font-medium">
-                  Status
+                  Published
+                </th>
+                <th scope="col" className="px-4 py-3 font-medium">
+                  Featured
+                </th>
+                <th scope="col" className="px-4 py-3 font-medium">
+                  Actions
                 </th>
               </tr>
             </thead>
@@ -99,11 +112,40 @@ export default async function AdminPortfolioPage({ searchParams }: Props) {
                     {categoryLabel.get(slugFromCategory(project.category))} ·{" "}
                     {project.reach === "LOCAL" ? "Local" : "Global"}
                   </td>
-                  <td className="px-4 py-3 tabular-nums">{project.year}</td>
+                  <td className="px-4 py-3 tabular-nums">{project.year ?? "—"}</td>
                   <td className="px-4 py-3 tabular-nums">{project._count.images}</td>
                   <td className="px-4 py-3">
-                    {project.publishedAt ? "Published" : "Draft"}
-                    {project.featured && " · Featured"}
+                    <ActionSwitch
+                      checked={project.publishedAt !== null}
+                      label={`Published: ${project.title}`}
+                      onText="Published"
+                      offText="Pending"
+                      action={setProjectPublished.bind(null, project.id)}
+                    />
+                  </td>
+                  <td className="px-4 py-3">
+                    <ActionSwitch
+                      checked={project.featured}
+                      label={`Featured on the home page: ${project.title}`}
+                      onText="Featured"
+                      offText="Not featured"
+                      action={setProjectFeatured.bind(null, project.id)}
+                    />
+                  </td>
+                  <td className="px-4 py-3">
+                    <div className="flex flex-wrap items-start gap-2">
+                      <Link
+                        href={`/admin/portfolio/${project.id}`}
+                        aria-label={`Edit ${project.title}`}
+                        className={buttonVariants({ size: "sm", variant: "outline" })}
+                      >
+                        Edit
+                      </Link>
+                      <ConfirmDeleteButton
+                        itemName={project.title}
+                        action={deleteProject.bind(null, project.id)}
+                      />
+                    </div>
                   </td>
                 </tr>
               ))}

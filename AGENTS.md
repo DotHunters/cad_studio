@@ -45,8 +45,8 @@
 | Language | **TypeScript** (`strict: true`) |
 | Styling | **Tailwind CSS v4** + `shadcn/ui` components |
 | Database | **PostgreSQL** via **Prisma ORM** |
-| Auth (admin only) | **Auth.js (NextAuth v5)** — email magic link or credentials; roles `ADMIN`, `STAFF` |
-| Images | **Cloudinary** (or S3 + `next/image`) — never commit client photos to the repo |
+| Auth (admin only) | **Auth.js (NextAuth v5)** database sessions — email + password (scrypt); a **super admin** from `.env` (`SUPER_ADMIN_EMAIL`/`SUPER_ADMIN_PASSWORD`), who with other admins creates users in Admin → Team; roles `ADMIN`, `STAFF` |
+| Images | **Vercel Blob** for admin uploads (owner decision 2026-10-03, replaces Cloudinary): the browser uploads straight to Blob, `next/image` resizes and serves AVIF/WebP, the image id is the Blob URL. Owner-supplied launch photos: originals in git-ignored `assets/`, optimized to WebP by `pnpm photos` into `public/photos/` (owner decision 2026-10-03) — never commit the originals |
 | Email | **Resend** + React Email templates |
 | Payments (phase 2) | **Stripe** — booking deposits in CAD |
 | Validation | **Zod** (shared between client and server) |
@@ -74,6 +74,7 @@ pnpm test:e2e         # Playwright e2e
 pnpm db:migrate       # prisma migrate dev
 pnpm db:seed          # seed packages, pricing, sample content
 pnpm db:studio        # Prisma Studio
+pnpm photos           # assets/ originals → compressed WebP in public/photos + src/data/photos.json (config: scripts/photos.config.mjs); then pnpm db:seed
 ```
 
 **Definition of done for every task:** `pnpm lint && pnpm typecheck && pnpm test && pnpm build` all pass.
@@ -542,12 +543,13 @@ See `.env.example` (source of truth, with comments). Summary:
 ```
 DATABASE_URL=
 AUTH_SECRET=
-AUTH_RESEND_KEY=
-SEED_ADMIN_EMAIL=                    # first ADMIN user, created by pnpm db:seed (sign-in is magic link only)
+SUPER_ADMIN_EMAIL=                   # super admin: signs in with the password below, creates other users
+SUPER_ADMIN_PASSWORD=                # ≥ 12 characters; never stored in the database
 RESEND_API_KEY=
 EMAIL_FROM="CAD Studio Photography <bookings@cadstudio.example>"   # dummy domain until owner provides one
 ADMIN_NOTIFY_EMAIL=
-NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=   # public: used by the client-side image loader
+BLOB_READ_WRITE_TOKEN=               # Vercel Blob: admin photo uploads
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=   # optional (older Cloudinary ids only)
 CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
 NEXT_PUBLIC_TURNSTILE_SITE_KEY=      # public: rendered in the browser widget
@@ -638,7 +640,8 @@ Live tracker: `docs/loop/OPEN_QUESTIONS.md`. Answered so far: studio in Scarboro
 Also answered: brand name is **"CAD Studio Photography"** (2026-10-03; was "Cad Studio"); studio story and stats (est. 2014, 2,000+ events, Canada + Sri Lanka); no public street address; dummy domain and dummy (clearly sample) clients for now; PST in BC/MB/SK unknown → GST only until confirmed; admin emails bank details or a payment link manually; agents write the French, a tester reviews it before launch.
 
 Still open:
-- Real domain and business email.
+- Real domain (contact email cadstudio01@gmail.com, phones and socials are in `config/site.ts`).
 - Real past clients that can be named publicly.
 - SVG logo versions (nice-to-have).
 - PST applicability in BC/MB/SK (accountant).
+- Reach (Local/Global), city, country and (where photos have no EXIF date) year for the 11 portfolio projects seeded from the owner's photos.

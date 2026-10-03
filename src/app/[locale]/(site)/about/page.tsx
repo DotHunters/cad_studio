@@ -10,7 +10,7 @@ import { Accent, SectionHeading } from "@/components/site/section-heading";
 import { buttonVariants } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { Link } from "@/i18n/navigation";
-import { placeholderImage } from "@/lib/images";
+import { photos } from "@/lib/photos";
 import { personJsonLd } from "@/lib/seo/json-ld";
 import { cn } from "@/lib/utils";
 import { pageMetadata } from "@/lib/seo/metadata";
@@ -74,11 +74,13 @@ export default async function AboutPage({ params }: Props) {
       <section aria-labelledby="owner-title" className="mx-auto max-w-7xl px-4 pb-20 sm:px-6">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
           <div className="bg-muted relative aspect-[4/5] overflow-hidden rounded-2xl">
-            {/* TODO(owner): portrait of I. Rukshan. */}
             <Image
-              src={placeholderImage(960, 1200, { background: "2a2118" })}
+              src={photos.owner[1].src}
               alt={t("portraitAlt")}
               fill
+              priority
+              placeholder="blur"
+              blurDataURL={photos.owner[1].blurDataUrl}
               sizes="(min-width: 1024px) 50vw, 100vw"
               className="object-cover"
             />

@@ -3,6 +3,7 @@ import "server-only";
 import { unstable_cache } from "next/cache";
 
 import { db } from "@/lib/db";
+import { pricedOptions } from "@/lib/pricing/options";
 import { parsePricingRules } from "@/lib/pricing/rules";
 import { CACHE_TAGS, CONTENT_REVALIDATE_SECONDS } from "@/server/cache";
 
@@ -24,6 +25,17 @@ export const getPricingContext = unstable_cache(
           basePriceCents: true,
           includedHours: true,
           includedShooters: true,
+          tiers: {
+            orderBy: [{ sortOrder: "asc" }, { basePriceCents: "asc" }],
+            select: {
+              key: true,
+              name: true,
+              nameFr: true,
+              basePriceCents: true,
+              includedHours: true,
+              includedShooters: true,
+            },
+          },
         },
       }),
       db.addOn.findMany({
@@ -43,7 +55,8 @@ export const getPricingContext = unstable_cache(
     ]);
 
     return {
-      packages,
+      // One option per package, or per tier for packages with tiers (lib/pricing/options.ts).
+      packages: pricedOptions(packages),
       addOns,
       rules: parsePricingRules(ruleRows),
       quoteValidDays: Number(ruleRows.find((row) => row.key === "QUOTE_VALID_DAYS")?.value ?? 14),

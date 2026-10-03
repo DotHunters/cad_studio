@@ -2,4 +2,7 @@
 // the database, not from pages cached by an earlier run.
 import { rmSync } from "node:fs";
 
-rmSync(".next/cache/fetch-cache", { recursive: true, force: true });
+rmSync(`${process.env.NEXT_DIST_DIR || ".next"}/cache/fetch-cache`, {
+  recursive: true,
+  force: true,
+});

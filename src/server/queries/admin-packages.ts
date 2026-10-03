@@ -20,6 +20,7 @@ export const listPackagesForAdmin = () =>
       includedHours: true,
       isActive: true,
       sortOrder: true,
+      tiers: { orderBy: { sortOrder: "asc" }, select: { name: true, basePriceCents: true } },
     },
   });
 
@@ -42,13 +43,17 @@ export const EMPTY_PACKAGE: PackageFormDefaults = {
   exclusions: "",
   exclusionsFr: "",
   faqs: [],
+  tiers: [],
   isActive: true,
   sortOrder: "0",
 };
 
 /** A package as form values (prices as dollars, lists as lines), or null if missing. */
 export async function getPackageFormDefaults(id: string): Promise<PackageFormDefaults | null> {
-  const pkg = await db.package.findUnique({ where: { id } });
+  const pkg = await db.package.findUnique({
+    where: { id },
+    include: { tiers: { orderBy: { sortOrder: "asc" } } },
+  });
   if (!pkg) return null;
   const optional = (value: number | null) => (value === null ? "" : String(value));
   return {
@@ -74,6 +79,18 @@ export async function getPackageFormDefaults(id: string): Promise<PackageFormDef
       a: faq.a,
       qFr: faq.qFr ?? "",
       aFr: faq.aFr ?? "",
+    })),
+    tiers: pkg.tiers.map((tier) => ({
+      key: tier.key,
+      name: tier.name,
+      nameFr: tier.nameFr ?? "",
+      basePrice: (tier.basePriceCents / 100).toFixed(2),
+      includedHours: String(tier.includedHours),
+      includedShooters: String(tier.includedShooters),
+      editedImages: optional(tier.editedImages),
+      turnaroundDays: optional(tier.turnaroundDays),
+      inclusions: tier.inclusions.join("\n"),
+      inclusionsFr: tier.inclusionsFr.join("\n"),
     })),
     isActive: pkg.isActive,
     sortOrder: String(pkg.sortOrder),

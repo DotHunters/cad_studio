@@ -4,10 +4,12 @@ import { getFormatter, getTranslations } from "next-intl/server";
 import { buttonVariants } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { Link } from "@/i18n/navigation";
+import { photos } from "@/lib/photos";
 import { cn } from "@/lib/utils";
 import { getClientNames } from "@/server/queries/home";
 
 import { ctaNav } from "./nav-items";
+import { SectionBackdrop } from "./section-backdrop";
 import { Accent, SectionHeading } from "./section-heading";
 
 /** Dark "why us" band: reasons, owner-confirmed stats, trusted-by names and a booking bar. */
@@ -31,7 +33,11 @@ export async function WhyUs() {
   ].filter((stat): stat is { value: number; plus: boolean; label: string } => stat.value !== null);
 
   return (
-    <section aria-labelledby="why-title" className="bg-ink text-paper relative overflow-hidden">
+    <section
+      aria-labelledby="why-title"
+      className="bg-ink text-paper relative isolate overflow-hidden"
+    >
+      <SectionBackdrop photo={photos.background[0]} />
       <div aria-hidden className="bg-gold-gradient h-px" />
       <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28">
         <SectionHeading

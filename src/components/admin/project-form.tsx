@@ -105,7 +105,7 @@ export function ProjectForm({ id, defaults, categories }: Props) {
             <option value="GLOBAL">Global</option>
           </select>
         </Field>
-        <Field {...field("year", "Year")}>
+        <Field {...field("year", "Year", "Optional")}>
           <input {...control("year")} inputMode="numeric" defaultValue={defaults.year} />
         </Field>
         <Field {...field("city", "City", "Optional")}>

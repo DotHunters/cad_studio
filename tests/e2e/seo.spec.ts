@@ -1,5 +1,7 @@
 import { expect, type Page, test } from "@playwright/test";
 
+import { galleryCounts } from "./photo-counts";
+
 async function jsonLd(page: Page) {
   const blocks = await page.locator('script[type="application/ld+json"]').allTextContents();
   return blocks.map((text) => JSON.parse(text) as Record<string, unknown>);
@@ -70,7 +72,8 @@ test.describe("SEO", () => {
     await page.goto("/en/gallery");
     const [gallery] = await jsonLd(page);
     expect(gallery["@type"]).toBe("ImageGallery");
-    expect((gallery.image as unknown[]).length).toBe(25);
+    // JSON-LD lists at most 30 images (json-ld.ts).
+    expect((gallery.image as unknown[]).length).toBe(Math.min(30, galleryCounts.total));
 
     await page.goto("/en/portfolio/sample-northwind-annual-summit");
     const [project] = await jsonLd(page);

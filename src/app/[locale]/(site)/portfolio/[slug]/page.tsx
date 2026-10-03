@@ -17,6 +17,7 @@ import { slugFromCategory } from "@/lib/categories";
 import { storedImageSrc } from "@/lib/images";
 import { pickCover } from "@/lib/images";
 import { localize } from "@/lib/localize";
+import { projectPlace } from "@/lib/portfolio-filters";
 import { excerpt } from "@/lib/seo/excerpt";
 import { imageGalleryJsonLd } from "@/lib/seo/json-ld";
 import { pageMetadata } from "@/lib/seo/metadata";
@@ -37,7 +38,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: localize(project.title, project.titleFr, locale),
     // "Corporate Events · Toronto, Canada · 2025. <start of the story>", ≤ 160 characters.
     description: excerpt(
-      `${category} · ${[project.city, project.country].filter(Boolean).join(", ")} · ${project.year}. ${localize(project.story, project.storyFr, locale)}`,
+      `${[category, projectPlace(project), project.year].filter(Boolean).join(" · ")}. ${localize(project.story, project.storyFr, locale)}`,
     ),
   });
 }
@@ -58,11 +59,8 @@ export default async function ProjectPage({ params }: Props) {
   const facts = [
     { label: t("Project.client"), value: project.clientName ?? t("Home.privateClient") },
     { label: t("Project.category"), value: categoryName },
-    {
-      label: t("Project.location"),
-      value: [project.city, project.country].filter(Boolean).join(", "),
-    },
-    { label: t("Project.year"), value: String(project.year) },
+    { label: t("Project.location"), value: projectPlace(project) },
+    { label: t("Project.year"), value: project.year ? String(project.year) : "" },
     {
       label: t("Project.reach"),
       value: project.reach === "GLOBAL" ? t("Home.reachGlobal") : t("Home.reachLocal"),
@@ -78,7 +76,9 @@ export default async function ProjectPage({ params }: Props) {
           locale,
           path: `/portfolio/${project.slug}`,
           name: title,
-          description: `${categoryName} · ${facts[2].value} · ${project.year}`,
+          description: [categoryName, projectPlace(project), project.year]
+            .filter(Boolean)
+            .join(" · "),
           images: project.images.map((image) => ({
             url: storedImageSrc(image),
             caption: localize(image.alt, image.altFr, locale),
@@ -140,12 +140,14 @@ export default async function ProjectPage({ params }: Props) {
 
         <aside>
           <dl className="divide-border divide-y rounded-xl border text-sm">
-            {facts.map((fact) => (
-              <div key={fact.label} className="flex justify-between gap-4 px-5 py-3">
-                <dt className="text-muted-foreground">{fact.label}</dt>
-                <dd className="text-right">{fact.value}</dd>
-              </div>
-            ))}
+            {facts
+              .filter((fact) => fact.value)
+              .map((fact) => (
+                <div key={fact.label} className="flex justify-between gap-4 px-5 py-3">
+                  <dt className="text-muted-foreground">{fact.label}</dt>
+                  <dd className="text-right">{fact.value}</dd>
+                </div>
+              ))}
           </dl>
         </aside>
       </div>

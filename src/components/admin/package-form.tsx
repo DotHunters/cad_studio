@@ -4,6 +4,7 @@ import { Loader2, Plus, Trash2 } from "lucide-react";
 import { type FormEvent, useEffect, useState, useTransition } from "react";
 
 import { adminFieldClass, Field } from "@/components/admin/form-field";
+import { PackageTiersEditor, type TierDraft } from "@/components/admin/package-tiers-editor";
 import { Button } from "@/components/ui/button";
 import { savePackage } from "@/server/actions/admin/packages";
 
@@ -26,6 +27,7 @@ export type PackageFormDefaults = {
   exclusions: string;
   exclusionsFr: string;
   faqs: Array<{ q: string; a: string; qFr: string; aFr: string }>;
+  tiers: TierDraft[];
   isActive: boolean;
   sortOrder: string;
 };
@@ -41,6 +43,7 @@ export function PackageForm({ id, defaults, categories }: Props) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState(false);
   const [faqs, setFaqs] = useState(defaults.faqs);
+  const [tiers, setTiers] = useState(defaults.tiers);
   const [pending, startTransition] = useTransition();
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => setHydrated(true), []);
@@ -57,6 +60,7 @@ export function PackageForm({ id, defaults, categories }: Props) {
     const input = {
       ...Object.fromEntries(new FormData(event.currentTarget)),
       faqs: JSON.stringify(faqs),
+      tiers: JSON.stringify(tiers.map((tier) => ({ ...tier, key: tier.key || undefined }))),
     };
     setServerError(false);
     startTransition(async () => {
@@ -67,7 +71,8 @@ export function PackageForm({ id, defaults, categories }: Props) {
     });
   };
 
-  const errorCount = Object.keys(errors).length;
+  // Nested keys ("tiers.0.name") repeat a top-level error; count each field once.
+  const errorCount = Object.keys(errors).filter((key) => !key.includes(".")).length;
   const bilingual = (
     name: "name" | "summary" | "description" | "inclusions" | "exclusions",
     label: string,
@@ -158,6 +163,9 @@ export function PackageForm({ id, defaults, categories }: Props) {
 
       <fieldset className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         <legend className="mb-3 text-lg font-medium">Price and coverage</legend>
+        <p className="text-muted-foreground text-sm sm:col-span-2 lg:col-span-5">
+          Used when the package has no options below.
+        </p>
         <Field
           error={errors.basePrice}
           name="basePrice"
@@ -222,6 +230,8 @@ export function PackageForm({ id, defaults, categories }: Props) {
           />
         </Field>
       </fieldset>
+
+      <PackageTiersEditor tiers={tiers} onChange={setTiers} errors={errors} />
 
       <fieldset className="space-y-4">
         <legend className="mb-3 text-lg font-medium">Text</legend>

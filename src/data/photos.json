@@ -1,0 +1,741 @@
+{
+  "groups": [
+    {
+      "slug": "christian-wedding",
+      "category": "WEDDING",
+      "tags": ["christian-wedding", "ceremony"],
+      "title": "Christian Church Wedding",
+      "titleFr": "Mariage à l’église",
+      "alt": "Christian church wedding: bride, groom, family and bridal party",
+      "altFr": "Mariage à l’église : mariés, famille et cortège",
+      "featured": true,
+      "year": null,
+      "images": [
+        {
+          "src": "/photos/christian-wedding/christian-wedding-01.webp",
+          "width": 2048,
+          "height": 1360,
+          "blurDataUrl": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAADwAQCdASoQAAsAA4BaJZwAD5AulA9MMWAA/lPL5lclOLAb0f3a2qCrDTNTzE+Yqx7PaXZDbtVzor1ZdtUiFjN2ef51smauCJwEerKdW2yglwgDyBAAAA=="
+        },
+        {
+          "src": "/photos/christian-wedding/christian-wedding-02.webp",
+          "width": 2048,
+          "height": 1366,
+          "blurDataUrl": "data:image/webp;base64,UklGRmwAAABXRUJQVlA4IGAAAAAQAgCdASoQAAsAA4BaJQBdgCH7/t31uwmAAP7G5fF+NiSLnQvG0s7PIMQztSXHUXXiC6Ia3Tn1k1x4LBbMoJi+YdhLbJA/oeKtNECH51eH7NV1BTyg/O3Xa88615YVAAA="
+        },
+        {
+          "src": "/photos/christian-wedding/christian-wedding-03.webp",
+          "width": 2048,
+          "height": 1365,
+          "blurDataUrl": "data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAACQAgCdASoQAAsAA4BaJQBOgO4FvfanMthUUQliAAD+hQyqXu4Qe3VVN5WfIdTHPf2hJV9y04onAtfSAkgWVoMIDuBem7dDIqrMKB8Kl3pXfSZplCzgAt2spHlu19RDvmJMxTKZRWwnrrEoAAA="
+        },
+        {
+          "src": "/photos/christian-wedding/christian-wedding-04.webp",
+          "width": 2048,
+          "height": 1365,
+          "blurDataUrl": "data:image/webp;base64,UklGRm4AAABXRUJQVlA4IGIAAAAQAgCdASoQAAsAA4BaJQBdgMXSlrfQDewAAP7W2O3caj9UsD9ltsfIJjZqyE1Kc0+9l4/UPr4MRMjJwMh9K7V3Nk8QPuQblRwGJL8gl/yadeqPJxs4kejoRpiS2AB02IAAAA=="
+        },
+        {
+          "src": "/photos/christian-wedding/christian-wedding-05.webp",
+          "width": 2048,
+          "height": 1366,
+          "blurDataUrl": "data:image/webp;base64,UklGRnAAAABXRUJQVlA4IGQAAADwAQCdASoQAAsAA4BaJYgCdADL1mDq1WwA/miHr04Kuuzbb6XjZM8bkPmKe3HwRL+Bo1Jq7l7cKa25wtty1KMEE1uRKs2PqXmeKkmRhSiSUQKVmj6YqNjFJhEIjhdsa9c27AAA"
+        },
+        {
+          "src": "/photos/christian-wedding/christian-wedding-06.webp",
+          "width": 1640,
+          "height": 2048,
+          "blurDataUrl": "data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAADwAQCdASoNABAAA4BaJZQAAl1zlYG+roAA/VPni/TSI4wZkvP9Sd9Y5X8KfDT9I6fGur5IpbQCIm+/y5i6zdz3AbO4pfYubcwq4/new3xY3gTtmxloN01ZednZzKdonIDSYLcMMAA="
+        },
+        {
+          "src": "/photos/christian-wedding/christian-wedding-07.webp",
+          "width": 1640,
+          "height": 2048,
+          "blurDataUrl": "data:image/webp;base64,UklGRoAAAABXRUJQVlA4IHQAAABwAgCdASoNABAAA4BaJZgCdAYvhwkT2JDv5pAAAP6YTgTfqU4K0ibFU+h0rtDHRjpmxX/vZmaNE2ad1y8hfp4ZxfzdN+5li+PC+eY3mS6pgyajFdjcE+fpKy/1Qzbg3rpGi3bUzEEavHVtGUBOHQfoUKSgAA=="
+        },
+        {
+          "src": "/photos/christian-wedding/christian-wedding-08.webp",
+          "width": 2047,
+          "height": 1367,
+          "blurDataUrl": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAABQAgCdASoQAAsAA4BaJYwC7AYuvnASS/CDcAAA/rdP86Ephf5tTDkCoQ3sMGfcbm4nfkaMkdaZojGD56P7ReIKLK6AudfAK/bMVofKRvW+Hi2JcmuXgYLnM6Qj34J0qU8ikm1i0ZwwFyQWl2gBOGAAAAA="
+        },
+        {
+          "src": "/photos/christian-wedding/christian-wedding-09.webp",
+          "width": 2048,
+          "height": 1366,
+          "blurDataUrl": "data:image/webp;base64,UklGRn4AAABXRUJQVlA4IHIAAABwAgCdASoQAAsAA4BaJagCdAYtp2YwXHb95RgAAP6+jeOiem9qvRme6uUNqe5StXPaFWqfuWXXDrs3kSzx82dFkUvBjrqX7msfvpvWEyzodxKdM25TE2sWVjTpzys6sjL4lekSUv5IkrTGqcrq6W6vAAA="
+        },
+        {
+          "src": "/photos/christian-wedding/christian-wedding-10.webp",
+          "width": 2049,
+          "height": 1366,
+          "blurDataUrl": "data:image/webp;base64,UklGRmgAAABXRUJQVlA4IFwAAAAwAgCdASoQAAsAA4BaJYwCdAYuvbPC8aKggADLTsCMe/y1WS5AM7ZzliKh+TZAWaxCI+YsAe/844re6+jstydHAFA7yRseY+1zMb9TenUAyXYBtUxaCNQYrcAAAA=="
+        },
+        {
+          "src": "/photos/christian-wedding/christian-wedding-11.webp",
+          "width": 2048,
+          "height": 1366,
+          "blurDataUrl": "data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAAAwAgCdASoQAAsAA4BaJYwCdAYt9Nxvsxfk4AD7oKMq3eokdpQCSXD2h6fAq+BXTF9keNb+GuC2Id6U08HOfxYe8jyR2kTA160ce+rkvfe3PIiU6EgBmLcFHe23raCzg1/WhvWCQAA="
+        },
+        {
+          "src": "/photos/christian-wedding/christian-wedding-12.webp",
+          "width": 2048,
+          "height": 1366,
+          "blurDataUrl": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAADwAQCdASoQAAsAA4BaJYwAApA6Vsx1iAAA/p9xdI+qkcXVowuSP3XM8SFWFLCiyzp3FmmnaHGN2JPbxBajhp1VUbfp48JIbwIixxvs72ovtwdBuAAAAA=="
+        },
+        {
+          "src": "/photos/christian-wedding/christian-wedding-13.webp",
+          "width": 2050,
+          "height": 1365,
+          "blurDataUrl": "data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAABQAgCdASoQAAsAA4BaJZQC7AYulqyUnJDJshAA/ub2I+l8yqe9PZF/2GUjAg2Uskg+EDIQx47AwjNL4sr7WStBT7Vp7s66dwY7qcH99E82m71PYd0Q3TA4iWtZ51t6EUuv/yWSmuLWpDP0M1AAAA=="
+        }
+      ]
+    },
+    {
+      "slug": "sinhala-wedding",
+      "category": "WEDDING",
+      "tags": ["sinhala-wedding", "ceremony"],
+      "title": "Sinhala Wedding",
+      "titleFr": "Mariage cinghalais",
+      "alt": "Sinhala wedding: bride and groom in traditional Kandyan attire",
+      "altFr": "Mariage cinghalais : mariés en tenue traditionnelle kandyenne",
+      "featured": true,
+      "year": 2023,
+      "images": [
+        {
+          "src": "/photos/sinhala-wedding/sinhala-wedding-01.webp",
+          "width": 1365,
+          "height": 2048,
+          "blurDataUrl": "data:image/webp;base64,UklGRmYAAABXRUJQVlA4IFoAAADQAQCdASoLABAAA4BaJQBYdsYisrEVgAD+Mv+QmtVt9AylDaNI4dRWPC+Tm+gjPK1LZ9Pk3Wa1TiyG1xy9FbtbaznRtWh+FeafXp2Njo6cuUyOTZc1Y1MmAAA="
+        },
+        {
+          "src": "/photos/sinhala-wedding/sinhala-wedding-02.webp",
+          "width": 2048,
+          "height": 1365,
+          "blurDataUrl": "data:image/webp;base64,UklGRmgAAABXRUJQVlA4IFwAAADwAQCdASoQAAsAA4BaJZQAAueJS4luIjAA/urzznhLR0Bvsd9K6Wa4q9GlXjeyJNRlHAiPXR5Ayrc7D/ZXIv0T1/uzMaDhZPyHC3F+ixxNz7cms7aZ3DT6vTagAA=="
+        },
+        {
+          "src": "/photos/sinhala-wedding/sinhala-wedding-03.webp",
+          "width": 1365,
+          "height": 2048,
+          "blurDataUrl": "data:image/webp;base64,UklGRmwAAABXRUJQVlA4IGAAAAAQAgCdASoLABAAA4BaJQBOgB6S75C3tZWAAPy06B3Eu49Wiv88j9AnESkhwIbP2Pp7DGgYhsNVcOhk9JSM/64pP870Sf1O9QpDgt44M0BonufYtsEtodEGjHp1KU12kAA="
+        },
+        {
+          "src": "/photos/sinhala-wedding/sinhala-wedding-04.webp",
+          "width": 1365,
+          "height": 2048,
+          "blurDataUrl": "data:image/webp;base64,UklGRnAAAABXRUJQVlA4IGQAAACwAQCdASoLABAAA4BaJQBdgBsX4UhgAM4zGq9o/uRgq8X4z3ZZqp/ir+JzZcYdvRUZnRQx6NtVVkRjApa3GlVaqUEuNz34vgXUqSeaA/pZHfrrzdx50X+jco9YXdelYZF20wAA"
+        },
+        {
+          "src": "/photos/sinhala-wedding/sinhala-wedding-05.webp",
+          "width": 2048,
+          "height": 1365,
+          "blurDataUrl": "data:image/webp;base64,UklGRmYAAABXRUJQVlA4IFoAAABQAgCdASoQAAsAA4BaJYwCw7Yv/2vxPDyy5AAA/rAntoIMBXXKuUB2ofwlwEi+TEqkZqrEEzSUfJAr1fR2wo9ajc0MThgBb6mmH4fsT6yFqoTyA0SDZOcj8AA="
+        },
+        {
+          "src": "/photos/sinhala-wedding/sinhala-wedding-06.webp",
+          "width": 2048,
+          "height": 1365,
+          "blurDataUrl": "data:image/webp;base64,UklGRnQAAABXRUJQVlA4IGgAAAAQAgCdASoQAAsAA4BaJagCdADyq91loQIAAPljCmGMnnGWP7MXVWU9UrmexWyEM5ceRT/dIDU6V7VVPSO8TLUL7Nkp5cVKQON8qGIu63bw8pAfe/ZxMrv7Dhvc3yV0N2iWlEvkViAAAA=="
+        },
+        {
+          "src": "/photos/sinhala-wedding/sinhala-wedding-07.webp",
+          "width": 2048,
+          "height": 1365,
+          "blurDataUrl": "data:image/webp;base64,UklGRm4AAABXRUJQVlA4IGIAAAAQAgCdASoQAAsAA4BaJZACsAC23JYLIUgAAPwr/wmU3lihJqA/fhv5Fkm5jPkCVAvo2zp13L/y0uDw0IH63bOFhaPE23nEvobzouIISvOu7xKvZUQqH/WGbPENjPGiAwAAAA=="
+        },
+        {
+          "src": "/photos/sinhala-wedding/sinhala-wedding-08.webp",
+          "width": 1365,
+          "height": 2048,
+          "blurDataUrl": "data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAABwAgCdASoLABAAA4BaJZQCdAYvryp/cY3hcrQAAMyC/z1xioXWxwyg60MhRv5MpsD9fYXwcI/vnqU59NU+h9kPZNw76e3DFK5xrzoH9AHTHee3BUnlXfoDf+ckiT7AyRkGy6A8zbz/oncAAAA="
+        }
+      ]
+    },
+    {
+      "slug": "hindu-wedding",
+      "category": "WEDDING",
+      "tags": ["hindu-wedding", "ceremony"],
+      "title": "Hindu Wedding",
+      "titleFr": "Mariage hindou",
+      "alt": "Hindu wedding: bride in a coral silk saree and groom in a white veshti",
+      "altFr": "Mariage hindou : mariée en sari de soie corail et marié en veshti blanc",
+      "featured": true,
+      "year": 2024,
+      "images": [
+        {
+          "src": "/photos/hindu-wedding/hindu-wedding-01.webp",
+          "width": 1920,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRmYAAABXRUJQVlA4IFoAAADwAQCdASoNABAAA4BaJaACdADdSJtynSAA/vCrK3JLqfl+0d+39WVW1pPI3mYNvi2HwHwswtAnEvwUsDEMA5FZpl58qdZX38Ky03nTkyWMb98o8r/zr/aAAAA="
+        },
+        {
+          "src": "/photos/hindu-wedding/hindu-wedding-02.webp",
+          "width": 1920,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRmwAAABXRUJQVlA4IGAAAAAQAgCdASoNABAAA4BaJbACdADhafvLEtuAAOJ+nn2Xgf4LNMZY0Ni2LJzMoTMvOX09AptRRyd74IwxQdETMoRDwtXbeeakWBUEGil4Y8SinpZM47LNoQrCZxbDvkfAAAA="
+        },
+        {
+          "src": "/photos/hindu-wedding/hindu-wedding-03.webp",
+          "width": 1920,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRl4AAABXRUJQVlA4IFIAAAAwAgCdASoNABAAA4BaJYgCsADdJ3EJ856sAAD9vot8r768fy92KtzD9HG5PRSbJNpjazJ7cxRcQudPXj3U4dvt+2xFejHn3CxNRZ1DufkIAAAA"
+        },
+        {
+          "src": "/photos/hindu-wedding/hindu-wedding-04.webp",
+          "width": 1632,
+          "height": 2040,
+          "blurDataUrl": "data:image/webp;base64,UklGRmgAAABXRUJQVlA4IFwAAACwAQCdASoNABAAA4BaJYgCsACUDJYAAP3wBf+UzCX8w7tv+sruoF9JKRyLjUF9Rcr+o37dWnvzRCqU1WBl7NkeNM3udmr8j3lcB1T7V7eiC58Ke+PdL/aVuYAAAA=="
+        },
+        {
+          "src": "/photos/hindu-wedding/hindu-wedding-05.webp",
+          "width": 1632,
+          "height": 2040,
+          "blurDataUrl": "data:image/webp;base64,UklGRmwAAABXRUJQVlA4IGAAAADwAQCdASoNABAAA4BaJYwCdAD73H719cAA/tgRqfGgjWQQEenqyDmIvMiX7jgYiUtefLLQVNeKv7IQfTi0GtaBMg9sivFA1xHEc+DGor122K7Oy8iMfX7tdKq7lQc0IAA="
+        },
+        {
+          "src": "/photos/hindu-wedding/hindu-wedding-06.webp",
+          "width": 1464,
+          "height": 1916,
+          "blurDataUrl": "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAAAQAgCdASoMABAAA4BaJYwC7AD6DAEF+b0AAP7roRM8d+7gTcl0oDoAjRItr6HCnhfrEYMq7w7+9fI8HleTJavX7Z42F5JZwKlyqS1GkMHoNs/rZAieJegIddkv54AA"
+        },
+        {
+          "src": "/photos/hindu-wedding/hindu-wedding-07.webp",
+          "width": 2048,
+          "height": 1638,
+          "blurDataUrl": "data:image/webp;base64,UklGRnAAAABXRUJQVlA4IGQAAAAwAgCdASoQAA0AA4BaJbACdEf/7oABOAgOAAD+mPeN8afPQr8qfeQA0Hi6TN2VlYkWea+2JwVSUSOi2wz5YurV58izLk40a6rCxXtT3ZQ8UUUzIKAz07jY+Wn7FND3gcO4gIAA"
+        },
+        {
+          "src": "/photos/hindu-wedding/hindu-wedding-08.webp",
+          "width": 1920,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAAAQAgCdASoNABAAA4BaJZgCdADhimk4waW4APwAdy6zWGIeYl1maxfNmO0ldJbeejO508pM1eSWcLJhsPZBQD215hGCejqQLlQxNyNQUC0zL/RBPZSAAA=="
+        },
+        {
+          "src": "/photos/hindu-wedding/hindu-wedding-09.webp",
+          "width": 1920,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAABQAgCdASoNABAAA4BaJaAC7AYwdbSrSUhdD2AA/f+NI/g1m+3ADpRNPh38ajooiu12UjAeyskaVGT6rSNHxqhh6AYHCRBTK6MM3HB0qEeW1nfSq0taG1aSyWy60WJCuvDvSO9EIrD1lPD5mJB+AAAA"
+        },
+        {
+          "src": "/photos/hindu-wedding/hindu-wedding-10.webp",
+          "width": 2400,
+          "height": 1920,
+          "blurDataUrl": "data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAAAQAgCdASoQAA0AA4BaJZQAD5SwgRPPOosgAP7yPnAVW7ST+P9+pocGlIxZwZvmIOjOwyclfrSt+ADdvqmPBBvSb3wt7PsNmv4NhKSjOGYzAbkWpP7UKuChNdqRWeeRv8gMhhTogAA="
+        },
+        {
+          "src": "/photos/hindu-wedding/hindu-wedding-11.webp",
+          "width": 2048,
+          "height": 1366,
+          "blurDataUrl": "data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAADwAQCdASoQAAsAA4BaJZQCsAEJhlJUVAAA/pBI0CN59C4h4/kJqqFzqtzRmMgyrvH8uiUA947NIOs1xHA4AgQgWAA="
+        },
+        {
+          "src": "/photos/hindu-wedding/hindu-wedding-12.webp",
+          "width": 1638,
+          "height": 2048,
+          "blurDataUrl": "data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAADwAQCdASoNABAAA4BaJaAC7AD6/+oMV0AA/vJppaY3HfuDkaTj/WNJICovbcFxAd6egIJc2jWWa9W2sOP0uLxq1HBnQqtptay05EDEJDhu1F0ptXNzPAfzodKPyyYNVVXtuIkgAAA="
+        },
+        {
+          "src": "/photos/hindu-wedding/hindu-wedding-13.webp",
+          "width": 2048,
+          "height": 1638,
+          "blurDataUrl": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAAAQAgCdASoQAA0AA4BaJYgCdAEUikhBa/XgAP4K2mmdf6It7jAJO4aaT2xABckHNR2+0NSMZuykDJfYcDoVlr9bb6DDmFK0IijF/2VmylxFH2cedfqUi27Y8E/hX6v8UH7XgYrnS00BEPBhNzzJgcAA"
+        }
+      ]
+    },
+    {
+      "slug": "bride-and-groom-preshoot",
+      "category": "WEDDING",
+      "tags": ["pre-shoot"],
+      "title": "Bride and Groom Pre-shoot",
+      "titleFr": "Séance avant le mariage",
+      "alt": "Bride and groom pre-wedding portrait session",
+      "altFr": "Séance de portraits des mariés avant le mariage",
+      "featured": true,
+      "year": 2020,
+      "images": [
+        {
+          "src": "/photos/bride-and-groom-preshoot/bride-and-groom-preshoot-01.webp",
+          "width": 2048,
+          "height": 1366,
+          "blurDataUrl": "data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAADwAQCdASoQAAsAA4BaJYwAAp0w90HEskAA/uo3+2XVsvy6ntfDVT9CRpCTOstEsBEmiopYDcKRndZCPPjg844Z3nCF2jXEfmy1cIAKIAA="
+        },
+        {
+          "src": "/photos/bride-and-groom-preshoot/bride-and-groom-preshoot-02.webp",
+          "width": 2048,
+          "height": 1366,
+          "blurDataUrl": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAADQAQCdASoQAAsAA4BaJQBOgB0+qyLWkAD+5ghWCtc9Y4rJM7UTO1TjK/Tsqq5zwwFtWFWUe7Acf+jcucfFMZ4WrTfcA+htJEOyW8QKkMpSXDOtsgWQAA=="
+        },
+        {
+          "src": "/photos/bride-and-groom-preshoot/bride-and-groom-preshoot-03.webp",
+          "width": 2048,
+          "height": 1366,
+          "blurDataUrl": "data:image/webp;base64,UklGRmQAAABXRUJQVlA4IFgAAADQAQCdASoQAAsAA4BaJZQAAptR2SaQiAD+7OHQXzKjyj5pk3Oyq43uCW8nfidOSGsAmb3ASdiVnQ+Vfp9nsR2QHkYtQjOMBRxTns5LbbghUqoVAJHQIAAA"
+        },
+        {
+          "src": "/photos/bride-and-groom-preshoot/bride-and-groom-preshoot-04.webp",
+          "width": 1366,
+          "height": 2048,
+          "blurDataUrl": "data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAAAwAgCdASoLABAAA4BaJYwAAu0ePvfnZBO2AAD+8XlGrrHlGWIv/NtWtV0TcCMbsmk1zthAZU3NSzRIkz1k5Otuqcj5F3hgtoyV8t7ZUIAAAA=="
+        },
+        {
+          "src": "/photos/bride-and-groom-preshoot/bride-and-groom-preshoot-05.webp",
+          "width": 1366,
+          "height": 2048,
+          "blurDataUrl": "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAABQAgCdASoLABAAA4BaJYwCdAYvNwOoeXh5VHwA/vQ1efE/H9jEQDva4t21WCOmra9CLCgdNeZYOBXYAF3AjbM03LlLZy5VQh/bT1hAadkco30sn/VN3Mj6JTmE9AAA"
+        },
+        {
+          "src": "/photos/bride-and-groom-preshoot/bride-and-groom-preshoot-06.webp",
+          "width": 2048,
+          "height": 1366,
+          "blurDataUrl": "data:image/webp;base64,UklGRnAAAABXRUJQVlA4IGQAAAAwAgCdASoQAAsAA4BaJZQC7AD7WFQgpu7yAAD+tf5Psqrqapdqr9OAw6Epx3s+S05aqcUa7kNAAWe826qn7zZPIdsHdfYiVXTIjDqvYwTuDUzVjTEcVdsibWxP7oe0ACVkwAAA"
+        },
+        {
+          "src": "/photos/bride-and-groom-preshoot/bride-and-groom-preshoot-07.webp",
+          "width": 1366,
+          "height": 2048,
+          "blurDataUrl": "data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAAAwAgCdASoLABAAA4BaJbACdAEedWpA6OGyAAD+R+KUiD/Qk3ZMuDvg+zjtlNm/hHe694x0lTtl2IjCEEKvOJWHBqPxMFCOgYea577Nghl4weuBcMALrT2UKjFt0JYUwRxdTiYAAAA="
+        }
+      ]
+    },
+    {
+      "slug": "wedding-preshoot",
+      "category": "WEDDING",
+      "tags": ["pre-shoot"],
+      "title": "Temple Pre-wedding Shoot",
+      "titleFr": "Séance prénuptiale au temple",
+      "alt": "Pre-wedding shoot: couple in traditional dress among temple architecture",
+      "altFr": "Séance prénuptiale : couple en tenue traditionnelle devant un temple",
+      "featured": false,
+      "year": null,
+      "images": [
+        {
+          "src": "/photos/wedding-preshoot/wedding-preshoot-01.webp",
+          "width": 2048,
+          "height": 1366,
+          "blurDataUrl": "data:image/webp;base64,UklGRm4AAABXRUJQVlA4IGIAAADwAQCdASoQAAsAA4BaJYwC7ADHja0S2+AA/gp6ln7Pz3mPJcRt5WAqPVdCe319sRTEPaX01cgnIt01/Zqc8A6D3pf5CvkjXZeGKOU9rLMnB9hzkrK3uDdvVP3SAB5wJQAAAA=="
+        },
+        {
+          "src": "/photos/wedding-preshoot/wedding-preshoot-02.webp",
+          "width": 1638,
+          "height": 2048,
+          "blurDataUrl": "data:image/webp;base64,UklGRnYAAABXRUJQVlA4IGoAAAAQAgCdASoNABAAA4BaJZQC7AYvq7tTYVAAAP7PLF/7D3SVdd5zxFzpK48OSkkc94M2oF8O5UCiBZVd1lv5Rx9HvPAiZpk3cCPDver8pK1hSiJohmXNGMxdfC30+K3UXwAvPbIsJrdqa4AA"
+        },
+        {
+          "src": "/photos/wedding-preshoot/wedding-preshoot-03.webp",
+          "width": 1364,
+          "height": 2046,
+          "blurDataUrl": "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAADwAQCdASoLABAAA4BaJYwAAuuWbTXuU4AA/sB/pyF+VzmIR4Sk7ibScW2PGWcRhEQ0t6wrzmDB0KEOxEqguRrSiwPL4Gg4yXpwE1/pfMUF8of53HWsof9AcYAriAAA"
+        },
+        {
+          "src": "/photos/wedding-preshoot/wedding-preshoot-04.webp",
+          "width": 1366,
+          "height": 2050,
+          "blurDataUrl": "data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAABQAgCdASoLABAAA4BaJaACdAEQFPZwa7P40AAA/t3W2qG6qUCbuz27ipvVMsee0phrM18i/deIK2rnNkjz2lFXNryEMz40H7GEwq5f4U1Sg324mlpUbClbTmXxOufoWG0AfNhSpm0Z/q/PPiQAAA=="
+        },
+        {
+          "src": "/photos/wedding-preshoot/wedding-preshoot-05.webp",
+          "width": 2046,
+          "height": 1365,
+          "blurDataUrl": "data:image/webp;base64,UklGRmYAAABXRUJQVlA4IFoAAADwAQCdASoQAAsAA4BaJZQCdAEfSqbIeKgA/upSYdQWFuATAPJYksLGA5uI9joCLgKArj9L7NV3nPogOK3Vmg4Z1Yve8/Ufh1JM4/Kd3Fs8hRiJMQP2LeRAAAA="
+        },
+        {
+          "src": "/photos/wedding-preshoot/wedding-preshoot-06.webp",
+          "width": 2050,
+          "height": 1366,
+          "blurDataUrl": "data:image/webp;base64,UklGRmQAAABXRUJQVlA4IFgAAAAQAgCdASoQAAsAA4BaJZQCdADp9NX5QyIAAP7SS0dHlmLbqLABD2NvRdVtzQ2vFNQi/jSmGgk0XMgEXeObc7G8UYfkOSIz0nTndheqwrlOlVuBOOQJsAAA"
+        },
+        {
+          "src": "/photos/wedding-preshoot/wedding-preshoot-07.webp",
+          "width": 1638,
+          "height": 2048,
+          "blurDataUrl": "data:image/webp;base64,UklGRnAAAABXRUJQVlA4IGQAAADwAQCdASoNABAAA4BaJYwC7AEN5P5mwAAA/m0SjDdeSAP9frzD23o9HJPs5eL5etlqcxJOH0eZLJerpIqDrJUhIS1SJo8yyaxNXSSfAonGe+Ozy+C+M7NlqKcD7Y9oL6sZwAAA"
+        }
+      ]
+    },
+    {
+      "slug": "outdoor-theme-preshoot",
+      "category": "WEDDING",
+      "tags": ["pre-shoot", "outdoor"],
+      "title": "Outdoor Themed Pre-shoot",
+      "titleFr": "Séance thématique en extérieur",
+      "alt": "Outdoor vintage-themed pre-wedding shoot with a classic motorcycle",
+      "altFr": "Séance prénuptiale en extérieur au thème rétro, avec une moto ancienne",
+      "featured": false,
+      "year": null,
+      "images": [
+        {
+          "src": "/photos/outdoor-theme-preshoot/outdoor-theme-preshoot-01.webp",
+          "width": 1920,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAADQAQCdASoNABAAA4BaJZQCdAC4WXblgAD+wkp7SdCUu+n+Zl4vu7gU1vKftA763ykK8b9L5tTTlq/4/WTGpW8Wm82hBVn7gXaJ7cdjR8IrqkIkbv1B7SNXnpGyAAAA"
+        },
+        {
+          "src": "/photos/outdoor-theme-preshoot/outdoor-theme-preshoot-02.webp",
+          "width": 1722,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRmwAAABXRUJQVlA4IGAAAADwAQCdASoLABAAA4BaJZQCw7ELUKpmcwAA/jL/lvcG7u1sPpbjt+xb9AVmameFkzImiltse2UFDorCb36XzF71OvToxRgNb2BU5kL/dQiC63/FOuaX1C5DjRmCNtTQAAA="
+        },
+        {
+          "src": "/photos/outdoor-theme-preshoot/outdoor-theme-preshoot-03.webp",
+          "width": 1600,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAADwAQCdASoLABAAA4BaJZQCdAEO/+M1r9gA/uXwUOAKloqGh6oeVtgZqdgBJhrCEwgZolzhwj5w7Pi0cVXS1x26QGDbDRgINY2RiuUAAAA="
+        },
+        {
+          "src": "/photos/outdoor-theme-preshoot/outdoor-theme-preshoot-04.webp",
+          "width": 1722,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRmwAAABXRUJQVlA4IGAAAAAQAgCdASoLABAAA4BaJQBdgCLZln5OozoAAP7xGXW+v/SinZpt+8wurPN/nd9ny+XVz7FVFNl1t41aYDlPn+18qGjGgqnXray5hj92YXjR2wVX/gfzRDvm4H7V0TAAAAA="
+        },
+        {
+          "src": "/photos/outdoor-theme-preshoot/outdoor-theme-preshoot-05.webp",
+          "width": 1920,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAAAQAgCdASoNABAAA4BaJYwCdAEfU+kqd9VAAP67bOisHJYbk30FjI3vI07O5lbedv+FdSR06TupodkN2cH1qC5ZXA2f4MIhFJiMPd8P++dBD8SuYhrwxfKnIyjVAYJDEZch8NqgAAA="
+        },
+        {
+          "src": "/photos/outdoor-theme-preshoot/outdoor-theme-preshoot-06.webp",
+          "width": 2057,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAAAwAgCdASoOABAAA4BaJQBYdiG/EMRoFEHkgAD+6f0aqohsR9zz/rS2LjCD24juL84/XbBa7eaF+uQFbfWF1579Fx/rLmiwHH5dzKq/NCOl9qJpXEAAAA=="
+        }
+      ]
+    },
+    {
+      "slug": "wedding-day",
+      "category": "WEDDING",
+      "tags": ["wedding-day"],
+      "title": "Wedding Day Portraits",
+      "titleFr": "Portraits du jour du mariage",
+      "alt": "Wedding day portraits of the bride and groom with a vintage car",
+      "altFr": "Portraits des mariés le jour du mariage avec une voiture ancienne",
+      "featured": false,
+      "year": null,
+      "images": [
+        {
+          "src": "/photos/wedding-day/wedding-day-01.webp",
+          "width": 2048,
+          "height": 1365,
+          "blurDataUrl": "data:image/webp;base64,UklGRm4AAABXRUJQVlA4IGIAAADwAQCdASoQAAsAA4BaJZACw7YtKysNOAAA9jTX7zs2wjZJDLW1L7S6Idrf5gH5utNWSk1IVoLQhhkzHAlv4jtt2m4+RqR7xFrgskqnPlLf+1tBcyefxkUaR2N+d1+HYVMAAA=="
+        },
+        {
+          "src": "/photos/wedding-day/wedding-day-02.webp",
+          "width": 2048,
+          "height": 1463,
+          "blurDataUrl": "data:image/webp;base64,UklGRnAAAABXRUJQVlA4IGQAAAAwAgCdASoQAAsAA4BaJYgCw7EVz+m6VCrcAAD+51hIQmgaRyFg2SpRGl3NL7W5yF0HpJqo54s/zkMjFI3HrdLTHvj5iKbjBTrEv5PjlE8Y9y2/rGidNIHxZx6SPGibOWveQAAA"
+        },
+        {
+          "src": "/photos/wedding-day/wedding-day-03.webp",
+          "width": 2048,
+          "height": 1365,
+          "blurDataUrl": "data:image/webp;base64,UklGRlwAAABXRUJQVlA4IFAAAAAQAgCdASoQAAsAA4BaJZwAAvhyTP0dBmgAAP7gCo5qzdz0/04EFl4iOHI/AEYY1/6zQs4qf+UMp5kggL+UPUxXWGMWvkDR+zaIruU6NJgoAA=="
+        },
+        {
+          "src": "/photos/wedding-day/wedding-day-04.webp",
+          "width": 1638,
+          "height": 2048,
+          "blurDataUrl": "data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAAAQAgCdASoNABAAA4BaJZwAD5FNqYsSsLWQAPzLQzYndT1ozAtd/GRQvXapGJUWEuZUQuo0RrBO/Yw1tI7ggkSpD9kgRIa8iLeoVWOQd4+m9iDmeKY5AaaAzoK6piQBSkJJbe53OMvKtsDgcAA="
+        },
+        {
+          "src": "/photos/wedding-day/wedding-day-05.webp",
+          "width": 2048,
+          "height": 1463,
+          "blurDataUrl": "data:image/webp;base64,UklGRngAAABXRUJQVlA4IGwAAAAwAgCdASoQAAsAA4BaJZwC7AYvrvs/D5feMAD+6KKH3cdGAHcSXCLP3wQD/0hqn3vW9mvHnR8eZ0LO3hvtwcVRdTdFBQiKwI9yCTsU/F8uyFssQmBGB1YomlnSfp3JZnMWo5+mcWo3ExX4oAA="
+        },
+        {
+          "src": "/photos/wedding-day/wedding-day-06.webp",
+          "width": 2048,
+          "height": 1365,
+          "blurDataUrl": "data:image/webp;base64,UklGRmAAAABXRUJQVlA4IFQAAAAwAgCdASoQAAsAA4BaJaQAAxear/ePYRAIAAD8Off852tV/Cc8jzC75W65u9PX1Wt1mKOBhVkhF0aF7btWOfcwq684IuHzjFusmzH4Ot7EWMCNwAA="
+        }
+      ]
+    },
+    {
+      "slug": "baby-shower",
+      "category": "FAMILY",
+      "tags": ["baby-shower"],
+      "title": "Garden Baby Shower",
+      "titleFr": "Fête prénatale au jardin",
+      "alt": "Baby shower: parents-to-be and guests with pastel balloons",
+      "altFr": "Fête prénatale : futurs parents et invités avec des ballons pastel",
+      "featured": true,
+      "year": null,
+      "images": [
+        {
+          "src": "/photos/baby-shower/baby-shower-01.webp",
+          "width": 1920,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRl4AAABXRUJQVlA4IFIAAAAwAgCdASoNABAAA4BaJQBOj+AQSZGWn/v2AAD+8d+ZNvYO1ErNAy0dFqOSAAxmQNHf4jnPtvaXJKuMw5DXdls+iHZguXHdI4as2uxRR1tYIAAA"
+        },
+        {
+          "src": "/photos/baby-shower/baby-shower-02.webp",
+          "width": 1920,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAADwAQCdASoNABAAA4BaJbACdADbI1IvbQAA/u/vv5lX2LWNWqBs2WJdI9UcUQ4bvDqyh0Gqeec3yHsvOC7cDmcRkq7cQ5/Qm7PUClP9xxCRlpUygqRHHUabM/2MoIAA"
+        },
+        {
+          "src": "/photos/baby-shower/baby-shower-03.webp",
+          "width": 1920,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRmIAAABXRUJQVlA4IFYAAABQAgCdASoNABAAA4BaJYgCdAYtBuKU8MRtCAAA/vZoFNIJMWwFgtiU9z/GfC+JUpat641/gbMpzq9laqFPvAxibl4KbpcNyVm1iOFGVDcxhNqxfAAAAA=="
+        },
+        {
+          "src": "/photos/baby-shower/baby-shower-04.webp",
+          "width": 1920,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAABwAgCdASoNABAAA4BaJYgCdAYwTjYd/LxYJV8gAP5mgmy/BrtVxKsFQmZnCEF/SBTvR9xFPhhJXpp0oXlUlfGQxyCMzWyJnd53c+PaYM6aqBsTp8diYaFmVVLO+1OzJd24M8iOCwz7t8gP1/rkAUAA"
+        },
+        {
+          "src": "/photos/baby-shower/baby-shower-05.webp",
+          "width": 1920,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAABwAgCdASoNABAAA4BaJYgCsAYv/y5mwntnRhaAAPzZecorkvgBD9qI9oe6163Ty41f2Lzvz3gZBd8SrQj/eqB79BGYv5q60/IG4EP8Zx4eO2lJXGVtMIFvJdDaBlZc3p6dFRuR2mnl7PIALcrp8hAA"
+        }
+      ]
+    },
+    {
+      "slug": "maternity-session",
+      "category": "FAMILY",
+      "tags": ["maternity", "baby-shower"],
+      "title": "Maternity Session",
+      "titleFr": "Séance de maternité",
+      "alt": "Studio maternity session of an expecting couple",
+      "altFr": "Séance de maternité en studio d’un couple qui attend un enfant",
+      "featured": false,
+      "year": 2026,
+      "images": [
+        {
+          "src": "/photos/maternity-session/maternity-session-01.webp",
+          "width": 1920,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRo4AAABXRUJQVlA4IIIAAADQAgCdASoNABAAA4BaJZQCw8GgC1RtTexU7A4tJQAAAP73EDZRUqCY4B9UGAosNSK3HPm23YiqdrK/VjsL9+X6GsXfqAxi8do3AU7ffr3jGikhX6IrHauDGe1XbneANViItnfw3GY9QYWVoeQyBao+89kH8/39uTPLfdAByeKGu7gA"
+        },
+        {
+          "src": "/photos/maternity-session/maternity-session-02.webp",
+          "width": 1920,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRm4AAABXRUJQVlA4IGIAAADwAQCdASoNABAAA4BaJZwAD4bQZR/FboAA/vcLk8+yrZWD/3McAHGZAHqYJzCuuDnEj4nUdFkSVA1fXDj1MEe7szP9KbG3OXpfLNP/VKnb76mBRg0djBZ+9latS0Y5qoAAAA=="
+        },
+        {
+          "src": "/photos/maternity-session/maternity-session-03.webp",
+          "width": 1920,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRnwAAABXRUJQVlA4IHAAAAAwAgCdASoNABAAA4BaJZwAD4YRf+9mINtdwAD+90IVe5l5YNTpcLAH/aF+GxZIrrB+rwCU+lKbOL/i5pniok1WqF9qu99jEaqTvZ4IsdHfmKWkmOe/H82PGLLCV620WBaA1vjnP8J/3RmLWJsAAAAA"
+        },
+        {
+          "src": "/photos/maternity-session/maternity-session-04.webp",
+          "width": 1920,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRm4AAABXRUJQVlA4IGIAAAAwAgCdASoNABAAA4BaJZwAD4cwbqprQIpKQAD++BnkU3hfKW4GUztZQ/3bqdJ9hxbeiZyPGRHHCUzmxJLNF+Ezqx/Cy229Scbx16z8e2/XBuu4v1BWRIlUvHkHHS9M3oAAAA=="
+        },
+        {
+          "src": "/photos/maternity-session/maternity-session-05.webp",
+          "width": 1920,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRnYAAABXRUJQVlA4IGoAAADwAQCdASoNABAAA4BaJZQC7AYu5V73r/AA/u3XSkftJNhhydr6lI+uz0ZfnhahUY4V71NeTV8iM9UEFdlFfLWtKDhJLTmbH8S5R50QhM8y7mbH2nvRQYejeu3S7RAVpkuP6aKIfmysAAAA"
+        },
+        {
+          "src": "/photos/maternity-session/maternity-session-06.webp",
+          "width": 1920,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRowAAABXRUJQVlA4IIAAAABQAgCdASoNABAAA4BaJZwAD4JOL0DlNPhSFYAA/pwTa7fTc2ByWynvj9a8UTQoWUEOmc6enZDTJ2uOl5sOuyH+f9uicX5YJqO3ISak8j/m3tlc6SQJeFxDMyOGlyY/Ig5C0NzccDZHjPKyTwV7n3i4FT/LK3hGBzK7geRYuNgQAA=="
+        }
+      ]
+    },
+    {
+      "slug": "puberty-ceremony",
+      "category": "FAMILY",
+      "tags": ["puberty-ceremony", "ceremony"],
+      "title": "Puberty Ceremony",
+      "titleFr": "Cérémonie de puberté",
+      "alt": "Puberty ceremony: young woman in a mint saree with her family",
+      "altFr": "Cérémonie de puberté : jeune femme en sari menthe avec sa famille",
+      "featured": false,
+      "year": null,
+      "images": [
+        {
+          "src": "/photos/puberty-ceremony/puberty-ceremony-01.webp",
+          "width": 1601,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRmQAAABXRUJQVlA4IFgAAADQAQCdASoLABAAA4BaJQBOgBrVOuKtwAD+rPtF7x4NDQip0tMoMAE+hTeBe6m4XZ7ZrYzHqozPOp5Lb1gU1t/vtgKuuBCCzbaayL7c6AeN6gT6mz0cAAAA"
+        },
+        {
+          "src": "/photos/puberty-ceremony/puberty-ceremony-02.webp",
+          "width": 2400,
+          "height": 1601,
+          "blurDataUrl": "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAADQAQCdASoQAAsAA4BaJQBOgBTF1P1AoAD+5kExLrgqbtdLu0Kj/M8spsVStPpvnQgsdaGwy39mSmcm9OGvDOhY9feMzgleOyu7/HdxEUhzY44qDKF7ExHu8RWmkAAA"
+        },
+        {
+          "src": "/photos/puberty-ceremony/puberty-ceremony-03.webp",
+          "width": 1601,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRmwAAABXRUJQVlA4IGAAAABQAgCdASoLABAAA4BaJZgCdAYt9n0vVYJvojQA/tUFilWsKilAhPPbx0pgwVgmxHeSLnwKaO7OzxmGge9ZEFbSm922vc8BrfuN0OYy02uqaNBbmxMdsig13h54yhWcAAA="
+        },
+        {
+          "src": "/photos/puberty-ceremony/puberty-ceremony-04.webp",
+          "width": 2400,
+          "height": 1601,
+          "blurDataUrl": "data:image/webp;base64,UklGRmwAAABXRUJQVlA4IGAAAABQAgCdASoQAAsAA4BaJbACdADp6LaHUaFm7gAA+2tE2Gu3dRK8uV986ACLqq8/eZVoFjB0BCbfavFmTQ/tLHjMTpGAcKcMlwzFEl+g31cIhZFPk/WPS6ZRdpukcvk7AAA="
+        },
+        {
+          "src": "/photos/puberty-ceremony/puberty-ceremony-05.webp",
+          "width": 2400,
+          "height": 1601,
+          "blurDataUrl": "data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAABQAgCdASoQAAsAA4BaJZgCdAYxF2/cxX85YgAA9oTOkSzXPUaeEG8uKk9d2Y2fq+qi8Z0+KFBNrsuKOxt5XvK5jiiXKs8fOdoLjTmU/EyJmjIqdyGsiDUT64uaOHYEldQcEBmkAAA="
+        }
+      ]
+    },
+    {
+      "slug": "model-shoot",
+      "category": "PROFESSIONAL",
+      "tags": ["model-portfolio"],
+      "title": "Model Portfolio Shoot",
+      "titleFr": "Séance portfolio de mannequin",
+      "alt": "Model portfolio shoot in a hotel suite",
+      "altFr": "Séance portfolio de mannequin dans une suite d’hôtel",
+      "featured": true,
+      "year": null,
+      "images": [
+        {
+          "src": "/photos/model-shoot/model-shoot-01.webp",
+          "width": 1920,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRnQAAABXRUJQVlA4IGgAAABQAgCdASoNABAAA4BaJZACdAERCCjQXvSaIAAA/kQSuweK74MM/AfjiNeasj1k1PJuvyj6+9N6j/UgyQ9l7PbqnQvTmCRW6IrgKwbwRXSH49UBkLE7HThfrZfQ8x5TtwmWxfXmq6AAAA=="
+        },
+        {
+          "src": "/photos/model-shoot/model-shoot-02.webp",
+          "width": 1920,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAABQAgCdASoNABAAA4BaJYwCdAYuROT6kCa3IgAA/ubOqpe3mtPjIax8PpmaJHpHr+fk/VSQI0ADz95kX1e2gV4uTUTabriLujVnI1kV7uPjgf/KT3duGmiPT8553e77kbTZDjRBP4KN2Oq21KAAAA=="
+        },
+        {
+          "src": "/photos/model-shoot/model-shoot-03.webp",
+          "width": 1920,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRnQAAABXRUJQVlA4IGgAAADwAQCdASoNABAAA4BaJQBOgBmLeTSYs0AA/PajRc4ZlcgmYKG9uk4wZIN4+1mh8t+Kx8ylETn9x9bApdHjx15gDK85QAuxekhOnph2uuYbsjUXORAzLwWWbFfELYKCdc6rwTDWzTu0AA=="
+        },
+        {
+          "src": "/photos/model-shoot/model-shoot-04.webp",
+          "width": 1800,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAAAwAgCdASoMABAAA4BaJYwCdAYu5vZEqNJQAADOPp9+TEVRKwCnL1rixtUMzGH0Gp/09O8khTy1vtXqBcG9N3BadJ1Ni5tFqHD36u3/emDv9dYlkDe8zHKVhV7yatUpbN1Wv4JBd9+PK6igpd6AAA=="
+        },
+        {
+          "src": "/photos/model-shoot/model-shoot-05.webp",
+          "width": 1800,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRmgAAABXRUJQVlA4IFwAAADwAQCdASoMABAAA4BaJQBOgB7HkRkCZHAA/ub5Bsj+cjhafLd+TvRTa2ZpyqQjnrZMQ1itfTd2bo0OwKT5xq52zCHWdpkE40rfZnt5oyqgiad/ySw79g4mdOyAAA=="
+        },
+        {
+          "src": "/photos/model-shoot/model-shoot-06.webp",
+          "width": 1800,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRnYAAABXRUJQVlA4IGoAAABQAgCdASoMABAAA4BaJQBOgMV9trV3l2aRrgAA4nCbRa6YnBHAS878G7zl5lsrpdfs7gKTQ6xEcptsq+rCQhcc9Orq3oL3SvgU2ntq5VX+nAV74kacEBhAp0AqCDBUl3ft+CZeHwiVYAAA"
+        },
+        {
+          "src": "/photos/model-shoot/model-shoot-07.webp",
+          "width": 1800,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRmwAAABXRUJQVlA4IGAAAADQAQCdASoMABAAA4BaJYwCdAEQFA62CAD9ePlvmF/ZOY5z37dd/3S5e90DfTKVE338LGkX0oddIE5dgCTT9ma5HykERq70nXR+f1tVbmVjM2Z6TOU+T5FqFFXHlfXgAAA="
+        },
+        {
+          "src": "/photos/model-shoot/model-shoot-08.webp",
+          "width": 1800,
+          "height": 2400,
+          "blurDataUrl": "data:image/webp;base64,UklGRmoAAABXRUJQVlA4IF4AAAAQAgCdASoMABAAA4BaJZwAE+zIET8KT2CgAOIrlxO9IHXuXz3NmIQeucorDnTDr4/tvMknRA+ayR3eR9MXao/jMeZd1WLr2KhjCuSAvbYV7YNnULKVZHERu2mFYAAA"
+        }
+      ]
+    }
+  ],
+  "hero": [
+    {
+      "src": "/photos/bride-and-groom-preshoot/bride-and-groom-preshoot-03.webp",
+      "width": 2048,
+      "height": 1366,
+      "blurDataUrl": "data:image/webp;base64,UklGRmQAAABXRUJQVlA4IFgAAADQAQCdASoQAAsAA4BaJZQAAptR2SaQiAD+7OHQXzKjyj5pk3Oyq43uCW8nfidOSGsAmb3ASdiVnQ+Vfp9nsR2QHkYtQjOMBRxTns5LbbghUqoVAJHQIAAA",
+      "group": "bride-and-groom-preshoot",
+      "position": "50% 50%"
+    },
+    {
+      "src": "/photos/maternity-session/maternity-session-04.webp",
+      "width": 1920,
+      "height": 2400,
+      "blurDataUrl": "data:image/webp;base64,UklGRm4AAABXRUJQVlA4IGIAAAAwAgCdASoNABAAA4BaJZwAD4cwbqprQIpKQAD++BnkU3hfKW4GUztZQ/3bqdJ9hxbeiZyPGRHHCUzmxJLNF+Ezqx/Cy229Scbx16z8e2/XBuu4v1BWRIlUvHkHHS9M3oAAAA==",
+      "group": "maternity-session",
+      "position": "50% 30%"
+    },
+    {
+      "src": "/photos/model-shoot/model-shoot-03.webp",
+      "width": 1920,
+      "height": 2400,
+      "blurDataUrl": "data:image/webp;base64,UklGRnQAAABXRUJQVlA4IGgAAADwAQCdASoNABAAA4BaJQBOgBmLeTSYs0AA/PajRc4ZlcgmYKG9uk4wZIN4+1mh8t+Kx8ylETn9x9bApdHjx15gDK85QAuxekhOnph2uuYbsjUXORAzLwWWbFfELYKCdc6rwTDWzTu0AA==",
+      "group": "model-shoot",
+      "position": "50% 30%"
+    },
+    {
+      "src": "/photos/sinhala-wedding/sinhala-wedding-03.webp",
+      "width": 1365,
+      "height": 2048,
+      "blurDataUrl": "data:image/webp;base64,UklGRmwAAABXRUJQVlA4IGAAAAAQAgCdASoLABAAA4BaJQBOgB6S75C3tZWAAPy06B3Eu49Wiv88j9AnESkhwIbP2Pp7DGgYhsNVcOhk9JSM/64pP870Sf1O9QpDgt44M0BonufYtsEtodEGjHp1KU12kAA=",
+      "group": "sinhala-wedding",
+      "position": "50% 35%"
+    },
+    {
+      "src": "/photos/christian-wedding/christian-wedding-13.webp",
+      "width": 2050,
+      "height": 1365,
+      "blurDataUrl": "data:image/webp;base64,UklGRnoAAABXRUJQVlA4IG4AAABQAgCdASoQAAsAA4BaJZQC7AYulqyUnJDJshAA/ub2I+l8yqe9PZF/2GUjAg2Uskg+EDIQx47AwjNL4sr7WStBT7Vp7s66dwY7qcH99E82m71PYd0Q3TA4iWtZ51t6EUuv/yWSmuLWpDP0M1AAAA==",
+      "group": "christian-wedding",
+      "position": "50% 40%"
+    },
+    {
+      "src": "/photos/outdoor-theme-preshoot/outdoor-theme-preshoot-03.webp",
+      "width": 1600,
+      "height": 2400,
+      "blurDataUrl": "data:image/webp;base64,UklGRloAAABXRUJQVlA4IE4AAADwAQCdASoLABAAA4BaJZQCdAEO/+M1r9gA/uXwUOAKloqGh6oeVtgZqdgBJhrCEwgZolzhwj5w7Pi0cVXS1x26QGDbDRgINY2RiuUAAAA=",
+      "group": "outdoor-theme-preshoot",
+      "position": "50% 60%"
+    }
+  ],
+  "owner": [
+    {
+      "src": "/photos/owner/owner-01.webp",
+      "width": 2013,
+      "height": 2400,
+      "blurDataUrl": "data:image/webp;base64,UklGRk4AAABXRUJQVlA4IEIAAADwAQCdASoNABAAA4BaJZQCdADb1I5fiIAA/UcSlO0uiKSzyJIMe8EuiRCUM957ZKE+qZ8j4o8soSW3Li8kxWySgAA="
+    },
+    {
+      "src": "/photos/owner/owner-02.webp",
+      "width": 1683,
+      "height": 2400,
+      "blurDataUrl": "data:image/webp;base64,UklGRmYAAABXRUJQVlA4IFoAAACwAQCdASoLABAAA4BaJaQAAuZ8A724AP55PecR1mG2dFl1BGV6fzIqRn64iYdKWhFlo8Ps9Q2mxe1hSLHJJeZmll+M2q2C259bv6XxTGWWxXPqNWDniOI8AAA="
+    }
+  ],
+  "background": [
+    {
+      "src": "/photos/background/background-01.webp",
+      "width": 2400,
+      "height": 1602,
+      "blurDataUrl": "data:image/webp;base64,UklGRkYAAABXRUJQVlA4IDoAAADwAQCdASoQAAsAA4BaJZwCdAEN4R1agYAA/vd60fX0v3ijxR0bf4qq4ian7RxPRMQHhBxaxtNjyrAA"
+    },
+    {
+      "src": "/photos/background/background-02.webp",
+      "width": 2400,
+      "height": 1602,
+      "blurDataUrl": "data:image/webp;base64,UklGRkgAAABXRUJQVlA4IDwAAADQAQCdASoQAAsAA4BaJZQAAuQrW5SzwAD+9ofRJo1zgNdVc7vfbVm46ekUDsyN+THsJXvUykm9pDEvAAA="
+    },
+    {
+      "src": "/photos/background/background-03.webp",
+      "width": 2400,
+      "height": 1602,
+      "blurDataUrl": "data:image/webp;base64,UklGRjwAAABXRUJQVlA4IDAAAADwAQCdASoQAAsAA4BaJZQAAudnVTPd7AAA/vd12u/WvjC3idlqGGIE+eilA7LxcAA="
+    },
+    {
+      "src": "/photos/background/background-04.webp",
+      "width": 2400,
+      "height": 1602,
+      "blurDataUrl": "data:image/webp;base64,UklGRjgAAABXRUJQVlA4ICwAAADQAQCdASoQAAsAA4BaJZQAAudf/4gWAAD++EltZUGj18vNL/0fEts3i4AAAA=="
+    }
+  ]
+}

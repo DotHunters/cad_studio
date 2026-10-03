@@ -8,6 +8,7 @@ import ReactMarkdown from "react-markdown";
 import { JsonLd } from "@/components/site/json-ld";
 import { Accent } from "@/components/site/section-heading";
 import { StoredImage } from "@/components/site/stored-image";
+import { PackageTierCard } from "@/components/packages/package-tier-card";
 import { buttonVariants } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { Link } from "@/i18n/navigation";
@@ -16,6 +17,7 @@ import { parseFaqs, publishableText } from "@/lib/content";
 import { isPricingConfirmed } from "@/lib/flags";
 import { localize } from "@/lib/localize";
 import { formatCAD } from "@/lib/money";
+import { startingPriceCents } from "@/lib/pricing/options";
 import { serviceJsonLd } from "@/lib/seo/json-ld";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { cn } from "@/lib/utils";
@@ -95,7 +97,7 @@ export default async function PackageDetailPage({ params }: Props) {
             name,
             description: localize(pkg.summary, pkg.summaryFr, locale),
             category: categoryName,
-            basePriceCents: pkg.basePriceCents,
+            basePriceCents: startingPriceCents(pkg),
           },
         })}
       />
@@ -247,19 +249,34 @@ export default async function PackageDetailPage({ params }: Props) {
               {t("PackageDetail.startingAt")}
             </p>
             <p className="font-heading mt-1 text-5xl lining-nums">
-              {formatCAD(pkg.basePriceCents, locale)}
+              {formatCAD(startingPriceCents(pkg), locale)}
             </p>
             <p className="text-muted-foreground mt-2 text-xs">{t("PackageDetail.priceNote")}</p>
 
-            <h2 className="mt-6 text-xl">{t("PackageDetail.deliverables")}</h2>
-            <dl className="divide-border mt-3 divide-y text-sm">
-              {deliverables.map((item) => (
-                <div key={item.label} className="flex justify-between gap-4 py-2">
-                  <dt className="text-muted-foreground">{item.label}</dt>
-                  <dd className="text-right">{item.value}</dd>
-                </div>
-              ))}
-            </dl>
+            {pkg.tiers.length > 0 ? (
+              <p className="mt-6 text-sm">
+                <a href="#options" className="text-gold-text underline underline-offset-4">
+                  {t("Packages.options", {
+                    count: pkg.tiers.length,
+                    names: pkg.tiers
+                      .map((tier) => localize(tier.name, tier.nameFr, locale))
+                      .join(" · "),
+                  })}
+                </a>
+              </p>
+            ) : (
+              <>
+                <h2 className="mt-6 text-xl">{t("PackageDetail.deliverables")}</h2>
+                <dl className="divide-border mt-3 divide-y text-sm">
+                  {deliverables.map((item) => (
+                    <div key={item.label} className="flex justify-between gap-4 py-2">
+                      <dt className="text-muted-foreground">{item.label}</dt>
+                      <dd className="text-right">{item.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </>
+            )}
 
             <div className="mt-6 flex flex-col gap-2">
               <Link
@@ -290,6 +307,27 @@ export default async function PackageDetailPage({ params }: Props) {
           )}
         </aside>
       </div>
+
+      {pkg.tiers.length > 0 && (
+        <section id="options" aria-labelledby="options-title" className="mt-20 scroll-mt-24">
+          <h2 id="options-title" className="text-4xl">
+            {t("PackageDetail.optionsTitle")}
+          </h2>
+          <p className="text-muted-foreground mt-3 max-w-2xl">{t("PackageDetail.optionsIntro")}</p>
+          <ul className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {pkg.tiers.map((tier) => (
+              <li key={tier.key}>
+                <PackageTierCard
+                  tier={tier}
+                  packageSlug={pkg.slug}
+                  locale={locale}
+                  headingId={`tier-${tier.key}`}
+                />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section className="bg-ink text-paper mt-20 rounded-2xl px-6 py-14 text-center sm:px-12">
         <h2 className="[&_em]:text-gold-light text-4xl">

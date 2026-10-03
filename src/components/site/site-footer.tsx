@@ -4,6 +4,7 @@ import { siteConfig } from "@/config/site";
 import { Link } from "@/i18n/navigation";
 
 import { Logo } from "./logo";
+import { SocialLinks } from "./social-links";
 import { legalNav, mainNav } from "./nav-items";
 
 export function SiteFooter() {
@@ -35,7 +36,6 @@ export function SiteFooter() {
         <div className="space-y-2 text-sm">
           <p>
             <span className="text-paper/70">{t("Footer.email")}: </span>
-            {/* TODO(owner): real business email (Q6). */}
             <a
               className="hover:text-gold-light underline"
               href={`mailto:${siteConfig.contact.email}`}
@@ -43,6 +43,18 @@ export function SiteFooter() {
               {siteConfig.contact.email}
             </a>
           </p>
+          {siteConfig.contact.phones.map((phone) => (
+            <p key={phone.tel}>
+              <span className="text-paper/70">{t("Footer.phone")}: </span>
+              <a className="hover:text-gold-light underline" href={`tel:${phone.tel}`}>
+                {phone.display}
+              </a>
+            </p>
+          ))}
+          <SocialLinks
+            className="flex gap-4 pt-1"
+            linkClassName="hover:text-gold-light underline"
+          />
         </div>
       </div>
 

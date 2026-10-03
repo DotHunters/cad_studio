@@ -44,8 +44,12 @@ export default async function AdminPanelLayout({ children }: { children: ReactNo
           </Link>
           <div className="flex items-center gap-4 text-sm">
             <span className="text-muted-foreground hidden sm:inline" data-testid="admin-user">
-              {user.email} · {user.role === "ADMIN" ? "Admin" : "Staff"}
+              {user.email} ·{" "}
+              {user.isSuperAdmin ? "Super admin" : user.role === "ADMIN" ? "Admin" : "Staff"}
             </span>
+            <Link href="/admin/account/password" className="underline-offset-4 hover:underline">
+              Password
+            </Link>
             <form action={signOutAdmin}>
               <Button type="submit" variant="outline" size="sm">
                 Sign out

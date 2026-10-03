@@ -35,17 +35,26 @@ export function parsePricingRules(records: readonly PricingRuleRecord[]): Pricin
 }
 
 /**
- * The package a quote is priced from: the chosen one if it belongs to the category,
- * otherwise the category's cheapest active package (AGENTS.md §8.1 "category minimum").
+ * The option a quote is priced from (see ./options.ts): the chosen one if it belongs to the
+ * category; for a package slug whose package has tiers, its cheapest tier; otherwise the
+ * category's cheapest option (AGENTS.md §8.1 "category minimum").
  */
 export function resolvePackage<
-  T extends { slug: string; category: string; basePriceCents: number },
+  T extends { slug: string; category: string; basePriceCents: number; packageSlug?: string },
 >(packages: readonly T[], category: string, slug: string | undefined): T | null {
   const inCategory = packages.filter((pkg) => pkg.category === category);
-  const chosen = slug ? inCategory.find((pkg) => pkg.slug === slug) : undefined;
+  const cheapest = (options: readonly T[]) =>
+    options.reduce<T | null>(
+      (best, pkg) => (!best || pkg.basePriceCents < best.basePriceCents ? pkg : best),
+      null,
+    );
+  if (!slug) return cheapest(inCategory);
+  const chosen = inCategory.find((pkg) => pkg.slug === slug);
   if (chosen) return chosen;
-  return inCategory.reduce<T | null>(
-    (cheapest, pkg) => (!cheapest || pkg.basePriceCents < cheapest.basePriceCents ? pkg : cheapest),
-    null,
+  // A package link ("?package=wedding") for a package with tiers, or a tier that was removed.
+  const packageSlug = slug.split(":")[0];
+  return (
+    cheapest(inCategory.filter((pkg) => (pkg.packageSlug ?? pkg.slug) === packageSlug)) ??
+    cheapest(inCategory)
   );
 }

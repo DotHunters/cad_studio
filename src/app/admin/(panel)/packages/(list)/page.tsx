@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { ActionSwitch, ConfirmDeleteButton } from "@/components/admin/row-actions";
 import { buttonVariants } from "@/components/ui/button";
 import { slugFromCategory } from "@/lib/categories";
 import { formatCAD } from "@/lib/money";
+import { startingPriceCents } from "@/lib/pricing/options";
+import { deletePackage, setPackageActive } from "@/server/actions/admin/packages";
 import { requireAdminPage } from "@/server/auth/guards";
 import { adminCategoryOptions, listPackagesForAdmin } from "@/server/queries/admin-packages";
 
@@ -43,6 +46,7 @@ export default async function AdminPackagesPage({ searchParams }: Props) {
         </p>
       )}
 
+      {/* No loading skeleton: it would stop the row actions from refreshing this page. */}
       {packages.length === 0 ? (
         <p className="text-muted-foreground mt-8">No packages yet.</p>
       ) : (
@@ -63,10 +67,13 @@ export default async function AdminPackagesPage({ searchParams }: Props) {
                   Hours
                 </th>
                 <th scope="col" className="px-4 py-3 font-medium">
-                  Status
+                  Active
                 </th>
                 <th scope="col" className="px-4 py-3 font-medium">
                   Order
+                </th>
+                <th scope="col" className="px-4 py-3 font-medium">
+                  Actions
                 </th>
               </tr>
             </thead>
@@ -86,11 +93,41 @@ export default async function AdminPackagesPage({ searchParams }: Props) {
                   </td>
                   <td className="px-4 py-3">{categoryLabel.get(slugFromCategory(pkg.category))}</td>
                   <td className="px-4 py-3 tabular-nums">
-                    {formatCAD(pkg.basePriceCents, "en", { suffix: false })}
+                    {formatCAD(startingPriceCents(pkg), "en", { suffix: false })}
+                    {pkg.tiers.length > 0 && (
+                      <span className="text-muted-foreground block text-xs">
+                        {pkg.tiers.map((tier) => tier.name).join(" · ")}
+                      </span>
+                    )}
                   </td>
-                  <td className="px-4 py-3 tabular-nums">{pkg.includedHours}</td>
-                  <td className="px-4 py-3">{pkg.isActive ? "Active" : "Hidden"}</td>
+                  <td className="px-4 py-3 tabular-nums">
+                    {pkg.tiers.length > 0 ? "By option" : pkg.includedHours}
+                  </td>
+                  <td className="px-4 py-3">
+                    <ActionSwitch
+                      checked={pkg.isActive}
+                      label={`Active: ${pkg.name}`}
+                      onText="Active"
+                      offText="Inactive"
+                      action={setPackageActive.bind(null, pkg.id)}
+                    />
+                  </td>
                   <td className="px-4 py-3 tabular-nums">{pkg.sortOrder}</td>
+                  <td className="px-4 py-3">
+                    <div className="flex flex-wrap items-start gap-2">
+                      <Link
+                        href={`/admin/packages/${pkg.id}`}
+                        aria-label={`Edit ${pkg.name}`}
+                        className={buttonVariants({ size: "sm", variant: "outline" })}
+                      >
+                        Edit
+                      </Link>
+                      <ConfirmDeleteButton
+                        itemName={pkg.name}
+                        action={deletePackage.bind(null, pkg.id)}
+                      />
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>

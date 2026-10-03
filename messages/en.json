@@ -23,7 +23,6 @@
     "tagline": "Collection Art Design",
     "heroTitle": "Your story. Our <accent>lens.</accent> Timeless memories.",
     "heroSubtitle": "Photography and videography for weddings, events, portraits and products — captured by a dedicated creative team. Based in Toronto, serving Canada and Sri Lanka.",
-    "heroImageAlt": "Sample photograph {index} of {total}",
     "pauseSlideshow": "Pause slideshow",
     "playSlideshow": "Play slideshow",
     "categoriesTitle": "Services, <accent>tailored</accent> to you",
@@ -91,6 +90,7 @@
     "tagline": "Capturing moments, creating relationships, building memories.",
     "serviceArea": "Based in Toronto — serving the GTA, Canada-wide, Sri Lanka and worldwide.",
     "email": "Email",
+    "phone": "Phone",
     "rights": "© {year} CAD Studio Photography. All rights reserved."
   },
   "PricingBanner": {
@@ -140,7 +140,8 @@
     "details": "View details",
     "empty": "No packages in this category yet.",
     "emptyCta": "See all packages",
-    "taxNote": "Prices in Canadian dollars, before applicable taxes and travel."
+    "taxNote": "Prices in Canadian dollars, before applicable taxes and travel.",
+    "options": "{count, plural, one {# option} other {# options}}: {names}"
   },
   "PackageDetail": {
     "breadcrumb": "Breadcrumb",
@@ -165,7 +166,10 @@
     "deposit": "A {percent}% deposit confirms your date.",
     "seePortfolio": "See {category} in our portfolio",
     "ctaTitle": "Make it <accent>yours</accent>",
-    "ctaBody": "Adjust hours, photographers and add-ons to see your price instantly."
+    "ctaBody": "Adjust hours, photographers and add-ons to see your price instantly.",
+    "optionsTitle": "Compare options",
+    "optionsIntro": "Each option has its own price and coverage. Pick one to customize your quote or book.",
+    "optionPrice": "{price} before tax"
   },
   "About": {
     "metaTitle": "About",
@@ -253,6 +257,8 @@
     "detailsTitle": "Studio details",
     "emailLabel": "Email",
     "serviceAreaLabel": "Service area",
+    "phoneLabel": "Phone",
+    "followLabel": "Follow us",
     "quoteCta": "Get an instant quote"
   },
   "Legal": {
@@ -475,7 +481,8 @@
     "expired": "This quote expired on {date}. Prices may have changed — create a new quote for current pricing.",
     "book": "Book this quote",
     "newQuote": "Create a new quote",
-    "hours": "{count, number} h"
+    "hours": "{count, number} h",
+    "cancelled": "This quote was cancelled. Contact us, or create a new quote for current pricing."
   },
   "Book": {
     "metaTitle": "Book a Date",

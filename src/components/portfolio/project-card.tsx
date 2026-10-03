@@ -5,6 +5,7 @@ import type { Locale } from "@/config/site";
 import { Link } from "@/i18n/navigation";
 import { slugFromCategory } from "@/lib/categories";
 import { localize } from "@/lib/localize";
+import { projectPlace } from "@/lib/portfolio-filters";
 import type { ProjectSummary } from "@/server/queries/portfolio";
 
 type Props = {
@@ -65,9 +66,14 @@ export function ProjectCard({
         {title}
       </Heading>
       <p className="text-muted-foreground mt-1 text-sm">
-        {project.clientName ?? t("Home.privateClient")} ·{" "}
-        {t(`Categories.${slugFromCategory(project.category)}.name`)} ·{" "}
-        {[project.city, project.country].filter(Boolean).join(", ")} · {project.year}
+        {[
+          project.clientName ?? t("Home.privateClient"),
+          t(`Categories.${slugFromCategory(project.category)}.name`),
+          projectPlace(project),
+          project.year,
+        ]
+          .filter(Boolean)
+          .join(" · ")}
       </p>
     </Link>
   );

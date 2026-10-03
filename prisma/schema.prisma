@@ -32,6 +32,8 @@ enum QuoteStatus {
   SENT
   ACCEPTED
   EXPIRED
+  /// Withdrawn by the studio; can no longer be booked.
+  CANCELLED
 }
 
 enum ReviewStatus {
@@ -85,8 +87,8 @@ enum Locale {
 }
 
 model Package {
-  id               String    @id @default(cuid())
-  slug             String    @unique
+  id               String        @id @default(cuid())
+  slug             String        @unique
   category         Category
   name             String
   nameFr           String?
@@ -97,7 +99,7 @@ model Package {
   descriptionFr    String?
   basePriceCents   Int
   includedHours    Int
-  includedShooters Int       @default(1)
+  includedShooters Int           @default(1)
   editedImages     Int?
   turnaroundDays   Int?
   inclusions       String[]
@@ -105,17 +107,45 @@ model Package {
   exclusions       String[]
   exclusionsFr     String[]
   /// [{ q, a, qFr?, aFr? }]
-  faqs             Json      @default("[]")
-  isActive         Boolean   @default(true)
-  sortOrder        Int       @default(0)
+  faqs             Json          @default("[]")
+  isActive         Boolean       @default(true)
+  sortOrder        Int           @default(0)
   images           Image[]
   addOns           AddOn[]
+  /// Optional options such as Silver / Gold / Platinum. When present, they set the price,
+  /// hours and photographers, and the package's own values are only defaults.
+  tiers            PackageTier[]
   quotes           Quote[]
   bookings         Booking[]
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
 
   @@index([category, isActive, sortOrder])
+}
+
+/// One option of a package (e.g. Gold). Quotes and bookings keep the tier they were priced
+/// from in their breakdown (`packageSlug` = "<package slug>:<tier key>"), so the key never
+/// changes once created.
+model PackageTier {
+  id               String   @id @default(cuid())
+  packageId        String
+  package          Package  @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  key              String
+  name             String
+  nameFr           String?
+  basePriceCents   Int
+  includedHours    Int
+  includedShooters Int      @default(1)
+  editedImages     Int?
+  turnaroundDays   Int?
+  inclusions       String[]
+  inclusionsFr     String[]
+  sortOrder        Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@unique([packageId, key])
+  @@index([packageId, sortOrder])
 }
 
 model AddOn {
@@ -271,7 +301,8 @@ model PortfolioProject {
   reach            Reach
   city             String?
   country          String
-  year             Int
+  /// null until the owner confirms it (photos without EXIF dates).
+  year             Int?
   /// Markdown.
   story            String
   storyFr          String?
@@ -359,21 +390,25 @@ model BookingChangeRequest {
 
 // --- Admin auth (Auth.js v5, Prisma adapter; AGENTS.md §2, §11) ---
 
-/// Admin/staff account. Sign-in is by email magic link and only for existing, active users —
+/// Admin/staff account. Sign-in is by email + password and only for existing, active users —
 /// nobody can sign themselves up.
 model User {
-  id               String    @id @default(cuid())
-  name             String?
-  email            String    @unique
-  emailVerified    DateTime?
-  image            String?
-  role             Role      @default(STAFF)
-  isActive         Boolean   @default(true)
-  accounts         Account[]
-  sessions         Session[]
-  assignedBookings Booking[] @relation("BookingAssignees")
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  id                 String    @id @default(cuid())
+  name               String?
+  email              String    @unique
+  emailVerified      DateTime?
+  image              String?
+  role               Role      @default(STAFF)
+  isActive           Boolean   @default(true)
+  /// scrypt hash (src/lib/auth/password.ts). Null for the super admin, whose password is in .env.
+  passwordHash       String?
+  /// Set when an admin chooses the password; the user must pick their own at next sign-in.
+  mustChangePassword Boolean   @default(false)
+  accounts           Account[]
+  sessions           Session[]
+  assignedBookings   Booking[] @relation("BookingAssignees")
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
 }
 
 model Account {

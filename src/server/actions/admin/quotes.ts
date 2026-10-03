@@ -13,7 +13,9 @@ import { bookingRequestSchema, paymentMethods } from "@/lib/validators/booking";
 import { fieldErrorsOf } from "@/lib/validators/admin/fields";
 import { localize } from "@/lib/localize";
 import { signValue } from "@/lib/signing";
+import { savedOptionName } from "@/lib/pricing/options";
 import { audit } from "@/server/audit";
+import type { ActionResult } from "@/lib/admin/action-result";
 import { requireRole } from "@/server/auth/guards";
 import { placeBooking } from "@/server/booking/place-booking";
 import { notifyBookingPlaced } from "@/server/emails/booking-emails";
@@ -43,6 +45,7 @@ export async function resendQuote(reference: string, input: unknown): Promise<Re
   if (quote.status === "ACCEPTED") {
     return { ok: false, error: "This quote was already booked." };
   }
+  if (quote.status === "CANCELLED") return { ok: false, error: "This quote was cancelled." };
   const result = storedQuoteResult(quote);
   if (!result) return { ok: false, error: "This quote's price details couldn't be read." };
 
@@ -74,7 +77,7 @@ export async function resendQuote(reference: string, input: unknown): Promise<Re
       durationHours: Number(quote.durationHours),
       city: quote.city ?? undefined,
       province: quote.province,
-      packageName: quote.package ? localize(quote.package.name, quote.package.nameFr, locale) : "",
+      packageName: savedOptionName(quote.breakdown, quote.package, locale) ?? "",
       addOnNames: Object.fromEntries(
         addOns.map((addOn) => [addOn.code, localize(addOn.name, addOn.nameFr, locale)]),
       ),
@@ -119,6 +122,7 @@ export async function adjustQuote(reference: string, input: unknown): Promise<Ad
   const quote = await db.quote.findUnique({ where: { reference: String(reference) } });
   if (!quote) return { ok: false, error: "This quote no longer exists." };
   if (quote.status === "ACCEPTED") return { ok: false, error: "This quote was already booked." };
+  if (quote.status === "CANCELLED") return { ok: false, error: "This quote was cancelled." };
   const current = storedQuoteResult(quote);
   if (!current) return { ok: false, error: "This quote's price details couldn't be read." };
 
@@ -247,4 +251,30 @@ export async function convertQuoteToBooking(
   await notifyBookingPlaced(request.data, result, locale);
   revalidatePath("/admin", "layout");
   return { ok: true, reference: result.reference };
+}
+
+/**
+ * Withdraws an open or expired quote (STAFF). The client's link then says it was cancelled
+ * and it can't be booked. Booked quotes are changed through their booking instead.
+ */
+export async function cancelQuote(reference: string): Promise<ActionResult> {
+  const actor = await requireRole("STAFF");
+  const quote = await db.quote.findUnique({
+    where: { reference: String(reference) },
+    select: { id: true, reference: true, status: true, booking: { select: { id: true } } },
+  });
+  if (!quote) return { ok: false, error: "This quote no longer exists." };
+  if (quote.status === "CANCELLED") return { ok: true };
+  if (quote.status === "ACCEPTED" || quote.booking) {
+    return { ok: false, error: "This quote was booked. Cancel the booking instead." };
+  }
+  await db.quote.update({ where: { id: quote.id }, data: { status: "CANCELLED" } });
+  await audit(actor, {
+    action: "quote.cancel",
+    entityType: "Quote",
+    entityId: quote.id,
+    summary: `${quote.reference}: cancelled`,
+  });
+  revalidatePath("/admin", "layout");
+  return { ok: true };
 }

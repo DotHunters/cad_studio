@@ -57,7 +57,7 @@ test.describe("gallery lightbox", () => {
       "aria-expanded",
       "true",
     );
-    await expect(dialog(page).getByText(/Sample placeholder image/)).toBeVisible();
+    await expect(dialog(page).getByText(/\(photo 1 of \d+\)/)).toBeVisible();
   });
 
   test("prev/next buttons work", async ({ page }) => {

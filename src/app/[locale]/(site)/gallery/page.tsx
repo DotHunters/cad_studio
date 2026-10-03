@@ -10,9 +10,9 @@ import { Accent, SectionHeading } from "@/components/site/section-heading";
 import { buttonVariants } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { siteConfig } from "@/config/site";
-import { categorySlugs } from "@/lib/categories";
 import {
   filterGallery,
+  galleryCategories,
   galleryHref,
   galleryTags,
   paginateGallery,
@@ -51,6 +51,7 @@ export default async function GalleryPage({ params, searchParams }: Props) {
   const matching = filterGallery(images, filters);
   const { items, hasMore } = paginateGallery(matching, filters.page);
   const tags = galleryTags(images);
+  const categories = galleryCategories(images);
   const hasFilters = Boolean(filters.category || filters.tag);
 
   return (
@@ -90,7 +91,7 @@ export default async function GalleryPage({ params, searchParams }: Props) {
               active: !filters.category,
               href: galleryHref(filters, { category: null }),
             },
-            ...categorySlugs.map((slug) => ({
+            ...categories.map((slug) => ({
               key: slug,
               label: t(`Categories.${slug}.name`),
               active: filters.category === slug,
@@ -110,7 +111,7 @@ export default async function GalleryPage({ params, searchParams }: Props) {
               },
               ...tags.map((tag) => ({
                 key: tag,
-                label: tag,
+                label: tag.replaceAll("-", " "),
                 active: filters.tag === tag,
                 href: galleryHref(filters, { tag }),
               })),
