@@ -4,8 +4,29 @@ test.describe("contact page", () => {
   test("shows the service area and no street address", async ({ page }) => {
     await page.goto("/en/contact");
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Tell us about your story");
-    await expect(page.locator("main")).toContainText("Based in Scarborough, Toronto");
+    await expect(page.locator("main")).toContainText("Based in Toronto");
     await expect(page.locator("main iframe")).toHaveCount(0);
+  });
+
+  test("lists the studio email, phones and social profiles", async ({ page }) => {
+    await page.goto("/en/contact");
+    const main = page.locator("main");
+    await expect(main.getByRole("link", { name: "cadstudio01@gmail.com" })).toHaveAttribute(
+      "href",
+      "mailto:cadstudio01@gmail.com",
+    );
+    await expect(main.getByRole("link", { name: "+1 437-223-6197" })).toHaveAttribute(
+      "href",
+      "tel:+14372236197",
+    );
+    await expect(main.getByRole("listitem").filter({ hasText: "+94 77 184 4347" })).toContainText(
+      "Sri Lanka",
+    );
+    await expect(main.getByRole("link", { name: "Instagram" })).toHaveAttribute(
+      "href",
+      "https://www.instagram.com/cadstudio/",
+    );
+    await expect(page.locator("footer").getByRole("link", { name: "Facebook" })).toBeVisible();
   });
 
   test("shows inline errors for an empty submission and focuses the first one", async ({

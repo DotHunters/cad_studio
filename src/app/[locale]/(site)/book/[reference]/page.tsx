@@ -8,11 +8,11 @@ import type { ReactNode } from "react";
 import { ChangeRequestForm } from "@/components/booking/change-request-form";
 import { Accent, SectionHeading } from "@/components/site/section-heading";
 import { formatInStudioTz, studioDateKey } from "@/lib/dates";
-import { localize } from "@/lib/localize";
 import { formatCAD } from "@/lib/money";
 import { parseReference } from "@/lib/references";
 import { verifySignedValue } from "@/lib/signing";
 import { canRequestChange } from "@/lib/validators/change-request";
+import { savedOptionName } from "@/lib/pricing/options";
 import { linkSecret } from "@/server/link-secret";
 import { getBookingByReference } from "@/server/queries/quotes";
 
@@ -68,7 +68,7 @@ export default async function BookingConfirmedPage({ params, searchParams }: Pro
     { label: t("when"), value: when },
     {
       label: t("package"),
-      value: booking.package ? localize(booking.package.name, booking.package.nameFr, locale) : "—",
+      value: savedOptionName(booking.breakdown, booking.package, locale) ?? "—",
     },
     ...(booking.totalCents !== null
       ? [{ label: t("total"), value: formatCAD(booking.totalCents, locale) }]

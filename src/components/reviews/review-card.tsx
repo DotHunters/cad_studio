@@ -45,7 +45,10 @@ export function ReviewCard({
 
   return (
     <figure
-      className={cn("bg-card flex h-full flex-col rounded-xl border p-6 shadow-sm", className)}
+      className={cn(
+        "bg-card text-card-foreground flex h-full flex-col rounded-xl border p-6 shadow-sm",
+        className,
+      )}
     >
       {review.rating !== null && (
         <StarRating

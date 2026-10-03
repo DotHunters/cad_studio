@@ -16,8 +16,10 @@ function resolveTimezone(value: string | undefined): string {
 }
 
 export const siteConfig = {
-  name: "Cad Studio",
+  name: "CAD Studio Photography",
   tagline: "Collection Art Design",
+  // Owner-supplied About copy (2026-10): established in Sri Lanka in 2014.
+  foundedYear: 2014,
   // TODO(owner): real domain (Q6). `.example` is reserved and non-routable.
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://cadstudio.example",
   owner: {
@@ -26,31 +28,34 @@ export const siteConfig = {
   },
   location: {
     // No public street address (Q1) — service area only, no map.
-    city: "Scarborough",
+    city: "Toronto",
     region: "Toronto",
     province: "ON",
     country: "CA",
-    serviceArea: "Based in Scarborough, Toronto — serving the GTA, Canada-wide and worldwide",
+    serviceArea: "Based in Toronto — serving the GTA, Canada-wide, Sri Lanka and worldwide",
   },
   timezone: resolveTimezone(process.env.STUDIO_TIMEZONE),
   contact: {
-    // TODO(owner): real business email and phone (Q6).
-    email: "hello@cadstudio.example",
+    // Owner-supplied (2026-10). Sending addresses stay on the dummy domain until a real one is
+    // verified in Resend (Q6); replies and admin notifications go to `email`.
+    email: "cadstudio01@gmail.com",
     bookingsEmail: "bookings@cadstudio.example",
-    phone: null as string | null,
+    phones: [
+      { country: "CA", display: "+1 437-223-6197", tel: "+14372236197" },
+      { country: "LK", display: "+94 77 184 4347", tel: "+94771844347" },
+    ],
   },
-  // TODO(owner): social profile URLs.
   socials: {
-    instagram: null as string | null,
-    facebook: null as string | null,
+    instagram: "https://www.instagram.com/cadstudio/" as string | null,
+    facebook: "https://www.facebook.com/cad.photos.54" as string | null,
     tiktok: null as string | null,
   },
   // Trust-strip stats. Only owner-confirmed numbers; null hides the stat (AGENTS.md §13).
   stats: {
     yearsExperience: 10 as number | null,
-    // TODO(owner): number of events photographed and countries worked in (Q7).
-    eventsPhotographed: null as number | null,
-    countries: null as number | null,
+    eventsPhotographed: 2000 as number | null,
+    // Canada and Sri Lanka.
+    countries: 2 as number | null,
   },
   // TODO(owner): business hours.
   businessHours: null as string | null,

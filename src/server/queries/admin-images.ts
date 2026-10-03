@@ -30,10 +30,13 @@ export const listImagesForAdmin = () =>
 export const projectOptions = async () =>
   (
     await db.portfolioProject.findMany({
-      orderBy: [{ year: "desc" }, { title: "asc" }],
+      orderBy: [{ year: { sort: "desc", nulls: "last" } }, { title: "asc" }],
       select: { id: true, title: true, year: true },
     })
-  ).map((project) => ({ value: project.id, label: `${project.title} (${project.year})` }));
+  ).map((project) => ({
+    value: project.id,
+    label: project.year ? `${project.title} (${project.year})` : project.title,
+  }));
 
 export async function getImageForAdmin(id: string) {
   const image = await db.image.findUnique({

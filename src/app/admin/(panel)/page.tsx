@@ -4,11 +4,17 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 
+import {
+  BookingsMonthCalendar,
+  CalendarMonthNav,
+} from "@/components/admin/bookings-month-calendar";
 import { StatusBadge } from "@/components/admin/status-badge";
+import { parseMonth } from "@/lib/admin/calendar";
 import { slugFromCategory } from "@/lib/categories";
-import { formatInStudioTz } from "@/lib/dates";
+import { formatInStudioTz, studioDateKey } from "@/lib/dates";
 import { formatCAD } from "@/lib/money";
 import { requireAdminPage } from "@/server/auth/guards";
+import { getMonthCalendar } from "@/server/queries/admin-calendar";
 import { getDashboardData } from "@/server/queries/admin-dashboard";
 
 export const metadata: Metadata = { title: "Dashboard" };
@@ -39,9 +45,14 @@ function Panel({ title, children }: { title: string; children: ReactNode }) {
 
 export default async function AdminDashboardPage({ searchParams }: Props) {
   const user = await requireAdminPage();
-  const [{ error }, data, t] = await Promise.all([
-    searchParams,
+  const query = await searchParams;
+  const error = query.error;
+  const month =
+    parseMonth(typeof query.month === "string" ? query.month : undefined) ??
+    studioDateKey(new Date()).slice(0, 7);
+  const [data, calendar, t] = await Promise.all([
     getDashboardData(),
+    getMonthCalendar(month),
     getTranslations({ locale: "en", namespace: "Categories" }),
   ]);
   const category = (value: Parameters<typeof slugFromCategory>[0]) =>
@@ -125,6 +136,16 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
             .join(" · ")}
         />
       </dl>
+
+      <section aria-labelledby="calendar-title" className="bg-card rounded-xl border p-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <h2 id="calendar-title" className="text-lg font-medium">
+            Calendar · {calendar.title}
+          </h2>
+          <CalendarMonthNav month={month} basePath="/admin" />
+        </div>
+        <BookingsMonthCalendar calendar={calendar} />
+      </section>
 
       <div className="grid gap-6 lg:grid-cols-2">
         <Panel title="Upcoming bookings">

@@ -33,7 +33,7 @@ describe("UI messages", () => {
 
   it("never uses the old brand name", () => {
     for (const text of [...leaves(en), ...leaves(fr)]) {
-      expect(text).not.toMatch(/CAD Studios?|Cad Studios/);
+      expect(text).not.toMatch(/Cad Studio|CAD Studios/);
     }
   });
 
@@ -51,6 +51,7 @@ describe("UI messages", () => {
     // Same in both languages on purpose (task 8.6). Anything else identical to English is
     // probably untranslated.
     const sameInFrench = new Set([
+      "Metadata.titleTemplate",
       "Home.heading",
       "Home.tagline",
       "Home.trustLocation",

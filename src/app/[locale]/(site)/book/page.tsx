@@ -8,6 +8,7 @@ import { Accent, SectionHeading } from "@/components/site/section-heading";
 import { MAX_MONTHS_AHEAD } from "@/lib/booking/availability";
 import { type CategorySlug, slugFromCategory } from "@/lib/categories";
 import { studioDateKey } from "@/lib/dates";
+import { findOption } from "@/lib/pricing/options";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { getPricingContext } from "@/server/queries/pricing";
 import { getBookableQuote } from "@/server/queries/quotes";
@@ -32,7 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 /**
- * Booking flow (AGENTS.md §6.6). `?package=` preselects a package; a signed `?quote=&t=`
+ * Booking flow (AGENTS.md §6.6). `?package=` (and `&tier=`) preselects a package; a signed `?quote=&t=`
  * from a quote page prefills everything and keeps the quoted price.
  */
 export default async function BookPage({ params, searchParams }: Props) {
@@ -47,7 +48,7 @@ export default async function BookPage({ params, searchParams }: Props) {
     getBookableQuote(quoteReference, single(query.t)),
   ]);
 
-  const chosen = context.packages.find((pkg) => pkg.slug === single(query.package));
+  const chosen = findOption(context.packages, single(query.package), single(query.tier));
   const initial: Partial<BookingFormValues> = chosen
     ? {
         category: slugFromCategory(chosen.category) as CategorySlug,

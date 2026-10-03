@@ -1,4 +1,4 @@
-# Pre-launch checklist — Cad Studio
+# Pre-launch checklist — CAD Studio Photography
 
 Everything that is still a placeholder or a sample, and what to do about it. Run
 `pnpm prelaunch` at any time to list what's left in the code; it reports zero when the code
@@ -10,12 +10,12 @@ is ready. Open questions are tracked in `docs/loop/OPEN_QUESTIONS.md` (Q-numbers
 |---|---|---|
 | `NEXT_PUBLIC_SITE_URL` | Real domain (Q6) | Replaces the dummy `https://cadstudio.example` used in links, emails, the sitemap and canonicals. |
 | `EMAIL_FROM`, `ADMIN_NOTIFY_EMAIL` | Sender and studio inbox | Domain must be verified in Resend. |
-| `RESEND_API_KEY` (and optionally `AUTH_RESEND_KEY`) | All emails, including admin sign-in links | Without it nothing is sent in production. |
+| `RESEND_API_KEY` | All emails to clients and the studio | Without it nothing is sent in production. |
 | `AUTH_SECRET`, `LINK_TOKEN_SECRET`, `CRON_SECRET` | Sessions, signed client links, the daily hold-release job | Long random values; never reuse the local ones. |
-| `SEED_ADMIN_EMAIL` | First admin account (Q17) | Run `pnpm db:seed` once against production; add staff later in **Admin → Team**. |
+| `SUPER_ADMIN_EMAIL`, `SUPER_ADMIN_PASSWORD` | The owner's super admin sign-in (Q17) | Password ≥ 12 characters (e.g. `openssl rand -base64 24`). Sign in at `/admin/sign-in`, then add staff and admins in **Admin → Team** with temporary passwords. |
 | `UPSTASH_REDIS_REST_URL` / `_TOKEN` | Rate limiting on public forms | Free tier is enough. |
 | `NEXT_PUBLIC_TURNSTILE_SITE_KEY` / `TURNSTILE_SECRET_KEY` | Bot check on public forms | Create the widget for the real domain. |
-| `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `_SECRET` | Photos (Q18) | Needed before real photos can be uploaded (task 7.4c). |
+| `BLOB_READ_WRITE_TOKEN` | Photo uploads in **Admin → Portfolio → (project) → Upload photos** (Q18) | In Vercel: Storage → Create → Blob, connect it to the project; the token is added for you. Redeploy. |
 | `SHOW_SAMPLE_CONTENT` | Sample clients, projects and reviews | Always hidden on Vercel production; leave unset (or `false`) there. |
 | `PRICING_CONFIRMED=true` | Marks prices as final: removes the "pricing pending" banner on previews and lets prices appear in search results (structured data) | Only after section 3 is done. |
 | `LEGAL_REVIEWED=true` | Removes the "pending legal review" notice on Privacy/Terms | Only after section 5 is done. |
@@ -24,12 +24,11 @@ Then run `prisma migrate deploy` (Vercel's build command already does) and seed 
 
 ## 2. Studio facts in the code (`src/config/site.ts` and pages)
 
-- Business email and phone (Q6) — `site.ts`, footer, contact page.
-- Social profile URLs — `site.ts`.
+- Business email, phones (Canada and Sri Lanka), Instagram and Facebook are done. Replace the
+  Gmail address with one on the real domain once it exists (Q6).
 - Business hours — `site.ts`, contact page.
-- Stats: events photographed, countries worked in (Q7) — `site.ts`; the "why us" band hides stats until they're real.
 - WhatsApp number for a chat button, if wanted (Q14).
-- About page: studio story, team, equipment (`about/page.tsx`).
+- About page: team member profiles, equipment (`about/page.tsx`). Story and stats are done.
 
 ## 3. Prices, rules and payment (Admin)
 

@@ -71,9 +71,15 @@ export const dollarsToCents = z
 /** HTML checkbox: "on" when ticked, missing when not. */
 export const checkbox = z.preprocess((value) => value === true || value === "on", z.boolean());
 
-/** First error per field, keyed by top-level field name. */
+/**
+ * First error per field, keyed by top-level field name. Errors inside lists (e.g. package
+ * tiers) are also keyed by their full path ("tiers.1.basePrice") so the editor can mark them.
+ */
 export function fieldErrorsOf(error: z.ZodError): Record<string, string> {
   const errors: Record<string, string> = {};
-  for (const issue of error.issues) errors[String(issue.path[0] ?? "form")] ??= issue.message;
+  for (const issue of error.issues) {
+    errors[String(issue.path[0] ?? "form")] ??= issue.message;
+    if (issue.path.length > 1) errors[issue.path.join(".")] ??= issue.message;
+  }
   return errors;
 }

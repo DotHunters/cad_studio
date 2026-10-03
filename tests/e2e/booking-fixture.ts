@@ -7,7 +7,7 @@ import { queryDb } from "./db";
  * parallel specs never delete each other's rows:
  *   9999 change-request · 9998 cron-api · 9997 admin-dashboard · 9996 admin-bookings
  *   9995 admin-booking-payments (+ 9995-2001 admin-settings.global) · 9994 admin-booking-status
- *   9993 review-verified · 9992 admin-assignments · 9990 admin-availability (March 2028) · 9989 seo-audit
+ *   9993 review-verified · 9992 admin-assignments · 9990 admin-availability (March 2028) · 9989 seo-audit · 9988 admin-add-ons + admin-packages (quotes only, x001/x002)
  * Event dates: September 2027 belongs to availability-api.spec.ts (it asserts every day), so
  * fixtures here use October 2027.
  */

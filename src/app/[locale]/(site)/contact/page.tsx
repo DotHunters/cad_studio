@@ -1,4 +1,4 @@
-import { ArrowUpRight, Mail, MapPin } from "lucide-react";
+import { ArrowUpRight, AtSign, Mail, MapPin, Phone } from "lucide-react";
 import type { Metadata } from "next";
 import type { Locale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -6,6 +6,7 @@ import type { ReactNode } from "react";
 
 import { ContactForm } from "@/components/contact/contact-form";
 import { Accent, SectionHeading } from "@/components/site/section-heading";
+import { SocialLinks } from "@/components/site/social-links";
 import { siteConfig } from "@/config/site";
 import { Link } from "@/i18n/navigation";
 import { pageMetadata } from "@/lib/seo/metadata";
@@ -28,6 +29,7 @@ export default async function ContactPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
   const [t, tFooter] = await Promise.all([getTranslations("Contact"), getTranslations("Footer")]);
+  const regions = new Intl.DisplayNames([locale], { type: "region" });
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
@@ -50,7 +52,6 @@ export default async function ContactPage({ params }: Props) {
                 <span className="text-muted-foreground block text-xs tracking-[0.15em] uppercase">
                   {t("emailLabel")}
                 </span>
-                {/* TODO(owner): real business email (Q6). */}
                 <a
                   href={`mailto:${siteConfig.contact.email}`}
                   className="hover:text-gold-text underline"
@@ -68,7 +69,37 @@ export default async function ContactPage({ params }: Props) {
                 {tFooter("serviceArea")}
               </span>
             </p>
-            {/* TODO(owner): phone, socials and business hours once provided. */}
+            <div className="flex gap-3">
+              <Phone className="text-gold-text mt-0.5 size-5 shrink-0" aria-hidden />
+              <div>
+                <span className="text-muted-foreground block text-xs tracking-[0.15em] uppercase">
+                  {t("phoneLabel")}
+                </span>
+                <ul>
+                  {siteConfig.contact.phones.map((phone) => (
+                    <li key={phone.tel}>
+                      <span className="text-muted-foreground">{regions.of(phone.country)}: </span>
+                      <a href={`tel:${phone.tel}`} className="hover:text-gold-text underline">
+                        {phone.display}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <AtSign className="text-gold-text mt-0.5 size-5 shrink-0" aria-hidden />
+              <div>
+                <span className="text-muted-foreground block text-xs tracking-[0.15em] uppercase">
+                  {t("followLabel")}
+                </span>
+                <SocialLinks
+                  className="flex gap-4"
+                  linkClassName="hover:text-gold-text underline"
+                />
+              </div>
+            </div>
+            {/* TODO(owner): business hours once provided. */}
           </section>
 
           <Link

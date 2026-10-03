@@ -55,4 +55,19 @@ test("dashboard shows bookings, quotes, reviews, revenue and what needs attentio
     await expect(page.locator("dt", { hasText: label })).toBeVisible();
   }
   await expect(page.getByRole("region", { name: "Recent quotes" })).toBeVisible();
+
+  // The booking is on the dashboard calendar, in its month (20 h ahead can cross a month).
+  const [{ month }] = await queryDb<{ month: string }>(
+    `select to_char("startAt" at time zone 'America/Toronto', 'YYYY-MM') as month
+     from "Booking" where reference = $1`,
+    [reference],
+  );
+  await page.goto(`/admin?month=${month}`);
+  const calendar = page.getByRole("region", { name: /^Calendar for / });
+  await expect(calendar.getByRole("link", { name: /Dashboard Tester/ })).toHaveAttribute(
+    "href",
+    `/admin/bookings/${reference}`,
+  );
+  await page.getByRole("link", { name: "Next →" }).click();
+  await expect(page).toHaveURL(/\/admin\?month=\d{4}-\d{2}$/);
 });

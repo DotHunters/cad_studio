@@ -12,6 +12,7 @@ export async function listQuotesForAdmin(filters: QuoteFilters, now: Date = new 
     OPEN: { status: "SENT", expiresAt: { gt: now } },
     ACCEPTED: { status: "ACCEPTED" },
     EXPIRED: { OR: [{ status: "EXPIRED" }, { status: "SENT", expiresAt: { lte: now } }] },
+    CANCELLED: { status: "CANCELLED" },
     ALL: {},
   };
   const quotes = await db.quote.findMany({

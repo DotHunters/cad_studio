@@ -4,7 +4,10 @@ import Image, { type ImageProps } from "next/image";
 
 import { cloudinaryLoader } from "@/lib/cloudinary";
 import {
+  isBlobUrl,
+  isLocalId,
   isPlaceholderId,
+  localImagePath,
   placeholderBlur,
   storedImageSrc,
   type StoredImage as Stored,
@@ -19,12 +22,27 @@ type Props = Omit<ImageProps, "src" | "loader" | "placeholder" | "blurDataURL"> 
 };
 
 /**
- * Renders a DB image. Real images go through Cloudinary (resized and served as AVIF/WebP by
- * Cloudinary itself); seeded `placeholder/…` images render as brand-toned blanks. Both get a
- * blur-up placeholder.
+ * Renders a DB image. Cloudinary images are resized and served as AVIF/WebP by Cloudinary
+ * itself; `local/…` photos (from `pnpm photos`) and photos uploaded in admin (Vercel Blob)
+ * by the Next.js image optimizer; seeded
+ * `placeholder/…` images render as brand-toned blanks. All get a blur-up placeholder.
  */
 export function StoredImage({ image, alt, fill, width, height, ...rest }: Props) {
   const sizing = fill ? { fill } : { width: width ?? image.width, height: height ?? image.height };
+
+  // Local and Vercel Blob photos go through the Next.js image optimizer (AVIF/WebP, sizes).
+  if (isLocalId(image.publicId) || isBlobUrl(image.publicId)) {
+    return (
+      <Image
+        src={isBlobUrl(image.publicId) ? image.publicId : localImagePath(image.publicId)}
+        alt={alt}
+        placeholder={image.blurDataUrl ? "blur" : "empty"}
+        blurDataURL={image.blurDataUrl ?? undefined}
+        {...sizing}
+        {...rest}
+      />
+    );
+  }
 
   if (isPlaceholderId(image.publicId)) {
     return (

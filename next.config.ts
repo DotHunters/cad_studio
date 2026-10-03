@@ -4,6 +4,8 @@ import createNextIntlPlugin from "next-intl/plugin";
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
+  // e2e builds go to their own folder so they never clobber a running `pnpm dev`.
+  distDir: process.env.NEXT_DIST_DIR || ".next",
   // Always render <title>/<meta> in the initial <head> (SEO, task 8.3). By default Next 15
   // streams metadata into the body for clients it doesn't list as HTML-limited bots —
   // including Googlebot — and some crawlers and link previews only read the head.
@@ -15,6 +17,8 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "placehold.co" },
       // Cloudinary images use a custom loader; allowed here for any direct use.
       { protocol: "https", hostname: "res.cloudinary.com" },
+      // Photos uploaded in admin (Vercel Blob).
+      { protocol: "https", hostname: "*.public.blob.vercel-storage.com" },
     ],
   },
 };

@@ -18,6 +18,7 @@ import { formatInStudioTz, studioDateKey } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { formatCAD } from "@/lib/money";
 import { lineItemLabel, type Translate } from "@/lib/pricing/line-labels";
+import { savedOptionName } from "@/lib/pricing/options";
 import { requireAdminPage } from "@/server/auth/guards";
 import { assignPhotographers } from "@/server/actions/admin/assignments";
 import { resolveChangeRequest } from "@/server/actions/admin/booking-status";
@@ -51,7 +52,7 @@ export default async function AdminBookingPage({ params }: Props) {
   const assignedIds = new Set(booking.assignees.map((assignee) => assignee.id));
   const note = staffingNote(assignedIds.size, booking.photographers);
   const names = {
-    packageName: booking.package?.name ?? "Base",
+    packageName: savedOptionName(booking.breakdown, booking.package, "en") ?? "Base",
     addOnNames: Object.fromEntries(addOns.map((addOn) => [addOn.code, addOn.name])),
   };
   const { customer } = booking;
@@ -108,7 +109,7 @@ export default async function AdminBookingPage({ params }: Props) {
           <Facts
             rows={[
               ["Service", tCategories(`${slugFromCategory(booking.category)}.name`)],
-              ["Package", booking.package?.name ?? "—"],
+              ["Package", savedOptionName(booking.breakdown, booking.package, "en") ?? "—"],
               ["Starts", when(booking.startAt)],
               ["Ends", when(booking.endAt)],
               ["Photographers", booking.photographers],

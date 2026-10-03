@@ -29,7 +29,6 @@ describe("adminGuardRedirect", () => {
 
   it("lets the sign-in pages and signed-in users through", () => {
     expect(adminGuardRedirect("/admin/sign-in", "", false)).toBeNull();
-    expect(adminGuardRedirect("/admin/sign-in/check-email", "", false)).toBeNull();
     expect(adminGuardRedirect("/admin/bookings", "", true)).toBeNull();
   });
 });
@@ -49,6 +48,7 @@ describe("safeCallbackUrl", () => {
     "/administrator",
     "/en",
     "/admin/sign-in",
+    "/admin/account/password",
   ])("falls back to /admin for %s", (url) => {
     expect(safeCallbackUrl(url)).toBe("/admin");
   });

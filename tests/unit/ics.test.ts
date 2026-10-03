@@ -6,11 +6,11 @@ const event = {
   uid: "CAD-B-2026-0001@cadstudio.example",
   start: new Date("2027-06-12T18:00:00Z"),
   end: new Date("2027-06-13T02:00:00Z"),
-  summary: "Cad Studio — Wedding",
+  summary: "CAD Studio Photography — Wedding",
   description: "Reference CAD-B-2026-0001\nDeposit pending",
   location: "Casa Loma, Toronto",
   url: "https://cadstudio.example/en/book/CAD-B-2026-0001?t=abc",
-  organizerName: "Cad Studio",
+  organizerName: "CAD Studio Photography",
   organizerEmail: "bookings@cadstudio.example",
   now: new Date("2026-10-02T12:00:00Z"),
 };

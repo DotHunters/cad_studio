@@ -5,7 +5,7 @@ import type { QuoteResult } from "@/lib/pricing/calculate-quote";
 
 import { parseStoredBreakdown } from "./bookings";
 
-export const QUOTE_VIEWS = ["OPEN", "ACCEPTED", "EXPIRED", "ALL"] as const;
+export const QUOTE_VIEWS = ["OPEN", "ACCEPTED", "EXPIRED", "CANCELLED", "ALL"] as const;
 export type QuoteView = (typeof QUOTE_VIEWS)[number];
 
 export type QuoteFilters = { view: QuoteView; q: string };
@@ -26,8 +26,9 @@ export function parseQuoteFilters(
 export function quoteState(
   quote: { status: string; expiresAt: Date },
   now: Date,
-): "OPEN" | "ACCEPTED" | "EXPIRED" | "DRAFT" {
+): "OPEN" | "ACCEPTED" | "EXPIRED" | "DRAFT" | "CANCELLED" {
   if (quote.status === "ACCEPTED") return "ACCEPTED";
+  if (quote.status === "CANCELLED") return "CANCELLED";
   if (quote.status === "DRAFT") return "DRAFT";
   if (quote.status === "EXPIRED" || quote.expiresAt <= now) return "EXPIRED";
   return "OPEN";

@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { teamChangeProblem, teamMemberSchema } from "@/lib/admin/team";
+import {
+  passwordProblem,
+  superAdminProblem,
+  teamChangeProblem,
+  teamMemberSchema,
+} from "@/lib/admin/team";
 import { fieldErrorsOf } from "@/lib/validators/admin/fields";
 
 const members = [
@@ -26,6 +31,63 @@ describe("teamMemberSchema", () => {
       email: "Enter a valid email address.",
       role: "Choose a role.",
     });
+  });
+});
+
+describe("team passwords", () => {
+  const base = { email: "alex@example.com", role: "STAFF" };
+
+  it("keeps the password exactly and treats an empty one as unchanged", () => {
+    expect(teamMemberSchema.parse({ ...base, password: " a long password " }).password).toBe(
+      " a long password ",
+    );
+    expect(teamMemberSchema.parse({ ...base, password: "" }).password).toBeUndefined();
+    expect(teamMemberSchema.parse(base).password).toBeUndefined();
+  });
+
+  it("rejects a short password", () => {
+    const result = teamMemberSchema.safeParse({ ...base, password: "short" });
+    expect(fieldErrorsOf(result.error!)).toEqual({ password: "Use at least 12 characters." });
+  });
+
+  it("requires a password only for new members", () => {
+    expect(passwordProblem(null, undefined)).toMatch(/temporary password/);
+    expect(passwordProblem(null, "a long password")).toBeNull();
+    expect(passwordProblem("photographer", undefined)).toBeNull();
+  });
+});
+
+describe("superAdminProblem", () => {
+  const people = [
+    { id: "super", email: "owner@example.com" },
+    { id: "photographer", email: "photo@example.com" },
+  ];
+
+  it("protects the super admin's account and email", () => {
+    expect(
+      superAdminProblem({ id: "super", email: "owner@example.com" }, people, "owner@example.com"),
+    ).toMatch(/managed in the server settings/);
+    expect(
+      superAdminProblem({ id: null, email: "owner@example.com" }, people, "owner@example.com"),
+    ).toBe("This email belongs to the super admin.");
+    expect(
+      superAdminProblem(
+        { id: "photographer", email: "owner@example.com" },
+        people,
+        "owner@example.com",
+      ),
+    ).toBe("This email belongs to the super admin.");
+  });
+
+  it("allows everything else, and everything when no super admin is set", () => {
+    expect(
+      superAdminProblem(
+        { id: "photographer", email: "new@example.com" },
+        people,
+        "owner@example.com",
+      ),
+    ).toBeNull();
+    expect(superAdminProblem({ id: "super", email: "owner@example.com" }, people, null)).toBeNull();
   });
 });
 

@@ -13,6 +13,7 @@ import {
   filterProjects,
   parsePortfolioFilters,
   type PortfolioFilters,
+  projectYears,
 } from "@/lib/portfolio-filters";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { getPublishedProjects } from "@/server/queries/portfolio";
@@ -40,7 +41,7 @@ export default async function PortfolioPage({ params, searchParams }: Props) {
 
   const [t, projects] = await Promise.all([getTranslations(), getPublishedProjects()]);
   const visible = filterProjects(projects, filters);
-  const years = [...new Set(projects.map((project) => project.year))].sort((a, b) => b - a);
+  const years = projectYears(projects);
   const hasFilters = Boolean(filters.category || filters.reach || filters.year);
 
   return (

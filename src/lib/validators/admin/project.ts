@@ -2,7 +2,7 @@ import * as z from "zod";
 
 import { categorySlugs } from "@/lib/categories";
 
-import { checkbox, integer, optionalText, text } from "./fields";
+import { checkbox, optionalInteger, optionalText, text } from "./fields";
 
 /**
  * Admin portfolio project form (AGENTS.md §6.3, §6.10). The client's name is only shown
@@ -24,7 +24,7 @@ export const projectFormSchema = z.object({
   reach: z.enum(["LOCAL", "GLOBAL"], "Choose local or global."),
   city: optionalText(80),
   country: text(80),
-  year: integer(1990, 2100),
+  year: optionalInteger(1990, 2100),
   story: text(20_000),
   storyFr: optionalText(20_000),
   featured: checkbox,

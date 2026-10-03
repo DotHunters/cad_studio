@@ -76,6 +76,7 @@ web_modules/
 
 # Next.js build output
 .next
+.next-e2e
 out
 
 # Nuxt.js build / generate output
@@ -158,3 +159,10 @@ next-env.d.ts
 
 # Prisma generated client
 /src/generated/
+
+# Original client photos (hundreds of MB). Only the logo sources are tracked; run `pnpm photos`
+# to publish optimized WebP copies to public/photos.
+/assets/*
+!/assets/gold.png
+!/assets/black.png
+!/assets/white.png

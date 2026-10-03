@@ -16,10 +16,10 @@ describe("businessJsonLd", () => {
 
   it("describes a ProfessionalService without a street address", () => {
     expect(ld["@type"]).toBe("ProfessionalService");
-    expect(ld.name).toBe("Cad Studio");
+    expect(ld.name).toBe("CAD Studio Photography");
     expect(ld.address).toEqual({
       "@type": "PostalAddress",
-      addressLocality: "Scarborough",
+      addressLocality: "Toronto",
       addressRegion: "ON",
       addressCountry: "CA",
     });
@@ -30,6 +30,14 @@ describe("businessJsonLd", () => {
     expect(ld.url).toBe(`${base}/en`);
     expect(ld.logo).toBe(`${base}/brand/logo-gold.png`);
     expect(ld.founder).toMatchObject({ "@type": "Person", name: "I. Rukshan" });
+  });
+
+  it("lists the studio phone and social profiles", () => {
+    expect(ld.telephone).toBe("+14372236197");
+    expect(ld.sameAs).toEqual([
+      "https://www.instagram.com/cadstudio/",
+      "https://www.facebook.com/cad.photos.54",
+    ]);
   });
 });
 
@@ -46,7 +54,7 @@ describe("serviceJsonLd", () => {
     const ld = serviceJsonLd({ baseUrl: base, locale: "en", pkg, pricingConfirmed: false });
     expect(ld).not.toHaveProperty("offers");
     expect(ld.url).toBe(`${base}/en/packages/wedding`);
-    expect(ld.provider).toMatchObject({ name: "Cad Studio" });
+    expect(ld.provider).toMatchObject({ name: "CAD Studio Photography" });
   });
 
   it("includes a CAD starting price once pricing is confirmed", () => {
@@ -66,7 +74,7 @@ describe("personJsonLd", () => {
       "@type": "Person",
       name: "I. Rukshan",
       jobTitle: "Founder",
-      worksFor: { "@type": "ProfessionalService", name: "Cad Studio" },
+      worksFor: { "@type": "ProfessionalService", name: "CAD Studio Photography" },
     });
   });
 });
@@ -101,7 +109,7 @@ describe("imageGalleryJsonLd", () => {
       "@type": "ImageGallery",
       name: "Gallery",
       url: `${base}/en/gallery`,
-      publisher: { name: "Cad Studio" },
+      publisher: { name: "CAD Studio Photography" },
     });
     expect(ld.image[0]).toEqual({
       "@type": "ImageObject",
@@ -109,8 +117,12 @@ describe("imageGalleryJsonLd", () => {
       caption: "Image 0",
       width: 1600,
       height: 1067,
-      creditText: "Cad Studio",
-      copyrightHolder: { "@type": "ProfessionalService", name: "Cad Studio", url: `${base}/` },
+      creditText: "CAD Studio Photography",
+      copyrightHolder: {
+        "@type": "ProfessionalService",
+        name: "CAD Studio Photography",
+        url: `${base}/`,
+      },
     });
   });
 

@@ -59,4 +59,29 @@ describe("resolvePackage", () => {
   it("returns null when the category has no packages", () => {
     expect(resolvePackage(packages, "PRODUCT", undefined)).toBeNull();
   });
+  describe("with tiers", () => {
+    const options = [
+      {
+        slug: "wedding:silver",
+        packageSlug: "wedding",
+        category: "WEDDING",
+        basePriceCents: 200000,
+      },
+      { slug: "wedding:gold", packageSlug: "wedding", category: "WEDDING", basePriceCents: 300000 },
+      { slug: "elopement", packageSlug: "elopement", category: "WEDDING", basePriceCents: 90000 },
+    ];
+
+    it("uses the chosen tier", () => {
+      expect(resolvePackage(options, "WEDDING", "wedding:gold")?.slug).toBe("wedding:gold");
+    });
+
+    it("uses the package's cheapest tier for a plain package link or a removed tier", () => {
+      expect(resolvePackage(options, "WEDDING", "wedding")?.slug).toBe("wedding:silver");
+      expect(resolvePackage(options, "WEDDING", "wedding:platinum")?.slug).toBe("wedding:silver");
+    });
+
+    it("falls back to the category's cheapest option otherwise", () => {
+      expect(resolvePackage(options, "WEDDING", "nope")?.slug).toBe("elopement");
+    });
+  });
 });

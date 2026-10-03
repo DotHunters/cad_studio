@@ -75,7 +75,7 @@ test("staff review an expired quote and re-send it with a fresh validity", async
   await expect(row).toContainText("$3,616.00");
   await expect(row).toContainText("Expired");
 
-  await page.getByRole("link", { name: reference }).click();
+  await page.getByRole("link", { name: reference, exact: true }).click();
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(reference);
   const price = page.getByRole("region", { name: "Price" });
   await expect(price).toContainText("Wedding package");
@@ -195,4 +195,53 @@ test("expired quotes must be renewed before booking", async ({
   await page.goto(`/admin/quotes/${reference}`);
   await expect(page.getByRole("form", { name: "Re-send quote" })).toBeVisible();
   await expect(page.getByRole("form", { name: "Book this quote" })).toHaveCount(0);
+});
+
+test("quote rows: download a PDF, then cancel; the client's link can no longer be booked", async ({
+  page,
+  context,
+  baseURL,
+}, testInfo) => {
+  const reference = await createExpiredQuote(testInfo, { expired: false });
+  await signInAsAdmin(context, baseURL!, adminEmailFor(testInfo, "staff"), "STAFF");
+  await page.goto(`/admin/quotes?q=${reference}`);
+  const row = page.getByRole("row", { name: new RegExp(reference) });
+
+  // The PDF is in the client's language (this client chose French).
+  const pdf = await page.request.get(`/admin/quotes/${reference}/pdf`);
+  expect(pdf.status()).toBe(200);
+  expect(pdf.headers()["content-type"]).toBe("application/pdf");
+  expect(pdf.headers()["content-disposition"]).toContain(`${reference}.pdf`);
+  expect((await pdf.body()).subarray(0, 5).toString()).toBe("%PDF-");
+  await expect(row.getByRole("link", { name: `Download ${reference} as PDF` })).toHaveAttribute(
+    "href",
+    `/admin/quotes/${reference}/pdf`,
+  );
+
+  await row.getByRole("button", { name: `Cancel quote ${reference}` }).click();
+  await row.getByRole("button", { name: "Yes, cancel it" }).click();
+  await expect
+    .poll(
+      async () =>
+        (
+          await queryDb<{ status: string }>(`select status from "Quote" where reference = $1`, [
+            reference,
+          ])
+        )[0].status,
+    )
+    .toBe("CANCELLED");
+  // It leaves the open list and shows under Cancelled.
+  await expect(page.getByRole("row", { name: new RegExp(reference) })).toHaveCount(0);
+  await page.goto(`/admin/quotes?view=cancelled&q=${reference}`);
+  await expect(page.getByRole("row", { name: new RegExp(reference) })).toContainText("Cancelled");
+
+  await page.goto(`/fr/quote/${reference}?t=${quoteToken(reference)}`);
+  await expect(page.getByText("Ce devis a été annulé.")).toBeVisible();
+  await expect(page.getByRole("link", { name: "Réserver ce devis" })).toHaveCount(0);
+
+  // Signed-out visitors are sent to sign-in instead of getting the PDF.
+  await context.clearCookies();
+  const anonymous = await page.request.get(`/admin/quotes/${reference}/pdf`, { maxRedirects: 0 });
+  expect(anonymous.status()).toBe(307);
+  expect(anonymous.headers()["location"]).toContain("/admin/sign-in");
 });

@@ -8,7 +8,13 @@ import { cn } from "@/lib/utils";
 
 const INTERVAL_MS = 6000;
 
-type Slide = { src: string; alt: string };
+type Slide = {
+  src: string;
+  alt: string;
+  blurDataUrl?: string;
+  /** CSS object-position keeping the subject in frame, e.g. "50% 30%". */
+  position?: string;
+};
 
 type Props = {
   slides: Slide[];
@@ -51,6 +57,9 @@ export function HeroSlideshow({ slides, pauseLabel, playLabel, slideLabels }: Pr
             fill
             priority={index === 0}
             sizes="100vw"
+            placeholder={slide.blurDataUrl ? "blur" : "empty"}
+            blurDataURL={slide.blurDataUrl}
+            style={{ objectPosition: slide.position }}
             className={cn(
               "object-cover transition-opacity duration-300",
               index === active ? "opacity-100" : "opacity-0",

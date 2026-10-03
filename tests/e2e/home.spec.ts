@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { heroSlideCount } from "./photo-counts";
+
 test.describe("home page", () => {
   test("hero has both calls to action", async ({ page }) => {
     await page.goto("/en");
@@ -41,12 +43,13 @@ test.describe("home page", () => {
 
   test("hero shows the trust facts", async ({ page }) => {
     await page.goto("/en");
-    await expect(page.getByText("10+ years behind the lens")).toBeVisible();
+    await expect(page.getByText("Since 2014", { exact: true })).toBeVisible();
+    await expect(page.getByText("2,000+ events captured")).toBeVisible();
   });
 
   test("slide indicators switch images", async ({ page }) => {
     await page.goto("/en");
-    const second = page.getByRole("button", { name: "Show image 2 of 4" });
+    const second = page.getByRole("button", { name: `Show image 2 of ${heroSlideCount}` });
     await second.click();
     await expect(second).toHaveAttribute("aria-current", "true");
   });
@@ -66,7 +69,7 @@ test.describe("home page", () => {
 
   test("owner intro shows the founder signature", async ({ page }) => {
     await page.goto("/en");
-    const intro = page.getByRole("region", { name: /The light, the laughter/ });
+    const intro = page.getByRole("region", { name: /Genuine emotions, meaningful moments/ });
     await expect(intro.getByText("I. Rukshan", { exact: true })).toBeVisible();
     await expect(intro.getByRole("link", { name: "About the studio" })).toHaveAttribute(
       "href",
@@ -74,21 +77,21 @@ test.describe("home page", () => {
     );
   });
 
-  test("why-us band hides unconfirmed stats and lists clients", async ({ page }) => {
+  test("why-us band shows confirmed stats and lists clients", async ({ page }) => {
     await page.goto("/en");
     const band = page.getByRole("region", { name: /Planned like an event/ });
-    // Only "years" is confirmed so far; a single stat is not shown on its own, and
-    // unconfirmed stats (events, countries) stay hidden until the owner provides them.
-    await expect(band.getByText("Events photographed", { exact: true })).toHaveCount(0);
-    await expect(band.getByText("Years of experience", { exact: true })).toHaveCount(0);
+    await expect(band.getByText("Events photographed", { exact: true })).toBeVisible();
+    await expect(band.getByText("2,000+", { exact: true })).toBeVisible();
+    // Countries is an exact count, so no "+".
+    await expect(band.getByText("2", { exact: true })).toBeVisible();
     await expect(band.getByText("Northwind Corp (Sample)")).toBeVisible();
   });
 
-  test("featured portfolio lists sample projects with badges", async ({ page }) => {
+  test("featured portfolio shows the studio's real work before samples", async ({ page }) => {
     await page.goto("/en");
     const portfolio = page.getByRole("region", { name: /Stories we've told/ });
     await expect(portfolio.getByRole("listitem")).toHaveCount(3);
-    await expect(portfolio.getByText("Sample").first()).toBeVisible();
+    await expect(portfolio.getByText("Sample", { exact: true })).toHaveCount(0);
     await expect(portfolio.getByRole("link", { name: "View all work" })).toHaveAttribute(
       "href",
       "/en/portfolio",
@@ -104,25 +107,23 @@ test.describe("home page", () => {
 
   test("portfolio and reviews are localized in French", async ({ page }) => {
     await page.goto("/fr");
-    await expect(page.getByRole("heading", { name: "Mariage au jardin" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: "Mariage hindou" })).toBeVisible();
     await expect(page.getByText(/4,7 sur 5 selon 3 avis/)).toBeVisible();
   });
 
   test("final call to action links to quote and booking", async ({ page }) => {
     await page.goto("/en");
-    const cta = page.getByRole("region", { name: /Let's create something timeless/ });
+    const cta = page.getByRole("region", { name: /Your story deserves timeless memories/ });
     await expect(cta.getByRole("link", { name: "Get a Quote" })).toHaveAttribute(
       "href",
       "/en/quote",
     );
   });
 
-  test("French final heading renders its accent word (ICU apostrophe regression)", async ({
-    page,
-  }) => {
+  test("French final heading renders its accent word", async ({ page }) => {
     await page.goto("/fr");
     await expect(
-      page.getByRole("heading", { name: "Créons quelque chose d’intemporel" }),
+      page.getByRole("heading", { name: "Votre histoire mérite des souvenirs intemporels" }),
     ).toBeVisible();
   });
 
@@ -138,6 +139,6 @@ test.describe("home page", () => {
       .getByRole("region", { name: /Stories we've told/ })
       .getByRole("img")
       .first();
-    await expect(image).toHaveAttribute("style", /data:image\/svg\+xml;base64/);
+    await expect(image).toHaveAttribute("style", /data:image\/(svg\+xml|webp);base64/);
   });
 });

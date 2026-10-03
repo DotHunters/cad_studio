@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 import { categorySlugs } from "@/lib/categories";
 import { placeholderImage } from "@/lib/images";
+import { categoryPhoto } from "@/lib/photos";
 
 import { Accent, SectionHeading } from "./section-heading";
 
@@ -27,15 +28,17 @@ export function CategoryTiles() {
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {categorySlugs.map((slug) => {
           const name = t(`Categories.${slug}.name`);
+          const photo = categoryPhoto(slug);
           return (
             <li key={slug}>
               <Link
                 href={{ pathname: "/packages", query: { category: slug } }}
                 className="group focus-visible:ring-ring relative block aspect-[4/3] overflow-hidden rounded-lg focus-visible:ring-2 focus-visible:outline-none"
               >
-                {/* TODO(owner): replace with a real image per category. */}
+                {/* TODO(owner): photos for categories without work yet (corporate, gathering, product). */}
                 <Image
-                  src={placeholderImage(800, 600)}
+                  src={photo ? photo.src : placeholderImage(800, 600)}
+                  {...(photo && { placeholder: "blur" as const, blurDataURL: photo.blurDataUrl })}
                   alt=""
                   fill
                   sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"

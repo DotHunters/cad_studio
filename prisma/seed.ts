@@ -2,10 +2,13 @@
  * Idempotent seed: safe to run repeatedly (`pnpm db:seed`). Upserts by unique key.
  * Data lives in ./seed-data.ts.
  */
+import { readFileSync } from "node:fs";
+
 import { config } from "dotenv";
 import { PrismaPg } from "@prisma/adapter-pg";
 
 import { PrismaClient } from "../src/generated/prisma/client";
+import type { PhotoGroup } from "../src/lib/photos";
 import {
   addOns,
   packages,
@@ -105,22 +108,82 @@ async function seedSamples() {
   });
 }
 
-/** First admin account (AGENTS.md §6.10). Nobody can sign up; more staff are added in admin. */
-async function seedAdmin() {
-  const email = process.env.SEED_ADMIN_EMAIL?.trim().toLowerCase();
-  if (!email) return;
-  await db.user.upsert({
-    where: { email },
-    update: { role: "ADMIN", isActive: true },
-    create: { email, role: "ADMIN" },
-  });
+/**
+ * The owner's real work, from `src/data/photos.json` (written by `pnpm photos`): one portfolio
+ * project per photo group, its images also in the gallery. Projects and image text are only
+ * created, never overwritten, so edits made in admin survive a re-seed; image dimensions and
+ * blur placeholders are refreshed in case the photos were re-encoded.
+ */
+async function seedPhotos() {
+  const { groups } = JSON.parse(readFileSync("src/data/photos.json", "utf8")) as {
+    groups: PhotoGroup[];
+  };
+
+  for (const [groupIndex, group] of groups.entries()) {
+    const project = await db.portfolioProject.upsert({
+      where: { slug: group.slug },
+      update: {},
+      create: {
+        slug: group.slug,
+        title: group.title,
+        titleFr: group.titleFr,
+        clientName: null,
+        category: group.category,
+        // TODO(owner): confirm reach, city and country in Admin → Portfolio.
+        reach: "LOCAL",
+        city: null,
+        country: "",
+        year: group.year,
+        story: `${group.title}, photographed by CAD Studio Photography.`,
+        // TODO(owner-fr): review
+        storyFr: `${group.titleFr}, photographié par CAD Studio Photography.`,
+        featured: group.featured,
+        isSample: false,
+        consentToPublish: true,
+        publishedAt: new Date(),
+      },
+    });
+
+    const total = group.images.length;
+    for (const [index, photo] of group.images.entries()) {
+      const publicId = `local${photo.src}`;
+      const position = index + 1;
+      const image = await db.image.upsert({
+        where: { publicId },
+        update: { width: photo.width, height: photo.height, blurDataUrl: photo.blurDataUrl },
+        create: {
+          publicId,
+          width: photo.width,
+          height: photo.height,
+          blurDataUrl: photo.blurDataUrl,
+          alt: `${group.alt} (photo ${position} of ${total})`,
+          altFr: `${group.altFr} (photo ${position} sur ${total})`,
+          category: group.category,
+          tags: group.tags,
+          inGallery: true,
+          // Interleaves the groups in the gallery; order within each project is kept.
+          sortOrder: index * 100 + groupIndex,
+          // The owner supplied these photos for the website (AGENTS.md §9).
+          consentToPublish: true,
+          isSample: false,
+          projectId: project.id,
+        },
+      });
+      if (index === 0 && !project.coverId) {
+        await db.portfolioProject.update({
+          where: { id: project.id },
+          data: { coverId: image.id },
+        });
+      }
+    }
+  }
 }
 
 async function main() {
   await seedCatalogue();
   await seedSettings();
   await seedSamples();
-  await seedAdmin();
+  await seedPhotos();
   console.info("Seed complete.");
 }
 

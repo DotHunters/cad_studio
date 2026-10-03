@@ -24,7 +24,7 @@ export function parsePortfolioFilters(params: SearchParams): PortfolioFilters {
   };
 }
 
-type Filterable = { category: string; reach: string; year: number };
+type Filterable = { category: string; reach: string; year: number | null };
 
 export function filterProjects<T extends Filterable>(
   projects: readonly T[],
@@ -46,4 +46,15 @@ export function filterHref(current: PortfolioFilters, change: Partial<PortfolioF
   if (next.reach) query.reach = next.reach;
   if (next.year) query.year = String(next.year);
   return { pathname: "/portfolio" as const, query };
+}
+
+/** "Toronto, Canada" — empty when the owner hasn't filled in the location yet. */
+export function projectPlace(project: { city: string | null; country: string }): string {
+  return [project.city, project.country].filter(Boolean).join(", ");
+}
+
+/** Distinct known years, newest first (projects without a year are left out). */
+export function projectYears(projects: readonly { year: number | null }[]): number[] {
+  const years = projects.map((project) => project.year).filter((year) => year !== null);
+  return [...new Set(years)].sort((a, b) => b - a);
 }

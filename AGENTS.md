@@ -1,14 +1,15 @@
-# AGENTS.md — Cad Studio Website
+# AGENTS.md — CAD Studio Photography Website
 
-> Instructions for AI coding agents (Claude Code, Cursor, Copilot, Codex, etc.) building and maintaining the Cad Studio website.
+> Instructions for AI coding agents (Claude Code, Cursor, Copilot, Codex, etc.) building and maintaining the CAD Studio Photography website.
 > Read this file fully before writing code. When this file and a user instruction conflict, the user instruction wins; update this file afterwards if the change is permanent.
 
 ---
 
 ## 1. Project overview
 
-**Client:** Cad Studio — professional photography studio based in Canada.
+**Client:** CAD Studio Photography — professional photography studio based in Canada.
 **Owner / Lead photographer:** I. Rukshan — 10+ years of photography experience, plus event management experience.
+**Studio facts (owner-supplied):** established **2014** in Sri Lanka; **2,000+** weddings, birthdays, events, promotional projects and special occasions photographed and filmed; now serves **Canada and Sri Lanka** with a creative team (photography, videography, editing, creative direction, event experience). Owner slogans: "Your Story. Our Lens. Timeless Memories." and "Capturing Moments, Creating Relationships, Building Memories."
 **Clients:** Local Canadian clients through to international/global clients.
 
 **Goal of the site:** Turn visitors into booked clients. Every page should make it easy to (1) see the work, (2) understand packages and price, (3) get a quote, and (4) book a date.
@@ -44,8 +45,8 @@
 | Language | **TypeScript** (`strict: true`) |
 | Styling | **Tailwind CSS v4** + `shadcn/ui` components |
 | Database | **PostgreSQL** via **Prisma ORM** |
-| Auth (admin only) | **Auth.js (NextAuth v5)** — email magic link or credentials; roles `ADMIN`, `STAFF` |
-| Images | **Cloudinary** (or S3 + `next/image`) — never commit client photos to the repo |
+| Auth (admin only) | **Auth.js (NextAuth v5)** database sessions — email + password (scrypt); a **super admin** from `.env` (`SUPER_ADMIN_EMAIL`/`SUPER_ADMIN_PASSWORD`), who with other admins creates users in Admin → Team; roles `ADMIN`, `STAFF` |
+| Images | **Vercel Blob** for admin uploads (owner decision 2026-10-03, replaces Cloudinary): the browser uploads straight to Blob, `next/image` resizes and serves AVIF/WebP, the image id is the Blob URL. Owner-supplied launch photos: originals in git-ignored `assets/`, optimized to WebP by `pnpm photos` into `public/photos/` (owner decision 2026-10-03) — never commit the originals |
 | Email | **Resend** + React Email templates |
 | Payments (phase 2) | **Stripe** — booking deposits in CAD |
 | Validation | **Zod** (shared between client and server) |
@@ -73,6 +74,7 @@ pnpm test:e2e         # Playwright e2e
 pnpm db:migrate       # prisma migrate dev
 pnpm db:seed          # seed packages, pricing, sample content
 pnpm db:studio        # Prisma Studio
+pnpm photos           # assets/ originals → compressed WebP in public/photos + src/data/photos.json (config: scripts/photos.config.mjs); then pnpm db:seed
 ```
 
 **Definition of done for every task:** `pnpm lint && pnpm typecheck && pnpm test && pnpm build` all pass.
@@ -135,8 +137,8 @@ pnpm db:studio        # Prisma Studio
 
 ## 5. Brand & design
 
-- **Name:** always "Cad Studio" (owner confirmed, matches logo; capital C only, singular). Never "CAD Studios", "CAD Studio" or "Cad Studios". Tagline: "Collection Art Design".
-- **Logo:** owner-supplied source files in `assets/` — `gold.png` (primary), `black.png` (light backgrounds), `white.png` (dark backgrounds); transparent PNG, 2014×814. Logo wordmark reads "Cad ♡ Studio" with tagline "· COLLECTION ART DESIGN ·" (CAD = Collection Art Design). Copy to `public/brand/` (`logo-gold.png`, `logo-black.png`, `logo-white.png`) and render via `next/image` with `alt="Cad Studio"`. Header: black logo in light theme, white logo in dark theme; gold for hero/footer/OG. Derive favicon from the camera-heart mark. Ask the owner for an SVG version for crispness. Logo gold gradient: `#C79856` → `#FAD983`.
+- **Name:** always **"CAD Studio Photography"** (owner decision 2026-10-03, replaces the earlier "Cad Studio"). "CAD Studio" is allowed only where space is tight (eyebrows, admin chrome, `.ics` PRODID). Never "Cad Studio", "CAD Studios" or "Cad Studios". The logo wordmark still reads "Cad ♡ Studio" — ask the owner for an updated logo. Tagline: "Collection Art Design" (CAD = Collection Art Design).
+- **Logo:** owner-supplied source files in `assets/` — `gold.png` (primary), `black.png` (light backgrounds), `white.png` (dark backgrounds); transparent PNG, 2014×814. Logo wordmark reads "Cad ♡ Studio" with tagline "· COLLECTION ART DESIGN ·" (CAD = Collection Art Design). Copy to `public/brand/` (`logo-gold.png`, `logo-black.png`, `logo-white.png`) and render via `next/image` with `alt="CAD Studio Photography"`. Header: black logo in light theme, white logo in dark theme; gold for hero/footer/OG. Derive favicon from the camera-heart mark. Ask the owner for an SVG version for crispness. Logo gold gradient: `#C79856` → `#FAD983`.
 - **Tone:** confident, warm, premium, never salesy. Short sentences. Canadian English spelling (colour, centre, cheque) in copy; code identifiers stay US English.
 - **Visual direction:** editorial and photo-first. Images are the hero — UI chrome is minimal.
   - Palette (CSS variables in `globals.css`, prefixed `--brand-*` so they don't clash with shadcn's semantic `--accent`/`--muted`; shadcn tokens are mapped onto them):
@@ -199,7 +201,7 @@ pnpm db:studio        # Prisma Studio
 - On submit: server recomputes the price (never trust the client total), saves a `Quote` with a reference `CAD-Q-YYYY-####`, emails the client a summary (+ PDF in phase 2), notifies admin.
 - Quote valid for **14 days** (configurable).
 - CTA on result: **Book this quote** → booking flow prefilled.
-- Show clearly: "Estimate only. Final price confirmed by Cad Studio."
+- Show clearly: "Estimate only. Final price confirmed by CAD Studio Photography."
 
 ### 6.6 Booking `/book`
 - Step 1: choose service/package (or arrive from a quote).
@@ -223,12 +225,12 @@ pnpm db:studio        # Prisma Studio
 
 ### 6.8 About `/about`
 - Owner profile: **I. Rukshan**, founder & lead photographer, **10+ years** in photography, **event management experience** (planning, coordination, run-of-show — explain how this benefits clients).
-- Studio story, approach, team (if any), equipment highlights, areas served (Canada-wide + travel worldwide).
+- Studio story (began in Sri Lanka in 2014, 2,000+ events, now Canada + Sri Lanka), approach, team skills, equipment highlights, areas served (GTA, Canada-wide, Sri Lanka, travel worldwide).
 - Use only facts provided by the owner. Placeholder text must be marked `{/* TODO(owner): confirm */}`.
 
 ### 6.9 Contact `/contact`
 - Form (name, email, phone, enquiry type, message) with spam protection (honeypot + Cloudflare Turnstile).
-- Email, phone, socials, business hours, service area ("Based in Scarborough, Toronto — serving the GTA, Canada-wide and worldwide"). **No public street address and no map embed** (owner decision).
+- Email, phone, socials, business hours, service area ("Based in Toronto — serving the GTA, Canada-wide, Sri Lanka and worldwide"). **No public street address and no map embed** (owner decision).
 
 ### 6.10 Admin `/admin`
 - Dashboard: upcoming bookings, new quotes, pending reviews, monthly revenue estimate.
@@ -488,7 +490,7 @@ Rates live in the `TaxRate` table (admin-editable) and are seeded with current r
 Add a comment in the seed file: `// Verify current rates and service applicability with the studio's accountant before launch.`
 
 ### 8.3 Availability & booking
-- Studio is in **Scarborough, Toronto, ON**. Time zone in `config/site.ts`: `America/Toronto` (confirmed). Default tax province for the studio: ON.
+- Studio is in **Scarborough, Toronto, ON**, but public copy says **"Toronto"** only (owner decision 2026-10-03); Scarborough stays internal (travel distance origin). Time zone in `config/site.ts`: `America/Toronto` (confirmed). Default tax province for the studio: ON.
 - `MAX_PHOTOGRAPHERS_PER_DAY` (rule, default **3**, owner confirmed) defines daily capacity.
 - A date is **unavailable** if it's in `BlockedDate`, in the past, within `MIN_LEAD_DAYS` (default 3), or the sum of photographers on `PENDING`+`CONFIRMED` bookings that day ≥ capacity.
 - `createBooking` runs inside a **serializable transaction**: re-check capacity, then insert. Return a friendly error if the slot was taken.
@@ -517,7 +519,7 @@ Add a comment in the seed file: `// Verify current rates and service applicabili
 
 ## 10. SEO & performance
 
-- Per-page `generateMetadata` (title, description, Open Graph, Twitter cards). Title pattern: `{Page} | Cad Studio — Photography in Canada`.
+- Per-page `generateMetadata` (title, description, Open Graph, Twitter cards). Title pattern: `{Page} | CAD Studio Photography`.
 - JSON-LD: `LocalBusiness`/`ProfessionalService` (home), `Service` (packages), `AggregateRating` (reviews), `Person` (owner on About), `ImageGallery`.
 - `sitemap.ts` and `robots.ts` generated from DB content; admin routes `noindex`.
 - Targets: Lighthouse ≥ 90 on all categories (mobile), LCP < 2.5 s, CLS < 0.1.
@@ -541,12 +543,13 @@ See `.env.example` (source of truth, with comments). Summary:
 ```
 DATABASE_URL=
 AUTH_SECRET=
-AUTH_RESEND_KEY=
-SEED_ADMIN_EMAIL=                    # first ADMIN user, created by pnpm db:seed (sign-in is magic link only)
+SUPER_ADMIN_EMAIL=                   # super admin: signs in with the password below, creates other users
+SUPER_ADMIN_PASSWORD=                # ≥ 12 characters; never stored in the database
 RESEND_API_KEY=
-EMAIL_FROM="Cad Studio <bookings@cadstudio.example>"   # dummy domain until owner provides one
+EMAIL_FROM="CAD Studio Photography <bookings@cadstudio.example>"   # dummy domain until owner provides one
 ADMIN_NOTIFY_EMAIL=
-NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=   # public: used by the client-side image loader
+BLOB_READ_WRITE_TOKEN=               # Vercel Blob: admin photo uploads
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=   # optional (older Cloudinary ids only)
 CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
 NEXT_PUBLIC_TURNSTILE_SITE_KEY=      # public: rendered in the browser widget
@@ -581,7 +584,7 @@ PRICING_CONFIRMED=false
 
 ## 13. Content rules for agents (important)
 
-- **Do not invent facts** about Cad Studio, I. Rukshan, past clients, awards, or numbers. Use clearly marked placeholders: `TODO(owner): …`.
+- **Do not invent facts** about CAD Studio Photography, I. Rukshan, past clients, awards, or numbers. Use clearly marked placeholders: `TODO(owner): …`.
 - **Do not fabricate reviews or testimonials** and present them as real. Seed data for reviews must be obviously sample (e.g. author "Sample Client", body prefixed "[SAMPLE]"), `isSample = true`, and gated by `SHOW_SAMPLE_CONTENT` so it never appears in production.
 - **Dummy clients (owner-approved for development):** seed fictional sample clients for portfolio projects, client logos and recommendations so pages look complete. Rules: clearly fictional names (e.g. "Maple & Co. Events (Sample)", "Northwind Corp (Sample)") — never real companies or people; `isSample = true` on `PortfolioProject` and `Review`; placeholder images only; sample content renders only when `SHOW_SAMPLE_CONTENT=true` (default `true` in dev/preview, `false` in production) and shows a small "Sample" badge. Owner replaces them with real clients before launch.
 - **Dummy domain:** use `cadstudio.example` (reserved, non-routable) for site URL and email addresses until the owner provides a real domain.
@@ -634,10 +637,11 @@ At the end of each milestone: update the checklist below and summarize what chan
 
 Live tracker: `docs/loop/OPEN_QUESTIONS.md`. Answered so far: studio in Scarborough, ON (`America/Toronto`); prices/deposit/cancellation policy managed in admin; travel 40 km free + $0.70/km; capacity 3 photographers/day; logo file exists; bilingual EN/FR at launch; deposits by bank transfer or cash (offline).
 
-Also answered: brand name is **"Cad Studio"**; no public street address; dummy domain and dummy (clearly sample) clients for now; PST in BC/MB/SK unknown → GST only until confirmed; admin emails bank details or a payment link manually; agents write the French, a tester reviews it before launch.
+Also answered: brand name is **"CAD Studio Photography"** (2026-10-03; was "Cad Studio"); studio story and stats (est. 2014, 2,000+ events, Canada + Sri Lanka); no public street address; dummy domain and dummy (clearly sample) clients for now; PST in BC/MB/SK unknown → GST only until confirmed; admin emails bank details or a payment link manually; agents write the French, a tester reviews it before launch.
 
 Still open:
-- Real domain and business email.
-- Real past clients that can be named publicly; stats.
+- Real domain (contact email cadstudio01@gmail.com, phones and socials are in `config/site.ts`).
+- Real past clients that can be named publicly.
 - SVG logo versions (nice-to-have).
 - PST applicability in BC/MB/SK (accountant).
+- Reach (Local/Global), city, country and (where photos have no EXIF date) year for the 11 portfolio projects seeded from the owner's photos.

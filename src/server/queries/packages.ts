@@ -26,6 +26,10 @@ export const getActivePackages = unstable_cache(
         editedImages: true,
         inclusions: true,
         inclusionsFr: true,
+        tiers: {
+          orderBy: [{ sortOrder: "asc" }, { basePriceCents: "asc" }],
+          select: { key: true, name: true, nameFr: true, basePriceCents: true },
+        },
       },
     }),
   ["packages:active"],
@@ -42,6 +46,7 @@ export const getPackageBySlug = unstable_cache(
       include: {
         addOns: { where: { isActive: true }, orderBy: [{ sortOrder: "asc" }, { name: "asc" }] },
         images: { orderBy: { sortOrder: "asc" } },
+        tiers: { orderBy: [{ sortOrder: "asc" }, { basePriceCents: "asc" }] },
       },
     }),
   ["packages:by-slug"],

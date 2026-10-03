@@ -1,6 +1,14 @@
 import { describe, expect, it } from "vitest";
 
-import { pickCover, placeholderImage, storedImageSrc } from "@/lib/images";
+import {
+  isBlobUrl,
+  isLocalId,
+  localImagePath,
+  pickCover,
+  placeholderImage,
+  storedImageSrc,
+  uploadedPhotoAlt,
+} from "@/lib/images";
 
 describe("placeholderImage", () => {
   it("builds a blank PNG by default (text colour matches background)", () => {
@@ -63,5 +71,44 @@ describe("pickCover", () => {
 
   it("is null without images", () => {
     expect(pickCover([], "a")).toBeNull();
+  });
+});
+
+describe("local photos", () => {
+  const image = {
+    publicId: "local/photos/hindu-wedding/hindu-wedding-01.webp",
+    width: 1,
+    height: 1,
+  };
+
+  it("recognizes local ids and maps them to public paths", () => {
+    expect(isLocalId(image.publicId)).toBe(true);
+    expect(isLocalId("placeholder/x-1")).toBe(false);
+    expect(localImagePath(image.publicId)).toBe("/photos/hindu-wedding/hindu-wedding-01.webp");
+  });
+
+  it("returns an absolute URL on the site for Open Graph and JSON-LD", () => {
+    expect(storedImageSrc(image, "", "https://cadstudio.example")).toBe(
+      "https://cadstudio.example/photos/hindu-wedding/hindu-wedding-01.webp",
+    );
+  });
+});
+
+describe("Vercel Blob photos", () => {
+  const url = "https://ab12cd.public.blob.vercel-storage.com/portfolio/x/photo-k3j2.jpg";
+
+  it("recognizes only Blob storage URLs", () => {
+    expect(isBlobUrl(url)).toBe(true);
+    expect(isBlobUrl("https://evil.example/public.blob.vercel-storage.com/x.jpg")).toBe(false);
+    expect(isBlobUrl("https://ab12cd.public.blob.vercel-storage.com.evil.example/x.jpg")).toBe(
+      false,
+    );
+    expect(isBlobUrl("http://ab12cd.public.blob.vercel-storage.com/x.jpg")).toBe(false);
+    expect(isBlobUrl("local/photos/x.webp")).toBe(false);
+  });
+
+  it("serves them by their own URL and numbers their alt text", () => {
+    expect(storedImageSrc({ publicId: url, width: 10, height: 10 })).toBe(url);
+    expect(uploadedPhotoAlt(" Maternity Session ", 3)).toBe("Maternity Session — photo 3");
   });
 });

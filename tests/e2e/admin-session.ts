@@ -9,8 +9,8 @@ export const adminEmailFor = (testInfo: TestInfo, label = "admin") =>
   `e2e-${label}-${testInfo.project.name}-${testInfo.testId}@example.com`.toLowerCase();
 
 /**
- * Creates a user with a database session and sets the Auth.js cookie — the same state the
- * magic link leaves behind (the link itself is covered in admin-auth.spec.ts).
+ * Creates a user with a database session and sets the Auth.js cookie — the same state a
+ * password sign-in leaves behind (the form itself is covered in admin-auth.spec.ts).
  */
 export async function signInAsAdmin(
   context: BrowserContext,

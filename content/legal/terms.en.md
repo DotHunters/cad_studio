@@ -4,11 +4,11 @@
   HTML comments are not rendered.
 -->
 
-These terms apply to your use of this website and to quotes and bookings made with Cad Studio. By using the website or booking our services, you agree to them.
+These terms apply to your use of this website and to quotes and bookings made with CAD Studio Photography. By using the website or booking our services, you agree to them.
 
 ## Quotes
 
-The online quote generator gives an **estimate only**. Prices are in Canadian dollars and are calculated from the options you choose, applicable sales tax and travel. Your final price is confirmed by Cad Studio in writing. A quote is valid for the period shown on it.
+The online quote generator gives an **estimate only**. Prices are in Canadian dollars and are calculated from the options you choose, applicable sales tax and travel. Your final price is confirmed by CAD Studio Photography in writing. A quote is valid for the period shown on it.
 
 Travel to destinations beyond our automatic travel range, including outside Canada, is quoted separately.
 
@@ -30,7 +30,7 @@ We deliver edited images through a private online gallery within the timeframe s
 
 ## Copyright and use of images
 
-Cad Studio retains copyright in all photographs. Clients receive a licence to use their delivered images for personal use. Commercial clients receive the licence agreed in their booking.
+CAD Studio Photography retains copyright in all photographs. Clients receive a licence to use their delivered images for personal use. Commercial clients receive the licence agreed in their booking.
 
 We use photographs in our portfolio, gallery or marketing only with the client's consent.
 

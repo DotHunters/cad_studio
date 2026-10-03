@@ -28,6 +28,8 @@ export function businessJsonLd({ baseUrl, locale }: Base) {
     logo: absolute(baseUrl, "/brand/logo-gold.png"),
     image: absolute(baseUrl, "/brand/og-default.png"),
     email: siteConfig.contact.email,
+    telephone: siteConfig.contact.phones[0].tel,
+    sameAs: Object.values(siteConfig.socials).filter((url): url is string => Boolean(url)),
     // Service area only — no street address is published (owner decision).
     address: {
       "@type": "PostalAddress",
@@ -35,7 +37,8 @@ export function businessJsonLd({ baseUrl, locale }: Base) {
       addressRegion: siteConfig.location.province,
       addressCountry: siteConfig.location.country,
     },
-    areaServed: ["Greater Toronto Area", "Canada", "Worldwide"],
+    areaServed: ["Greater Toronto Area", "Canada", "Sri Lanka", "Worldwide"],
+    foundingDate: String(siteConfig.foundedYear),
     founder: { "@type": "Person", name: siteConfig.owner.name },
     knowsLanguage: ["en", "fr"],
   } satisfies JsonLdObject;

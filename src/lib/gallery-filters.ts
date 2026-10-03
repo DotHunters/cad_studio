@@ -1,4 +1,4 @@
-import { type CategorySlug, categoryFromSlug } from "@/lib/categories";
+import { type CategorySlug, categoryFromSlug, categorySlugs } from "@/lib/categories";
 
 /** Images per "load more" step. */
 export const GALLERY_PAGE_SIZE = 12;
@@ -32,6 +32,12 @@ export function filterGallery<T extends Filterable>(
       (!filters.category || image.category === filters.category.toUpperCase()) &&
       (!filters.tag || image.tags.includes(filters.tag)),
   );
+}
+
+/** Categories that have at least one image, in the standard order (empty ones are hidden). */
+export function galleryCategories(images: readonly Filterable[]): CategorySlug[] {
+  const present = new Set(images.map((image) => image.category));
+  return categorySlugs.filter((slug) => present.has(slug.toUpperCase()));
 }
 
 /** Unique tags, most used first (ties alphabetical). */

@@ -8,7 +8,7 @@ import "../globals.css";
 
 // The admin area is English-only and never indexed (AGENTS.md §10).
 export const metadata: Metadata = {
-  title: { default: "Admin | Cad Studio", template: "%s | Cad Studio admin" },
+  title: { default: "Admin | CAD Studio Photography", template: "%s | CAD Studio admin" },
   robots: { index: false, follow: false },
 };
 

@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
+import { FileDown } from "lucide-react";
 import Link from "next/link";
 
 import { adminFieldClass } from "@/components/admin/form-field";
+import { ConfirmDeleteButton } from "@/components/admin/row-actions";
 import { StatusBadge } from "@/components/admin/status-badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { parseQuoteFilters, quoteState } from "@/lib/admin/quotes";
 import { slugFromCategory } from "@/lib/categories";
 import { formatInStudioTz } from "@/lib/dates";
 import { formatCAD } from "@/lib/money";
+import { cancelQuote } from "@/server/actions/admin/quotes";
 import { requireAdminPage } from "@/server/auth/guards";
 import { adminCategoryOptions } from "@/server/queries/admin-packages";
 import { listQuotesForAdmin } from "@/server/queries/admin-quotes";
@@ -16,7 +19,13 @@ export const metadata: Metadata = { title: "Quotes" };
 
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
 
-const VIEW_LABELS = { OPEN: "Open", ACCEPTED: "Booked", EXPIRED: "Expired", ALL: "All" } as const;
+const VIEW_LABELS = {
+  OPEN: "Open",
+  ACCEPTED: "Booked",
+  EXPIRED: "Expired",
+  CANCELLED: "Cancelled",
+  ALL: "All",
+} as const;
 
 export default async function AdminQuotesPage({ searchParams }: Props) {
   await requireAdminPage();
@@ -62,6 +71,7 @@ export default async function AdminQuotesPage({ searchParams }: Props) {
         </Button>
       </form>
 
+      {/* No loading skeleton: it would stop the row actions from refreshing this page. */}
       {quotes.length === 0 ? (
         <p className="text-muted-foreground mt-8">No quotes match these filters.</p>
       ) : (
@@ -83,6 +93,9 @@ export default async function AdminQuotesPage({ searchParams }: Props) {
                 </th>
                 <th scope="col" className="px-4 py-3 font-medium">
                   Status
+                </th>
+                <th scope="col" className="px-4 py-3 font-medium">
+                  Actions
                 </th>
               </tr>
             </thead>
@@ -124,6 +137,33 @@ export default async function AdminQuotesPage({ searchParams }: Props) {
                           ? `Booked as ${quote.booking.reference}`
                           : `Valid until ${formatInStudioTz(quote.expiresAt, "MMM d")}`}
                       </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex flex-wrap items-start gap-2">
+                        <Link
+                          href={`/admin/quotes/${quote.reference}`}
+                          aria-label={`Edit ${quote.reference}`}
+                          className={buttonVariants({ size: "sm", variant: "outline" })}
+                        >
+                          Edit
+                        </Link>
+                        <a
+                          href={`/admin/quotes/${quote.reference}/pdf`}
+                          download
+                          aria-label={`Download ${quote.reference} as PDF`}
+                          className={buttonVariants({ size: "sm", variant: "outline" })}
+                        >
+                          <FileDown aria-hidden /> PDF
+                        </a>
+                        {(state === "OPEN" || state === "EXPIRED") && !quote.booking && (
+                          <ConfirmDeleteButton
+                            itemName={quote.reference}
+                            verb="Cancel quote"
+                            confirmText="Yes, cancel it"
+                            action={cancelQuote.bind(null, quote.reference)}
+                          />
+                        )}
+                      </div>
                     </td>
                   </tr>
                 );

@@ -42,8 +42,8 @@ for (const locale of ["en", "fr"] as const) {
         locale === "fr" ? "fr-CA" : "en-CA",
       );
       const title = await page.title();
-      expect(title).toContain("Cad Studio");
-      if (path) expect(title).toMatch(/\| Cad Studio — /);
+      expect(title).toContain("CAD Studio Photography");
+      if (path) expect(title).toMatch(/\| CAD Studio Photography$/);
 
       const description = await meta(page, 'meta[name="description"]');
       expect(description?.length ?? 0).toBeGreaterThan(50);
@@ -57,7 +57,7 @@ for (const locale of ["en", "fr"] as const) {
         ).toHaveCount(1);
       }
 
-      expect(await meta(page, 'meta[property="og:title"]')).toContain("Cad Studio");
+      expect(await meta(page, 'meta[property="og:title"]')).toContain("CAD Studio Photography");
       expect(await meta(page, 'meta[property="og:description"]')).toBeTruthy();
       expect(await meta(page, 'meta[property="og:image"]')).toMatch(/^https?:\/\//);
       expect(await meta(page, 'meta[property="og:url"]')).toBe(canonical);

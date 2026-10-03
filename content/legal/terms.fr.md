@@ -3,11 +3,11 @@
   traduction rédigée par un agent. Les commentaires HTML ne sont pas affichés.
 -->
 
-Les présentes conditions s’appliquent à l’utilisation de ce site Web ainsi qu’aux devis et réservations effectués auprès de Cad Studio. En utilisant le site ou en réservant nos services, vous les acceptez.
+Les présentes conditions s’appliquent à l’utilisation de ce site Web ainsi qu’aux devis et réservations effectués auprès de CAD Studio Photography. En utilisant le site ou en réservant nos services, vous les acceptez.
 
 ## Devis
 
-Le générateur de devis en ligne fournit une **estimation seulement**. Les prix sont en dollars canadiens et sont calculés selon les options choisies, les taxes de vente applicables et les frais de déplacement. Le prix final est confirmé par écrit par Cad Studio. Un devis est valide pendant la période qui y est indiquée.
+Le générateur de devis en ligne fournit une **estimation seulement**. Les prix sont en dollars canadiens et sont calculés selon les options choisies, les taxes de vente applicables et les frais de déplacement. Le prix final est confirmé par écrit par CAD Studio Photography. Un devis est valide pendant la période qui y est indiquée.
 
 Les déplacements au-delà de notre zone de déplacement automatique, y compris à l’extérieur du Canada, font l’objet d’un devis distinct.
 
@@ -29,7 +29,7 @@ Nous livrons les images retouchées dans une galerie en ligne privée, dans le d
 
 ## Droits d’auteur et utilisation des images
 
-Cad Studio conserve les droits d’auteur sur toutes les photographies. Les clients reçoivent une licence d’utilisation de leurs images livrées à des fins personnelles. Les clients commerciaux reçoivent la licence convenue lors de leur réservation.
+CAD Studio Photography conserve les droits d’auteur sur toutes les photographies. Les clients reçoivent une licence d’utilisation de leurs images livrées à des fins personnelles. Les clients commerciaux reçoivent la licence convenue lors de leur réservation.
 
 Nous utilisons des photographies dans notre portfolio, notre galerie ou notre marketing uniquement avec le consentement du client.
 

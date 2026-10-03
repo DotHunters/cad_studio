@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { filterProjects, parsePortfolioFilters, filterHref } from "@/lib/portfolio-filters";
+import {
+  filterProjects,
+  parsePortfolioFilters,
+  filterHref,
+  projectPlace,
+  projectYears,
+} from "@/lib/portfolio-filters";
 
 const projects = [
   { category: "WEDDING", reach: "LOCAL", year: 2025 },
@@ -57,5 +63,29 @@ describe("filterHref", () => {
       pathname: "/portfolio",
       query: { reach: "local", year: "2025" },
     });
+  });
+});
+
+describe("projectPlace", () => {
+  it("joins city and country, skipping blanks", () => {
+    expect(projectPlace({ city: "Toronto", country: "Canada" })).toBe("Toronto, Canada");
+    expect(projectPlace({ city: null, country: "Sri Lanka" })).toBe("Sri Lanka");
+    expect(projectPlace({ city: null, country: "" })).toBe("");
+  });
+});
+
+describe("projectYears", () => {
+  it("lists distinct known years, newest first", () => {
+    expect(projectYears([{ year: 2023 }, { year: null }, { year: 2025 }, { year: 2023 }])).toEqual([
+      2025, 2023,
+    ]);
+  });
+});
+
+describe("filterProjects with unknown years", () => {
+  it("keeps projects without a year unless a year is chosen", () => {
+    const list = [{ category: "WEDDING", reach: "LOCAL", year: null }] as const;
+    expect(filterProjects(list, { category: null, reach: null, year: null })).toHaveLength(1);
+    expect(filterProjects(list, { category: null, reach: null, year: 2024 })).toHaveLength(0);
   });
 });

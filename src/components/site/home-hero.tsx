@@ -1,25 +1,29 @@
 import { ArrowUpRight, ChevronDown } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 import { buttonVariants } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
-import { placeholderImage } from "@/lib/images";
+import { localize } from "@/lib/localize";
+import { photos } from "@/lib/photos";
 import { cn } from "@/lib/utils";
 
 import { HeroSlideshow } from "./hero-slideshow";
 import { ctaNav } from "./nav-items";
 
-// TODO(owner): replace with 3–5 of the studio's best images (task 3.x wires Cloudinary).
-// Blank placeholders in slightly different shades so the rotation is visible.
-const HERO_BACKGROUNDS = ["2a2118", "1c1c1c", "231d16", "181818"];
-
 export function HomeHero() {
   const t = useTranslations();
-  const total = HERO_BACKGROUNDS.length;
-  const slides = HERO_BACKGROUNDS.map((background, index) => ({
-    src: placeholderImage(1920, 1080, { background }),
-    alt: t("Home.heroImageAlt", { index: index + 1, total }),
-  }));
+  const locale = useLocale();
+  // The owner's picks, chosen in scripts/photos.config.mjs (`pnpm photos`).
+  const slides = photos.hero.map((photo) => {
+    const group = photos.groups.find((g) => g.slug === photo.group);
+    return {
+      src: photo.src,
+      blurDataUrl: photo.blurDataUrl,
+      position: photo.position,
+      alt: group ? localize(group.alt, group.altFr, locale) : "",
+    };
+  });
+  const total = slides.length;
   const trust = [t("Home.trustYears"), t("Home.trustEvents"), t("Home.trustLocation")];
 
   return (

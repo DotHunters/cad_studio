@@ -10,7 +10,7 @@ import { Accent, SectionHeading } from "@/components/site/section-heading";
 import { buttonVariants } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { Link } from "@/i18n/navigation";
-import { placeholderImage } from "@/lib/images";
+import { photos } from "@/lib/photos";
 import { personJsonLd } from "@/lib/seo/json-ld";
 import { cn } from "@/lib/utils";
 import { pageMetadata } from "@/lib/seo/metadata";
@@ -30,7 +30,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 /**
  * About page (AGENTS.md §6.8). Only owner-provided facts: I. Rukshan, founder & lead
- * photographer, 10+ years, event management background, based in Scarborough, Toronto.
+ * photographer, 10+ years, event experience; studio established in Sri Lanka in 2014,
+ * 2,000+ events photographed and filmed, now serving Canada and Sri Lanka.
  */
 export default async function AboutPage({ params }: Props) {
   const { locale } = await params;
@@ -42,6 +43,14 @@ export default async function AboutPage({ params }: Props) {
     { label: t("factYears"), value: t("factYearsValue") },
     { label: t("factEvents"), value: t("factEventsValue") },
     { label: t("factBase"), value: t("factBaseValue") },
+  ];
+  const story = [t("storyJourney"), t("storyExperience"), t("storyValues")];
+  const team = [
+    t("teamPhotography"),
+    t("teamVideography"),
+    t("teamEditing"),
+    t("teamDirection"),
+    t("teamEvents"),
   ];
   const approach = [
     { icon: CalendarCheck, title: t("approachPlanTitle"), body: t("approachPlanBody") },
@@ -65,11 +74,13 @@ export default async function AboutPage({ params }: Props) {
       <section aria-labelledby="owner-title" className="mx-auto max-w-7xl px-4 pb-20 sm:px-6">
         <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
           <div className="bg-muted relative aspect-[4/5] overflow-hidden rounded-2xl">
-            {/* TODO(owner): portrait of I. Rukshan. */}
             <Image
-              src={placeholderImage(960, 1200, { background: "2a2118" })}
+              src={photos.owner[1].src}
               alt={t("portraitAlt")}
               fill
+              priority
+              placeholder="blur"
+              blurDataURL={photos.owner[1].blurDataUrl}
               sizes="(min-width: 1024px) 50vw, 100vw"
               className="object-cover"
             />
@@ -100,6 +111,33 @@ export default async function AboutPage({ params }: Props) {
         </div>
       </section>
 
+      <section aria-labelledby="story-title" className="mx-auto max-w-7xl px-4 pb-20 sm:px-6">
+        <div className="grid gap-12 lg:grid-cols-[2fr_3fr] lg:gap-20">
+          <SectionHeading
+            id="story-title"
+            eyebrow={t("storyEyebrow")}
+            title={t.rich("storyTitle", accent)}
+          />
+          <div>
+            <div className="text-muted-foreground space-y-5 text-lg leading-relaxed">
+              {story.map((paragraph) => (
+                <p key={paragraph}>{paragraph}</p>
+              ))}
+            </div>
+            <h3 className="text-muted-foreground mt-10 text-xs font-medium tracking-[0.25em] uppercase">
+              {t("teamTitle")}
+            </h3>
+            <ul className="mt-4 flex flex-wrap gap-2">
+              {team.map((skill) => (
+                <li key={skill} className="border-border rounded-full border px-4 py-1.5 text-sm">
+                  {skill}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
       <section aria-labelledby="approach-title" className="bg-ink text-paper">
         <div aria-hidden className="bg-gold-gradient h-px" />
         <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28">
@@ -125,8 +163,7 @@ export default async function AboutPage({ params }: Props) {
         </div>
       </section>
 
-      {/* TODO(owner): studio story, team members and equipment highlights (AGENTS.md §6.8) —
-          add sections here once the owner provides the details. */}
+      {/* TODO(owner): team member profiles and equipment highlights (AGENTS.md §6.8). */}
 
       <section
         aria-labelledby="areas-title"
@@ -140,6 +177,7 @@ export default async function AboutPage({ params }: Props) {
           intro={t("areasBody")}
           className="max-w-3xl"
         />
+        <p className="font-heading text-gold-text mt-10 text-xl italic">{t("slogan")}</p>
         <div className="mt-12 flex flex-col items-center gap-3">
           <p className="font-heading text-3xl">{t.rich("ctaTitle", accent)}</p>
           <p className="text-muted-foreground">{t("ctaBody")}</p>

@@ -3,15 +3,21 @@ import { useTranslations } from "next-intl";
 
 import { buttonVariants } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
+import { photos } from "@/lib/photos";
 import { cn } from "@/lib/utils";
 
 import { ctaNav } from "./nav-items";
+import { SectionBackdrop } from "./section-backdrop";
 
 export function FinalCta() {
   const t = useTranslations();
 
   return (
-    <section aria-labelledby="final-cta-title" className="bg-ink text-paper">
+    <section
+      aria-labelledby="final-cta-title"
+      className="bg-ink text-paper relative isolate overflow-hidden"
+    >
+      <SectionBackdrop photo={photos.background[2]} overlayClassName="bg-ink/80" />
       <div className="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 sm:py-28">
         <span aria-hidden className="bg-gold-gradient mx-auto block h-px w-16" />
         <h2

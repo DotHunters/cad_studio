@@ -29,7 +29,7 @@ test.describe("quote generator", () => {
     await expect(total(page)).toHaveText("$3,164.00 CAD");
     await expect(estimate(page)).toContainText("Deposit to confirm (30%): $949.20");
     await expect(estimate(page)).toContainText(
-      "Estimate only. Final price confirmed by Cad Studio.",
+      "Estimate only. Final price confirmed by CAD Studio Photography.",
     );
   });
 
@@ -55,7 +55,7 @@ test.describe("quote generator", () => {
   test("charges travel beyond the free radius", async ({ page }) => {
     await open(page, "/en/quote?package=corporate-event");
     await page.getByLabel("Event date").fill(WEEKDAY);
-    await page.getByLabel("Distance from Scarborough (km)").fill("100");
+    await page.getByLabel("Distance from Toronto (km)").fill("100");
     // $1,200 + (60 km × 2 × $0.70 = $84) = $1,284 + HST
     await expect(total(page)).toHaveText("$1,450.92 CAD");
   });
@@ -132,7 +132,7 @@ test.describe("quote generator", () => {
     const email = `e2e-quote-${testInfo.project.name}-${Date.now()}@example.com`;
     await open(page, "/en/quote?package=corporate-event");
     await page.getByLabel("Event date").fill(WEEKDAY);
-    await page.getByLabel("Distance from Scarborough (km)").fill("100");
+    await page.getByLabel("Distance from Toronto (km)").fill("100");
     await expect(total(page)).toHaveText("$1,450.92 CAD");
 
     await page.getByLabel("Name").fill("E2E Tester");

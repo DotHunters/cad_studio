@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { FileDown } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
@@ -8,12 +9,14 @@ import { ConvertQuotePanel } from "@/components/admin/convert-quote-panel";
 import { Facts, PriceTable, Section } from "@/components/admin/detail-section";
 import { ResendQuotePanel } from "@/components/admin/resend-quote-panel";
 import { StatusBadge } from "@/components/admin/status-badge";
+import { buttonVariants } from "@/components/ui/button";
 import { quoteState, storedQuoteResult } from "@/lib/admin/quotes";
 import { slugFromCategory } from "@/lib/categories";
 import { formatInStudioTz } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { formatCAD } from "@/lib/money";
 import { lineItemLabel, type Translate } from "@/lib/pricing/line-labels";
+import { savedOptionName } from "@/lib/pricing/options";
 import { requireAdminPage } from "@/server/auth/guards";
 import { getQuoteForAdmin } from "@/server/queries/admin-quotes";
 
@@ -23,7 +26,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return { title: (await params).reference };
 }
 
-const STATE_LABEL = { OPEN: "SENT", ACCEPTED: "ACCEPTED", EXPIRED: "EXPIRED", DRAFT: "DRAFT" };
+const STATE_LABEL = {
+  OPEN: "SENT",
+  ACCEPTED: "ACCEPTED",
+  EXPIRED: "EXPIRED",
+  DRAFT: "DRAFT",
+  CANCELLED: "CANCELLED",
+};
 
 export default async function AdminQuotePage({ params }: Props) {
   await requireAdminPage();
@@ -43,7 +52,7 @@ export default async function AdminQuotePage({ params }: Props) {
     db.pricingRule.findUnique({ where: { key: "QUOTE_VALID_DAYS" } }),
   ]);
   const names = {
-    packageName: quote.package?.name ?? "Base",
+    packageName: savedOptionName(quote.breakdown, quote.package, "en") ?? "Base",
     addOnNames: Object.fromEntries(addOns.map((addOn) => [addOn.code, addOn.name])),
   };
   const state = quoteState(quote, new Date());
@@ -63,6 +72,13 @@ export default async function AdminQuotePage({ params }: Props) {
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <h1 className="font-heading font-mono text-3xl">{quote.reference}</h1>
         <StatusBadge status={STATE_LABEL[state]} />
+        <a
+          href={`/admin/quotes/${quote.reference}/pdf`}
+          download
+          className={buttonVariants({ size: "sm", variant: "outline" })}
+        >
+          <FileDown aria-hidden /> Download PDF
+        </a>
       </div>
       <p className="text-muted-foreground mt-1 text-sm">
         Created {when(quote.createdAt)} ·{" "}
@@ -81,7 +97,7 @@ export default async function AdminQuotePage({ params }: Props) {
         )}
       </p>
 
-      {!quote.booking && state !== "ACCEPTED" && (
+      {!quote.booking && state !== "ACCEPTED" && state !== "CANCELLED" && (
         <div className="mt-8 max-w-3xl">
           <ResendQuotePanel
             reference={quote.reference}
@@ -116,7 +132,7 @@ export default async function AdminQuotePage({ params }: Props) {
           <Facts
             rows={[
               ["Service", tCategories(`${slugFromCategory(quote.category)}.name`)],
-              ["Package", quote.package?.name ?? "—"],
+              ["Package", savedOptionName(quote.breakdown, quote.package, "en") ?? "—"],
               ["Date", when(quote.eventDate)],
               ["Coverage", `${Number(quote.durationHours)} h`],
               ["Photographers", quote.photographers],
