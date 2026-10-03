@@ -26,6 +26,7 @@ try {
   await client.end();
 }
 
-const env = { ...process.env, DATABASE_URL: url };
+// Both, so `prisma migrate` (which prefers the unpooled URL) also targets the e2e database.
+const env = { ...process.env, DATABASE_URL: url, DATABASE_URL_UNPOOLED: url };
 execSync("pnpm -s prisma migrate deploy", { stdio: "inherit", env });
 execSync("pnpm -s prisma db seed", { stdio: "inherit", env });

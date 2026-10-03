@@ -59,6 +59,7 @@ export default defineConfig({
     // Seeded sample clients/reviews fill the home page sections under test.
     env: {
       DATABASE_URL: E2E_DATABASE_URL,
+      DATABASE_URL_UNPOOLED: E2E_DATABASE_URL,
       E2E_DATABASE_URL,
       NEXT_DIST_DIR,
       // Never write to the real photo store from tests (overrides .env.local).
