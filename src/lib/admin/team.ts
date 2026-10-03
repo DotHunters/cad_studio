@@ -2,7 +2,7 @@
  * Team accounts (AGENTS.md §2 roles, §6.10). Admins add photographers/staff; sign-in is by
  * emailed link, so the email must be a real inbox. Pure rules, unit tested.
  */
-import { z } from "zod";
+import * as z from "zod";
 
 import { checkbox, optionalText } from "@/lib/validators/admin/fields";
 

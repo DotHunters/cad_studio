@@ -17,6 +17,7 @@ import { slugFromCategory } from "@/lib/categories";
 import { storedImageSrc } from "@/lib/images";
 import { pickCover } from "@/lib/images";
 import { localize } from "@/lib/localize";
+import { excerpt } from "@/lib/seo/excerpt";
 import { imageGalleryJsonLd } from "@/lib/seo/json-ld";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { cn } from "@/lib/utils";
@@ -34,7 +35,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     locale,
     path: `/portfolio/${slug}`,
     title: localize(project.title, project.titleFr, locale),
-    description: `${category} · ${[project.city, project.country].filter(Boolean).join(", ")} · ${project.year}`,
+    // "Corporate Events · Toronto, Canada · 2025. <start of the story>", ≤ 160 characters.
+    description: excerpt(
+      `${category} · ${[project.city, project.country].filter(Boolean).join(", ")} · ${project.year}. ${localize(project.story, project.storyFr, locale)}`,
+    ),
   });
 }
 

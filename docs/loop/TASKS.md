@@ -101,13 +101,20 @@ Legend: `[ ]` todo · `[x]` done · `BLOCKED(Q#)` waiting on `OPEN_QUESTIONS.md`
 
 ## M8 — Hardening · branch `feat/m8-hardening`
 
-- [ ] 8.1 Upstash rate limiting on all public forms; real Turnstile wiring. — §11
-- [ ] 8.2 WCAG 2.1 AA audit and fixes (contrast, focus, labels, announced errors, reduced motion). — §5, §9
-- [ ] 8.3 SEO pass: metadata, OG images, noindex on admin, sitemap built from the DB. — §10
+- [x] 8.1 Upstash rate limiting on all public forms; real Turnstile wiring. — §11
+  - [x] 8.1a Upstash rate limiting on contact, quote, booking, review, change-request and admin sign-in
+  - [x] 8.1b Cloudflare Turnstile widget on public forms (token passed to the existing server check)
+- [x] 8.2 WCAG 2.1 AA audit and fixes (contrast, focus, labels, announced errors, reduced motion). — §5, §9
+- [x] 8.3 SEO pass: metadata, OG images, noindex on admin, sitemap built from the DB. — §10
 - [ ] 8.4 Performance pass: Lighthouse ≥ 90 on mobile, LCP < 2.5 s, CLS < 0.1. — §10
-- [ ] 8.4b Pre-launch content check: list every `isSample`, `TODO(owner)` and `cadstudio.example` occurrence in the PR so the owner can replace them. — §13
-- [ ] 8.5 Full e2e suite green (§15 scenarios 1–7, run in both `en` and `fr`); empty and skeleton states on every list page. — §12, §15
-- [ ] 8.6 French completeness check: no missing FR keys, every `*Fr` seed field filled, list all `TODO(owner-fr)` items in the PR for review. — §9, Q12
+  - [x] 8.4.1 Measure with Lighthouse (`pnpm perf`), trim web fonts, fix heading order
+  - [x] 8.4.2 Cut client JavaScript on the quote, booking and contact pages (82–83 → 86–88 locally)
+  - [ ] 8.4.3 BLOCKED(Q19) Confirm Lighthouse ≥ 90 on a deployed Vercel preview (`BASE_URL=… pnpm perf`)
+- [x] 8.4b Pre-launch content check: list every `isSample`, `TODO(owner)` and `cadstudio.example` occurrence in the PR so the owner can replace them. — §13
+- [x] 8.5 Full e2e suite green (§15 scenarios 1–7, run in both `en` and `fr`); empty and skeleton states on every list page. — §12, §15
+  - [x] 8.5a Loading skeletons on list pages (empty states already exist)
+  - [x] 8.5b §15 scenarios also in French (quote → book, review, blocked date, lightbox)
+- [x] 8.6 French completeness check: no missing FR keys, every `*Fr` seed field filled, list all `TODO(owner-fr)` items in the PR for review. — §9, Q12
 
 ## Out of scope for the loop
 

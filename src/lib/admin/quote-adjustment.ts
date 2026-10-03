@@ -3,7 +3,7 @@
  * labelled adjustment line (a discount or an extra); tax is recalculated on the new subtotal
  * at the rates the quote was taxed at, and the deposit at the current deposit %. Pure.
  */
-import { z } from "zod";
+import * as z from "zod";
 
 import type { QuoteResult } from "@/lib/pricing/calculate-quote";
 import { dollarsToCents, text } from "@/lib/validators/admin/fields";

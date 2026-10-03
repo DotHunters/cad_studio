@@ -2,7 +2,7 @@
 
 import { addDays } from "date-fns";
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
+import * as z from "zod";
 
 import { adjustmentSchema, applyQuoteAdjustment } from "@/lib/admin/quote-adjustment";
 import { storedQuoteResult } from "@/lib/admin/quotes";

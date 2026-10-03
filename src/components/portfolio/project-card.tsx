@@ -24,10 +24,17 @@ type Props = {
   >;
   locale: Locale;
   sizes?: string;
+  /** h2 when the card sits right under the page h1 (portfolio page), h3 under a section h2. */
+  headingLevel?: "h2" | "h3";
 };
 
 /** Case-study card: cover, Local/Global (+ Sample) badges, title, client, category, place. */
-export function ProjectCard({ project, locale, sizes = "(min-width: 768px) 33vw, 100vw" }: Props) {
+export function ProjectCard({
+  project,
+  locale,
+  sizes = "(min-width: 768px) 33vw, 100vw",
+  headingLevel: Heading = "h3",
+}: Props) {
   const t = useTranslations();
   const title = localize(project.title, project.titleFr, locale);
 
@@ -54,7 +61,9 @@ export function ProjectCard({ project, locale, sizes = "(min-width: 768px) 33vw,
           )}
         </div>
       </div>
-      <h3 className="group-hover:text-gold-text mt-4 text-2xl transition-colors">{title}</h3>
+      <Heading className="group-hover:text-gold-text mt-4 text-2xl transition-colors">
+        {title}
+      </Heading>
       <p className="text-muted-foreground mt-1 text-sm">
         {project.clientName ?? t("Home.privateClient")} ·{" "}
         {t(`Categories.${slugFromCategory(project.category)}.name`)} ·{" "}

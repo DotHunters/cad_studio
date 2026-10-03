@@ -12,7 +12,7 @@ const daysFor = (testInfo: TestInfo) =>
 const referenceFor = (testInfo: TestInfo) =>
   `CAD-B-9990-${testInfo.project.name === "mobile" ? 1 : 0}001`;
 
-test.afterEach(async ({}, testInfo) => {
+async function cleanUp(testInfo: TestInfo) {
   const days = daysFor(testInfo);
   await queryDb(`delete from "BlockedDate" where date between $1::date and $2::date`, [
     days[0],
@@ -20,7 +20,11 @@ test.afterEach(async ({}, testInfo) => {
   ]);
   await deleteBookingFixture(testInfo, referenceFor(testInfo));
   await deleteAdmin(adminEmailFor(testInfo, "staff"));
-});
+}
+
+// Before as well: a crashed earlier run can leave its blocked days behind.
+test.beforeEach(async ({}, testInfo) => cleanUp(testInfo));
+test.afterEach(async ({}, testInfo) => cleanUp(testInfo));
 
 async function publicStatus(request: APIRequestContext, day: string) {
   const response = await request.get("/api/availability?month=2028-03");

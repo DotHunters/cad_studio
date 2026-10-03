@@ -3,16 +3,29 @@ import { expect, test, type TestInfo } from "@playwright/test";
 import { adminEmailFor, deleteAdmin, signInAsAdmin } from "./admin-session";
 import { queryDb } from "./db";
 
-// Own project and images (never in the gallery) so seeded gallery counts stay intact. Data is
+// Runs in the "global" project (after other specs): its published project changes the public
+// portfolio counts. Own project and images (never in the gallery) so gallery counts stay intact. Data is
 // written with SQL, which doesn't revalidate the page cache — and that cache survives between
 // runs — so slugs are unique per run.
 const RUN = Date.now().toString(36);
 const slugFor = (testInfo: TestInfo) =>
   `e2e-images-${RUN}-${testInfo.project.name}-${testInfo.testId}`.toLowerCase().slice(0, 80);
+/** This test's rows from any run — a crashed run leaves rows a later run must still remove. */
+const anyRunPattern = (testInfo: TestInfo) =>
+  // The whole test id: its first half identifies the file, shared by every test in it.
+  `e2e-images-%-${testInfo.project.name}-${testInfo.testId}%`.toLowerCase();
+
+async function removeFixtures(testInfo: TestInfo) {
+  await queryDb(`delete from "Image" where "publicId" like $1`, [
+    `placeholder/${anyRunPattern(testInfo)}`,
+  ]);
+  await queryDb(`delete from "PortfolioProject" where slug like $1`, [anyRunPattern(testInfo)]);
+}
 const altFor = (testInfo: TestInfo, label: string) =>
   `E2E ${label} photo ${testInfo.project.name} ${testInfo.testId.slice(-6)}`;
 
 async function createFixtures(testInfo: TestInfo) {
+  await removeFixtures(testInfo);
   const slug = slugFor(testInfo);
   const [project] = await queryDb<{ id: string }>(
     `insert into "PortfolioProject" (id, slug, title, category, reach, country, year, story,
@@ -41,10 +54,7 @@ async function createFixtures(testInfo: TestInfo) {
 }
 
 test.afterEach(async ({}, testInfo) => {
-  await queryDb(`delete from "Image" where "publicId" like $1`, [
-    `placeholder/${slugFor(testInfo)}-%`,
-  ]);
-  await queryDb(`delete from "PortfolioProject" where slug = $1`, [slugFor(testInfo)]);
+  await removeFixtures(testInfo);
   await deleteAdmin(adminEmailFor(testInfo));
 });
 

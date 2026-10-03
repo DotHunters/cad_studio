@@ -12,11 +12,12 @@ import {
   changeRequestSchema,
 } from "@/lib/validators/change-request";
 import { linkSecret } from "@/server/link-secret";
+import { isRateLimited } from "@/server/rate-limit";
 
 export type ChangeRequestResult =
   | { ok: true }
   | { ok: false; error: "validation"; fieldErrors: Record<string, string> }
-  | { ok: false; error: "forbidden" | "closed" | "server" };
+  | { ok: false; error: "forbidden" | "closed" | "rateLimited" | "server" };
 
 /**
  * Records a reschedule/cancel request from the signed booking link and notifies the studio
@@ -32,6 +33,7 @@ export async function requestBookingChange(
     for (const issue of parsed.error.issues) fieldErrors[issue.path.join(".")] ??= issue.message;
     return { ok: false, error: "validation", fieldErrors };
   }
+  if (await isRateLimited("changeRequest")) return { ok: false, error: "rateLimited" };
   const request = parsed.data;
   if (
     parseReference(request.reference)?.type !== "B" ||

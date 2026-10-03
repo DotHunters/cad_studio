@@ -1,4 +1,4 @@
-import { z } from "zod";
+import * as z from "zod";
 
 /** Max open change requests per booking (keeps a leaked link from spamming the studio). */
 export const MAX_OPEN_CHANGE_REQUESTS = 3;

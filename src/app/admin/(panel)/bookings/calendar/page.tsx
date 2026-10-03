@@ -88,7 +88,13 @@ export default async function BookingsCalendarPage({ searchParams }: Props) {
         </nav>
       </div>
 
-      <div className="mt-6 overflow-x-auto">
+      {/* Scrolls sideways on small screens; focusable so keyboard users can scroll it. */}
+      <div
+        className="mt-6 overflow-x-auto"
+        tabIndex={0}
+        role="region"
+        aria-label={`Calendar for ${title}`}
+      >
         <table className="w-full min-w-[56rem] table-fixed border-collapse text-sm">
           <caption className="sr-only">Bookings in {title}</caption>
           <thead>

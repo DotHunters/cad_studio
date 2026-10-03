@@ -3,7 +3,7 @@
  * PAYMENT_INSTRUCTIONS, optional payment link), then records the deposit → CONFIRMED.
  * Pure rules and form parsing, unit tested.
  */
-import { z } from "zod";
+import * as z from "zod";
 
 import { dollarsToCents } from "@/lib/validators/admin/fields";
 

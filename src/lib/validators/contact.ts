@@ -1,4 +1,4 @@
-import { z } from "zod";
+import * as z from "zod";
 
 /**
  * Contact form schema, shared by the client form and the server action (AGENTS.md §6.9).

@@ -7,6 +7,9 @@ const GLOBAL_SPECS = /\.global\.spec\.ts$/;
 export default defineConfig({
   testDir: "tests/e2e",
   fullyParallel: true,
+  // The default (half the CPU cores = 8 here) intermittently crashed Windows test workers
+  // (0xC0000409) once the suite passed ~450 tests; 6 is stable and only slightly slower.
+  workers: process.env.CI ? undefined : 6,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   reporter: process.env.CI ? "github" : "list",

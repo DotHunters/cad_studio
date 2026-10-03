@@ -13,11 +13,12 @@ import {
   reviewSubmissionSchema,
 } from "@/lib/validators/review";
 import { getVerifiedBooking } from "@/server/review-links";
+import { isRateLimited } from "@/server/rate-limit";
 
 export type SubmitReviewResult =
   | { ok: true }
   | { ok: false; error: "validation"; fieldErrors: Record<string, string> }
-  | { ok: false; error: "captcha" | "server" };
+  | { ok: false; error: "captcha" | "rateLimited" | "server" };
 
 /**
  * Public review submission (AGENTS.md §6.7, §8.4): always stored as PENDING — never
@@ -35,6 +36,7 @@ export async function submitReview(
   }
   const review = parsed.data;
 
+  if (await isRateLimited("review")) return { ok: false, error: "rateLimited" };
   const requestHeaders = await headers();
   const ip = requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim();
   if (!(await verifyTurnstile(turnstileToken, ip))) return { ok: false, error: "captcha" };

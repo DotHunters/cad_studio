@@ -22,6 +22,7 @@ import { createQuote } from "@/server/actions/quote";
 import type { PricingContext } from "@/server/queries/pricing";
 
 import { QuoteBreakdown } from "./quote-breakdown";
+import { useTurnstile } from "@/components/site/turnstile";
 
 export type QuoteFormValues = {
   category: CategorySlug | "";
@@ -153,6 +154,7 @@ export function QuoteForm({ context, locale, today, initialPackage, initialCateg
     },
   });
   const [pending, startTransition] = useTransition();
+  const turnstile = useTurnstile("quote");
   const router = useRouter();
   const values = useWatch({ control }) as QuoteFormValues;
   // Marks the form interactive once hydrated (used by e2e tests to avoid typing too early).
@@ -227,7 +229,8 @@ export function QuoteForm({ context, locale, today, initialPackage, initialCateg
     const request = parsed.data;
 
     startTransition(async () => {
-      const outcome = await createQuote(request);
+      const outcome = await createQuote(request, turnstile.token);
+      turnstile.reset();
       if (outcome.ok) {
         // The private quote page needs the signed token.
         router.push({ pathname: `/quote/${outcome.reference}`, query: { t: outcome.token } });
@@ -242,7 +245,9 @@ export function QuoteForm({ context, locale, today, initialPackage, initialCateg
           ? t("Quote.captchaError")
           : outcome.error === "unavailable"
             ? t("Quote.unavailable")
-            : t("Quote.serverError"),
+            : outcome.error === "rateLimited"
+              ? t("Common.tooManyRequests")
+              : t("Quote.serverError"),
       );
     });
   };
@@ -547,6 +552,7 @@ export function QuoteForm({ context, locale, today, initialPackage, initialCateg
               ),
             })}
           </p>
+          {turnstile.element}
           <Button type="submit" size="cta" disabled={pending} className="w-full sm:w-auto">
             {pending && <Loader2 className="size-4 animate-spin" aria-hidden />}
             {pending ? t("Quote.sending") : t("Quote.submit")}

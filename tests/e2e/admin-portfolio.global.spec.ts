@@ -3,6 +3,8 @@ import { expect, test, type TestInfo } from "@playwright/test";
 import { adminEmailFor, deleteAdmin, signInAsAdmin } from "./admin-session";
 import { queryDb } from "./db";
 
+// Runs in the "global" project (after other specs): publishing a project changes the public
+// portfolio counts that portfolio.spec.ts asserts.
 const slugFor = (testInfo: TestInfo) =>
   `e2e-project-${testInfo.project.name}-${testInfo.testId}`.toLowerCase().slice(0, 80);
 const titleFor = (testInfo: TestInfo) => `E2E Project ${testInfo.project.name}`;

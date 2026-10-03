@@ -526,3 +526,86 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Done: retargeted PR #8 to `main`, renamed it "M4–M7: Quote engine, Booking, Reviews, Admin", explained why in its body, and listed the deploy steps (migrations, env vars, first admin). GitHub reports it mergeable/clean. Loop rule added for this case.
 - Next: M8 Hardening on `feat/m8-hardening`, branched from `feat/m7-admin` (stacked on #8).
 
+### 2026-10-02 — 8.1a Rate limiting
+- Branch: feat/m8-hardening (stacked on #8 → main)
+- Split 8.1 into 8.1a rate limiting · 8.1b Turnstile widget.
+- Done: `@upstash/ratelimit` + `@upstash/redis`. Sliding-window limits per client IP (`src/lib/rate-limit.ts`: contact 5/10 min, quote 10/10 min, booking 5/10 min, review 3/10 min, change request 5/10 min, admin sign-in 5/15 min per IP **and** per email). `isRateLimited(bucket, key?)` in `src/server/rate-limit.ts`: no Upstash env → no limiting (dev/tests; logged once as an error in production); Upstash errors fail open (Turnstile/honeypot still apply). Wired into `submitContact`, `createQuote`, `createBooking`, `submitReview`, `requestBookingChange` (new `rateLimited` result) and `requestSignInLink` (`?error=TooManyRequests`). Forms show "Too many attempts…" (EN/FR, `Common.tooManyRequests`). 6 unit tests (IP parsing, policy coverage, wiring with a mocked Upstash client, fail-open).
+- Not covered by e2e: limiting needs Upstash; e2e runs without it (346 green, behaviour unchanged).
+- Checks: lint ✅ · typecheck ✅ · test ✅ (448) · e2e ✅ (346) · build ✅ · format ✅
+- Next: 8.1b Turnstile widget
+
+### 2026-10-03 — 8.1b Turnstile widget (8.1 complete) + PR housekeeping
+- Branch: feat/m8-hardening
+- Housekeeping: the owner merged #8 (M4–M7) into `main`, then #9 (8.1a) into `feat/m7-admin` — so 8.1a wasn't in `main`. Opened a follow-up PR `feat/m8-hardening` → `main` (per the loop rule). Resumed the 8.1b work that had been stashed when the user paused M8.
+- Done: `useTurnstile(action)` (`src/components/site/turnstile.tsx`): loads Cloudflare's script only when `NEXT_PUBLIC_TURNSTILE_SITE_KEY` is set, renders explicitly in the visitor's language with `appearance: "interaction-only"` (invisible unless Cloudflare is unsure), exposes the token and a `reset()` (tokens are single-use, reset after every submit). Wired into the contact, quote, booking and review forms, passing the token to the existing server check (`verifyTurnstile`, skipped without `TURNSTILE_SECRET_KEY`). The contact form's `TODO(8.1)` is gone. Change-request (signed link) and admin sign-in (rate limited, admins only) don't use it.
+- Not covered by e2e: needs Cloudflare keys and network; without keys nothing renders and forms behave as before (346 green).
+- Env: local Postgres wasn't running after a restart (build failed prerendering the sitemap) — started it per the memory note.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (448) · e2e ✅ (346 on rerun after one Windows worker crash) · build ✅ · format ✅
+- Next: 8.2 WCAG 2.1 AA audit
+
+### 2026-10-03 — 8.2 Accessibility audit (WCAG 2.1 AA)
+- Branch: feat/m8-hardening · PR #10
+- Done: `@axe-core/playwright` (dev only) and `tests/e2e/a11y.spec.ts` — axe with WCAG 2.0/2.1 A + AA rules on every public page (EN, FR samples, 404), dark mode on four pages, interactive states (mobile menu open, gallery lightbox open, contact/quote/review forms showing errors), the admin sign-in and 15 admin screens; desktop and mobile. Sanity-checked that the harness does flag a deliberately broken page.
+- Findings and fixes: (1) error text `--destructive` #e7000b was 4.49:1 on paper → #c70009 (5.8:1); (2) Sonner's rich toast colours were 3.1–4.4:1 on their tinted backgrounds → darker error/warning/info/success text (6.3–6.6:1, computed); (3) the admin calendar's sideways-scrolling area wasn't reachable by keyboard on mobile → focusable labelled region. Everything else already passed (labels, names, landmarks, contrast, ARIA).
+- Not automatable: a manual screen-reader pass (NVDA/VoiceOver) and real keyboard walk-through should be done by the tester before launch (added to the PR). Focus visibility, reduced motion and keyboard-operable lightbox were built and tested in earlier milestones.
+- Test infra (separate commit): admin-images/admin-portfolio publish projects that change public portfolio counts → moved to the global project; admin-images cleanup now removes rows left by crashed runs (and a cleanup-pattern bug that matched the other test in the file was caught by the full run).
+- Checks: lint ✅ · typecheck ✅ · test ✅ (448) · e2e ✅ (426 incl. 80 a11y scans) · build ✅ · format ✅
+- Next: 8.3 SEO pass
+
+### 2026-10-03 — 8.3 SEO pass
+- Branch: feat/m8-hardening · PR #10
+- Audit: `tests/e2e/seo-audit.spec.ts` checks every public page in EN and FR as Googlebot — `lang`, title pattern, description length (50–200), canonical, `en-CA`/`fr-CA`/`x-default` alternates, Open Graph (title, description, absolute image, url = canonical), Twitter card, exactly one `h1`, indexable — plus `noindex` on private quote/booking pages. (Metadata, sitemap from the DB, robots and admin `noindex` already existed from earlier milestones.)
+- Findings and fixes: (1) **Next 15 streamed metadata into the body** for clients not on its "HTML-limited bots" list — Googlebot included — so on dynamic pages like home and About the description wasn't in the initial `<head>`; set `htmlLimitedBots: /.*/` so metadata always renders in the head. (2) Case-study descriptions were only "Category · City, Country · Year" (41 chars) → now that line plus a plain-text excerpt of the story, ≤ 160 chars (`src/lib/seo/excerpt.ts`, 3 unit tests).
+- Later (with real photos, Q18): per-page OG images (case-study covers) instead of the default brand image.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (451) · e2e ✅ (480 incl. 54 SEO checks) · build ✅ · format ✅
+- Next: 8.4 performance pass
+
+### 2026-10-03 — 8.4.1 Performance: measurement, fonts, heading order
+- Branch: feat/m8-hardening · PR #10
+- Split 8.4 into 8.4.1 (this) · 8.4.2 cut client JS on the form pages.
+- Measured: `lighthouse` (dev dependency) + `scripts/lighthouse.mjs` → `pnpm perf` (mobile preset, 10 pages, against `BASE_URL`, default `http://localhost:3300`). Core Web Vitals under Lighthouse-like throttling (Playwright, observed): LCP 1.0–2.3 s, CLS ≈ 0 on every page — targets met.
+- Fixed: Cormorant was loaded in 4 weights × 2 styles × 2 subsets (16 files) → 3 weights (400/500/600) × 2 styles, `latin` only (it covers French incl. œ); Inter `latin` only. Home 82 → 86–89. `display: "optional"` was tried and reverted: no LCP gain, and it would sometimes show a fallback instead of the brand serif. `/portfolio` card titles were `h3` straight under the `h1` (heading-order) → `ProjectCard` takes `headingLevel`, h2 on that page.
+- Local Lighthouse now: performance 90 on packages/portfolio/gallery/reviews/about, 86–89 on home/fr, **82–83 on quote/book/contact** (JS: form libraries, calendar — TBT 190–230 ms), accessibility 100, best practices 100, SEO 92 (only failure: canonical points to `cadstudio.example` while testing on localhost — fine on the real domain). Local numbers are pessimistic (no CDN/HTTP 2); a Vercel preview should be measured too.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (451) · e2e ✅ (480, rerun after a Windows worker crash) · build ✅ · format ✅
+- Next: 8.4.2
+
+### 2026-10-03 — 8.4.2 Less JavaScript on the form pages
+- Branch: feat/m8-hardening · PR #10
+- Found (build manifests, gzipped sizes): one shared 94 KB chunk on the quote/booking/contact pages contained **all of Zod's error-message locales and its JSON-Schema generator** — `import { z } from "zod"` (a re-exported namespace) wasn't tree-shaken by Turbopack. Switched all 22 imports to `import * as z from "zod"` (the form Zod's docs recommend): page-specific JS contact 111 → 50 KB, quote 115 → 54 KB, booking 143 → 82 KB; locales gone.
+- Lighthouse (local, mobile): quote 82 → 88, contact 83 → 88, booking 82 → 86, blocking time 190–230 → 70–140 ms; other pages 86–91; a11y/best practices 100, SEO 92 (localhost canonical only). The remaining gap is the ~3.5–4 s simulated LCP that every page shares, including the lightest ones — it tracks the local server (no CDN, HTTP 2 or Brotli) more than page code. Confirming ≥ 90 needs the deployed site → 8.4.3 BLOCKED(Q19).
+- Test fixes (separate commit): the private-pages noindex check had relied on references from an earlier run → it now creates its own quote and booking; the audit-log spec also cleans up first. `review-verified` failed once under load (second use of a link not rejected) and passed 4/4 when rerun — watch it.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (451) · e2e ✅ (480) · build ✅ · format ✅
+- Next: 8.4b pre-launch content check
+
+### 2026-10-03 — 8.4b Pre-launch content check
+- Branch: feat/m8-hardening · PR #10
+- Done: `docs/PRE_LAUNCH.md` — the owner's checklist: environment/accounts (domain, email, secrets, first admin, Upstash, Turnstile, Cloudinary, the sample/pricing/legal flags as they actually behave), studio facts in code, prices/rules/tax/payment instructions in admin, photos and real clients, legal review, French review, final checks. `pnpm prelaunch` (`scripts/prelaunch-check.mjs`) lists every remaining `TODO(owner)`, `TODO(owner-fr)` and `cadstudio.example` with file:line and exits 1 until none are left; currently 21 + 4 + 3. A comment in `src/lib/content.ts` that only described the mechanism was reworded so it isn't reported. Sample clients and reviews are DB rows (`isSample`) that never render on Vercel production. Placeholder list added to PR #10.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (451) · build ✅ · format ✅ (no UI change; e2e not rerun)
+- Next: 8.5 full e2e in EN + FR, empty/skeleton states
+
+### 2026-10-03 — 8.5a Loading skeletons
+- Branch: feat/m8-hardening · PR #10
+- Split 8.5 into 8.5a skeletons · 8.5b French scenario runs.
+- Done: shadcn `Skeleton`, `CardGridSkeleton` (public lists, localized "Loading…"/"Chargement…") and `TableSkeleton` (admin), announced once via `role="status"`/`aria-busy`, blocks `aria-hidden`, pulse off for reduced motion (global rule). `loading.tsx` on public packages, portfolio, gallery, reviews and admin bookings, quotes, packages, add-ons, portfolio, gallery, audit. Empty states already existed on every list page.
+- Bugs caught by the existing suite while doing this: (1) a `loading.tsx` also wraps child routes, and once a segment streams `notFound()` answers **200 instead of 404** (soft 404 for unknown packages/case studies) → list pages moved into `(list)` route groups so detail routes aren't wrapped; (2) on admin pages whose own form actions redirect back to the same page (reviews, availability, team) the page intermittently came back blank/stale → no skeleton there. Both noted in loop.md pitfalls.
+- Test infra: Playwright local workers capped at 6 — the default 8 crashed Windows test workers (0xC0000409) most runs now that the suite is ~480 tests; 6 gave two clean runs in a row. `admin-availability` also cleans up before running.
+- e2e: slowed client navigation to the gallery shows the skeleton and then the page; unit test for the skeleton markup (2 tests).
+- Checks: lint ✅ · typecheck ✅ · test ✅ (453) · e2e ✅ (481, twice) · build ✅ · format ✅
+- Next: 8.5b French scenarios
+
+### 2026-10-03 — 8.5b §15 scenarios in French (8.5 complete)
+- Branch: feat/m8-hardening · PR #10
+- Done: `tests/e2e/scenarios-fr.spec.ts` (desktop + mobile, own data per test): (1) wedding package → "Personnaliser le devis" → prefilled → hours 10 → total updates in Canadian French format (3 164,00 $ → 3 616,00 $) → `CAD-Q-` reference; (2) "Réserver ce devis" → booking → `CAD-B-` page, the day's capacity drops to "limited", the customer is stored with locale `fr` (emails in French); (4) a blocked day is disabled in the French calendar, navigating months via its French label "Aller au mois suivant"; (5, public half) a French review is stored PENDING with locale `fr` and not shown; (6) the gallery viewer opens, moves and closes with the keyboard, returning focus. Scenario 7 and the admin half of 5 are English-only admin screens covered by `admin-auth`/`admin-reviews.global`. All passed first time.
+- For the French review (8.6): the review success title is "Merci!" — French typography wants a space before "!" ("Merci !").
+- Checks: lint ✅ · typecheck ✅ · test ✅ (453) · e2e ✅ (491, twice) · build ✅ · format ✅
+- Next: 8.6 French completeness check
+
+### 2026-10-03 — 8.6 French completeness check
+- Branch: feat/m8-hardening · PR #10
+- Correction to 8.5b: "Merci!" is right for **Canadian** French — the Office québécois de la langue française puts no space before `!`, `?` or `;` (only before `:`), so there's nothing to fix.
+- Found and fixed: 24 French strings (30 occurrences) used the straight `'` while the rest used `’` → all typographic now (also avoids ICU's quoting rules, which caused an earlier bug).
+- New checks: unit — French apostrophes typographic; every French string differs from English except an explicit allow-list of 33 names/cognates/formats (Ontario, Portfolio, Total, `{index} / {total}`…); every add-on has a French name; every sample project has a French title and a translated story (packages were already covered; colon spacing scanned clean). e2e `french-pages.spec.ts` — 14 French pages (incl. legal and 404) show none of the ~500 English UI sentences that have a different French version, with a control proving the scan finds English on an English page.
+- `docs/PRE_LAUNCH.md` §6 now lists what the French reviewer should read, in order: website text (549 strings), emails (47), legal pages (~1,450 words), package/add-on text (editable in admin), samples.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (457) · e2e ✅ (521 on rerun after a Windows worker crash) · build ✅ · format ✅
+- Status: every remaining task is BLOCKED on the owner — 7.4c (Q18 Cloudinary) and 8.4.3 (Q19 measure Lighthouse on the deployed site). Milestones 7 and 8 stay unticked until those are done. Loop stops here.
+

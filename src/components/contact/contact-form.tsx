@@ -12,6 +12,7 @@ import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { type ContactInput, contactSchema, enquiryTypes } from "@/lib/validators/contact";
 import { submitContact } from "@/server/actions/contact";
+import { useTurnstile } from "@/components/site/turnstile";
 
 const ERROR_KEYS = [
   "required",
@@ -31,8 +32,10 @@ const fieldClass =
 
 export function ContactForm() {
   const t = useTranslations("Contact");
+  const tCommon = useTranslations("Common");
   const [sent, setSent] = useState(false);
   const [pending, startTransition] = useTransition();
+  const turnstile = useTurnstile("contact");
 
   const {
     register,
@@ -49,7 +52,8 @@ export function ContactForm() {
 
   const onSubmit = (values: ContactInput) =>
     startTransition(async () => {
-      const result = await submitContact(values);
+      const result = await submitContact(values, turnstile.token);
+      turnstile.reset();
       if (result.ok) {
         setSent(true);
         reset();
@@ -61,7 +65,13 @@ export function ContactForm() {
         if (fields[0]) setFocus(fields[0][0]);
         return;
       }
-      toast.error(result.error === "captcha" ? t("captchaError") : t("serverError"));
+      toast.error(
+        result.error === "captcha"
+          ? t("captchaError")
+          : result.error === "rateLimited"
+            ? tCommon("tooManyRequests")
+            : t("serverError"),
+      );
     });
 
   if (sent) {
@@ -180,7 +190,7 @@ export function ContactForm() {
         <input id="website" tabIndex={-1} autoComplete="off" {...register("website")} />
       </div>
 
-      {/* TODO(8.1): Cloudflare Turnstile widget; pass its token to submitContact. */}
+      {turnstile.element}
 
       <p className="text-muted-foreground text-sm">
         {t.rich("privacyNotice", {

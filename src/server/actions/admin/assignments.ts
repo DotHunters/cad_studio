@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { z } from "zod";
+import * as z from "zod";
 
 import { Prisma } from "@/generated/prisma/client";
 import { db } from "@/lib/db";

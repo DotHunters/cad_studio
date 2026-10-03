@@ -3,7 +3,7 @@
  * `TaxRate` table stores fractions with 5 decimals ("0.13", "0.09975"). String/integer
  * conversion only, so no floating-point drift.
  */
-import { z } from "zod";
+import * as z from "zod";
 
 const PERCENT = /^(\d{1,2})(?:\.(\d{1,3}))?$/;
 
