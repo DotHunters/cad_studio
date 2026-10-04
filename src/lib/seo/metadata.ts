@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 import { type Locale, siteConfig } from "@/config/site";
 
-const OG_IMAGE = { url: "/brand/og-default.png", width: 1200, height: 630 };
+const OG_IMAGE = { url: "/brand/og-default.jpg", width: 1200, height: 630 };
 const OG_LOCALE: Record<Locale, string> = { en: "en_CA", fr: "fr_CA" };
 
 type Options = {

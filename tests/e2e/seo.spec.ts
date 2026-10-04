@@ -55,7 +55,7 @@ test.describe("SEO", () => {
     await expect(page.locator('meta[property="og:locale"]')).toHaveAttribute("content", "fr_CA");
     await expect(page.locator('meta[property="og:image"]')).toHaveAttribute(
       "content",
-      /\/brand\/og-default\.png$/,
+      /\/brand\/og-default\.jpg$/,
     );
     await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute(
       "content",
