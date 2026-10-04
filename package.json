@@ -23,7 +23,8 @@
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
     "db:seed": "prisma db seed",
-    "db:studio": "prisma studio"
+    "db:studio": "prisma studio",
+    "og": "node scripts/make-og-image.mjs"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.11.3",

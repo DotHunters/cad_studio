@@ -26,7 +26,7 @@ export function businessJsonLd({ baseUrl, locale }: Base) {
     alternateName: siteConfig.tagline,
     url: absolute(baseUrl, `/${locale}`),
     logo: absolute(baseUrl, "/brand/logo-gold.png"),
-    image: absolute(baseUrl, "/brand/og-default.png"),
+    image: absolute(baseUrl, "/brand/og-default.jpg"),
     email: siteConfig.contact.email,
     telephone: siteConfig.contact.phones[0].tel,
     sameAs: Object.values(siteConfig.socials).filter((url): url is string => Boolean(url)),
