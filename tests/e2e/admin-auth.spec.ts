@@ -3,6 +3,7 @@ import { randomBytes } from "node:crypto";
 import { type BrowserContext, expect, type Page, test, type TestInfo } from "@playwright/test";
 
 import { hashPassword } from "../../src/lib/auth/password";
+import { openAdminMenu } from "./admin-session";
 import { queryDb } from "./db";
 
 // Must match SUPER_ADMIN_* in playwright.config.ts.
@@ -142,6 +143,7 @@ test.describe("admin sign-in", () => {
     await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
 
     // The new password works; the temporary one doesn't.
+    await openAdminMenu(page);
     await page.getByRole("button", { name: "Sign out" }).click();
     await signInWithForm(page, email, PASSWORD);
     await expect(page.locator("#sign-in-error")).toContainText(CREDENTIALS_ERROR);
@@ -161,6 +163,7 @@ test.describe("admin sign-in", () => {
     await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
     await expect(page.getByTestId("admin-user")).toContainText(`${email} · Staff`);
 
+    await openAdminMenu(page);
     await page.getByRole("button", { name: "Sign out" }).click();
     await expect(page).toHaveURL(/\/admin\/sign-in/);
     const sessions = await queryDb(`select 1 from "Session" where "sessionToken" = $1`, [token]);
