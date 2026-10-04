@@ -1,6 +1,6 @@
 import { expect, type Page, test, type TestInfo } from "@playwright/test";
 
-import { adminEmailFor, deleteAdmin, signInAsAdmin } from "./admin-session";
+import { adminEmailFor, deleteAdmin, openAdminMenu, signInAsAdmin } from "./admin-session";
 import { queryDb } from "./db";
 
 // "E2E Package" names are ignored by packages.spec.ts's counts.
@@ -101,6 +101,7 @@ test.describe("admin packages", () => {
   test("staff can't manage packages", async ({ page, context, baseURL }, testInfo) => {
     await signInAsAdmin(context, baseURL!, adminEmailFor(testInfo, "staff"), "STAFF");
     await page.goto("/admin");
+    await openAdminMenu(page);
     await expect(page.getByRole("navigation", { name: "Admin" })).not.toContainText("Packages");
     await page.goto("/admin/packages");
     await expect(page).toHaveURL(/\/admin\?error=forbidden$/);

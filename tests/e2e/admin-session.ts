@@ -1,6 +1,6 @@
 import { randomBytes } from "node:crypto";
 
-import type { BrowserContext, TestInfo } from "@playwright/test";
+import type { BrowserContext, Page, TestInfo } from "@playwright/test";
 
 import { queryDb } from "./db";
 
@@ -41,4 +41,10 @@ export async function signInAsAdmin(
 export async function deleteAdmin(email: string) {
   await queryDb(`delete from "AuditLog" where "userEmail" = $1`, [email]);
   await queryDb(`delete from "User" where email = $1`, [email]);
+}
+
+/** Below `lg` the admin nav sits in a drawer; open it so its links and Sign out are reachable. */
+export async function openAdminMenu(page: Page) {
+  const toggle = page.getByRole("button", { name: "Open menu" });
+  if (await toggle.isVisible()) await toggle.click();
 }
