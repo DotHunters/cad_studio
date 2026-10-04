@@ -1,7 +1,5 @@
 import "server-only";
 
-import sharp from "sharp";
-
 /** Same output as `pnpm photos` — keep in sync with scripts/photos.config.mjs. */
 export const MAX_EDGE = 2400;
 export const WEBP_QUALITY = 80;
@@ -19,6 +17,8 @@ export type OptimizedPhoto = {
  * Metadata (camera details, GPS location) is dropped — sharp keeps none unless asked to.
  */
 export async function optimizePhoto(original: Buffer): Promise<OptimizedPhoto> {
+  // Loaded on use, so a missing native binary fails one upload, not every admin page.
+  const { default: sharp } = await import("sharp");
   const webp = await sharp(original, { failOn: "none" })
     .rotate()
     .resize(MAX_EDGE, MAX_EDGE, { fit: "inside", withoutEnlargement: true })
