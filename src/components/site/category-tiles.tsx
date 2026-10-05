@@ -1,15 +1,21 @@
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 
 import { Link } from "@/i18n/navigation";
 import { categorySlugs } from "@/lib/categories";
 import { placeholderImage } from "@/lib/images";
-import { categoryPhoto } from "@/lib/photos";
+import { getServiceTileImages } from "@/server/queries/service-tiles";
 
 import { Accent, SectionHeading } from "./section-heading";
+import { StoredImage } from "./stored-image";
 
-export function CategoryTiles() {
-  const t = useTranslations();
+const TILE_SIZES = "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw";
+const TILE_CLASS =
+  "object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100";
+
+/** Service tiles; each photo is chosen in Admin → Service tiles (default: first launch photo). */
+export async function CategoryTiles() {
+  const [t, images] = await Promise.all([getTranslations(), getServiceTileImages()]);
 
   return (
     <section
@@ -28,22 +34,31 @@ export function CategoryTiles() {
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {categorySlugs.map((slug) => {
           const name = t(`Categories.${slug}.name`);
-          const photo = categoryPhoto(slug);
+          const image = images[slug];
           return (
             <li key={slug}>
               <Link
                 href={{ pathname: "/packages", query: { category: slug } }}
                 className="group focus-visible:ring-ring relative block aspect-[4/3] overflow-hidden rounded-lg focus-visible:ring-2 focus-visible:outline-none"
               >
-                {/* TODO(owner): photos for categories without work yet (corporate, gathering, product). */}
-                <Image
-                  src={photo ? photo.src : placeholderImage(800, 600)}
-                  {...(photo && { placeholder: "blur" as const, blurDataURL: photo.blurDataUrl })}
-                  alt=""
-                  fill
-                  sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-                  className="object-cover transition-transform duration-300 group-hover:scale-105 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
-                />
+                {image ? (
+                  <StoredImage
+                    image={image}
+                    alt=""
+                    fill
+                    sizes={TILE_SIZES}
+                    className={TILE_CLASS}
+                  />
+                ) : (
+                  // TODO(owner): choose photos for the empty tiles in Admin → Service tiles.
+                  <Image
+                    src={placeholderImage(800, 600)}
+                    alt=""
+                    fill
+                    sizes={TILE_SIZES}
+                    className={TILE_CLASS}
+                  />
+                )}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                 <div className="text-paper absolute inset-x-0 bottom-0 p-5">
                   <h3 className="text-2xl">{name}</h3>

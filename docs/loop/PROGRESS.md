@@ -609,3 +609,9 @@ Append-only. Newest entry at the bottom. One entry per tick that did something.
 - Checks: lint ✅ · typecheck ✅ · test ✅ (457) · e2e ✅ (521 on rerun after a Windows worker crash) · build ✅ · format ✅
 - Status: every remaining task is BLOCKED on the owner — 7.4c (Q18 Cloudinary) and 8.4.3 (Q19 measure Lighthouse on the deployed site). Milestones 7 and 8 stay unticked until those are done. Loop stops here.
 
+
+### 2026-10-06 — Service tile photos editable in admin (owner request)
+- Branch: feat/service-tile-photos
+- Done: Admin → Showcase → **Service tiles** shows the six home-page tiles; "Change photo" opens a picker of consented photos (tile's own category first, then others, plus "Default"). The choice is one `SiteSetting` row (`SERVICE_TILE_IMAGES`, slug → `Image.id`), no migration. Home tiles read it through a cached query tagged settings/gallery/portfolio, so saving shows immediately; unset tiles, removed photos or withdrawn consent fall back to the first launch photo (`categoryPhoto`). ADMIN only, audited.
+- Tests: unit (choice parsing, 5); e2e global (choose → home shows it → reset; STAFF blocked; unknown category 404); axe on both new pages.
+- Checks: lint ✅ · typecheck ✅ · test ✅ (518) · e2e ✅ (related specs, 140) · build ✅

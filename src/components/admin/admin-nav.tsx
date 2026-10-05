@@ -8,6 +8,7 @@ import {
   FileText,
   Images,
   LayoutDashboard,
+  LayoutGrid,
   type LucideIcon,
   Menu,
   MessageSquareQuote,
@@ -47,6 +48,7 @@ const GROUPS: NavGroup[] = [
     items: [
       { href: "/admin/portfolio", label: "Portfolio", icon: BookImage, adminOnly: true },
       { href: "/admin/gallery", label: "Images", icon: Images, adminOnly: true },
+      { href: "/admin/service-tiles", label: "Service tiles", icon: LayoutGrid, adminOnly: true },
     ],
   },
   {
