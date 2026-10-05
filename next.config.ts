@@ -10,15 +10,6 @@ const nextConfig: NextConfig = {
   // streams metadata into the body for clients it doesn't list as HTML-limited bots —
   // including Googlebot — and some crawlers and link previews only read the head.
   htmlLimitedBots: /.*/,
-  // sharp (photo uploads → WebP) picks its native binary at runtime, which file tracing can't
-  // follow, so the serverless function shipped without it ("Could not load the sharp module
-  // using the linux-x64 runtime"). Copy the installed platform packages in explicitly.
-  outputFileTracingIncludes: {
-    "/admin/**": [
-      "./node_modules/.pnpm/@img+sharp-*/**/*",
-      "./node_modules/.pnpm/sharp@*/node_modules/@img/**/*",
-    ],
-  },
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
