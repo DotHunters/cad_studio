@@ -6,7 +6,10 @@ import { db } from "@/lib/db";
 /** All add-ons (active and hidden) for the admin list. Uncached. */
 export const listAddOnsForAdmin = () =>
   db.addOn.findMany({
-    include: { services: { select: { slug: true } } },
+    // Services in display order (join-table rows come back in no fixed order).
+    include: {
+      services: { select: { slug: true }, orderBy: [{ sortOrder: "asc" }, { name: "asc" }] },
+    },
     orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
   });
 
