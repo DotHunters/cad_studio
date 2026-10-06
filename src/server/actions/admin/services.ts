@@ -75,9 +75,15 @@ export async function saveService(slug: string | null, input: unknown): Promise<
   redirect(`/admin/services?saved=${encodeURIComponent(slug ?? newSlug!)}`);
 }
 
+const INVALID_REQUEST = { ok: false, error: "Invalid request." } as const;
+const moveSchema = z.object({ slug: z.string().min(1), direction: z.enum(["up", "down"]) });
+
 /** Moves a service one place up or down in the display order. ADMIN only. */
 export async function moveService(slug: string, direction: "up" | "down"): Promise<ActionResult> {
   const actor = await requireRole("ADMIN");
+  const args = moveSchema.safeParse({ slug, direction });
+  if (!args.success) return INVALID_REQUEST;
+  ({ slug, direction } = args.data);
   const services = await db.service.findMany({
     orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
     select: { slug: true, name: true },
@@ -105,6 +111,7 @@ export async function moveService(slug: string, direction: "up" | "down"): Promi
 /** Archives (hides from the site and new quotes/bookings) or restores a service. ADMIN only. */
 export async function setServiceArchived(slug: string, archived: boolean): Promise<ActionResult> {
   const actor = await requireRole("ADMIN");
+  if (typeof slug !== "string" || !z.boolean().safeParse(archived).success) return INVALID_REQUEST;
   const services = await db.service.findMany({
     select: { slug: true, name: true, archivedAt: true },
   });
@@ -127,6 +134,10 @@ export async function setServiceArchived(slug: string, archived: boolean): Promi
 
 /** The Active switch on Admin → Services (checked = not archived). ADMIN only. */
 export async function setServiceActive(slug: string, active: boolean): Promise<ActionResult> {
+  if (!z.boolean().safeParse(active).success) {
+    await requireRole("ADMIN");
+    return INVALID_REQUEST;
+  }
   return setServiceArchived(slug, !active);
 }
 

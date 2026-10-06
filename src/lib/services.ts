@@ -8,6 +8,9 @@ import { localize } from "@/lib/localize";
 export const SERVICE_SLUG_MAX = 40;
 export const SERVICE_SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
+/** "new" is the admin create route; "other" and "privacy" are contact enquiry types. */
+export const RESERVED_SERVICE_SLUGS = ["new", "other", "privacy"] as const;
+
 /** A service as cached for the site: plain JSON (no Dates), `active` = not archived. */
 export type ServiceRow = {
   slug: string;

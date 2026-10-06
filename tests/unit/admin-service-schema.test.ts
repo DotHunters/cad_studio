@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import { RESERVED_SERVICE_SLUGS } from "@/lib/services";
 import { serviceFormSchema } from "@/lib/validators/admin/service";
 
 const valid = {
@@ -20,6 +21,13 @@ describe("serviceFormSchema", () => {
     expect(serviceFormSchema.parse({ ...valid, slug: " Graduations " }).slug).toBe("graduations");
     expect(serviceFormSchema.safeParse({ ...valid, slug: "grad uations" }).success).toBe(false);
     expect(serviceFormSchema.safeParse({ ...valid, slug: "a".repeat(41) }).success).toBe(false);
+  });
+
+  it("rejects reserved slugs but accepts look-alikes", () => {
+    for (const slug of RESERVED_SERVICE_SLUGS) {
+      expect(serviceFormSchema.safeParse({ ...valid, slug }).success).toBe(false);
+    }
+    expect(serviceFormSchema.safeParse({ ...valid, slug: "news" }).success).toBe(true);
   });
 
   it("lets edits omit the slug", () => {

@@ -164,6 +164,8 @@ async function ServicesTable() {
                     <ConfirmDeleteButton
                       itemName={service.name}
                       action={deleteService.bind(null, service.slug)}
+                      disabled={usageTotal(service.usage) > 0}
+                      disabledReason="In use — archive instead."
                     />
                   </div>
                 </td>

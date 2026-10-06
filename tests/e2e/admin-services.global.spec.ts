@@ -97,9 +97,8 @@ test.describe("service lifecycle", () => {
     // Delete is refused while a quote uses it, allowed once unused
     await page.goto("/admin/services");
     const row = page.getByRole("row").filter({ hasText: NAME });
-    await row.getByRole("button", { name: `Delete ${NAME}` }).click();
-    await row.getByRole("button", { name: "Yes, delete" }).click();
-    await expect(row.getByRole("alert")).toContainText("Archive it instead");
+    await expect(row.getByRole("button", { name: `Delete ${NAME}` })).toBeDisabled();
+    await expect(row).toContainText("In use — archive instead.");
 
     await queryDb(`delete from "Quote" where reference = $1`, [QUOTE_REFERENCE]);
     await page.reload();

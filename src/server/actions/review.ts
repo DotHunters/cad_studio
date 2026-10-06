@@ -13,7 +13,7 @@ import {
   reviewSubmissionSchema,
 } from "@/lib/validators/review";
 import { getVerifiedBooking } from "@/server/review-links";
-import { isActiveServiceSlug } from "@/server/queries/services";
+import { getServiceNames, isActiveServiceSlug } from "@/server/queries/services";
 import { isRateLimited } from "@/server/rate-limit";
 
 export type SubmitReviewResult =
@@ -80,7 +80,7 @@ export async function submitReview(
         subject: `[${siteConfig.name}] New ${review.type === "CUSTOMER" ? `${review.rating}★ review` : "recommendation"} to moderate${flagged ? " (flagged)" : ""}`,
         text: [
           `From: ${review.authorName}${review.company ? ` · ${review.authorTitle ?? ""} ${review.company}` : ""}`,
-          category ? `Service: ${category}` : "",
+          category ? `Service: ${(await getServiceNames("en"))(category)}` : "",
           verifiedBooking ? `Verified client — booking ${verifiedBooking.reference}` : "",
           flagged ? "Flagged by the automatic spam/profanity check — please read carefully." : "",
           "",

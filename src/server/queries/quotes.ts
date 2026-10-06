@@ -7,6 +7,7 @@ import { parseReference } from "@/lib/references";
 import { verifySignedValue } from "@/lib/signing";
 import { addHoursToTime } from "@/lib/validators/booking";
 import { linkSecret } from "@/server/link-secret";
+import { isActiveServiceSlug } from "@/server/queries/services";
 import type { LineItem } from "@/lib/pricing/calculate-quote";
 import type { TaxLine } from "@/lib/tax";
 
@@ -45,6 +46,8 @@ export async function getBookableQuote(
   if (!verifySignedValue(`quote:${reference}`, token, linkSecret())) return null;
   const quote = await getQuoteByReference(reference);
   if (!quote || quote.status !== "SENT" || quote.expiresAt < new Date()) return null;
+  // A quote on an archived service can't be booked any more.
+  if (!(await isActiveServiceSlug(quote.category))) return null;
 
   const { breakdown } = quote;
   const durationHours = Number(quote.durationHours);

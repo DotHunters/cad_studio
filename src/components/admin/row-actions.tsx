@@ -1,7 +1,7 @@
 "use client";
 
 import { Loader2, Trash2 } from "lucide-react";
-import { useOptimistic, useState, useTransition } from "react";
+import { useId, useOptimistic, useState, useTransition } from "react";
 
 import { Button } from "@/components/ui/button";
 import type { ActionResult } from "@/lib/admin/action-result";
@@ -84,12 +84,18 @@ export function ConfirmDeleteButton({
   action,
   verb = "Delete",
   confirmText = "Yes, delete",
+  disabled = false,
+  disabledReason,
 }: {
   itemName: string;
   action: () => Promise<ActionResult>;
   verb?: string;
   confirmText?: string;
+  /** Greys the button out; `disabledReason` is shown beside it. */
+  disabled?: boolean;
+  disabledReason?: string;
 }) {
+  const reasonId = useId();
   const [confirming, setConfirming] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -123,6 +129,8 @@ export function ConfirmDeleteButton({
           size="sm"
           variant="outline"
           aria-label={`${verb} ${itemName}`}
+          aria-describedby={disabled && disabledReason ? reasonId : undefined}
+          disabled={disabled}
           onClick={() => {
             setError(null);
             setConfirming(true);
@@ -131,6 +139,11 @@ export function ConfirmDeleteButton({
           {verb === "Delete" && <Trash2 aria-hidden />}
           {verb}
         </Button>
+      )}
+      {disabled && disabledReason && (
+        <p id={reasonId} className="text-muted-foreground mt-1 max-w-64 text-xs">
+          {disabledReason}
+        </p>
       )}
       {error && (
         <p role="alert" className="text-destructive mt-1 max-w-64 text-xs">
