@@ -2,7 +2,7 @@
   "groups": [
     {
       "slug": "christian-wedding",
-      "category": "WEDDING",
+      "category": "wedding",
       "tags": ["christian-wedding", "ceremony"],
       "title": "Christian Church Wedding",
       "titleFr": "Mariage à l’église",
@@ -93,7 +93,7 @@
     },
     {
       "slug": "sinhala-wedding",
-      "category": "WEDDING",
+      "category": "wedding",
       "tags": ["sinhala-wedding", "ceremony"],
       "title": "Sinhala Wedding",
       "titleFr": "Mariage cinghalais",
@@ -154,7 +154,7 @@
     },
     {
       "slug": "hindu-wedding",
-      "category": "WEDDING",
+      "category": "wedding",
       "tags": ["hindu-wedding", "ceremony"],
       "title": "Hindu Wedding",
       "titleFr": "Mariage hindou",
@@ -245,7 +245,7 @@
     },
     {
       "slug": "bride-and-groom-preshoot",
-      "category": "WEDDING",
+      "category": "wedding",
       "tags": ["pre-shoot"],
       "title": "Bride and Groom Pre-shoot",
       "titleFr": "Séance avant le mariage",
@@ -300,7 +300,7 @@
     },
     {
       "slug": "wedding-preshoot",
-      "category": "WEDDING",
+      "category": "wedding",
       "tags": ["pre-shoot"],
       "title": "Temple Pre-wedding Shoot",
       "titleFr": "Séance prénuptiale au temple",
@@ -355,7 +355,7 @@
     },
     {
       "slug": "outdoor-theme-preshoot",
-      "category": "WEDDING",
+      "category": "wedding",
       "tags": ["pre-shoot", "outdoor"],
       "title": "Outdoor Themed Pre-shoot",
       "titleFr": "Séance thématique en extérieur",
@@ -404,7 +404,7 @@
     },
     {
       "slug": "wedding-day",
-      "category": "WEDDING",
+      "category": "wedding",
       "tags": ["wedding-day"],
       "title": "Wedding Day Portraits",
       "titleFr": "Portraits du jour du mariage",
@@ -453,7 +453,7 @@
     },
     {
       "slug": "baby-shower",
-      "category": "FAMILY",
+      "category": "family",
       "tags": ["baby-shower"],
       "title": "Garden Baby Shower",
       "titleFr": "Fête prénatale au jardin",
@@ -496,7 +496,7 @@
     },
     {
       "slug": "maternity-session",
-      "category": "FAMILY",
+      "category": "family",
       "tags": ["maternity", "baby-shower"],
       "title": "Maternity Session",
       "titleFr": "Séance de maternité",
@@ -545,7 +545,7 @@
     },
     {
       "slug": "puberty-ceremony",
-      "category": "FAMILY",
+      "category": "family",
       "tags": ["puberty-ceremony", "ceremony"],
       "title": "Puberty Ceremony",
       "titleFr": "Cérémonie de puberté",
@@ -588,7 +588,7 @@
     },
     {
       "slug": "model-shoot",
-      "category": "PROFESSIONAL",
+      "category": "professional",
       "tags": ["model-portfolio"],
       "title": "Model Portfolio Shoot",
       "titleFr": "Séance portfolio de mannequin",
