@@ -54,7 +54,7 @@ model Service {
   1. Create `Service`; insert the six current services with `sortOrder` 0–5 and EN/FR names and
      descriptions copied from `messages/en.json` / `fr.json`.
   2. For each category column: `ALTER COLUMN ... TYPE TEXT USING lower("category"::text)`, then
-     add the foreign key and an index.
+     add the foreign key (existing `category` indexes are kept).
   3. Create the add-on join table and fill it from `unnest(lower(categories))`; drop
      `AddOn.categories`.
   4. Copy `SiteSetting['SERVICE_TILE_IMAGES']` (slug → image id) into `Service.tileImageId`
