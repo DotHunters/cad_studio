@@ -44,7 +44,7 @@ async function createExpiredQuote(testInfo: TestInfo, { expired = true } = {}) {
     `insert into "Quote" (id, reference, category, "packageId", "eventDate", "durationHours",
        photographers, province, city, "distanceKm", "addOns", breakdown, "subtotalCents",
        "taxCents", "totalCents", status, "expiresAt", "customerId", "createdAt")
-     values (gen_random_uuid()::text, $1, 'WEDDING', (select id from "Package" where slug = 'wedding'),
+     values (gen_random_uuid()::text, $1, 'wedding', (select id from "Package" where slug = 'wedding'),
        $5::timestamp, 10, 2, 'ON', 'Markham', 25, '[]'::jsonb, $2::jsonb, 320000, 41600,
        361600, 'SENT', now() + $4::interval, $3, now() - interval '20 days')`,
     [

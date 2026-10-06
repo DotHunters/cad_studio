@@ -31,7 +31,7 @@ test.beforeAll(async () => {
     await queryDb(
       `insert into "Booking" (id, reference, category, "startAt", "endAt", photographers, status,
          "paymentRequestedAt", "depositPaidAt", "customerId", "updatedAt")
-       values (gen_random_uuid()::text, $1, 'FAMILY', '2027-12-01 15:00', '2027-12-01 17:00', 1, 'PENDING',
+       values (gen_random_uuid()::text, $1, 'family', '2027-12-01 15:00', '2027-12-01 17:00', 1, 'PENDING',
          $2::timestamp, $3::timestamp, $4, now())`,
       [
         fixture.ref,

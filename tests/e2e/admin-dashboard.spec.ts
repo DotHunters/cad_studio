@@ -33,7 +33,7 @@ test("dashboard shows bookings, quotes, reviews, revenue and what needs attentio
   await queryDb(
     `insert into "Booking" (id, reference, category, "startAt", "endAt", photographers, status,
        "subtotalCents", "totalCents", "customerId", "createdAt", "updatedAt")
-     values (gen_random_uuid()::text, $1, 'FAMILY', now() + interval '20 hours',
+     values (gen_random_uuid()::text, $1, 'family', now() + interval '20 hours',
        now() + interval '22 hours', 1, 'PENDING', 60000, 67800, $2,
        now() - interval '30 hours', now())`,
     [reference, customer.id],

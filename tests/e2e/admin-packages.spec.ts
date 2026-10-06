@@ -31,7 +31,7 @@ test.describe("admin packages", () => {
     await openNewPackageForm(page);
 
     await page.getByLabel("Slug").fill(slug);
-    await page.getByLabel("Category").selectOption("family");
+    await page.getByLabel("Service").selectOption("family");
     await page.getByLabel("Name (English)").fill(nameFor(testInfo));
     await page.getByLabel("Name (French)").fill(`Forfait E2E ${testInfo.project.name}`);
     await page.getByLabel("Summary (English)").fill("A short test package.");
@@ -123,7 +123,7 @@ test("package rows: deactivate, refuse to delete while quoted, delete once unuse
   const [pkg] = await queryDb<{ id: string }>(
     `insert into "Package" (id, slug, category, name, summary, description, "basePriceCents",
        "includedHours", "updatedAt")
-     values (gen_random_uuid()::text, $1, 'FAMILY', $2, 'Row test', 'Row test', 50000, 2, now())
+     values (gen_random_uuid()::text, $1, 'family', $2, 'Row test', 'Row test', 50000, 2, now())
      returning id`,
     [slug, name],
   );
@@ -136,7 +136,7 @@ test("package rows: deactivate, refuse to delete while quoted, delete once unuse
     `insert into "Quote" (id, reference, category, "packageId", "eventDate", "durationHours",
        photographers, province, "addOns", breakdown, "subtotalCents", "taxCents", "totalCents",
        status, "expiresAt", "customerId")
-     values (gen_random_uuid()::text, $1, 'FAMILY', $2, '2027-10-16 18:00', 2, 1, 'ON',
+     values (gen_random_uuid()::text, $1, 'family', $2, '2027-10-16 18:00', 2, 1, 'ON',
        '[]'::jsonb, '{"lineItems":[]}'::jsonb, 50000, 6500, 56500, 'SENT',
        now() + interval '10 days', $3)`,
     [reference, pkg.id, customer.id],

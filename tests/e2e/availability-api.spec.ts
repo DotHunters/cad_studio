@@ -28,7 +28,7 @@ test.beforeAll(async () => {
   const booking = (reference: string, localStart: string, photographers: number, status: string) =>
     queryDb(
       `insert into "Booking" (id, reference, category, "startAt", "endAt", photographers, status, "customerId", "updatedAt")
-       values (gen_random_uuid()::text, $1, 'WEDDING',
+       values (gen_random_uuid()::text, $1, 'wedding',
                (($2::timestamp at time zone 'America/Toronto') at time zone 'UTC'),
                (($2::timestamp at time zone 'America/Toronto') at time zone 'UTC') + interval '4 hours',
                $3, $4::"BookingStatus", $5, now())`,

@@ -98,7 +98,7 @@ test("private quote and booking pages are not indexed", async ({ page }, testInf
     `insert into "Quote" (id, reference, category, "eventDate", "durationHours", photographers,
        province, "addOns", breakdown, "subtotalCents", "taxCents", "totalCents", status,
        "expiresAt", "customerId")
-     select gen_random_uuid()::text, $1, 'FAMILY', '2027-10-16 18:00', 2, 1, 'ON', '[]'::jsonb,
+     select gen_random_uuid()::text, $1, 'family', '2027-10-16 18:00', 2, 1, 'ON', '[]'::jsonb,
        $2::jsonb, 60000, 7800, 67800, 'SENT', now() + interval '10 days', "customerId"
      from "Booking" where reference = $3`,
     [

@@ -36,7 +36,7 @@ async function createBooking(testInfo: TestInfo) {
     `insert into "Booking" (id, reference, category, "packageId", "startAt", "endAt", photographers,
        "guestCount", venue, notes, status, "subtotalCents", "taxCents", "totalCents", breakdown,
        "depositCents", "paymentMethod", "customerId", "updatedAt")
-     values (gen_random_uuid()::text, $1, 'FAMILY',
+     values (gen_random_uuid()::text, $1, 'family',
        (select id from "Package" where slug = 'family-event'),
        '2027-10-23 18:00', '2027-10-23 20:00', 1, 40, 'Rouge Park, Scarborough',
        'Grandma''s 90th birthday', 'PENDING', 90000, 11700, 101700, $2::jsonb, 30510,
@@ -113,7 +113,7 @@ test("bookings export to CSV, download as .ics and show on the calendar", async 
   expect(csv.headers()["content-type"]).toContain("text/csv");
   const text = await csv.text();
   expect(text).toContain("Reference,Status,Event date");
-  expect(text).toContain(`${reference},PENDING,2027-10-23,14:00,FAMILY,1,Booking Viewer`);
+  expect(text).toContain(`${reference},PENDING,2027-10-23,14:00,family,1,Booking Viewer`);
   expect(text).toContain("1017.00");
 
   const ics = await page.request.get(`/admin/bookings/${reference}/ics`);

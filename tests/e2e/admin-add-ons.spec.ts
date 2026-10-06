@@ -87,8 +87,11 @@ test("add-on rows: switch off, refuse to delete while used, delete once unused",
   await signInAsAdmin(context, baseURL!, adminEmailFor(testInfo));
   await queryDb(`delete from "Quote" where reference = $1`, [reference]);
   await queryDb(
-    `insert into "AddOn" (id, code, name, "priceCents", unit, categories)
-     values (gen_random_uuid()::text, $1, $2, 5000, 'FLAT', '{FAMILY}')`,
+    `with addon as (
+       insert into "AddOn" (id, code, name, "priceCents", unit)
+       values (gen_random_uuid()::text, $1, $2, 5000, 'FLAT') returning id
+     )
+     insert into "_AddOnToService" ("A", "B") select id, 'family' from addon`,
     [code, name],
   );
   const [customer] = await queryDb<{ id: string }>(
@@ -100,7 +103,7 @@ test("add-on rows: switch off, refuse to delete while used, delete once unused",
     `insert into "Quote" (id, reference, category, "eventDate", "durationHours", photographers,
        province, "addOns", breakdown, "subtotalCents", "taxCents", "totalCents", status,
        "expiresAt", "customerId")
-     values (gen_random_uuid()::text, $1, 'FAMILY', '2027-10-16 18:00', 2, 1, 'ON', $2::jsonb,
+     values (gen_random_uuid()::text, $1, 'family', '2027-10-16 18:00', 2, 1, 'ON', $2::jsonb,
        '{"lineItems":[]}'::jsonb, 65000, 8450, 73450, 'SENT', now() + interval '10 days', $3)`,
     [reference, JSON.stringify([{ code, qty: 1 }]), customer.id],
   );

@@ -7,7 +7,7 @@ import { queryDb } from "./db";
  * parallel specs never delete each other's rows:
  *   9999 change-request · 9998 cron-api · 9997 admin-dashboard · 9996 admin-bookings
  *   9995 admin-booking-payments (+ 9995-2001 admin-settings.global) · 9994 admin-booking-status
- *   9993 review-verified · 9992 admin-assignments · 9990 admin-availability (March 2028) · 9989 seo-audit · 9988 admin-add-ons + admin-packages (quotes only, x001/x002)
+ *   9993 review-verified · 9992 admin-assignments · 9990 admin-availability (March 2028) · 9989 seo-audit · 9988 admin-add-ons + admin-packages (quotes only, x001/x002) · 9987 admin-services.global (quote only)
  * Event dates: September 2027 belongs to availability-api.spec.ts (it asserts every day), so
  * fixtures here use October 2027.
  */
@@ -36,7 +36,7 @@ export async function createPendingBooking(
     `insert into "Booking" (id, reference, category, "startAt", "endAt", photographers, status,
        "subtotalCents", "taxCents", "totalCents", "depositCents", "paymentMethod", "customerId",
        "updatedAt")
-     values (gen_random_uuid()::text, $1, 'FAMILY', '2027-10-16 18:00', '2027-10-16 20:00', 1,
+     values (gen_random_uuid()::text, $1, 'family', '2027-10-16 18:00', '2027-10-16 20:00', 1,
        'PENDING', 90000, 11700, 101700, 30510, 'BANK_TRANSFER', $2, now())`,
     [reference, customer.id],
   );

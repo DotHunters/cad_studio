@@ -35,7 +35,7 @@ async function createBooking(testInfo: TestInfo, n: number, status = "COMPLETED"
   await queryDb(
     `insert into "Booking" (id, reference, category, "startAt", "endAt", photographers, status,
        "depositCents", "totalCents", "paymentMethod", "customerId", "updatedAt")
-     values (gen_random_uuid()::text, $1, 'PROFESSIONAL', '2026-05-14 18:00', '2026-05-14 20:00', 1,
+     values (gen_random_uuid()::text, $1, 'professional', '2026-05-14 18:00', '2026-05-14 20:00', 1,
        $2::"BookingStatus", 10000, 40000, 'CASH', $3, now())`,
     [reference, status, customer.id],
   );
@@ -78,7 +78,7 @@ test.describe("verified client reviews", () => {
     await expect(page.getByLabel("Service (optional)")).toHaveValue("professional");
     expect(await submit(page, testInfo)).toEqual({
       verified: true,
-      category: "PROFESSIONAL",
+      category: "professional",
       linked: true,
     });
 

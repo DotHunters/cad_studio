@@ -40,7 +40,7 @@ test.describe("submit a review", () => {
     }>(`select status, rating, flagged, category from "Review" where "authorName" = $1`, [
       nameFor(testInfo),
     ]);
-    expect(row).toEqual({ status: "PENDING", rating: 5, flagged: false, category: "FAMILY" });
+    expect(row).toEqual({ status: "PENDING", rating: 5, flagged: false, category: "family" });
 
     // AGENTS.md §15 scenario 5 (first half): not visible until an admin approves it.
     await page.reload();

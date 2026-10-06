@@ -27,7 +27,7 @@ test("projects: client named only with consent, unpublishing hides them", async 
   await page.getByRole("link", { name: "New project" }).click();
   await expect(page.locator('form[data-hydrated="true"]')).toBeVisible();
   await page.getByLabel("Slug").fill(slug);
-  await page.getByLabel("Category").selectOption("corporate");
+  await page.getByLabel("Service").selectOption("corporate");
   await page.getByLabel("Local or global").selectOption("LOCAL");
   await page.getByLabel("City").fill("Toronto");
   await page.getByLabel("Client name").fill("Lakeshore Test Co.");
@@ -96,7 +96,7 @@ test("project rows: publish, feature and delete from the list", async ({
   await queryDb(`delete from "PortfolioProject" where slug = $1`, [slug]);
   const [project] = await queryDb<{ id: string }>(
     `insert into "PortfolioProject" (id, slug, title, category, reach, country, story)
-     values (gen_random_uuid()::text, $1, $2, 'FAMILY', 'LOCAL', 'Canada', 'A row test.')
+     values (gen_random_uuid()::text, $1, $2, 'family', 'LOCAL', 'Canada', 'A row test.')
      returning id`,
     [slug, title],
   );
