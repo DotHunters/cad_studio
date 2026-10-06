@@ -11,15 +11,6 @@ datasource db {
   provider = "postgresql"
 }
 
-enum Category {
-  CORPORATE
-  WEDDING
-  FAMILY
-  GATHERING
-  PROFESSIONAL
-  PRODUCT
-}
-
 enum BookingStatus {
   PENDING
   CONFIRMED
@@ -86,10 +77,37 @@ enum Locale {
   fr
 }
 
+/// A service the studio offers (AGENTS.md §1), managed in Admin → Services. Other tables refer
+/// to it by slug, which never changes. Archived services are hidden from the public site and
+/// from new quotes, bookings and reviews; they can only be deleted when nothing uses them.
+model Service {
+  /// Lowercase words joined by dashes, e.g. "wedding". Set on creation, never edited.
+  slug          String             @id
+  name          String
+  nameFr        String?
+  description   String
+  descriptionFr String?
+  sortOrder     Int                @default(0)
+  archivedAt    DateTime?
+  /// Photo on the home-page tile; null = first launch photo of the service.
+  tileImageId   String?
+  tileImage     Image?             @relation("ServiceTile", fields: [tileImageId], references: [id], onDelete: SetNull)
+  packages      Package[]
+  addOns        AddOn[]
+  quotes        Quote[]
+  bookings      Booking[]
+  projects      PortfolioProject[]
+  images        Image[]            @relation("ServiceImages")
+  reviews       Review[]
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+}
+
 model Package {
   id               String        @id @default(cuid())
   slug             String        @unique
-  category         Category
+  category         String
+  service          Service       @relation(fields: [category], references: [slug], onDelete: Restrict)
   name             String
   nameFr           String?
   summary          String
@@ -149,16 +167,16 @@ model PackageTier {
 }
 
 model AddOn {
-  id         String     @id @default(cuid())
+  id         String    @id @default(cuid())
   /// e.g. VIDEO, DRONE, ALBUM, RUSH
-  code       String     @unique
+  code       String    @unique
   name       String
   nameFr     String?
   priceCents Int
   unit       AddOnUnit
-  categories Category[]
-  isActive   Boolean    @default(true)
-  sortOrder  Int        @default(0)
+  services   Service[]
+  isActive   Boolean   @default(true)
+  sortOrder  Int       @default(0)
   packages   Package[]
 }
 
@@ -211,7 +229,8 @@ model Customer {
 model Quote {
   id              String      @id @default(cuid())
   reference       String      @unique
-  category        Category
+  category        String
+  service         Service     @relation(fields: [category], references: [slug], onDelete: Restrict)
   packageId       String?
   package         Package?    @relation(fields: [packageId], references: [id], onDelete: SetNull)
   eventDate       DateTime
@@ -242,7 +261,8 @@ model Quote {
 model Booking {
   id                 String                 @id @default(cuid())
   reference          String                 @unique
-  category           Category
+  category           String
+  service            Service                @relation(fields: [category], references: [slug], onDelete: Restrict)
   packageId          String?
   package            Package?               @relation(fields: [packageId], references: [id], onDelete: SetNull)
   quoteId            String?                @unique
@@ -297,7 +317,8 @@ model PortfolioProject {
   /// null => "Private client". Shown only when consentToPublish is true.
   clientName       String?
   consentToPublish Boolean   @default(false)
-  category         Category
+  category         String
+  service          Service   @relation(fields: [category], references: [slug], onDelete: Restrict)
   reach            Reach
   city             String?
   country          String
@@ -326,7 +347,10 @@ model Image {
   /// Required, descriptive.
   alt              String
   altFr            String?
-  category         Category?
+  category         String?
+  service          Service?          @relation("ServiceImages", fields: [category], references: [slug], onDelete: Restrict)
+  /// Services whose home tile shows this photo.
+  tileFor          Service[]         @relation("ServiceTile")
   tags             String[]
   inGallery        Boolean           @default(true)
   sortOrder        Int               @default(0)
@@ -355,7 +379,8 @@ model Review {
   logoPermission   Boolean      @default(false)
   /// 1–5, required for CUSTOMER (enforced in validation).
   rating           Int?
-  category         Category?
+  category         String?
+  service          Service?     @relation(fields: [category], references: [slug], onDelete: Restrict)
   body             String
   locale           Locale       @default(en)
   verified         Boolean      @default(false)
