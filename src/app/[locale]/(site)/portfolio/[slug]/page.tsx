@@ -1,4 +1,4 @@
-import { ArrowLeft, ArrowUpRight } from "lucide-react";
+import { ArrowLeft, ArrowUpRight, ChevronDown } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import type { Locale } from "next-intl";
@@ -69,7 +69,7 @@ export default async function ProjectPage({ params }: Props) {
   const quote = project.recommendation;
 
   return (
-    <article className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16">
+    <article>
       <JsonLd
         data={imageGalleryJsonLd({
           baseUrl: siteConfig.url,
@@ -87,114 +87,145 @@ export default async function ProjectPage({ params }: Props) {
           })),
         })}
       />
-      <Link
-        href="/portfolio"
-        className="text-muted-foreground hover:text-foreground inline-flex items-center gap-1 text-sm"
+
+      {/* Full-screen cover; -mt-16 slides it under the transparent sticky header (h-16). */}
+      <header
+        className={cn(
+          "bg-ink text-paper relative isolate -mt-16 flex flex-col justify-end overflow-hidden",
+          lead ? "min-h-[100svh]" : "min-h-[60svh]",
+        )}
       >
-        <ArrowLeft className="size-4" aria-hidden />
-        {t("Project.back")}
-      </Link>
-
-      <header className="mt-8 max-w-3xl">
-        <p className="text-gold-text text-xs font-semibold tracking-[0.2em] uppercase">
-          {categoryName}
-          {project.isSample && (
-            <span className="bg-gold-button text-ink ml-3 rounded-full px-2.5 py-0.5 text-[0.6rem]">
-              {t("Home.sampleBadge")}
-            </span>
-          )}
-        </p>
-        <h1 className="mt-3 text-5xl leading-tight sm:text-6xl">{title}</h1>
-      </header>
-
-      {lead && (
-        <div className="bg-muted relative mt-10 aspect-[3/2] overflow-hidden rounded-2xl">
+        {lead && (
           <StoredImage
             image={lead}
             alt={localize(lead.alt, lead.altFr, locale)}
             fill
             priority
-            sizes="(min-width: 1280px) 1216px, 100vw"
-            className="object-cover"
+            sizes="100vw"
+            className="-z-20 object-cover object-[50%_30%]"
           />
-        </div>
-      )}
+        )}
+        <div className="absolute inset-0 -z-10 bg-gradient-to-b from-black/55 via-black/10 to-black/80" />
 
-      <div className="mt-12 grid gap-12 lg:grid-cols-[1fr_320px]">
-        <div className="text-lg leading-relaxed [&_h2]:mt-10 [&_h2]:text-3xl [&_p]:mt-4">
-          <ReactMarkdown skipHtml>{localize(project.story, project.storyFr, locale)}</ReactMarkdown>
-
-          {quote && (
-            <figure className="border-gold mt-12 border-l-2 pl-6">
-              <blockquote className="font-heading text-2xl leading-snug italic">
-                “{quote.body}”
-              </blockquote>
-              <figcaption className="text-muted-foreground mt-4 text-sm">
-                {quote.authorName}
-                {quote.authorTitle && `, ${quote.authorTitle}`}
-                {quote.company && ` · ${quote.company}`}
-              </figcaption>
-            </figure>
+        <div className="mx-auto w-full max-w-7xl px-4 pt-28 pb-24 sm:px-6 sm:pb-28">
+          <Link
+            href="/portfolio"
+            className="text-paper/80 hover:text-paper inline-flex items-center gap-1 text-sm"
+          >
+            <ArrowLeft className="size-4" aria-hidden />
+            {t("Project.back")}
+          </Link>
+          <p className="text-gold-light mt-6 text-xs font-semibold tracking-[0.2em] uppercase">
+            {categoryName}
+            {project.isSample && (
+              <span className="bg-gold-button text-ink ml-3 rounded-full px-2.5 py-0.5 text-[0.6rem]">
+                {t("Home.sampleBadge")}
+              </span>
+            )}
+          </p>
+          <h1 className="mt-3 max-w-4xl text-5xl leading-[1.05] sm:text-7xl">{title}</h1>
+          {(projectPlace(project) || project.year) && (
+            <p className="text-paper/80 mt-4 text-sm tracking-[0.15em] uppercase">
+              {[projectPlace(project), project.year].filter(Boolean).join(" · ")}
+            </p>
           )}
         </div>
 
-        <aside>
-          <dl className="divide-border divide-y rounded-xl border text-sm">
-            {facts
-              .filter((fact) => fact.value)
-              .map((fact) => (
-                <div key={fact.label} className="flex justify-between gap-4 px-5 py-3">
-                  <dt className="text-muted-foreground">{fact.label}</dt>
-                  <dd className="text-right">{fact.value}</dd>
-                </div>
-              ))}
-          </dl>
-        </aside>
-      </div>
-
-      {rest.length > 0 && (
-        <section aria-labelledby="project-gallery" className="mt-16">
-          <h2 id="project-gallery" className="text-3xl">
-            {t("Project.gallery")}
-          </h2>
-          <p className="text-muted-foreground mt-1 text-sm">
-            {t("Project.imageCount", { count: project.images.length })}
-          </p>
-          <LightboxGrid
-            images={rest.map((image) => ({
-              ...image,
-              alt: localize(image.alt, image.altFr, locale),
-            }))}
-            className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
-            itemClassName="bg-muted relative aspect-[4/5] overflow-hidden rounded-lg"
-            imageClassName="object-cover"
-            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-            fill
-          />
-        </section>
-      )}
-
-      <section className="bg-ink text-paper mt-20 rounded-2xl px-6 py-14 text-center sm:px-12">
-        <h2 className="[&_em]:text-gold-light text-4xl">
-          {t.rich("Project.ctaTitle", { accent: (chunks: ReactNode) => <Accent>{chunks}</Accent> })}
-        </h2>
-        <p className="text-paper/75 mx-auto mt-4 max-w-xl">{t("Project.ctaBody")}</p>
-        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Link href="/quote" className={cn(buttonVariants({ size: "cta" }))}>
-            {t("Nav.getQuote")}
-            <ArrowUpRight className="size-4" aria-hidden />
-          </Link>
-          <Link
-            href={{ pathname: "/packages", query: { category: categorySlug } }}
-            className={cn(
-              buttonVariants({ variant: "outline", size: "cta" }),
-              "border-paper/50 text-paper hover:bg-paper hover:text-ink bg-transparent dark:bg-transparent",
-            )}
+        {lead && (
+          <a
+            href="#project-story"
+            className="text-paper/70 hover:text-paper absolute inset-x-0 bottom-6 mx-auto flex w-fit flex-col items-center gap-1 text-[0.65rem] tracking-[0.3em] uppercase"
           >
-            {t("Project.viewPackages", { category: categoryName })}
-          </Link>
+            {t("Home.scroll")}
+            <ChevronDown className="size-4 motion-safe:animate-bounce" aria-hidden />
+          </a>
+        )}
+      </header>
+
+      <div
+        id="project-story"
+        className="mx-auto max-w-7xl scroll-mt-16 px-4 py-12 sm:px-6 sm:py-16"
+      >
+        <div className="grid gap-12 lg:grid-cols-[1fr_320px]">
+          <div className="text-lg leading-relaxed [&_h2]:mt-10 [&_h2]:text-3xl [&_p]:mt-4">
+            <ReactMarkdown skipHtml>
+              {localize(project.story, project.storyFr, locale)}
+            </ReactMarkdown>
+
+            {quote && (
+              <figure className="border-gold mt-12 border-l-2 pl-6">
+                <blockquote className="font-heading text-2xl leading-snug italic">
+                  “{quote.body}”
+                </blockquote>
+                <figcaption className="text-muted-foreground mt-4 text-sm">
+                  {quote.authorName}
+                  {quote.authorTitle && `, ${quote.authorTitle}`}
+                  {quote.company && ` · ${quote.company}`}
+                </figcaption>
+              </figure>
+            )}
+          </div>
+
+          <aside>
+            <dl className="divide-border divide-y rounded-xl border text-sm">
+              {facts
+                .filter((fact) => fact.value)
+                .map((fact) => (
+                  <div key={fact.label} className="flex justify-between gap-4 px-5 py-3">
+                    <dt className="text-muted-foreground">{fact.label}</dt>
+                    <dd className="text-right">{fact.value}</dd>
+                  </div>
+                ))}
+            </dl>
+          </aside>
         </div>
-      </section>
+
+        {rest.length > 0 && (
+          <section aria-labelledby="project-gallery" className="mt-16">
+            <h2 id="project-gallery" className="text-3xl">
+              {t("Project.gallery")}
+            </h2>
+            <p className="text-muted-foreground mt-1 text-sm">
+              {t("Project.imageCount", { count: project.images.length })}
+            </p>
+            <LightboxGrid
+              images={rest.map((image) => ({
+                ...image,
+                alt: localize(image.alt, image.altFr, locale),
+              }))}
+              className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+              itemClassName="bg-muted relative aspect-[4/5] overflow-hidden rounded-lg"
+              imageClassName="object-cover"
+              sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+              fill
+            />
+          </section>
+        )}
+
+        <section className="bg-ink text-paper mt-20 rounded-2xl px-6 py-14 text-center sm:px-12">
+          <h2 className="[&_em]:text-gold-light text-4xl">
+            {t.rich("Project.ctaTitle", {
+              accent: (chunks: ReactNode) => <Accent>{chunks}</Accent>,
+            })}
+          </h2>
+          <p className="text-paper/75 mx-auto mt-4 max-w-xl">{t("Project.ctaBody")}</p>
+          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <Link href="/quote" className={cn(buttonVariants({ size: "cta" }))}>
+              {t("Nav.getQuote")}
+              <ArrowUpRight className="size-4" aria-hidden />
+            </Link>
+            <Link
+              href={{ pathname: "/packages", query: { category: categorySlug } }}
+              className={cn(
+                buttonVariants({ variant: "outline", size: "cta" }),
+                "border-paper/50 text-paper hover:bg-paper hover:text-ink bg-transparent dark:bg-transparent",
+              )}
+            >
+              {t("Project.viewPackages", { category: categoryName })}
+            </Link>
+          </div>
+        </section>
+      </div>
     </article>
   );
 }

@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 
 /** Pages whose first section is a full-bleed dark hero the header can sit on. */
 const HERO_PATHS = new Set(["/"]);
+/** Case studies (`/portfolio/<slug>`) open on a full-screen cover photo. */
+const HERO_PATTERN = /^\/portfolio\/[^/]+$/;
 
 /**
  * Sticky header that is transparent (light text) over a hero at the top of the page and
@@ -24,7 +26,7 @@ export function HeaderShell({ children }: { children: ReactNode }) {
     return () => window.removeEventListener("scroll", update);
   }, []);
 
-  const transparent = HERO_PATHS.has(pathname) && !scrolled;
+  const transparent = (HERO_PATHS.has(pathname) || HERO_PATTERN.test(pathname)) && !scrolled;
 
   return (
     <header
