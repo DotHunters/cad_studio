@@ -11,17 +11,15 @@
  * TODO(owner-fr): review — French titles and alt text were drafted by an agent.
  */
 
-/** @typedef {"CORPORATE"|"WEDDING"|"FAMILY"|"GATHERING"|"PROFESSIONAL"|"PRODUCT"} Category */
-
 /**
- * @type {Array<{ slug: string; source: string; category: Category; tags: string[];
+ * @type {Array<{ slug: string; source: string; category: string; tags: string[];
  *   title: string; titleFr: string; alt: string; altFr: string; featured?: boolean }>}
  */
 export const groups = [
   {
     slug: "christian-wedding",
     source: "Christian Wedding",
-    category: "WEDDING",
+    category: "wedding",
     tags: ["christian-wedding", "ceremony"],
     title: "Christian Church Wedding",
     titleFr: "Mariage à l’église",
@@ -32,7 +30,7 @@ export const groups = [
   {
     slug: "sinhala-wedding",
     source: "sinhala weddign",
-    category: "WEDDING",
+    category: "wedding",
     tags: ["sinhala-wedding", "ceremony"],
     title: "Sinhala Wedding",
     titleFr: "Mariage cinghalais",
@@ -43,7 +41,7 @@ export const groups = [
   {
     slug: "hindu-wedding",
     source: "sri and heily Hindu wedding",
-    category: "WEDDING",
+    category: "wedding",
     tags: ["hindu-wedding", "ceremony"],
     title: "Hindu Wedding",
     titleFr: "Mariage hindou",
@@ -54,7 +52,7 @@ export const groups = [
   {
     slug: "bride-and-groom-preshoot",
     source: "Groom and Bride preshoot",
-    category: "WEDDING",
+    category: "wedding",
     tags: ["pre-shoot"],
     title: "Bride and Groom Pre-shoot",
     titleFr: "Séance avant le mariage",
@@ -65,7 +63,7 @@ export const groups = [
   {
     slug: "wedding-preshoot",
     source: "Wedding preshoot",
-    category: "WEDDING",
+    category: "wedding",
     tags: ["pre-shoot"],
     title: "Temple Pre-wedding Shoot",
     titleFr: "Séance prénuptiale au temple",
@@ -75,7 +73,7 @@ export const groups = [
   {
     slug: "outdoor-theme-preshoot",
     source: "Out Door theme Shoot for wedding",
-    category: "WEDDING",
+    category: "wedding",
     tags: ["pre-shoot", "outdoor"],
     title: "Outdoor Themed Pre-shoot",
     titleFr: "Séance thématique en extérieur",
@@ -85,7 +83,7 @@ export const groups = [
   {
     slug: "wedding-day",
     source: "Wedding Day preshoot",
-    category: "WEDDING",
+    category: "wedding",
     tags: ["wedding-day"],
     title: "Wedding Day Portraits",
     titleFr: "Portraits du jour du mariage",
@@ -95,7 +93,7 @@ export const groups = [
   {
     slug: "baby-shower",
     source: "Baby Shower",
-    category: "FAMILY",
+    category: "family",
     tags: ["baby-shower"],
     title: "Garden Baby Shower",
     titleFr: "Fête prénatale au jardin",
@@ -106,7 +104,7 @@ export const groups = [
   {
     slug: "maternity-session",
     source: "Baby Shower 2",
-    category: "FAMILY",
+    category: "family",
     tags: ["maternity", "baby-shower"],
     title: "Maternity Session",
     titleFr: "Séance de maternité",
@@ -116,7 +114,7 @@ export const groups = [
   {
     slug: "puberty-ceremony",
     source: "Pubetry Ceremony",
-    category: "FAMILY",
+    category: "family",
     tags: ["puberty-ceremony", "ceremony"],
     title: "Puberty Ceremony",
     titleFr: "Cérémonie de puberté",
@@ -126,7 +124,7 @@ export const groups = [
   {
     slug: "model-shoot",
     source: "model shoot",
-    category: "PROFESSIONAL",
+    category: "professional",
     tags: ["model-portfolio"],
     title: "Model Portfolio Shoot",
     titleFr: "Séance portfolio de mannequin",

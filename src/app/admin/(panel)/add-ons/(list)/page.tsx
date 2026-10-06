@@ -3,7 +3,6 @@ import Link from "next/link";
 
 import { ActionSwitch, ConfirmDeleteButton } from "@/components/admin/row-actions";
 import { buttonVariants } from "@/components/ui/button";
-import { slugFromCategory } from "@/lib/categories";
 import { formatCAD } from "@/lib/money";
 import { deleteAddOn, setAddOnActive } from "@/server/actions/admin/add-ons";
 import { requireAdminPage } from "@/server/auth/guards";
@@ -104,9 +103,7 @@ async function AddOnsTable() {
                     <span className="text-muted-foreground">{UNIT_LABELS[addOn.unit]}</span>
                   </td>
                   <td className="px-4 py-3">
-                    {addOn.categories
-                      .map((category) => categoryLabel.get(slugFromCategory(category)))
-                      .join(", ")}
+                    {addOn.services.map((service) => categoryLabel.get(service.slug)).join(", ")}
                   </td>
                   <td className="px-4 py-3">
                     <ActionSwitch

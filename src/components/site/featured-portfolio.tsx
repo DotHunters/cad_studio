@@ -3,17 +3,20 @@ import { getLocale, getTranslations } from "next-intl/server";
 
 import { ProjectCard } from "@/components/portfolio/project-card";
 import { buttonVariants } from "@/components/ui/button";
+import type { Locale } from "@/config/site";
 import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 import { getFeaturedProjects } from "@/server/queries/home";
+import { getServiceNames } from "@/server/queries/services";
 
 import { Accent, SectionHeading } from "./section-heading";
 
 export async function FeaturedPortfolio() {
-  const [t, locale, projects] = await Promise.all([
+  const locale = (await getLocale()) as Locale;
+  const [t, projects, serviceName] = await Promise.all([
     getTranslations(),
-    getLocale(),
     getFeaturedProjects(3),
+    getServiceNames(locale),
   ]);
   if (projects.length === 0) return null;
 
@@ -41,7 +44,11 @@ export async function FeaturedPortfolio() {
       <ul className="mt-12 grid gap-6 md:grid-cols-3">
         {projects.map((project) => (
           <li key={project.id}>
-            <ProjectCard project={project} locale={locale} />
+            <ProjectCard
+              project={project}
+              locale={locale}
+              serviceName={serviceName(project.category)}
+            />
           </li>
         ))}
       </ul>

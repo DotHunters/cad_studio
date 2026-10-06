@@ -10,6 +10,7 @@ import { SocialLinks } from "@/components/site/social-links";
 import { siteConfig } from "@/config/site";
 import { Link } from "@/i18n/navigation";
 import { pageMetadata } from "@/lib/seo/metadata";
+import { getActiveServiceOptions } from "@/server/queries/services";
 
 type Props = { params: Promise<{ locale: Locale }> };
 
@@ -28,7 +29,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ContactPage({ params }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const [t, tFooter] = await Promise.all([getTranslations("Contact"), getTranslations("Footer")]);
+  const [t, tFooter, services] = await Promise.all([
+    getTranslations("Contact"),
+    getTranslations("Footer"),
+    getActiveServiceOptions(locale),
+  ]);
   const regions = new Intl.DisplayNames([locale], { type: "region" });
 
   return (
@@ -112,7 +117,7 @@ export default async function ContactPage({ params }: Props) {
         </div>
 
         <div className="bg-card relative rounded-2xl border p-6 shadow-sm sm:p-10">
-          <ContactForm />
+          <ContactForm services={services} />
         </div>
       </div>
     </div>

@@ -1,9 +1,9 @@
-import { type CategorySlug, categoryFromSlug } from "@/lib/categories";
+import { isServiceSlug } from "@/lib/services";
 
 export type ReachSlug = "local" | "global";
 
 export type PortfolioFilters = {
-  category: CategorySlug | null;
+  category: string | null;
   reach: ReachSlug | null;
   year: number | null;
 };
@@ -18,7 +18,7 @@ export function parsePortfolioFilters(params: SearchParams): PortfolioFilters {
   const reach = single(params.reach);
   const year = single(params.year);
   return {
-    category: category && categoryFromSlug(category) ? (category as CategorySlug) : null,
+    category: isServiceSlug(category) ? category : null,
     reach: reach === "local" || reach === "global" ? reach : null,
     year: year && /^\d{4}$/.test(year) ? Number(year) : null,
   };
@@ -32,7 +32,7 @@ export function filterProjects<T extends Filterable>(
 ): T[] {
   return projects.filter(
     (project) =>
-      (!filters.category || project.category === filters.category.toUpperCase()) &&
+      (!filters.category || project.category === filters.category) &&
       (!filters.reach || project.reach === filters.reach.toUpperCase()) &&
       (!filters.year || project.year === filters.year),
   );

@@ -30,7 +30,7 @@ async function createFixtures(testInfo: TestInfo) {
   const [project] = await queryDb<{ id: string }>(
     `insert into "PortfolioProject" (id, slug, title, category, reach, country, year, story,
        "publishedAt")
-     values (gen_random_uuid()::text, $1, $2, 'CORPORATE', 'LOCAL', 'Canada', 2026,
+     values (gen_random_uuid()::text, $1, $2, 'corporate', 'LOCAL', 'Canada', 2026,
        'Created by an e2e test.', now())
      returning id`,
     [slug, `E2E Images ${testInfo.project.name}`],

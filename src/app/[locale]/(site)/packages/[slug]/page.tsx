@@ -12,7 +12,6 @@ import { PackageTierCard } from "@/components/packages/package-tier-card";
 import { buttonVariants } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { Link } from "@/i18n/navigation";
-import { slugFromCategory } from "@/lib/categories";
 import { parseFaqs, publishableText } from "@/lib/content";
 import { isPricingConfirmed } from "@/lib/flags";
 import { localize } from "@/lib/localize";
@@ -22,6 +21,7 @@ import { serviceJsonLd } from "@/lib/seo/json-ld";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { cn } from "@/lib/utils";
 import { getBookingTerms, getPackageBySlug } from "@/server/queries/packages";
+import { getServiceNames } from "@/server/queries/services";
 
 type Props = { params: Promise<{ locale: Locale; slug: string }> };
 
@@ -49,8 +49,8 @@ export default async function PackageDetailPage({ params }: Props) {
   if (!pkg) notFound();
 
   const name = localize(pkg.name, pkg.nameFr, locale);
-  const categorySlug = slugFromCategory(pkg.category);
-  const categoryName = t(`Categories.${categorySlug}.name`);
+  const categorySlug = pkg.category;
+  const categoryName = (await getServiceNames(locale))(pkg.category);
   const inclusions = localize(
     pkg.inclusions,
     pkg.inclusionsFr.length ? pkg.inclusionsFr : null,

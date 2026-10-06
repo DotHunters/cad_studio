@@ -15,6 +15,7 @@ import {
   pricingRules,
   sampleProjects,
   sampleReviews,
+  services,
   siteSettings,
   taxRates,
 } from "./seed-data";
@@ -32,18 +33,28 @@ const db = new PrismaClient({ adapter: new PrismaPg({ connectionString }) });
 // the owner manages them in admin, so re-running the seed (e.g. to add the first admin) must
 // never overwrite them. Only missing rows are created.
 async function seedCatalogue() {
+  // Services first: everything else refers to them. Create-only, like the rest of the catalogue.
+  for (const service of services) {
+    await db.service.upsert({ where: { slug: service.slug }, update: {}, create: service });
+  }
+
   for (const pkg of packages) {
     await db.package.upsert({ where: { slug: pkg.slug }, update: {}, create: pkg });
   }
 
-  for (const addOn of addOns) {
-    // Link each add-on to every package in one of its categories.
-    const linked = packages.filter((p) => addOn.categories.includes(p.category));
-    const connect = linked.map((p) => ({ slug: p.slug }));
+  for (const { categories, ...addOn } of addOns) {
+    // Link each add-on to its services and to every package in one of them.
+    const connect = packages
+      .filter((p) => categories.includes(p.category))
+      .map((p) => ({ slug: p.slug }));
     await db.addOn.upsert({
       where: { code: addOn.code },
       update: {},
-      create: { ...addOn, packages: { connect } },
+      create: {
+        ...addOn,
+        services: { connect: categories.map((slug) => ({ slug })) },
+        packages: { connect },
+      },
     });
   }
 }

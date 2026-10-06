@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-import { categorySlugs } from "@/lib/categories";
+import { SERVICE_SLUG_PATTERN } from "@/lib/services";
 
 /**
  * Public review submission (AGENTS.md §6.7, §8.4). Every submission is stored as PENDING
@@ -26,7 +26,9 @@ export const reviewSubmissionSchema = z
       z.number().int().min(1, "ratingRequired").max(5, "ratingRequired").optional(),
     ),
     category: z
-      .enum(categorySlugs)
+      .string()
+      .regex(SERVICE_SLUG_PATTERN)
+      .max(40)
       .optional()
       .or(z.literal("").transform(() => undefined)),
     body: z.string().trim().min(20, "bodyTooShort").max(2000, "tooLong"),

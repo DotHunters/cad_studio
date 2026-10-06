@@ -28,7 +28,7 @@ test("options (Silver / Gold): admin adds them, clients compare and quote the on
   await expect(page.locator('form[data-hydrated="true"]')).toBeVisible();
 
   await page.getByLabel("Slug").fill(slug);
-  await page.getByLabel("Category").selectOption("wedding");
+  await page.getByLabel("Service").selectOption("wedding");
   await page.getByLabel("Name (English)", { exact: true }).fill(name);
   await page.getByLabel("Summary (English)").fill("A package with options.");
   await page.getByLabel("Description (English)").fill("Created by an end-to-end test.");

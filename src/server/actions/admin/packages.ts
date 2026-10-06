@@ -4,7 +4,6 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { Prisma } from "@/generated/prisma/client";
-import { categoryFromSlug } from "@/lib/categories";
 import type { ActionResult } from "@/lib/admin/action-result";
 import { auditSummary, describeChanges } from "@/lib/admin/audit";
 import { db } from "@/lib/db";
@@ -36,7 +35,7 @@ export async function savePackage(id: string | null, input: unknown): Promise<Sa
   const { basePrice, category, faqs, tiers, ...rest } = parsed.data;
   const data = {
     ...rest,
-    category: categoryFromSlug(category)!,
+    category: category,
     basePriceCents: basePrice,
     faqs: faqs as Prisma.InputJsonValue,
   };

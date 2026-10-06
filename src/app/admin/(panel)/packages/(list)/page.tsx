@@ -3,7 +3,6 @@ import Link from "next/link";
 
 import { ActionSwitch, ConfirmDeleteButton } from "@/components/admin/row-actions";
 import { buttonVariants } from "@/components/ui/button";
-import { slugFromCategory } from "@/lib/categories";
 import { formatCAD } from "@/lib/money";
 import { startingPriceCents } from "@/lib/pricing/options";
 import { deletePackage, setPackageActive } from "@/server/actions/admin/packages";
@@ -91,7 +90,7 @@ export default async function AdminPackagesPage({ searchParams }: Props) {
                       {pkg.slug}
                     </span>
                   </td>
-                  <td className="px-4 py-3">{categoryLabel.get(slugFromCategory(pkg.category))}</td>
+                  <td className="px-4 py-3">{categoryLabel.get(pkg.category)}</td>
                   <td className="px-4 py-3 tabular-nums">
                     {formatCAD(startingPriceCents(pkg), "en", { suffix: false })}
                     {pkg.tiers.length > 0 && (

@@ -96,32 +96,6 @@
   "PricingBanner": {
     "message": "Pricing pending owner confirmation — prices shown are placeholders."
   },
-  "Categories": {
-    "corporate": {
-      "name": "Corporate Events",
-      "description": "Conferences, launches, galas and on-site headshots."
-    },
-    "wedding": {
-      "name": "Weddings",
-      "description": "Engagement, ceremony and reception."
-    },
-    "family": {
-      "name": "Family Events",
-      "description": "Birthdays, anniversaries, baby showers and milestones."
-    },
-    "gathering": {
-      "name": "Gatherings",
-      "description": "Community, cultural, religious and social events."
-    },
-    "professional": {
-      "name": "Professional Photoshoots",
-      "description": "Portraits, headshots, branding and portfolios."
-    },
-    "product": {
-      "name": "Product Photography",
-      "description": "E-commerce, catalogue, lifestyle and flat-lay."
-    }
-  },
   "Packages": {
     "metaTitle": "Packages",
     "metaDescription": "Photography packages for weddings, corporate events, family events, gatherings, portraits and products — with starting prices in CAD.",
@@ -228,12 +202,6 @@
     "selectType": "Choose one…",
     "message": "Message",
     "types": {
-      "wedding": "Wedding",
-      "corporate": "Corporate event",
-      "family": "Family event",
-      "gathering": "Gathering",
-      "professional": "Professional photoshoot",
-      "product": "Product photography",
       "other": "Something else",
       "privacy": "Privacy request (access or delete my data)"
     },

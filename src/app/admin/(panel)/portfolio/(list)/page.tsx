@@ -3,7 +3,6 @@ import Link from "next/link";
 
 import { ActionSwitch, ConfirmDeleteButton } from "@/components/admin/row-actions";
 import { buttonVariants } from "@/components/ui/button";
-import { slugFromCategory } from "@/lib/categories";
 import {
   deleteProject,
   setProjectFeatured,
@@ -109,7 +108,7 @@ export default async function AdminPortfolioPage({ searchParams }: Props) {
                     )}
                   </td>
                   <td className="px-4 py-3">
-                    {categoryLabel.get(slugFromCategory(project.category))} ·{" "}
+                    {categoryLabel.get(project.category)} ·{" "}
                     {project.reach === "LOCAL" ? "Local" : "Global"}
                   </td>
                   <td className="px-4 py-3 tabular-nums">{project.year ?? "—"}</td>

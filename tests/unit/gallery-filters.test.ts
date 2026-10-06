@@ -11,9 +11,9 @@ import {
 } from "@/lib/gallery-filters";
 
 const images = [
-  { category: "WEDDING", tags: ["outdoor", "sample"] },
-  { category: "WEDDING", tags: ["sample"] },
-  { category: "PRODUCT", tags: ["flat-lay"] },
+  { category: "wedding", tags: ["outdoor", "sample"] },
+  { category: "wedding", tags: ["sample"] },
+  { category: "product", tags: ["flat-lay"] },
   { category: null, tags: [] },
 ] as const;
 
@@ -27,7 +27,7 @@ describe("parseGalleryFilters", () => {
   });
 
   it("ignores invalid values and defaults to page 1", () => {
-    expect(parseGalleryFilters({ category: "x", tag: ["a", "b"], page: "-3" })).toEqual({
+    expect(parseGalleryFilters({ category: "bad slug", tag: ["a", "b"], page: "-3" })).toEqual({
       category: null,
       tag: null,
       page: 1,
@@ -52,13 +52,20 @@ describe("filterGallery", () => {
   });
 });
 
+const ORDER = ["corporate", "wedding", "family", "gathering", "professional", "product"];
+
 describe("galleryCategories", () => {
   it("lists only categories with images, in the standard order", () => {
-    expect(galleryCategories(images)).toEqual(["wedding", "product"]);
+    expect(galleryCategories(images, ORDER)).toEqual(["wedding", "product"]);
+  });
+
+  it("hides images whose service is not in the service order", () => {
+    expect(galleryCategories(images, ["wedding"])).toEqual(["wedding"]);
+    expect(galleryCategories([{ category: "graduations", tags: [] }], ORDER)).toEqual([]);
   });
 
   it("is empty when there are no images", () => {
-    expect(galleryCategories([])).toEqual([]);
+    expect(galleryCategories([], ORDER)).toEqual([]);
   });
 });
 

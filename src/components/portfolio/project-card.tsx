@@ -3,7 +3,6 @@ import { useTranslations } from "next-intl";
 import { StoredImage } from "@/components/site/stored-image";
 import type { Locale } from "@/config/site";
 import { Link } from "@/i18n/navigation";
-import { slugFromCategory } from "@/lib/categories";
 import { localize } from "@/lib/localize";
 import { projectPlace } from "@/lib/portfolio-filters";
 import type { ProjectSummary } from "@/server/queries/portfolio";
@@ -24,6 +23,8 @@ type Props = {
     | "cover"
   >;
   locale: Locale;
+  /** Localized service name (archived services keep their name on old projects). */
+  serviceName: string;
   sizes?: string;
   /** h2 when the card sits right under the page h1 (portfolio page), h3 under a section h2. */
   headingLevel?: "h2" | "h3";
@@ -33,6 +34,7 @@ type Props = {
 export function ProjectCard({
   project,
   locale,
+  serviceName,
   sizes = "(min-width: 768px) 33vw, 100vw",
   headingLevel: Heading = "h3",
 }: Props) {
@@ -68,7 +70,7 @@ export function ProjectCard({
       <p className="text-muted-foreground mt-1 text-sm">
         {[
           project.clientName ?? t("Home.privateClient"),
-          t(`Categories.${slugFromCategory(project.category)}.name`),
+          serviceName,
           projectPlace(project),
           project.year,
         ]

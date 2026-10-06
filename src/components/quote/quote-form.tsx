@@ -10,12 +10,12 @@ import { Button } from "@/components/ui/button";
 
 import type { Locale } from "@/config/site";
 import { Link, useRouter } from "@/i18n/navigation";
-import { type CategorySlug, categoryFromSlug, categorySlugs } from "@/lib/categories";
 import { localize } from "@/lib/localize";
 import { formatCAD } from "@/lib/money";
 import { calculateQuote, type QuoteResult } from "@/lib/pricing/calculate-quote";
 import { toEngineInput } from "@/lib/pricing/engine-input";
 import { resolvePackage } from "@/lib/pricing/rules";
+import type { ServiceOption } from "@/lib/services";
 import { cn } from "@/lib/utils";
 import { provinceCodes, quoteDetailsSchema, quoteRequestSchema } from "@/lib/validators/quote";
 import { createQuote } from "@/server/actions/quote";
@@ -25,7 +25,7 @@ import { QuoteBreakdown } from "./quote-breakdown";
 import { useTurnstile } from "@/components/site/turnstile";
 
 export type QuoteFormValues = {
-  category: CategorySlug | "";
+  category: string;
   packageSlug: string;
   eventDate: string;
   startTime: string;
@@ -77,7 +77,8 @@ type Props = {
   /** Earliest bookable date in the studio time zone (YYYY-MM-DD). */
   today: string;
   initialPackage?: string;
-  initialCategory?: CategorySlug;
+  initialCategory?: string;
+  services: ServiceOption[];
 };
 
 const fieldClass =
@@ -117,12 +118,17 @@ function Field({
 }
 
 /** Live quote form: every change re-runs the same engine the server uses (AGENTS.md §6.5). */
-export function QuoteForm({ context, locale, today, initialPackage, initialCategory }: Props) {
+export function QuoteForm({
+  context,
+  locale,
+  today,
+  initialPackage,
+  initialCategory,
+  services,
+}: Props) {
   const t = useTranslations();
   const startingPackage = context.packages.find((pkg) => pkg.slug === initialPackage);
-  const startingCategory =
-    initialCategory ??
-    (startingPackage ? (startingPackage.category.toLowerCase() as CategorySlug) : "");
+  const startingCategory = initialCategory ?? startingPackage?.category ?? "";
 
   const {
     register,
@@ -161,7 +167,7 @@ export function QuoteForm({ context, locale, today, initialPackage, initialCateg
   const [hydrated, setHydrated] = useState(false);
   useEffect(() => setHydrated(true), []);
 
-  const category = values.category ? categoryFromSlug(values.category) : null;
+  const category = values.category || null;
   const packagesInCategory = context.packages.filter((pkg) => pkg.category === category);
   const addOnsInCategory = context.addOns.filter(
     (addOn) => category && addOn.categories.includes(category),
@@ -273,9 +279,9 @@ export function QuoteForm({ context, locale, today, initialPackage, initialCateg
                 <option value="" disabled>
                   {t("Contact.selectType")}
                 </option>
-                {categorySlugs.map((slug) => (
-                  <option key={slug} value={slug}>
-                    {t(`Categories.${slug}.name`)}
+                {services.map((service) => (
+                  <option key={service.slug} value={service.slug}>
+                    {service.name}
                   </option>
                 ))}
               </select>

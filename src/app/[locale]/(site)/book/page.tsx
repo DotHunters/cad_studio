@@ -6,12 +6,12 @@ import type { ReactNode } from "react";
 import { BookingWizard, type BookingFormValues } from "@/components/booking/booking-wizard";
 import { Accent, SectionHeading } from "@/components/site/section-heading";
 import { MAX_MONTHS_AHEAD } from "@/lib/booking/availability";
-import { type CategorySlug, slugFromCategory } from "@/lib/categories";
 import { studioDateKey } from "@/lib/dates";
 import { findOption } from "@/lib/pricing/options";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { getPricingContext } from "@/server/queries/pricing";
 import { getBookableQuote } from "@/server/queries/quotes";
+import { getActiveServiceOptions } from "@/server/queries/services";
 
 type Props = {
   params: Promise<{ locale: Locale }>;
@@ -42,16 +42,17 @@ export default async function BookPage({ params, searchParams }: Props) {
   const query = await searchParams;
   const quoteReference = single(query.quote);
 
-  const [t, context, quote] = await Promise.all([
+  const [t, context, quote, services] = await Promise.all([
     getTranslations("Book"),
     getPricingContext(),
     getBookableQuote(quoteReference, single(query.t)),
+    getActiveServiceOptions(locale),
   ]);
 
   const chosen = findOption(context.packages, single(query.package), single(query.tier));
   const initial: Partial<BookingFormValues> = chosen
     ? {
-        category: slugFromCategory(chosen.category) as CategorySlug,
+        category: chosen.category,
         packageSlug: chosen.slug,
         photographers: String(chosen.includedShooters),
       }
@@ -78,6 +79,7 @@ export default async function BookPage({ params, searchParams }: Props) {
           monthsAhead={MAX_MONTHS_AHEAD}
           initial={initial}
           quote={quote}
+          services={services}
         />
       </div>
     </div>

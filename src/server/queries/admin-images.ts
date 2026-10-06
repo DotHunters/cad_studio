@@ -1,7 +1,6 @@
 import "server-only";
 
 import type { ImageFormDefaults } from "@/components/admin/image-form";
-import { slugFromCategory } from "@/lib/categories";
 import { db } from "@/lib/db";
 
 /** All images for the admin list, in gallery order. Uncached. */
@@ -47,7 +46,7 @@ export async function getImageForAdmin(id: string) {
   const defaults: ImageFormDefaults = {
     alt: image.alt,
     altFr: image.altFr ?? "",
-    category: image.category ? slugFromCategory(image.category) : "",
+    category: image.category ?? "",
     tags: image.tags.join(", "),
     inGallery: image.inGallery,
     sortOrder: String(image.sortOrder),

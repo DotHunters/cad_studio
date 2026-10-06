@@ -20,7 +20,7 @@ const group = (slug: string, category: PhotoGroup["category"]): PhotoGroup => ({
 });
 
 describe("categoryPhoto", () => {
-  const groups = [group("model-shoot", "PROFESSIONAL"), group("wedding-a", "WEDDING")];
+  const groups = [group("model-shoot", "professional"), group("wedding-a", "wedding")];
 
   it("returns the first photo of the first group in the category", () => {
     expect(categoryPhoto("wedding", groups)?.src).toBe("/photos/wedding-a/wedding-a-01.webp");

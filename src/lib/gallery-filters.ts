@@ -1,10 +1,10 @@
-import { type CategorySlug, categoryFromSlug, categorySlugs } from "@/lib/categories";
+import { isServiceSlug } from "@/lib/services";
 
 /** Images per "load more" step. */
 export const GALLERY_PAGE_SIZE = 12;
 const MAX_PAGE = 50;
 
-export type GalleryFilters = { category: CategorySlug | null; tag: string | null; page: number };
+export type GalleryFilters = { category: string | null; tag: string | null; page: number };
 
 type SearchParams = Record<string, string | string[] | undefined>;
 const single = (value: string | string[] | undefined) => (typeof value === "string" ? value : null);
@@ -15,7 +15,7 @@ export function parseGalleryFilters(params: SearchParams): GalleryFilters {
   const tag = single(params.tag)?.trim();
   const page = Number(single(params.page));
   return {
-    category: category && categoryFromSlug(category) ? (category as CategorySlug) : null,
+    category: isServiceSlug(category) ? category : null,
     tag: tag || null,
     page: Number.isInteger(page) && page > 0 ? Math.min(page, MAX_PAGE) : 1,
   };
@@ -29,15 +29,18 @@ export function filterGallery<T extends Filterable>(
 ): T[] {
   return images.filter(
     (image) =>
-      (!filters.category || image.category === filters.category.toUpperCase()) &&
+      (!filters.category || image.category === filters.category) &&
       (!filters.tag || image.tags.includes(filters.tag)),
   );
 }
 
-/** Categories that have at least one image, in the standard order (empty ones are hidden). */
-export function galleryCategories(images: readonly Filterable[]): CategorySlug[] {
+/** Services that have at least one image, in the given service order (active services only). */
+export function galleryCategories(
+  images: readonly Filterable[],
+  serviceOrder: readonly string[],
+): string[] {
   const present = new Set(images.map((image) => image.category));
-  return categorySlugs.filter((slug) => present.has(slug.toUpperCase()));
+  return serviceOrder.filter((slug) => present.has(slug));
 }
 
 /** Unique tags, most used first (ties alphabetical). */

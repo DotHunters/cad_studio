@@ -11,13 +11,13 @@ import { Button } from "@/components/ui/button";
 import type { Locale } from "@/config/site";
 import { Link, useRouter } from "@/i18n/navigation";
 import { matchesQuote, type PriceFingerprint } from "@/lib/booking/quote-match";
-import { type CategorySlug, categoryFromSlug, categorySlugs } from "@/lib/categories";
 import { formatInStudioTz } from "@/lib/dates";
 import { localize } from "@/lib/localize";
 import { formatCAD } from "@/lib/money";
 import { calculateQuote, type QuoteResult } from "@/lib/pricing/calculate-quote";
 import { toEngineInput } from "@/lib/pricing/engine-input";
 import { resolvePackage } from "@/lib/pricing/rules";
+import type { ServiceOption } from "@/lib/services";
 import { cn } from "@/lib/utils";
 import { bookingRequestSchema } from "@/lib/validators/booking";
 import { provinceCodes } from "@/lib/validators/quote";
@@ -28,7 +28,7 @@ import { AvailabilityCalendar } from "./availability-calendar";
 import { useTurnstile } from "@/components/site/turnstile";
 
 export type BookingFormValues = {
-  category: CategorySlug | "";
+  category: string;
   packageSlug: string;
   eventDate: string;
   startTime: string;
@@ -69,6 +69,7 @@ type Props = {
   monthsAhead: number;
   initial: Partial<BookingFormValues>;
   quote: QuotePrefill | null;
+  services: ServiceOption[];
 };
 
 const STEPS = ["service", "date", "details", "contact", "review"] as const;
@@ -108,7 +109,15 @@ const TIMES = Array.from({ length: 48 }, (_, index) => {
   return `${hours}:${index % 2 ? "30" : "00"}`;
 });
 
-export function BookingWizard({ context, locale, today, monthsAhead, initial, quote }: Props) {
+export function BookingWizard({
+  context,
+  locale,
+  today,
+  monthsAhead,
+  initial,
+  quote,
+  services,
+}: Props) {
   const t = useTranslations();
   const [step, setStep] = useState<Step>("service");
   const [pending, setPending] = useState(false);
@@ -155,7 +164,7 @@ export function BookingWizard({ context, locale, today, monthsAhead, initial, qu
   });
   const values = useWatch({ control }) as BookingFormValues;
 
-  const category = values.category ? categoryFromSlug(values.category) : null;
+  const category = values.category || null;
   const pkg = category
     ? resolvePackage(context.packages, category, values.packageSlug || undefined)
     : null;
@@ -369,9 +378,9 @@ export function BookingWizard({ context, locale, today, monthsAhead, initial, qu
                 <option value="" disabled>
                   {t("Contact.selectType")}
                 </option>
-                {categorySlugs.map((slug) => (
-                  <option key={slug} value={slug}>
-                    {t(`Categories.${slug}.name`)}
+                {services.map((service) => (
+                  <option key={service.slug} value={service.slug}>
+                    {service.name}
                   </option>
                 ))}
               </select>

@@ -1,4 +1,4 @@
-import { type CategorySlug, categoryFromSlug } from "@/lib/categories";
+import { isServiceSlug } from "@/lib/services";
 
 /**
  * Public display rules for reviews (AGENTS.md §6.7). Customer names show as first name +
@@ -15,7 +15,7 @@ export function customerDisplayName(fullName: string): string {
 
 export type ReviewSort = "newest" | "highest";
 
-export type ReviewFilters = { category: CategorySlug | null; sort: ReviewSort };
+export type ReviewFilters = { category: string | null; sort: ReviewSort };
 
 type SearchParams = Record<string, string | string[] | undefined>;
 const single = (value: string | string[] | undefined) => (typeof value === "string" ? value : null);
@@ -23,7 +23,7 @@ const single = (value: string | string[] | undefined) => (typeof value === "stri
 export function parseReviewFilters(params: SearchParams): ReviewFilters {
   const category = single(params.category);
   return {
-    category: category && categoryFromSlug(category) ? (category as CategorySlug) : null,
+    category: isServiceSlug(category) ? category : null,
     sort: single(params.sort) === "highest" ? "highest" : "newest",
   };
 }
@@ -35,7 +35,7 @@ export function applyReviewFilters<T extends Sortable>(
   reviews: readonly T[],
   filters: ReviewFilters,
 ): T[] {
-  const category = filters.category ? filters.category.toUpperCase() : null;
+  const category = filters.category;
   return reviews
     .filter((review) => !category || review.category === category)
     .slice()

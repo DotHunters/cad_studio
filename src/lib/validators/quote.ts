@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-import { categorySlugs } from "@/lib/categories";
+import { SERVICE_SLUG_PATTERN } from "@/lib/services";
 
 /**
  * Quote form schemas, shared by the browser (live estimate) and the server action
@@ -44,7 +44,7 @@ const optionalNumber = z.preprocess(
 
 export const quoteDetailsSchema = z
   .object({
-    category: z.enum(categorySlugs, "required"),
+    category: z.string("required").regex(SERVICE_SLUG_PATTERN, "required").max(40, "required"),
     packageSlug: z.string().trim().max(120).optional(),
     eventDate: z.string().refine(isRealDate, "invalidDate"),
     startTime: z.string().regex(TIME, "invalidTime"),

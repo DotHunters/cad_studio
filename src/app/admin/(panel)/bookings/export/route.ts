@@ -3,6 +3,7 @@ import { centsToDecimal, toCsv } from "@/lib/admin/csv";
 import { formatInStudioTz, studioDateKey } from "@/lib/dates";
 import { forbiddenUnlessRole } from "@/server/auth/guards";
 import { listBookingsForAdmin } from "@/server/queries/admin-bookings";
+import { getServiceNames } from "@/server/queries/services";
 
 export const dynamic = "force-dynamic";
 
@@ -26,7 +27,10 @@ export async function GET(request: Request) {
   if (forbidden) return forbidden;
 
   const params = Object.fromEntries(new URL(request.url).searchParams);
-  const { bookings } = await listBookingsForAdmin(parseBookingFilters(params));
+  const [{ bookings }, serviceName] = await Promise.all([
+    listBookingsForAdmin(parseBookingFilters(params)),
+    getServiceNames("en"),
+  ]);
   const csv = toCsv(
     HEADER,
     bookings.map((booking) => [
@@ -34,7 +38,7 @@ export async function GET(request: Request) {
       booking.status,
       studioDateKey(booking.startAt),
       formatInStudioTz(booking.startAt, "HH:mm"),
-      booking.category,
+      serviceName(booking.category),
       booking.photographers,
       booking.customer.name,
       booking.customer.email,

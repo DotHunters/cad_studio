@@ -6,7 +6,6 @@ import { siteConfig } from "@/config/site";
 import { Prisma } from "@/generated/prisma/client";
 import { addDaysToKey, canBook, parseBookingRules } from "@/lib/booking/availability";
 import { matchesQuote, type PriceFingerprint } from "@/lib/booking/quote-match";
-import { categoryFromSlug } from "@/lib/categories";
 import { studioDateKey } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { calculateQuote, type QuoteResult } from "@/lib/pricing/calculate-quote";
@@ -15,6 +14,7 @@ import { resolvePackage } from "@/lib/pricing/rules";
 import { counterKey, formatReference } from "@/lib/references";
 import type { BookingRequest } from "@/lib/validators/booking";
 import { getPricingContext } from "@/server/queries/pricing";
+import { isActiveServiceSlug } from "@/server/queries/services";
 import { getBookableQuote } from "@/server/queries/quotes";
 import { isSerializationFailure } from "@/server/serialization";
 import { storedQuoteResult } from "@/lib/admin/quotes";
@@ -47,7 +47,7 @@ export async function placeBooking(
   { locale, now = new Date() }: { locale: "en" | "fr"; now?: Date },
 ): Promise<PlaceBookingResult> {
   const context = await getPricingContext();
-  const category = categoryFromSlug(request.category);
+  const category = (await isActiveServiceSlug(request.category)) ? request.category : null;
   const pkg = category ? resolvePackage(context.packages, category, request.packageSlug) : null;
   if (!category || !pkg) return { ok: false, error: "invalid" };
 

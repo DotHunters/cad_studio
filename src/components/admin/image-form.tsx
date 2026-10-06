@@ -105,7 +105,7 @@ export function ImageForm({ id, defaults, categories, projects }: Props) {
       </Field>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field {...field("category", "Category", "Used by the gallery filters.")}>
+        <Field {...field("category", "Service", "Used by the gallery filters.")}>
           <select {...control("category")} defaultValue={defaults.category}>
             <option value="">None</option>
             {categories.map((option) => (

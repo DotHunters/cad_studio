@@ -5,12 +5,13 @@ import { useTranslations } from "next-intl";
 import { type FormEvent, type ReactNode, useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import { categorySlugs } from "@/lib/categories";
+import type { ServiceOption } from "@/lib/services";
 import { cn } from "@/lib/utils";
 import { submitReview } from "@/server/actions/review";
 import { useTurnstile } from "@/components/site/turnstile";
 
 type Props = {
+  services: ServiceOption[];
   /** Signed booking link from a completed booking (6.3) — marks the review as verified. */
   booking?: { reference: string; exp: string; token: string; category: string };
 };
@@ -30,7 +31,7 @@ const isErrorKey = (key: string): key is (typeof ERROR_KEYS)[number] =>
   (ERROR_KEYS as readonly string[]).includes(key);
 
 /** Public review form (AGENTS.md §6.7). Submissions are always moderated before publishing. */
-export function ReviewForm({ booking }: Props) {
+export function ReviewForm({ services, booking }: Props) {
   const t = useTranslations();
   const [asCompany, setAsCompany] = useState(false);
   const [rating, setRating] = useState(0);
@@ -198,9 +199,9 @@ export function ReviewForm({ booking }: Props) {
             className={fieldClass}
           >
             <option value="">—</option>
-            {categorySlugs.map((slug) => (
-              <option key={slug} value={slug}>
-                {t(`Categories.${slug}.name`)}
+            {services.map((service) => (
+              <option key={service.slug} value={service.slug}>
+                {service.name}
               </option>
             ))}
           </select>

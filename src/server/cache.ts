@@ -12,6 +12,7 @@ export const CACHE_TAGS = {
   gallery: "gallery",
   reviews: "reviews",
   settings: "settings",
+  services: "services",
 } as const;
 
 export type ContentKind = keyof typeof CACHE_TAGS;

@@ -15,6 +15,8 @@
 **Goal of the site:** Turn visitors into booked clients. Every page should make it easy to (1) see the work, (2) understand packages and price, (3) get a quote, and (4) book a date.
 
 ### Services / package categories
+Services are admin-managed (`Service` table, Admin → Services: create, edit EN/FR, reorder, tile photo, archive, delete when unused). The six below are the launch set; a slug never changes once created. Archived services are hidden from the site and from new quotes/bookings/reviews; old records keep their name.
+
 | Slug | Name |
 |---|---|
 | `corporate` | Corporate Events (conferences, launches, galas, headshots on site) |
@@ -234,7 +236,7 @@ pnpm photos           # assets/ originals → compressed WebP in public/photos +
 
 ### 6.10 Admin `/admin`
 - Dashboard: upcoming bookings, new quotes, pending reviews, monthly revenue estimate.
-- CRUD: packages, add-ons, pricing rules, tax rates, portfolio projects, gallery images (bulk upload, tagging, reorder), reviews (approve/reject/feature), blocked dates & capacity.
+- CRUD: services, packages, add-ons, pricing rules, tax rates, portfolio projects, gallery images (bulk upload, tagging, reorder), reviews (approve/reject/feature), blocked dates & capacity.
 - Bookings: list + calendar view, status changes (`PENDING → CONFIRMED → COMPLETED` / `CANCELLED`), assign photographers, export CSV, `.ics` download.
 - Quotes: list, convert to booking, adjust and re-send.
 - Audit log of admin changes.
@@ -246,7 +248,6 @@ pnpm photos           # assets/ originals → compressed WebP in public/photos +
 > **Source of truth: `prisma/schema.prisma`** (Prisma 7, `prisma-client` generator → `src/generated/prisma`, `@prisma/adapter-pg`). The schema adds to this summary: relations, `*Fr` columns, `Package.faqs`, `AddOnUnit` enum, `Locale` enum, consent flags on `PortfolioProject`/`Image`, `Review.logoPermission`/`flagged`/`locale`, `ReferenceCounter` for `CAD-Q/B-YYYY-####`, `Customer.marketingConsentAt`, timestamps and indexes. Auth.js tables come with task 7.1, `AuditLog` with 7.9.
 
 ```prisma
-enum Category { CORPORATE WEDDING FAMILY GATHERING PROFESSIONAL PRODUCT }
 enum BookingStatus { PENDING CONFIRMED COMPLETED CANCELLED }
 enum QuoteStatus { DRAFT SENT ACCEPTED EXPIRED }
 enum ReviewStatus { PENDING APPROVED REJECTED }
@@ -255,11 +256,22 @@ enum Reach { LOCAL GLOBAL }
 enum Role { ADMIN STAFF }
 enum PaymentMethod { BANK_TRANSFER CASH PAYMENT_LINK STRIPE }   // PAYMENT_LINK = external link sent by admin; STRIPE = phase 2
 
+model Service {               // admin-managed; replaces the old Category enum
+  slug          String  @id    // e.g. "wedding"; never changes
+  name          String
+  nameFr        String?
+  description   String
+  descriptionFr String?
+  sortOrder     Int     @default(0)
+  archivedAt    DateTime?      // hidden from site and new quotes/bookings
+  tileImageId   String?        // home tile photo
+}
+
 model Package {
   id               String   @id @default(cuid())
   slug             String   @unique
   name             String
-  category         Category
+  category         String    // FK → Service.slug
   summary          String
   description      String   // markdown
   basePriceCents   Int      // CAD cents
@@ -281,7 +293,7 @@ model AddOn {
   name        String
   priceCents  Int
   unit        String            // "flat" | "per_hour" | "per_item"
-  categories  Category[]
+  services  Service[]   // many-to-many
   isActive    Boolean @default(true)
   packages    Package[]
 }
@@ -307,7 +319,7 @@ model TaxRate {
 model Quote {
   id            String   @id @default(cuid())
   reference     String   @unique
-  category      Category
+  category      String    // FK → Service.slug
   packageId     String?
   eventDate     DateTime
   durationHours Decimal
@@ -333,7 +345,7 @@ model Quote {
 model Booking {
   id            String   @id @default(cuid())
   reference     String   @unique
-  category      Category
+  category      String    // FK → Service.slug
   packageId     String?
   quoteId       String?  @unique
   startAt       DateTime // UTC
@@ -371,7 +383,7 @@ model PortfolioProject {
   slug        String   @unique
   title       String
   clientName  String?  // null => "Private client"
-  category    Category
+  category    String    // FK → Service.slug
   reach       Reach
   city        String?
   country     String
@@ -390,7 +402,7 @@ model Image {
   width      Int
   height     Int
   alt        String           // REQUIRED, descriptive
-  category   Category?
+  category   String?   // FK → Service.slug
   tags       String[]
   inGallery  Boolean @default(true)
   sortOrder  Int @default(0)
@@ -405,7 +417,7 @@ model Review {
   authorTitle String?   // recommendations
   company     String?   // recommendations
   rating      Int?      // 1–5, required for CUSTOMER
-  category    Category?
+  category    String?   // FK → Service.slug
   body        String
   verified    Boolean  @default(false)
   bookingId   String?

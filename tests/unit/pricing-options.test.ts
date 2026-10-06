@@ -10,7 +10,7 @@ import {
 } from "@/lib/pricing/options";
 
 const base = {
-  category: "WEDDING",
+  category: "wedding",
   basePriceCents: 280000,
   includedHours: 8,
   includedShooters: 2,
@@ -25,7 +25,7 @@ describe("pricedOptions", () => {
         slug: "wedding",
         packageSlug: "wedding",
         tierKey: null,
-        category: "WEDDING",
+        category: "wedding",
         name: "Wedding",
         nameFr: "Mariage",
         basePriceCents: 280000,

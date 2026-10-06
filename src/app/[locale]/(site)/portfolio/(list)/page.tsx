@@ -7,7 +7,6 @@ import { ProjectCard } from "@/components/portfolio/project-card";
 import { FilterGroup } from "@/components/site/filter-group";
 import { Accent, SectionHeading } from "@/components/site/section-heading";
 import { Link } from "@/i18n/navigation";
-import { categorySlugs } from "@/lib/categories";
 import {
   filterHref,
   filterProjects,
@@ -17,6 +16,7 @@ import {
 } from "@/lib/portfolio-filters";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { getPublishedProjects } from "@/server/queries/portfolio";
+import { getActiveServiceOptions, getServiceNames } from "@/server/queries/services";
 
 type Props = {
   params: Promise<{ locale: Locale }>;
@@ -37,9 +37,19 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function PortfolioPage({ params, searchParams }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const filters: PortfolioFilters = parsePortfolioFilters(await searchParams);
+  const parsed = parsePortfolioFilters(await searchParams);
 
-  const [t, projects] = await Promise.all([getTranslations(), getPublishedProjects()]);
+  const [t, projects, services, serviceName] = await Promise.all([
+    getTranslations(),
+    getPublishedProjects(),
+    getActiveServiceOptions(locale),
+    getServiceNames(locale),
+  ]);
+  // An archived or unknown ?category falls back to "All".
+  const filters: PortfolioFilters = {
+    ...parsed,
+    category: services.some((s) => s.slug === parsed.category) ? parsed.category : null,
+  };
   const visible = filterProjects(projects, filters);
   const years = projectYears(projects);
   const hasFilters = Boolean(filters.category || filters.reach || filters.year);
@@ -66,11 +76,11 @@ export default async function PortfolioPage({ params, searchParams }: Props) {
               active: !filters.category,
               href: filterHref(filters, { category: null }),
             },
-            ...categorySlugs.map((slug) => ({
-              key: slug,
-              label: t(`Categories.${slug}.name`),
-              active: filters.category === slug,
-              href: filterHref(filters, { category: slug }),
+            ...services.map((service) => ({
+              key: service.slug,
+              label: service.name,
+              active: filters.category === service.slug,
+              href: filterHref(filters, { category: service.slug }),
             })),
           ]}
         />
@@ -129,6 +139,7 @@ export default async function PortfolioPage({ params, searchParams }: Props) {
               <ProjectCard
                 project={project}
                 locale={locale}
+                serviceName={serviceName(project.category)}
                 sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
                 headingLevel="h2"
               />

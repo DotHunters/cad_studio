@@ -88,7 +88,7 @@ export function ProjectForm({ id, defaults, categories }: Props) {
         <Field {...field("slug", "Slug", "Used in the address: /portfolio/slug")}>
           <input {...control("slug")} defaultValue={defaults.slug} />
         </Field>
-        <Field {...field("category", "Category")}>
+        <Field {...field("category", "Service")}>
           <select {...control("category")} defaultValue={defaults.category}>
             <option value="">Choose…</option>
             {categories.map((category) => (

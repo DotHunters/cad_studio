@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
-import { slugFromCategory } from "@/lib/categories";
 import { formatInStudioTz } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { cn } from "@/lib/utils";
@@ -155,9 +154,8 @@ export default async function AdminReviewsPage({ searchParams }: Props) {
                 </div>
                 <p className="text-muted-foreground mt-1 text-xs">
                   {review.type === "RECOMMENDATION" ? "Recommendation" : "Customer review"}
-                  {review.category &&
-                    ` · ${categoryLabel.get(slugFromCategory(review.category))}`}{" "}
-                  · {review.locale.toUpperCase()} ·{" "}
+                  {review.category && ` · ${categoryLabel.get(review.category)}`} ·{" "}
+                  {review.locale.toUpperCase()} ·{" "}
                   {formatInStudioTz(review.createdAt, "MMM d, yyyy h:mm a")}
                 </p>
                 <p className="mt-3 text-sm whitespace-pre-line">{review.body}</p>

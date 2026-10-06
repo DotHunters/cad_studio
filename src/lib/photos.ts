@@ -5,15 +5,11 @@
  */
 import manifest from "@/data/photos.json";
 
-import type { Category } from "@/generated/prisma/enums";
-
-import { type CategorySlug, categoryFromSlug } from "./categories";
-
 export type Photo = { src: string; width: number; height: number; blurDataUrl: string };
 
 export type PhotoGroup = {
   slug: string;
-  category: Category;
+  category: string; // service slug
   tags: string[];
   title: string;
   titleFr: string;
@@ -43,9 +39,8 @@ export function localPublicId(src: string): string {
 
 /** First photo of the first group in a category (category tiles), or null if none yet. */
 export function categoryPhoto(
-  slug: CategorySlug,
+  slug: string,
   groups: readonly PhotoGroup[] = photos.groups,
 ): Photo | null {
-  const category = categoryFromSlug(slug);
-  return groups.find((group) => group.category === category)?.images[0] ?? null;
+  return groups.find((group) => group.category === slug)?.images[0] ?? null;
 }

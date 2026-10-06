@@ -1,17 +1,17 @@
 import { useTranslations } from "next-intl";
 
 import { Link } from "@/i18n/navigation";
-import { type CategorySlug, categorySlugs } from "@/lib/categories";
+import type { ServiceOption } from "@/lib/services";
 import { cn } from "@/lib/utils";
 
-type Props = { active: CategorySlug | null; pathname: string };
+type Props = { services: ServiceOption[]; active: string | null; pathname: string };
 
 /** Category tabs as plain links (`?category=…`) so filtering works without JavaScript. */
-export function CategoryFilter({ active, pathname }: Props) {
+export function CategoryFilter({ services, active, pathname }: Props) {
   const t = useTranslations();
-  const options: Array<{ slug: CategorySlug | null; label: string }> = [
+  const options: Array<{ slug: string | null; label: string }> = [
     { slug: null, label: t("Packages.all") },
-    ...categorySlugs.map((slug) => ({ slug, label: t(`Categories.${slug}.name`) })),
+    ...services.map((service) => ({ slug: service.slug, label: service.name })),
   ];
 
   return (

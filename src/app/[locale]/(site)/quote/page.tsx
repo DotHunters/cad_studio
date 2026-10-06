@@ -5,11 +5,11 @@ import type { ReactNode } from "react";
 
 import { QuoteForm } from "@/components/quote/quote-form";
 import { Accent, SectionHeading } from "@/components/site/section-heading";
-import { type CategorySlug, categoryFromSlug } from "@/lib/categories";
 import { findOption } from "@/lib/pricing/options";
 import { studioDateKey } from "@/lib/dates";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { getPricingContext } from "@/server/queries/pricing";
+import { getActiveServiceOptions } from "@/server/queries/services";
 
 type Props = {
   params: Promise<{ locale: Locale }>;
@@ -40,7 +40,11 @@ export default async function QuotePage({ params, searchParams }: Props) {
     typeof value === "string" ? value : undefined;
   const categoryParam = typeof query.category === "string" ? query.category : undefined;
 
-  const [t, context] = await Promise.all([getTranslations("Quote"), getPricingContext()]);
+  const [t, context, services] = await Promise.all([
+    getTranslations("Quote"),
+    getPricingContext(),
+    getActiveServiceOptions(locale),
+  ]);
   // `?package=wedding&tier=gold` → the "wedding:gold" option (lib/pricing/options.ts).
   const packageSlug = findOption(context.packages, single(query.package), single(query.tier))?.slug;
 
@@ -59,10 +63,11 @@ export default async function QuotePage({ params, searchParams }: Props) {
           today={studioDateKey(new Date())}
           initialPackage={packageSlug}
           initialCategory={
-            categoryParam && categoryFromSlug(categoryParam)
-              ? (categoryParam as CategorySlug)
+            categoryParam && services.some((s) => s.slug === categoryParam)
+              ? categoryParam
               : undefined
           }
+          services={services}
         />
       </div>
     </div>

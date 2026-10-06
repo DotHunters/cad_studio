@@ -6,11 +6,12 @@ import {
   pricingRules,
   sampleProjects,
   sampleReviews,
+  services,
   siteSettings,
   taxRates,
 } from "../../prisma/seed-data";
 
-const CATEGORIES = ["CORPORATE", "WEDDING", "FAMILY", "GATHERING", "PROFESSIONAL", "PRODUCT"];
+const CATEGORIES = ["corporate", "wedding", "family", "gathering", "professional", "product"];
 const PROVINCES = ["AB", "BC", "MB", "NB", "NL", "NS", "NT", "NU", "ON", "PE", "QC", "SK", "YT"];
 
 describe("seed packages", () => {
@@ -119,4 +120,11 @@ describe("sample content (AGENTS.md §13)", () => {
       expect(r.rating).toBeLessThanOrEqual(5);
     }
   });
+});
+
+it("only refers to seeded services", () => {
+  const slugs = new Set(services.map((service) => service.slug));
+  for (const pkg of packages) expect(slugs).toContain(pkg.category);
+  for (const addOn of addOns) for (const slug of addOn.categories) expect(slugs).toContain(slug);
+  for (const project of sampleProjects) expect(slugs).toContain(project.category);
 });

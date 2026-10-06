@@ -4,7 +4,6 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { Prisma } from "@/generated/prisma/client";
-import { categoryFromSlug } from "@/lib/categories";
 import type { ActionResult } from "@/lib/admin/action-result";
 import { auditSummary, describeChanges } from "@/lib/admin/audit";
 import { db } from "@/lib/db";
@@ -30,22 +29,43 @@ export async function saveAddOn(id: string | null, input: unknown): Promise<Save
 
   const { code, price, categories, ...rest } = parsed.data;
   if (!id && !code) return { ok: false, fieldErrors: { code: "Required." } };
-  const data = {
-    ...rest,
-    priceCents: price,
-    categories: categories.map((slug) => categoryFromSlug(slug)!),
-  };
+  const data = { ...rest, priceCents: price };
 
-  const before = id ? await db.addOn.findUnique({ where: { id } }) : null;
+  const beforeRow = id
+    ? await db.addOn.findUnique({
+        where: { id },
+        include: { services: { select: { slug: true } } },
+      })
+    : null;
+  const before = beforeRow
+    ? { ...beforeRow, categories: beforeRow.services.map((s) => s.slug) }
+    : null;
   let savedCode: string;
   try {
     const saved = id
-      ? await db.addOn.update({ where: { id }, data, select: { code: true } })
-      : await db.addOn.create({ data: { ...data, code: code! }, select: { code: true } });
+      ? await db.addOn.update({
+          where: { id },
+          data: { ...data, services: { set: categories.map((slug) => ({ slug })) } },
+          select: { code: true },
+        })
+      : await db.addOn.create({
+          data: {
+            ...data,
+            code: code!,
+            services: { connect: categories.map((slug) => ({ slug })) },
+          },
+          select: { code: true },
+        });
     savedCode = saved.code;
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
       return { ok: false, fieldErrors: { code: "Another add-on already uses this code." } };
+    }
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      (error.code === "P2003" || error.code === "P2025")
+    ) {
+      return { ok: false, fieldErrors: { categories: "Choose at least one service." } };
     }
     console.error("[admin] saveAddOn failed", error);
     return { ok: false, error: "server" };
@@ -58,16 +78,20 @@ export async function saveAddOn(id: string | null, input: unknown): Promise<Save
     summary: before
       ? auditSummary(
           `${data.name} (${savedCode})`,
-          describeChanges(before, data, {
-            name: { label: "name" },
-            priceCents: {
-              label: "price",
-              format: (value) => formatCAD(Number(value), "en", { suffix: false }),
+          describeChanges(
+            before,
+            { ...data, categories },
+            {
+              name: { label: "name" },
+              priceCents: {
+                label: "price",
+                format: (value) => formatCAD(Number(value), "en", { suffix: false }),
+              },
+              unit: { label: "charged" },
+              categories: { label: "services" },
+              isActive: { label: "active", format: (value) => (value ? "yes" : "no") },
             },
-            unit: { label: "charged" },
-            categories: { label: "services" },
-            isActive: { label: "active", format: (value) => (value ? "yes" : "no") },
-          }),
+          ),
           "details updated",
         )
       : `Created ${data.name} (${savedCode}) at ${formatCAD(data.priceCents, "en", { suffix: false })}`,

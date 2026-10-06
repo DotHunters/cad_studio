@@ -2,7 +2,6 @@
 
 import { redirect } from "next/navigation";
 
-import { categoryFromSlug } from "@/lib/categories";
 import { auditSummary, describeChanges } from "@/lib/admin/audit";
 import { db } from "@/lib/db";
 import { fieldErrorsOf } from "@/lib/validators/admin/fields";
@@ -33,7 +32,7 @@ export async function saveImage(id: string, input: unknown): Promise<SaveResult>
       }
       await tx.image.update({
         where: { id },
-        data: { ...rest, projectId, category: category ? categoryFromSlug(category) : null },
+        data: { ...rest, projectId, category: category ?? null },
       });
       // A project's cover must be one of its own images.
       await tx.portfolioProject.updateMany({

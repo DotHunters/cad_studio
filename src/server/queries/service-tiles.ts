@@ -2,11 +2,9 @@ import "server-only";
 
 import { unstable_cache } from "next/cache";
 
-import { type CategorySlug, categorySlugs, slugFromCategory } from "@/lib/categories";
 import { db } from "@/lib/db";
 import { shouldShowSampleContent } from "@/lib/flags";
 import { categoryPhoto, localPublicId } from "@/lib/photos";
-import { parseServiceTileChoices, SERVICE_TILES_KEY } from "@/lib/service-tiles";
 import { CACHE_TAGS, CONTENT_REVALIDATE_SECONDS } from "@/server/cache";
 
 export type TileImage = {
@@ -18,8 +16,8 @@ export type TileImage = {
 
 const tileImageSelect = { publicId: true, width: true, height: true, blurDataUrl: true } as const;
 
-/** The first launch photo of a category, as a stored image; null when there is none yet. */
-function defaultTileImage(slug: CategorySlug): TileImage | null {
+/** The first launch photo of a service, as a stored image; null when there is none yet. */
+export function defaultTileImage(slug: string): TileImage | null {
   const photo = categoryPhoto(slug);
   return photo
     ? {
@@ -31,35 +29,29 @@ function defaultTileImage(slug: CategorySlug): TileImage | null {
     : null;
 }
 
-async function readChoices() {
-  const setting = await db.siteSetting.findUnique({ where: { key: SERVICE_TILES_KEY } });
-  return parseServiceTileChoices(setting?.value);
-}
-
 // The sample flag is an argument so it is part of the cache key (see queries/home.ts).
 const cachedTileImages = unstable_cache(
   async (includeSamples: boolean) => {
-    const choices = await readChoices();
-    const chosen = await db.image.findMany({
-      where: {
-        id: { in: Object.values(choices) },
-        // A chosen photo whose consent is later withdrawn falls back to the default.
-        consentToPublish: true,
-        ...(includeSamples ? {} : { isSample: false }),
+    const services = await db.service.findMany({
+      select: {
+        slug: true,
+        tileImage: { select: { ...tileImageSelect, consentToPublish: true, isSample: true } },
       },
-      select: { id: true, ...tileImageSelect },
     });
-    const byId = new Map(chosen.map(({ id, ...image }) => [id, image]));
     return Object.fromEntries(
-      categorySlugs.map((slug) => {
-        const id = choices[slug];
-        return [slug, (id && byId.get(id)) || defaultTileImage(slug)];
+      services.map(({ slug, tileImage }) => {
+        // A chosen photo whose consent is later withdrawn falls back to the default.
+        if (tileImage && tileImage.consentToPublish && (includeSamples || !tileImage.isSample)) {
+          const { publicId, width, height, blurDataUrl } = tileImage;
+          return [slug, { publicId, width, height, blurDataUrl }];
+        }
+        return [slug, defaultTileImage(slug)];
       }),
-    ) as Record<CategorySlug, TileImage | null>;
+    ) as Record<string, TileImage | null>;
   },
   ["home:service-tiles"],
   {
-    tags: [CACHE_TAGS.settings, CACHE_TAGS.gallery, CACHE_TAGS.portfolio],
+    tags: [CACHE_TAGS.services, CACHE_TAGS.gallery, CACHE_TAGS.portfolio],
     revalidate: CONTENT_REVALIDATE_SECONDS,
   },
 );
@@ -67,35 +59,21 @@ const cachedTileImages = unstable_cache(
 /** Photo for each home-page service tile: the admin's choice, else the first launch photo. */
 export const getServiceTileImages = () => cachedTileImages(shouldShowSampleContent());
 
-/** Admin overview: each tile's current photo and whether it is a choice or the default. */
-export async function getServiceTilesForAdmin() {
-  const [choices, images] = await Promise.all([readChoices(), getServiceTileImages()]);
-  return categorySlugs.map((slug) => ({
-    slug,
-    image: images[slug],
-    chosen: Boolean(choices[slug]),
-  }));
-}
-
-/** Photos that may go on a tile (consent given), the tile's own category first. Uncached. */
-export async function getServiceTileOptions(slug: CategorySlug) {
-  const [choices, images] = await Promise.all([
-    readChoices(),
+/** Photos that may go on a tile (consent given), the service's own photos first. Uncached. */
+export async function getServiceTileOptions(slug: string) {
+  const [service, images] = await Promise.all([
+    db.service.findUnique({ where: { slug }, select: { tileImageId: true } }),
     db.image.findMany({
-      where: {
-        consentToPublish: true,
-        ...(shouldShowSampleContent() ? {} : { isSample: false }),
-      },
+      where: { consentToPublish: true, ...(shouldShowSampleContent() ? {} : { isSample: false }) },
       orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
       select: { id: true, alt: true, category: true, ...tileImageSelect },
     }),
   ]);
-  const inCategory = (image: (typeof images)[number]) =>
-    image.category !== null && slugFromCategory(image.category) === slug;
+  if (!service) return null;
   return {
-    currentId: choices[slug] ?? null,
+    currentId: service.tileImageId,
     defaultImage: defaultTileImage(slug),
-    sameCategory: images.filter(inCategory),
-    others: images.filter((image) => !inCategory(image)),
+    sameCategory: images.filter((image) => image.category === slug),
+    others: images.filter((image) => image.category !== slug),
   };
 }

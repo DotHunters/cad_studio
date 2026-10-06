@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-import { categorySlugs } from "@/lib/categories";
+import { SERVICE_SLUG_PATTERN } from "@/lib/services";
 
 import { checkbox, integer, optionalText, text } from "./fields";
 
@@ -22,7 +22,9 @@ export const imageFormSchema = z
     alt: text(250),
     altFr: optionalText(250),
     category: z
-      .enum(categorySlugs)
+      .string()
+      .regex(SERVICE_SLUG_PATTERN)
+      .max(40)
       .optional()
       .or(z.literal("").transform(() => undefined)),
     tags: z

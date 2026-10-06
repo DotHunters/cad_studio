@@ -16,14 +16,14 @@ const imagesIn = (category?: string) =>
 
 export const galleryCounts = {
   total: SAMPLE_IMAGES.total + imagesIn(),
-  wedding: SAMPLE_IMAGES.WEDDING + imagesIn("WEDDING"),
+  wedding: SAMPLE_IMAGES.WEDDING + imagesIn("wedding"),
 };
 
 // Projects seeded from photos start as "Local" until the owner confirms reach.
 export const portfolioCounts = {
   total: SAMPLE_PROJECTS.total + groups.length,
   local: SAMPLE_PROJECTS.local + groups.length,
-  wedding: SAMPLE_PROJECTS.WEDDING + groups.filter((g) => g.category === "WEDDING").length,
+  wedding: SAMPLE_PROJECTS.WEDDING + groups.filter((g) => g.category === "wedding").length,
   local2024: SAMPLE_PROJECTS.local2024 + groups.filter((g) => g.year === 2024).length,
 };
 

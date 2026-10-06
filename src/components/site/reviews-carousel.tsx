@@ -2,10 +2,12 @@ import { getLocale, getTranslations } from "next-intl/server";
 
 import { ReviewCard } from "@/components/reviews/review-card";
 import { buttonVariants } from "@/components/ui/button";
+import type { Locale } from "@/config/site";
 import { Link } from "@/i18n/navigation";
 import { averageRating } from "@/lib/reviews";
 import { cn } from "@/lib/utils";
 import { getHomeReviews } from "@/server/queries/home";
+import { getServiceNames } from "@/server/queries/services";
 
 import { Accent, SectionHeading } from "./section-heading";
 import { StarRating } from "./star-rating";
@@ -15,10 +17,11 @@ import { StarRating } from "./star-rating";
  * keeps it keyboard- and touch-friendly without JavaScript.
  */
 export async function ReviewsCarousel() {
-  const [t, locale, { featured, ratings }] = await Promise.all([
+  const locale = (await getLocale()) as Locale;
+  const [t, { featured, ratings }, serviceName] = await Promise.all([
     getTranslations(),
-    getLocale(),
     getHomeReviews(8),
+    getServiceNames(locale),
   ]);
   if (featured.length === 0) return null;
 
@@ -49,7 +52,11 @@ export async function ReviewsCarousel() {
       >
         {featured.map((review) => (
           <li key={review.id} className="w-[85%] shrink-0 snap-start sm:w-[360px]">
-            <ReviewCard review={review} locale={locale} />
+            <ReviewCard
+              review={review}
+              locale={locale}
+              serviceName={review.category ? serviceName(review.category) : null}
+            />
           </li>
         ))}
       </ul>

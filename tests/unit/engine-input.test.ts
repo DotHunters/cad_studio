@@ -4,7 +4,7 @@ import { toEngineInput } from "@/lib/pricing/engine-input";
 
 describe("toEngineInput", () => {
   const pkg = {
-    category: "WEDDING",
+    category: "wedding",
     basePriceCents: 280000,
     includedHours: 8,
     includedShooters: 2,
@@ -28,7 +28,7 @@ describe("toEngineInput", () => {
         pkg,
       ),
     ).toEqual({
-      category: "WEDDING",
+      category: "wedding",
       pkg,
       eventDate: "2027-06-12",
       durationHours: 10,

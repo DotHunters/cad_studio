@@ -1,7 +1,6 @@
 import "server-only";
 
 import { type Locale, siteConfig } from "@/config/site";
-import { slugFromCategory } from "@/lib/categories";
 import { db } from "@/lib/db";
 import { parseReference } from "@/lib/references";
 import { signExpiring, verifyExpiring } from "@/lib/signing";
@@ -52,5 +51,5 @@ export async function getVerifiedBooking(
     },
   });
   if (!booking || booking.status !== "COMPLETED" || booking.reviews.length > 0) return null;
-  return { bookingId: booking.id, reference, categorySlug: slugFromCategory(booking.category) };
+  return { bookingId: booking.id, reference, categorySlug: booking.category };
 }

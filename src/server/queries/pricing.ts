@@ -15,7 +15,7 @@ export const getPricingContext = unstable_cache(
   async () => {
     const [packages, addOns, ruleRows, taxRates] = await Promise.all([
       db.package.findMany({
-        where: { isActive: true },
+        where: { isActive: true, service: { archivedAt: null } },
         orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
         select: {
           slug: true,
@@ -47,7 +47,7 @@ export const getPricingContext = unstable_cache(
           nameFr: true,
           priceCents: true,
           unit: true,
-          categories: true,
+          services: { where: { archivedAt: null }, select: { slug: true } },
         },
       }),
       db.pricingRule.findMany({ select: { key: true, value: true } }),
@@ -57,7 +57,10 @@ export const getPricingContext = unstable_cache(
     return {
       // One option per package, or per tier for packages with tiers (lib/pricing/options.ts).
       packages: pricedOptions(packages),
-      addOns,
+      addOns: addOns.map(({ services, ...addOn }) => ({
+        ...addOn,
+        categories: services.map((service) => service.slug),
+      })),
       rules: parsePricingRules(ruleRows),
       quoteValidDays: Number(ruleRows.find((row) => row.key === "QUOTE_VALID_DAYS")?.value ?? 14),
       // Decimal → string so it can be passed to the client.
@@ -72,7 +75,7 @@ export const getPricingContext = unstable_cache(
   },
   ["pricing:context"],
   {
-    tags: [CACHE_TAGS.packages, CACHE_TAGS.settings],
+    tags: [CACHE_TAGS.packages, CACHE_TAGS.settings, CACHE_TAGS.services],
     revalidate: CONTENT_REVALIDATE_SECONDS,
   },
 );

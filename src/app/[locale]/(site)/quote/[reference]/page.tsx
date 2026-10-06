@@ -9,7 +9,6 @@ import { QuoteBreakdown } from "@/components/quote/quote-breakdown";
 import { Accent, SectionHeading } from "@/components/site/section-heading";
 import { buttonVariants } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
-import { slugFromCategory } from "@/lib/categories";
 import { formatInStudioTz } from "@/lib/dates";
 import { localize } from "@/lib/localize";
 import { parseReference } from "@/lib/references";
@@ -19,6 +18,7 @@ import { savedOptionName } from "@/lib/pricing/options";
 import { linkSecret } from "@/server/link-secret";
 import { getPricingContext } from "@/server/queries/pricing";
 import { getQuoteByReference } from "@/server/queries/quotes";
+import { getServiceNames } from "@/server/queries/services";
 
 type Props = {
   params: Promise<{ locale: Locale; reference: string }>;
@@ -68,7 +68,7 @@ export default async function QuoteResultPage({ params, searchParams }: Props) {
   const facts = [
     {
       label: t("QuoteResult.event"),
-      value: t(`Categories.${slugFromCategory(quote.category)}.name`),
+      value: (await getServiceNames(locale))(quote.category),
     },
     { label: t("QuoteResult.package"), value: packageName },
     { label: t("QuoteResult.date"), value: formatInStudioTz(quote.eventDate, "PPPP", locale) },

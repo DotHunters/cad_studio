@@ -6,13 +6,13 @@
  * Sample clients/reviews are fictional, flagged `isSample`, and hidden in production
  * (SHOW_SAMPLE_CONTENT=false).
  */
-import type { AddOnUnit, Category, Reach, ReviewType } from "../src/generated/prisma/client";
+import type { AddOnUnit, Reach, ReviewType } from "../src/generated/prisma/client";
 
 const dollars = (amount: number) => Math.round(amount * 100);
 
 export type PackageSeed = {
   slug: string;
-  category: Category;
+  category: string; // service slug
   name: string;
   nameFr: string;
   summary: string;
@@ -34,7 +34,7 @@ export type PackageSeed = {
 export const packages: PackageSeed[] = [
   {
     slug: "corporate-event",
-    category: "CORPORATE",
+    category: "corporate",
     name: "Corporate Event",
     nameFr: "Événement corporatif",
     summary: "Conferences, launches, galas and on-site headshots.",
@@ -61,7 +61,7 @@ export const packages: PackageSeed[] = [
   },
   {
     slug: "wedding",
-    category: "WEDDING",
+    category: "wedding",
     name: "Wedding",
     nameFr: "Mariage",
     summary: "Engagement, ceremony and reception — the whole story.",
@@ -95,7 +95,7 @@ export const packages: PackageSeed[] = [
   },
   {
     slug: "family-event",
-    category: "FAMILY",
+    category: "family",
     name: "Family Event",
     nameFr: "Événement familial",
     summary: "Birthdays, anniversaries, baby showers and milestones.",
@@ -122,7 +122,7 @@ export const packages: PackageSeed[] = [
   },
   {
     slug: "gathering",
-    category: "GATHERING",
+    category: "gathering",
     name: "Gathering",
     nameFr: "Rassemblement",
     summary: "Community, cultural, religious and social events.",
@@ -149,7 +149,7 @@ export const packages: PackageSeed[] = [
   },
   {
     slug: "professional-photoshoot",
-    category: "PROFESSIONAL",
+    category: "professional",
     name: "Professional Photoshoot",
     nameFr: "Séance photo professionnelle",
     summary: "Portraits, headshots, personal branding and portfolios.",
@@ -171,7 +171,7 @@ export const packages: PackageSeed[] = [
   },
   {
     slug: "product-photography",
-    category: "PRODUCT",
+    category: "product",
     name: "Product Photography",
     nameFr: "Photographie de produits",
     summary: "E-commerce, catalogue, lifestyle and flat-lay.",
@@ -203,12 +203,12 @@ export type AddOnSeed = {
   nameFr: string;
   priceCents: number;
   unit: AddOnUnit;
-  categories: Category[];
+  categories: string[];
   sortOrder: number;
 };
 
-const EVENT_CATEGORIES: Category[] = ["CORPORATE", "WEDDING", "FAMILY", "GATHERING"];
-const ALL_CATEGORIES: Category[] = [...EVENT_CATEGORIES, "PROFESSIONAL", "PRODUCT"];
+const EVENT_CATEGORIES: string[] = ["corporate", "wedding", "family", "gathering"];
+const ALL_CATEGORIES: string[] = [...EVENT_CATEGORIES, "professional", "product"];
 
 export const addOns: AddOnSeed[] = [
   {
@@ -244,7 +244,7 @@ export const addOns: AddOnSeed[] = [
     nameFr: "Album imprimé",
     priceCents: dollars(450),
     unit: "FLAT",
-    categories: ["WEDDING", "FAMILY", "GATHERING"],
+    categories: ["wedding", "family", "gathering"],
     sortOrder: 4,
   },
   {
@@ -262,7 +262,7 @@ export const addOns: AddOnSeed[] = [
     nameFr: "Image de produit supplémentaire",
     priceCents: dollars(25),
     unit: "PER_ITEM",
-    categories: ["PRODUCT"],
+    categories: ["product"],
     sortOrder: 6,
   },
   {
@@ -342,7 +342,7 @@ export type SampleProjectSeed = {
   title: string;
   titleFr: string;
   clientName: string;
-  category: Category;
+  category: string; // service slug
   reach: Reach;
   city: string;
   country: string;
@@ -359,7 +359,7 @@ export const sampleProjects: SampleProjectSeed[] = [
     title: "Annual Leadership Summit",
     titleFr: "Sommet annuel de leadership",
     clientName: "Northwind Corp (Sample)",
-    category: "CORPORATE",
+    category: "corporate",
     reach: "LOCAL",
     city: "Toronto",
     country: "Canada",
@@ -374,7 +374,7 @@ export const sampleProjects: SampleProjectSeed[] = [
     title: "Garden Wedding",
     titleFr: "Mariage au jardin",
     clientName: "Maple & Co. Events (Sample)",
-    category: "WEDDING",
+    category: "wedding",
     reach: "LOCAL",
     city: "Markham",
     country: "Canada",
@@ -389,7 +389,7 @@ export const sampleProjects: SampleProjectSeed[] = [
     title: "Spring Catalogue",
     titleFr: "Catalogue du printemps",
     clientName: "Lumen Skincare (Sample)",
-    category: "PRODUCT",
+    category: "product",
     reach: "GLOBAL",
     city: "London",
     country: "United Kingdom",
@@ -404,7 +404,7 @@ export const sampleProjects: SampleProjectSeed[] = [
     title: "Cultural Festival",
     titleFr: "Festival culturel",
     clientName: "Harbourfront Community Arts (Sample)",
-    category: "GATHERING",
+    category: "gathering",
     reach: "LOCAL",
     city: "Toronto",
     country: "Canada",
@@ -422,7 +422,7 @@ export type SampleReviewSeed = {
   authorTitle?: string;
   company?: string;
   rating?: number;
-  category: Category;
+  category: string; // service slug
   body: string;
   featured: boolean;
 };
@@ -432,7 +432,7 @@ export const sampleReviews: SampleReviewSeed[] = [
     type: "CUSTOMER",
     authorName: "Sample Client A.",
     rating: 5,
-    category: "WEDDING",
+    category: "wedding",
     body: "[SAMPLE] Placeholder review text for layout only.",
     featured: true,
   },
@@ -440,7 +440,7 @@ export const sampleReviews: SampleReviewSeed[] = [
     type: "CUSTOMER",
     authorName: "Sample Client B.",
     rating: 5,
-    category: "FAMILY",
+    category: "family",
     body: "[SAMPLE] Placeholder review text for layout only.",
     featured: true,
   },
@@ -448,7 +448,7 @@ export const sampleReviews: SampleReviewSeed[] = [
     type: "CUSTOMER",
     authorName: "Sample Client C.",
     rating: 4,
-    category: "PROFESSIONAL",
+    category: "professional",
     body: "[SAMPLE] Placeholder review text for layout only.",
     featured: false,
   },
@@ -457,8 +457,60 @@ export const sampleReviews: SampleReviewSeed[] = [
     authorName: "Sample Person",
     authorTitle: "Events Director (Sample)",
     company: "Northwind Corp (Sample)",
-    category: "CORPORATE",
+    category: "corporate",
     body: "[SAMPLE] Placeholder recommendation text for layout only.",
     featured: true,
+  },
+];
+
+/** Launch services (AGENTS.md §1). Starting values only: the owner manages them in Admin → Services. */
+export const services = [
+  {
+    slug: "corporate",
+    name: "Corporate Events",
+    nameFr: "Événements corporatifs",
+    description: "Conferences, launches, galas and on-site headshots.",
+    descriptionFr: "Conférences, lancements, galas et portraits sur place.",
+    sortOrder: 0,
+  },
+  {
+    slug: "wedding",
+    name: "Weddings",
+    nameFr: "Mariages",
+    description: "Engagement, ceremony and reception.",
+    descriptionFr: "Fiançailles, cérémonie et réception.",
+    sortOrder: 1,
+  },
+  {
+    slug: "family",
+    name: "Family Events",
+    nameFr: "Événements familiaux",
+    description: "Birthdays, anniversaries, baby showers and milestones.",
+    descriptionFr: "Anniversaires, fêtes prénatales et grandes étapes.",
+    sortOrder: 2,
+  },
+  {
+    slug: "gathering",
+    name: "Gatherings",
+    nameFr: "Rassemblements",
+    description: "Community, cultural, religious and social events.",
+    descriptionFr: "Événements communautaires, culturels, religieux et sociaux.",
+    sortOrder: 3,
+  },
+  {
+    slug: "professional",
+    name: "Professional Photoshoots",
+    nameFr: "Séances professionnelles",
+    description: "Portraits, headshots, branding and portfolios.",
+    descriptionFr: "Portraits, photos professionnelles, image de marque et portfolios.",
+    sortOrder: 4,
+  },
+  {
+    slug: "product",
+    name: "Product Photography",
+    nameFr: "Photographie de produits",
+    description: "E-commerce, catalogue, lifestyle and flat-lay.",
+    descriptionFr: "Commerce en ligne, catalogue, mise en situation et vue de dessus.",
+    sortOrder: 5,
   },
 ];

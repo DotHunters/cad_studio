@@ -6,7 +6,6 @@ import { adminFieldClass } from "@/components/admin/form-field";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { BOOKING_STATUSES, parseBookingFilters } from "@/lib/admin/bookings";
 import { needsPaymentRequest } from "@/lib/booking/holds";
-import { slugFromCategory } from "@/lib/categories";
 import { formatInStudioTz } from "@/lib/dates";
 import { formatCAD } from "@/lib/money";
 import { requireAdminPage } from "@/server/auth/guards";
@@ -131,7 +130,7 @@ export default async function AdminBookingsPage({ searchParams }: Props) {
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    {categoryLabel.get(slugFromCategory(booking.category))}
+                    {categoryLabel.get(booking.category)}
                     <span className="text-muted-foreground block text-xs">
                       {booking.photographers}{" "}
                       {booking.photographers === 1 ? "photographer" : "photographers"}

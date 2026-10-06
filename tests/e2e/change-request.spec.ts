@@ -26,7 +26,7 @@ async function createBooking(testInfo: TestInfo, n: number, status = "PENDING") 
   await queryDb(
     `insert into "Booking" (id, reference, category, "startAt", "endAt", photographers, status,
        "depositCents", "totalCents", "paymentMethod", "customerId", "updatedAt")
-     values (gen_random_uuid()::text, $1, 'WEDDING', '2027-08-14 18:00', '2027-08-15 02:00', 2,
+     values (gen_random_uuid()::text, $1, 'wedding', '2027-08-14 18:00', '2027-08-15 02:00', 2,
        $2::"BookingStatus", 94920, 316400, 'BANK_TRANSFER', $3, now())`,
     [reference, status, customer.id],
   );

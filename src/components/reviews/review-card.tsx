@@ -3,7 +3,6 @@ import { useTranslations } from "next-intl";
 
 import { StarRating } from "@/components/site/star-rating";
 import type { Locale } from "@/config/site";
-import { slugFromCategory } from "@/lib/categories";
 import { formatInStudioTz } from "@/lib/dates";
 import { customerDisplayName } from "@/lib/review-display";
 import { cn } from "@/lib/utils";
@@ -26,20 +25,20 @@ export type ReviewCardData = {
 export function ReviewCard({
   review,
   locale,
+  serviceName,
   className,
 }: {
   review: ReviewCardData;
   locale: Locale;
+  /** Localized service name for `review.category`, computed by the page. */
+  serviceName: string | null;
   className?: string;
 }) {
   const t = useTranslations();
   const isCustomer = review.type === "CUSTOMER";
   // Customers: first name + last initial. Recommendations: full name, title and company.
   const name = isCustomer ? customerDisplayName(review.authorName) : review.authorName;
-  const meta = [
-    review.category ? t(`Categories.${slugFromCategory(review.category as never)}.name`) : null,
-    formatInStudioTz(review.createdAt, "MMMM yyyy", locale),
-  ]
+  const meta = [serviceName, formatInStudioTz(review.createdAt, "MMMM yyyy", locale)]
     .filter(Boolean)
     .join(" · ");
 
