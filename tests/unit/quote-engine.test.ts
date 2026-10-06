@@ -22,15 +22,15 @@ const rules: PricingRules = {
 };
 
 const addOns: AddOnDefinition[] = [
-  { code: "VIDEO", priceCents: 15000, unit: "PER_HOUR", categories: ["CORPORATE", "WEDDING"] },
-  { code: "DRONE", priceCents: 30000, unit: "FLAT", categories: ["CORPORATE", "WEDDING"] },
+  { code: "VIDEO", priceCents: 15000, unit: "PER_HOUR", categories: ["corporate", "wedding"] },
+  { code: "DRONE", priceCents: 30000, unit: "FLAT", categories: ["corporate", "wedding"] },
   {
     code: "RUSH",
     priceCents: 25000,
     unit: "FLAT",
-    categories: ["CORPORATE", "WEDDING", "PRODUCT"],
+    categories: ["corporate", "wedding", "product"],
   },
-  { code: "EXTRA_PRODUCT", priceCents: 2500, unit: "PER_ITEM", categories: ["PRODUCT"] },
+  { code: "EXTRA_PRODUCT", priceCents: 2500, unit: "PER_ITEM", categories: ["product"] },
 ];
 
 const taxRates: TaxRateInput[] = [
@@ -44,7 +44,7 @@ const corporate = { basePriceCents: 120000, includedHours: 4, includedShooters: 
 
 // 2026-06-10 is a Wednesday and not a holiday.
 const base: QuoteInput = {
-  category: "CORPORATE",
+  category: "corporate",
   pkg: corporate,
   eventDate: "2026-06-10",
   durationHours: 4,
@@ -125,7 +125,7 @@ describe("calculateQuote — add-ons", () => {
 
   it("prices per-item add-ons by quantity", () => {
     const result = calculateQuote(
-      { ...base, category: "PRODUCT", addOns: [{ code: "EXTRA_PRODUCT", qty: 12 }] },
+      { ...base, category: "product", addOns: [{ code: "EXTRA_PRODUCT", qty: 12 }] },
       { rules, addOns, taxRates },
     );
     expect(result.lineItems).toContainEqual({

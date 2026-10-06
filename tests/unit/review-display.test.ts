@@ -28,7 +28,7 @@ describe("parseReviewFilters", () => {
       category: "wedding",
       sort: "highest",
     });
-    expect(parseReviewFilters({ category: "x", sort: "random" })).toEqual({
+    expect(parseReviewFilters({ category: "bad slug", sort: "random" })).toEqual({
       category: null,
       sort: "newest",
     });
@@ -38,9 +38,9 @@ describe("parseReviewFilters", () => {
 describe("applyReviewFilters", () => {
   const day = (n: number) => new Date(Date.UTC(2026, 0, n));
   const reviews = [
-    { id: "a", rating: 4, createdAt: day(3), category: "WEDDING" },
-    { id: "b", rating: 5, createdAt: day(1), category: "FAMILY" },
-    { id: "c", rating: 5, createdAt: day(2), category: "WEDDING" },
+    { id: "a", rating: 4, createdAt: day(3), category: "wedding" },
+    { id: "b", rating: 5, createdAt: day(1), category: "family" },
+    { id: "c", rating: 5, createdAt: day(2), category: "wedding" },
     { id: "d", rating: null, createdAt: day(4), category: null },
   ];
   const ids = (list: Array<{ id: string }>) => list.map((review) => review.id);

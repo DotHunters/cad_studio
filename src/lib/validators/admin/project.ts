@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-import { categorySlugs } from "@/lib/categories";
+import { SERVICE_SLUG_PATTERN } from "@/lib/services";
 
 import { checkbox, optionalInteger, optionalText, text } from "./fields";
 
@@ -20,7 +20,7 @@ export const projectFormSchema = z.object({
   titleFr: optionalText(150),
   clientName: optionalText(120),
   consentToPublish: checkbox,
-  category: z.enum(categorySlugs, "Choose a category."),
+  category: z.string("Choose a service.").regex(SERVICE_SLUG_PATTERN, "Choose a service."),
   reach: z.enum(["LOCAL", "GLOBAL"], "Choose local or global."),
   city: optionalText(80),
   country: text(80),

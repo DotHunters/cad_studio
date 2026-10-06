@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { matchesQuote, type PriceFingerprint } from "@/lib/booking/quote-match";
 
 const quote: PriceFingerprint = {
-  category: "WEDDING",
+  category: "wedding",
   packageSlug: "wedding",
   eventDate: "2027-06-12",
   startTime: "14:00",

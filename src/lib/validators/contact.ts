@@ -1,21 +1,15 @@
 import * as z from "zod";
 
+import { SERVICE_SLUG_PATTERN } from "@/lib/services";
+
 /**
  * Contact form schema, shared by the client form and the server action (AGENTS.md §6.9).
  * Error messages are keys under `Contact.errors` in the message files.
  */
-export const enquiryTypes = [
-  "wedding",
-  "corporate",
-  "family",
-  "gathering",
-  "professional",
-  "product",
-  "other",
-  "privacy",
-] as const;
+/** Non-service enquiry types; the rest are active service slugs (checked by the server action). */
+export const otherEnquiryTypes = ["other", "privacy"] as const;
 
-export type EnquiryType = (typeof enquiryTypes)[number];
+export type EnquiryType = string;
 
 const PHONE = /^[+\d][\d\s().-]{6,19}$/;
 
@@ -28,7 +22,14 @@ export const contactSchema = z.object({
     .optional()
     .transform((value) => (value ? value : undefined))
     .refine((value) => value === undefined || PHONE.test(value), "invalidPhone"),
-  enquiryType: z.enum(enquiryTypes, "required"),
+  enquiryType: z
+    .string("required")
+    .refine(
+      (value) =>
+        (otherEnquiryTypes as readonly string[]).includes(value) ||
+        SERVICE_SLUG_PATTERN.test(value),
+      "required",
+    ),
   message: z.string().trim().min(10, "messageTooShort").max(5000, "tooLong"),
   // Honeypot: hidden from people, filled by bots. Must stay empty.
   website: z.string().max(0, "spam").optional(),

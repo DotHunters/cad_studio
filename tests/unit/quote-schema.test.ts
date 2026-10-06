@@ -58,7 +58,7 @@ describe("quoteDetailsSchema", () => {
     expect(
       errorsFor(quoteDetailsSchema, {
         ...details,
-        category: "pizza",
+        category: "WEDDING",
         eventDate: "2026-02-30",
         startTime: "25:00",
         durationHours: 4.25,
@@ -111,5 +111,13 @@ describe("quoteRequestSchema", () => {
     expect(errorsFor(quoteRequestSchema, { ...details, ...contact, website: "spam" })).toEqual({
       website: "spam",
     });
+  });
+});
+
+describe("quoteDetailsSchema category", () => {
+  it("accepts any slug-shaped service (existence is checked on the server)", () => {
+    expect(quoteDetailsSchema.safeParse({ ...details, category: "graduations" }).success).toBe(
+      true,
+    );
   });
 });

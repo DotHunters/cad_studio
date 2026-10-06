@@ -141,3 +141,14 @@ describe("addHoursToTime", () => {
     expect(addHoursToTime("20:00", 3.5)).toBe("23:30");
   });
 });
+
+describe("bookingDetailsSchema category", () => {
+  it("accepts any slug-shaped service and rejects the old uppercase form", () => {
+    expect(bookingDetailsSchema.safeParse({ ...details, category: "graduations" }).success).toBe(
+      true,
+    );
+    expect(errors(bookingDetailsSchema, { ...details, category: "WEDDING" })).toEqual({
+      category: "required",
+    });
+  });
+});

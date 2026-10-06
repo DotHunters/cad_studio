@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { contactSchema, enquiryTypes } from "@/lib/validators/contact";
+import { contactSchema, otherEnquiryTypes } from "@/lib/validators/contact";
 
 const valid = {
   name: "Alex Martin",
@@ -25,13 +25,16 @@ describe("contactSchema", () => {
   });
 
   it("includes a privacy request type for PIPEDA deletion requests", () => {
-    expect(enquiryTypes).toContain("privacy");
+    expect(otherEnquiryTypes).toContain("privacy");
   });
 
   it("returns translation keys as error messages", () => {
     expect(errorsFor({ ...valid, name: " " })).toEqual({ name: "required" });
     expect(errorsFor({ ...valid, email: "not-an-email" })).toEqual({ email: "invalidEmail" });
-    expect(errorsFor({ ...valid, enquiryType: "pizza" })).toEqual({ enquiryType: "required" });
+    expect(errorsFor({ ...valid, enquiryType: "Not A Slug" })).toEqual({
+      enquiryType: "required",
+    });
+    expect(contactSchema.safeParse({ ...valid, enquiryType: "graduations" }).success).toBe(true);
     expect(errorsFor({ ...valid, message: "Hi" })).toEqual({ message: "messageTooShort" });
     expect(errorsFor({ ...valid, message: "x".repeat(5001) })).toEqual({ message: "tooLong" });
   });

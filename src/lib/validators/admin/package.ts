@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-import { categorySlugs } from "@/lib/categories";
+import { SERVICE_SLUG_PATTERN } from "@/lib/services";
 import {
   checkbox,
   dollarsToCents,
@@ -81,7 +81,7 @@ export const packageFormSchema = z.object({
     .min(1, "Required.")
     .max(60, "Keep it under 60 characters.")
     .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Use lowercase letters, numbers and dashes."),
-  category: z.enum(categorySlugs, "Choose a category."),
+  category: z.string("Choose a service.").regex(SERVICE_SLUG_PATTERN, "Choose a service."),
   name: text(120),
   nameFr: optionalText(120),
   summary: text(300),

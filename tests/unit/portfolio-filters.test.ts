@@ -9,9 +9,9 @@ import {
 } from "@/lib/portfolio-filters";
 
 const projects = [
-  { category: "WEDDING", reach: "LOCAL", year: 2025 },
-  { category: "CORPORATE", reach: "LOCAL", year: 2025 },
-  { category: "PRODUCT", reach: "GLOBAL", year: 2024 },
+  { category: "wedding", reach: "LOCAL", year: 2025 },
+  { category: "corporate", reach: "LOCAL", year: 2025 },
+  { category: "product", reach: "GLOBAL", year: 2024 },
 ] as const;
 
 describe("parsePortfolioFilters", () => {
@@ -25,7 +25,7 @@ describe("parsePortfolioFilters", () => {
 
   it("ignores invalid or repeated values", () => {
     expect(
-      parsePortfolioFilters({ category: "pizza", reach: ["local", "global"], year: "20x4" }),
+      parsePortfolioFilters({ category: "WEDDING", reach: ["local", "global"], year: "20x4" }),
     ).toEqual({ category: null, reach: null, year: null });
   });
 });
@@ -84,7 +84,7 @@ describe("projectYears", () => {
 
 describe("filterProjects with unknown years", () => {
   it("keeps projects without a year unless a year is chosen", () => {
-    const list = [{ category: "WEDDING", reach: "LOCAL", year: null }] as const;
+    const list = [{ category: "wedding", reach: "LOCAL", year: null }] as const;
     expect(filterProjects(list, { category: null, reach: null, year: null })).toHaveLength(1);
     expect(filterProjects(list, { category: null, reach: null, year: 2024 })).toHaveLength(0);
   });

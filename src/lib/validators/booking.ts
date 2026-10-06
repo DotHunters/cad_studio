@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-import { categorySlugs } from "@/lib/categories";
+import { SERVICE_SLUG_PATTERN } from "@/lib/services";
 
 import { provinceCodes } from "./quote";
 
@@ -54,7 +54,7 @@ const optionalText = (max: number) =>
 
 export const bookingDetailsSchema = z
   .object({
-    category: z.enum(categorySlugs, "required"),
+    category: z.string("required").regex(SERVICE_SLUG_PATTERN, "required").max(40, "required"),
     packageSlug: z.string().trim().max(120).optional(),
     eventDate: z.string().refine(isRealDate, "invalidDate"),
     startTime: z.string().regex(HALF_HOUR_TIME, "invalidTime"),

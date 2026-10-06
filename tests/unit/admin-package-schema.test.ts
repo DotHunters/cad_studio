@@ -73,7 +73,7 @@ describe("packageFormSchema", () => {
   it("requires the English text and a category", () => {
     expect(errors({ ...valid, name: "  ", category: "" })).toEqual({
       name: "Required.",
-      category: "Choose a category.",
+      category: "Choose a service.",
     });
   });
 

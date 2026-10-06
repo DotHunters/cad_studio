@@ -10,7 +10,7 @@ import { CACHE_TAGS, CONTENT_REVALIDATE_SECONDS } from "@/server/cache";
 export const getActivePackages = unstable_cache(
   async () =>
     db.package.findMany({
-      where: { isActive: true },
+      where: { isActive: true, service: { archivedAt: null } },
       orderBy: [{ sortOrder: "asc" }, { name: "asc" }],
       select: {
         id: true,
@@ -33,7 +33,7 @@ export const getActivePackages = unstable_cache(
       },
     }),
   ["packages:active"],
-  { tags: [CACHE_TAGS.packages], revalidate: CONTENT_REVALIDATE_SECONDS },
+  { tags: [CACHE_TAGS.packages, CACHE_TAGS.services], revalidate: CONTENT_REVALIDATE_SECONDS },
 );
 
 export type PackageSummary = Awaited<ReturnType<typeof getActivePackages>>[number];
@@ -42,7 +42,7 @@ export type PackageSummary = Awaited<ReturnType<typeof getActivePackages>>[numbe
 export const getPackageBySlug = unstable_cache(
   async (slug: string) =>
     db.package.findFirst({
-      where: { slug, isActive: true },
+      where: { slug, isActive: true, service: { archivedAt: null } },
       include: {
         addOns: { where: { isActive: true }, orderBy: [{ sortOrder: "asc" }, { name: "asc" }] },
         images: { orderBy: { sortOrder: "asc" } },
@@ -50,7 +50,7 @@ export const getPackageBySlug = unstable_cache(
       },
     }),
   ["packages:by-slug"],
-  { tags: [CACHE_TAGS.packages], revalidate: CONTENT_REVALIDATE_SECONDS },
+  { tags: [CACHE_TAGS.packages, CACHE_TAGS.services], revalidate: CONTENT_REVALIDATE_SECONDS },
 );
 
 export type PackageDetail = NonNullable<Awaited<ReturnType<typeof getPackageBySlug>>>;

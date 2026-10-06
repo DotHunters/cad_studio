@@ -42,46 +42,46 @@ describe("parsePricingRules", () => {
 
 describe("resolvePackage", () => {
   const packages = [
-    { slug: "wedding", category: "WEDDING", basePriceCents: 280000 },
-    { slug: "wedding-mini", category: "WEDDING", basePriceCents: 150000 },
-    { slug: "corporate-event", category: "CORPORATE", basePriceCents: 120000 },
+    { slug: "wedding", category: "wedding", basePriceCents: 280000 },
+    { slug: "wedding-mini", category: "wedding", basePriceCents: 150000 },
+    { slug: "corporate-event", category: "corporate", basePriceCents: 120000 },
   ];
 
   it("uses the chosen package when it belongs to the category", () => {
-    expect(resolvePackage(packages, "WEDDING", "wedding")?.slug).toBe("wedding");
+    expect(resolvePackage(packages, "wedding", "wedding")?.slug).toBe("wedding");
   });
 
   it("falls back to the cheapest package in the category", () => {
-    expect(resolvePackage(packages, "WEDDING", undefined)?.slug).toBe("wedding-mini");
-    expect(resolvePackage(packages, "WEDDING", "corporate-event")?.slug).toBe("wedding-mini");
+    expect(resolvePackage(packages, "wedding", undefined)?.slug).toBe("wedding-mini");
+    expect(resolvePackage(packages, "wedding", "corporate-event")?.slug).toBe("wedding-mini");
   });
 
   it("returns null when the category has no packages", () => {
-    expect(resolvePackage(packages, "PRODUCT", undefined)).toBeNull();
+    expect(resolvePackage(packages, "product", undefined)).toBeNull();
   });
   describe("with tiers", () => {
     const options = [
       {
         slug: "wedding:silver",
         packageSlug: "wedding",
-        category: "WEDDING",
+        category: "wedding",
         basePriceCents: 200000,
       },
-      { slug: "wedding:gold", packageSlug: "wedding", category: "WEDDING", basePriceCents: 300000 },
-      { slug: "elopement", packageSlug: "elopement", category: "WEDDING", basePriceCents: 90000 },
+      { slug: "wedding:gold", packageSlug: "wedding", category: "wedding", basePriceCents: 300000 },
+      { slug: "elopement", packageSlug: "elopement", category: "wedding", basePriceCents: 90000 },
     ];
 
     it("uses the chosen tier", () => {
-      expect(resolvePackage(options, "WEDDING", "wedding:gold")?.slug).toBe("wedding:gold");
+      expect(resolvePackage(options, "wedding", "wedding:gold")?.slug).toBe("wedding:gold");
     });
 
     it("uses the package's cheapest tier for a plain package link or a removed tier", () => {
-      expect(resolvePackage(options, "WEDDING", "wedding")?.slug).toBe("wedding:silver");
-      expect(resolvePackage(options, "WEDDING", "wedding:platinum")?.slug).toBe("wedding:silver");
+      expect(resolvePackage(options, "wedding", "wedding")?.slug).toBe("wedding:silver");
+      expect(resolvePackage(options, "wedding", "wedding:platinum")?.slug).toBe("wedding:silver");
     });
 
     it("falls back to the category's cheapest option otherwise", () => {
-      expect(resolvePackage(options, "WEDDING", "nope")?.slug).toBe("elopement");
+      expect(resolvePackage(options, "wedding", "nope")?.slug).toBe("elopement");
     });
   });
 });

@@ -1,6 +1,6 @@
 import * as z from "zod";
 
-import { categorySlugs } from "@/lib/categories";
+import { SERVICE_SLUG_PATTERN } from "@/lib/services";
 
 import { checkbox, dollarsToCents, integer, optionalText, text } from "./fields";
 
@@ -24,7 +24,7 @@ export const addOnFormSchema = z.object({
   unit: z.enum(ADD_ON_UNITS, "Choose how it's charged."),
   categories: z.preprocess(
     (value) => (value === undefined ? [] : Array.isArray(value) ? value : [value]),
-    z.array(z.enum(categorySlugs)).min(1, "Choose at least one service."),
+    z.array(z.string().regex(SERVICE_SLUG_PATTERN)).min(1, "Choose at least one service."),
   ),
   isActive: checkbox,
   sortOrder: integer(0, 1000),
