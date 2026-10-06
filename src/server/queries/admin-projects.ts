@@ -1,7 +1,6 @@
 import "server-only";
 
 import type { ProjectFormDefaults } from "@/components/admin/project-form";
-import { slugFromCategory } from "@/lib/categories";
 import { db } from "@/lib/db";
 
 /** All projects (published or not, samples included) for the admin list. Uncached. */
@@ -66,7 +65,7 @@ export async function getProjectForAdmin(id: string) {
     titleFr: project.titleFr ?? "",
     clientName: project.clientName ?? "",
     consentToPublish: project.consentToPublish,
-    category: slugFromCategory(project.category),
+    category: project.category,
     reach: project.reach,
     city: project.city ?? "",
     country: project.country,

@@ -1,7 +1,6 @@
 import "server-only";
 
 import type { PackageFormDefaults } from "@/components/admin/package-form";
-import { slugFromCategory } from "@/lib/categories";
 import { parseFaqs } from "@/lib/content";
 import { db } from "@/lib/db";
 import { getServices } from "@/server/queries/services";
@@ -57,7 +56,7 @@ export async function getPackageFormDefaults(id: string): Promise<PackageFormDef
   const optional = (value: number | null) => (value === null ? "" : String(value));
   return {
     slug: pkg.slug,
-    category: slugFromCategory(pkg.category),
+    category: pkg.category,
     name: pkg.name,
     nameFr: pkg.nameFr ?? "",
     summary: pkg.summary,

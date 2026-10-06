@@ -6,7 +6,6 @@ import { headers } from "next/headers";
 import { getLocale } from "next-intl/server";
 
 import { siteConfig } from "@/config/site";
-import { categoryFromSlug } from "@/lib/categories";
 import { studioDateKey } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { calculateQuote } from "@/lib/pricing/calculate-quote";
@@ -20,6 +19,7 @@ import { localize } from "@/lib/localize";
 import { sendQuoteEmails } from "@/server/emails/quote-emails";
 import { linkSecret } from "@/server/link-secret";
 import { getPricingContext } from "@/server/queries/pricing";
+import { isActiveServiceSlug } from "@/server/queries/services";
 import { isRateLimited } from "@/server/rate-limit";
 
 export type CreateQuoteResult =
@@ -60,8 +60,8 @@ export async function createQuote(
 
   try {
     const context = await getPricingContext();
-    const category = categoryFromSlug(request.category)!;
-    const pkg = resolvePackage(context.packages, category, request.packageSlug);
+    if (!(await isActiveServiceSlug(request.category))) return { ok: false, error: "unavailable" };
+    const pkg = resolvePackage(context.packages, request.category, request.packageSlug);
     if (!pkg) return { ok: false, error: "unavailable" };
 
     let quote;
@@ -118,7 +118,7 @@ export async function createQuote(
       await tx.quote.create({
         data: {
           reference: ref,
-          category,
+          category: request.category,
           packageId: packageRow?.id,
           eventDate: eventStart,
           durationHours: request.durationHours,
@@ -160,7 +160,7 @@ export async function createQuote(
         token,
         locale,
         customer: { name: request.name, email: request.email, phone: request.phone },
-        category,
+        category: request.category,
         eventStart,
         durationHours: request.durationHours,
         city: request.city,

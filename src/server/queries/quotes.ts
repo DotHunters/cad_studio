@@ -1,8 +1,6 @@
 import "server-only";
 
 import type { BookingFormValues, QuotePrefill } from "@/components/booking/booking-wizard";
-import type { CategorySlug } from "@/lib/categories";
-import { slugFromCategory } from "@/lib/categories";
 import { studioDateKey } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { parseReference } from "@/lib/references";
@@ -55,7 +53,7 @@ export async function getBookableQuote(
     ? (quote.addOns as Array<{ code: string; qty: number }>)
     : [];
   const values: Partial<BookingFormValues> = {
-    category: slugFromCategory(quote.category) as CategorySlug,
+    category: quote.category,
     packageSlug: breakdown.packageSlug,
     eventDate,
     startTime: breakdown.startTime,

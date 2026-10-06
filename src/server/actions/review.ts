@@ -13,6 +13,7 @@ import {
   reviewSubmissionSchema,
 } from "@/lib/validators/review";
 import { getVerifiedBooking } from "@/server/review-links";
+import { isActiveServiceSlug } from "@/server/queries/services";
 import { isRateLimited } from "@/server/rate-limit";
 
 export type SubmitReviewResult =
@@ -53,6 +54,9 @@ export async function submitReview(
         .filter(Boolean)
         .join(" "),
     );
+    const category =
+      verifiedBooking?.categorySlug ??
+      (review.category && (await isActiveServiceSlug(review.category)) ? review.category : null);
     await db.review.create({
       data: {
         type: review.type,
@@ -60,7 +64,7 @@ export async function submitReview(
         authorTitle: review.type === "RECOMMENDATION" ? review.authorTitle : null,
         company: review.type === "RECOMMENDATION" ? review.company : null,
         rating: review.type === "CUSTOMER" ? review.rating : null,
-        category: (verifiedBooking?.categorySlug ?? review.category)?.toUpperCase() as never,
+        category,
         body: review.body,
         locale: (await getLocale()) === "fr" ? "fr" : "en",
         status: "PENDING",
@@ -76,7 +80,7 @@ export async function submitReview(
         subject: `[${siteConfig.name}] New ${review.type === "CUSTOMER" ? `${review.rating}★ review` : "recommendation"} to moderate${flagged ? " (flagged)" : ""}`,
         text: [
           `From: ${review.authorName}${review.company ? ` · ${review.authorTitle ?? ""} ${review.company}` : ""}`,
-          review.category ? `Service: ${review.category}` : "",
+          category ? `Service: ${category}` : "",
           verifiedBooking ? `Verified client — booking ${verifiedBooking.reference}` : "",
           flagged ? "Flagged by the automatic spam/profanity check — please read carefully." : "",
           "",

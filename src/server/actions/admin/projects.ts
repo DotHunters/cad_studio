@@ -5,7 +5,6 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { Prisma } from "@/generated/prisma/client";
-import { categoryFromSlug } from "@/lib/categories";
 import type { ActionResult } from "@/lib/admin/action-result";
 import { auditSummary, describeChanges } from "@/lib/admin/audit";
 import { db } from "@/lib/db";
@@ -39,7 +38,7 @@ export async function saveProject(id: string | null, input: unknown): Promise<Sa
     if (id && !current) return { ok: false, error: "server" };
     const data = {
       ...rest,
-      category: categoryFromSlug(category)!,
+      category: category,
       publishedAt: nextPublishedAt(published, current?.publishedAt ?? null, new Date()),
     };
     if (id) await db.portfolioProject.update({ where: { id }, data });

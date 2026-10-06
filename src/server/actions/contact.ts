@@ -5,8 +5,9 @@ import { headers } from "next/headers";
 import { siteConfig } from "@/config/site";
 import { adminNotifyAddress, sendEmail } from "@/lib/email/send";
 import { verifyTurnstile } from "@/lib/turnstile";
-import { contactSchema, type ContactInput } from "@/lib/validators/contact";
+import { contactSchema, otherEnquiryTypes, type ContactInput } from "@/lib/validators/contact";
 import { isRateLimited } from "@/server/rate-limit";
+import { getServiceNames, isActiveServiceSlug } from "@/server/queries/services";
 
 export type ContactResult =
   | { ok: true }
@@ -38,16 +39,23 @@ export async function submitContact(
   }
 
   const data = parsed.data;
+  const isOther = (otherEnquiryTypes as readonly string[]).includes(data.enquiryType);
+  if (!isOther && !(await isActiveServiceSlug(data.enquiryType))) {
+    return { ok: false, error: "validation", fieldErrors: { enquiryType: "required" } };
+  }
   try {
+    const enquiryType = isOther
+      ? data.enquiryType
+      : (await getServiceNames("en"))(data.enquiryType);
     await sendEmail({
       to: adminNotifyAddress(),
       replyTo: data.email,
-      subject: `[${siteConfig.name}] New ${data.enquiryType} enquiry from ${data.name}`,
+      subject: `[${siteConfig.name}] New ${enquiryType} enquiry from ${data.name}`,
       text: [
         `Name: ${data.name}`,
         `Email: ${data.email}`,
         `Phone: ${data.phone ?? "—"}`,
-        `Enquiry type: ${data.enquiryType}`,
+        `Enquiry type: ${enquiryType}`,
         "",
         data.message,
       ].join("\n"),
