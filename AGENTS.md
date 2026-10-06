@@ -163,7 +163,7 @@ pnpm photos           # assets/ originals → compressed WebP in public/photos +
 ## 6. Pages & acceptance criteria
 
 ### 6.1 Home `/`
-- Full-bleed hero (rotating 3–5 best images) + headline + two CTAs: **Get a Quote**, **Book a Date**.
+- Full-bleed hero (rotating 3–5 best images, chosen in Admin → Hero slides; launch photos until then) + headline + two CTAs: **Get a Quote**, **Book a Date**.
 - Service category tiles (6) linking to packages.
 - "Trusted locally and globally" strip — client logos (with permission) + stats (years, events, countries).
 - Featured portfolio (3–6 case studies).
@@ -236,7 +236,7 @@ pnpm photos           # assets/ originals → compressed WebP in public/photos +
 
 ### 6.10 Admin `/admin`
 - Dashboard: upcoming bookings, new quotes, pending reviews, monthly revenue estimate.
-- CRUD: services, packages, add-ons, pricing rules, tax rates, portfolio projects, gallery images (bulk upload, tagging, reorder), reviews (approve/reject/feature), blocked dates & capacity.
+- CRUD: hero slides, services, packages, add-ons, pricing rules, tax rates, portfolio projects, gallery images (bulk upload, tagging, reorder), reviews (approve/reject/feature), blocked dates & capacity.
 - Bookings: list + calendar view, status changes (`PENDING → CONFIRMED → COMPLETED` / `CANCELLED`), assign photographers, export CSV, `.ics` download.
 - Quotes: list, convert to booking, adjust and re-send.
 - Audit log of admin changes.

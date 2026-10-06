@@ -1,28 +1,19 @@
 import { ArrowUpRight, ChevronDown } from "lucide-react";
-import { useLocale, useTranslations } from "next-intl";
+import { getLocale, getTranslations } from "next-intl/server";
 
 import { buttonVariants } from "@/components/ui/button";
+import type { Locale } from "@/config/site";
 import { Link } from "@/i18n/navigation";
-import { localize } from "@/lib/localize";
-import { photos } from "@/lib/photos";
 import { cn } from "@/lib/utils";
+import { getHeroSlides } from "@/server/queries/hero-slides";
 
 import { HeroSlideshow } from "./hero-slideshow";
 import { ctaNav } from "./nav-items";
 
-export function HomeHero() {
-  const t = useTranslations();
-  const locale = useLocale();
-  // The owner's picks, chosen in scripts/photos.config.mjs (`pnpm photos`).
-  const slides = photos.hero.map((photo) => {
-    const group = photos.groups.find((g) => g.slug === photo.group);
-    return {
-      src: photo.src,
-      blurDataUrl: photo.blurDataUrl,
-      position: photo.position,
-      alt: group ? localize(group.alt, group.altFr, locale) : "",
-    };
-  });
+export async function HomeHero() {
+  const locale = (await getLocale()) as Locale;
+  // Chosen in Admin → Hero slides; the launch photos until the owner picks some.
+  const [t, slides] = await Promise.all([getTranslations(), getHeroSlides(locale)]);
   const total = slides.length;
   const trust = [t("Home.trustYears"), t("Home.trustEvents"), t("Home.trustLocation")];
 
