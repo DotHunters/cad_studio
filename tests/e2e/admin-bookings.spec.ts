@@ -113,7 +113,7 @@ test("bookings export to CSV, download as .ics and show on the calendar", async 
   expect(csv.headers()["content-type"]).toContain("text/csv");
   const text = await csv.text();
   expect(text).toContain("Reference,Status,Event date");
-  expect(text).toContain(`${reference},PENDING,2027-10-23,14:00,family,1,Booking Viewer`);
+  expect(text).toContain(`${reference},PENDING,2027-10-23,14:00,Family Events,1,Booking Viewer`);
   expect(text).toContain("1017.00");
 
   const ics = await page.request.get(`/admin/bookings/${reference}/ics`);
