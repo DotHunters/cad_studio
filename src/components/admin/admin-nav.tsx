@@ -6,6 +6,7 @@ import {
   CalendarCheck,
   CalendarOff,
   FileText,
+  GalleryHorizontal,
   Images,
   LayoutDashboard,
   LayoutGrid,
@@ -48,6 +49,7 @@ const GROUPS: NavGroup[] = [
     items: [
       { href: "/admin/portfolio", label: "Portfolio", icon: BookImage, adminOnly: true },
       { href: "/admin/gallery", label: "Images", icon: Images, adminOnly: true },
+      { href: "/admin/hero", label: "Hero slides", icon: GalleryHorizontal, adminOnly: true },
     ],
   },
   {
