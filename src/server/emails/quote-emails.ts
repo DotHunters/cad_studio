@@ -5,13 +5,13 @@ import { getTranslations } from "next-intl/server";
 import { createElement } from "react";
 
 import { type Locale, siteConfig } from "@/config/site";
-import { slugFromCategory } from "@/lib/categories";
 import { formatInStudioTz } from "@/lib/dates";
 import { adminNotifyAddress, sendEmail } from "@/lib/email/send";
 import { QuoteSummaryEmail } from "@/lib/email/templates/quote-summary";
 import { formatCAD } from "@/lib/money";
 import type { QuoteResult } from "@/lib/pricing/calculate-quote";
 import { lineItemLabel, type Translate } from "@/lib/pricing/line-labels";
+import { getServiceNames } from "@/server/queries/services";
 
 export type QuoteEmailData = {
   reference: string;
@@ -36,16 +36,16 @@ export type QuoteEmailData = {
 /** Client summary (in their locale) + admin notification. Failures are logged by the caller. */
 export async function sendQuoteEmails(data: QuoteEmailData) {
   const { locale, quote } = data;
-  const [t, tQuote, tCategories, tQuoteEn] = await Promise.all([
+  const [t, tQuote, tQuoteEn, serviceName] = await Promise.all([
     getTranslations({ locale, namespace: "Email" }),
     getTranslations({ locale, namespace: "Quote" }),
-    getTranslations({ locale, namespace: "Categories" }),
     getTranslations({ locale: "en", namespace: "Quote" }),
+    getServiceNames(locale),
   ]);
   const money = (cents: number) => formatCAD(cents, locale);
   const date = formatInStudioTz(data.eventStart, "PPP", locale);
   const time = formatInStudioTz(data.eventStart, "p", locale);
-  const category = tCategories(`${slugFromCategory(data.category as never)}.name`);
+  const category = serviceName(data.category);
   const quoteUrl = new URL(
     `/${locale}/quote/${data.reference}?t=${data.token}`,
     siteConfig.url,

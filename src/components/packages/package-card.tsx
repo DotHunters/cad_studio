@@ -4,7 +4,6 @@ import { useTranslations } from "next-intl";
 import { buttonVariants } from "@/components/ui/button";
 import type { Locale } from "@/config/site";
 import { Link } from "@/i18n/navigation";
-import { slugFromCategory } from "@/lib/categories";
 import { localize } from "@/lib/localize";
 import { formatCAD } from "@/lib/money";
 import { startingPriceCents } from "@/lib/pricing/options";
@@ -13,7 +12,15 @@ import type { PackageSummary } from "@/server/queries/packages";
 
 const MAX_INCLUSIONS = 4;
 
-export function PackageCard({ pkg, locale }: { pkg: PackageSummary; locale: Locale }) {
+export function PackageCard({
+  pkg,
+  locale,
+  serviceName,
+}: {
+  pkg: PackageSummary;
+  locale: Locale;
+  serviceName: string;
+}) {
   const t = useTranslations();
   const name = localize(pkg.name, pkg.nameFr, locale);
   const inclusions = localize(
@@ -29,7 +36,7 @@ export function PackageCard({ pkg, locale }: { pkg: PackageSummary; locale: Loca
       className="bg-card flex h-full flex-col rounded-xl border p-7 shadow-sm transition-shadow hover:shadow-md"
     >
       <p className="text-gold-text text-xs font-semibold tracking-[0.2em] uppercase">
-        {t(`Categories.${slugFromCategory(pkg.category)}.name`)}
+        {serviceName}
       </p>
       <h2 id={headingId} className="mt-2 text-3xl">
         <Link href={`/packages/${pkg.slug}`} className="hover:text-gold-text transition-colors">

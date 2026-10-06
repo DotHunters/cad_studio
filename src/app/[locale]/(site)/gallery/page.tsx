@@ -24,6 +24,7 @@ import { imageGalleryJsonLd } from "@/lib/seo/json-ld";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { cn } from "@/lib/utils";
 import { getGalleryImages } from "@/server/queries/gallery";
+import { getActiveServiceOptions } from "@/server/queries/services";
 
 type Props = {
   params: Promise<{ locale: Locale }>;
@@ -45,13 +46,26 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function GalleryPage({ params, searchParams }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const filters = parseGalleryFilters(await searchParams);
+  const parsed = parseGalleryFilters(await searchParams);
 
-  const [t, images] = await Promise.all([getTranslations(), getGalleryImages()]);
+  const [t, images, services] = await Promise.all([
+    getTranslations(),
+    getGalleryImages(),
+    getActiveServiceOptions(locale),
+  ]);
+  // An archived or unknown ?category falls back to "All".
+  const filters = {
+    ...parsed,
+    category: services.some((s) => s.slug === parsed.category) ? parsed.category : null,
+  };
+  const serviceLabels = new Map(services.map((s) => [s.slug, s.name]));
   const matching = filterGallery(images, filters);
   const { items, hasMore } = paginateGallery(matching, filters.page);
   const tags = galleryTags(images);
-  const categories = galleryCategories(images);
+  const categories = galleryCategories(
+    images,
+    services.map((s) => s.slug),
+  );
   const hasFilters = Boolean(filters.category || filters.tag);
 
   return (
@@ -93,7 +107,7 @@ export default async function GalleryPage({ params, searchParams }: Props) {
             },
             ...categories.map((slug) => ({
               key: slug,
-              label: t(`Categories.${slug}.name`),
+              label: serviceLabels.get(slug) ?? slug,
               active: filters.category === slug,
               href: galleryHref(filters, { category: slug }),
             })),

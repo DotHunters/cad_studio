@@ -2,7 +2,6 @@ import { getTranslations } from "next-intl/server";
 
 import { siteConfig } from "@/config/site";
 import { storedQuoteResult } from "@/lib/admin/quotes";
-import { slugFromCategory } from "@/lib/categories";
 import { formatInStudioTz } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { localize } from "@/lib/localize";
@@ -11,6 +10,7 @@ import { renderQuotePdf } from "@/lib/pdf/quote-pdf";
 import { lineItemLabel, type Translate } from "@/lib/pricing/line-labels";
 import { savedOptionName } from "@/lib/pricing/options";
 import { forbiddenUnlessRole } from "@/server/auth/guards";
+import { getServiceNames } from "@/server/queries/services";
 
 export const dynamic = "force-dynamic";
 
@@ -38,7 +38,7 @@ export async function GET(
 
   const locale = quote.customer.locale === "fr" ? "fr" : "en";
   const addOnCodes = result.lineItems.flatMap((item) => (item.kind === "addOn" ? [item.code] : []));
-  const [t, tQuote, addOns, depositRule] = await Promise.all([
+  const [t, tQuote, addOns, depositRule, serviceName] = await Promise.all([
     getTranslations({ locale }),
     getTranslations({ locale, namespace: "Quote" }),
     db.addOn.findMany({
@@ -46,6 +46,7 @@ export async function GET(
       select: { code: true, name: true, nameFr: true },
     }),
     db.pricingRule.findUnique({ where: { key: "DEPOSIT_PCT" } }),
+    getServiceNames(locale),
   ]);
   const money = (cents: number) => formatCAD(cents, locale);
   const names = {
@@ -79,7 +80,7 @@ export async function GET(
     facts: [
       {
         label: t("QuoteResult.event"),
-        value: t(`Categories.${slugFromCategory(quote.category)}.name`),
+        value: serviceName(quote.category),
       },
       { label: t("QuoteResult.package"), value: names.packageName },
       {

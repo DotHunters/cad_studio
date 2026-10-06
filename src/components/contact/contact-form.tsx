@@ -9,8 +9,9 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
+import type { ServiceOption } from "@/lib/services";
 import { cn } from "@/lib/utils";
-import { type ContactInput, contactSchema, enquiryTypes } from "@/lib/validators/contact";
+import { type ContactInput, contactSchema, otherEnquiryTypes } from "@/lib/validators/contact";
 import { submitContact } from "@/server/actions/contact";
 import { useTurnstile } from "@/components/site/turnstile";
 
@@ -30,7 +31,7 @@ function isErrorKey(key: string): key is (typeof ERROR_KEYS)[number] {
 const fieldClass =
   "border-input bg-background focus-visible:border-ring focus-visible:ring-ring/40 mt-2 block w-full rounded-lg border px-4 py-3 text-base focus-visible:ring-3 focus-visible:outline-none aria-invalid:border-destructive";
 
-export function ContactForm() {
+export function ContactForm({ services }: { services: ServiceOption[] }) {
   const t = useTranslations("Contact");
   const tCommon = useTranslations("Common");
   const [sent, setSent] = useState(false);
@@ -160,7 +161,12 @@ export function ContactForm() {
             <option value="" disabled>
               {t("selectType")}
             </option>
-            {enquiryTypes.map((type) => (
+            {services.map((service) => (
+              <option key={service.slug} value={service.slug}>
+                {service.name}
+              </option>
+            ))}
+            {otherEnquiryTypes.map((type) => (
               <option key={type} value={type}>
                 {t(`types.${type}`)}
               </option>

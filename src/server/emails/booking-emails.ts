@@ -5,7 +5,6 @@ import { getTranslations } from "next-intl/server";
 import { createElement } from "react";
 
 import { type Locale, siteConfig } from "@/config/site";
-import { slugFromCategory } from "@/lib/categories";
 import { formatInStudioTz } from "@/lib/dates";
 import { adminNotifyAddress, sendEmail } from "@/lib/email/send";
 import { BookingRequestEmail } from "@/lib/email/templates/booking-request";
@@ -15,6 +14,7 @@ import { formatCAD } from "@/lib/money";
 import { signValue } from "@/lib/signing";
 import type { BookingRequest } from "@/lib/validators/booking";
 import type { PlaceBookingResult } from "@/server/booking/place-booking";
+import { getServiceNames } from "@/server/queries/services";
 import { linkSecret } from "@/server/link-secret";
 
 export type BookingEmailData = {
@@ -39,13 +39,13 @@ export type BookingEmailData = {
 /** Client confirmation (their locale) + studio notification, both with an .ics invite. */
 export async function sendBookingEmails(data: BookingEmailData) {
   const { locale } = data;
-  const [t, tConfirmed, tBook, tCategories] = await Promise.all([
+  const [t, tConfirmed, tBook, serviceName] = await Promise.all([
     getTranslations({ locale, namespace: "Email" }),
     getTranslations({ locale, namespace: "BookingConfirmed" }),
     getTranslations({ locale, namespace: "Book" }),
-    getTranslations({ locale, namespace: "Categories" }),
+    getServiceNames(locale),
   ]);
-  const category = tCategories(`${slugFromCategory(data.category as never)}.name`);
+  const category = serviceName(data.category);
   const bookingUrl = new URL(
     `/${locale}/book/${data.reference}?t=${data.token}`,
     siteConfig.url,

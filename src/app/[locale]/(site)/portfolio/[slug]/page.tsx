@@ -13,7 +13,6 @@ import { StoredImage } from "@/components/site/stored-image";
 import { buttonVariants } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
 import { Link } from "@/i18n/navigation";
-import { slugFromCategory } from "@/lib/categories";
 import { storedImageSrc } from "@/lib/images";
 import { pickCover } from "@/lib/images";
 import { localize } from "@/lib/localize";
@@ -23,6 +22,7 @@ import { imageGalleryJsonLd } from "@/lib/seo/json-ld";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { cn } from "@/lib/utils";
 import { getProjectBySlug } from "@/server/queries/portfolio";
+import { getServiceNames } from "@/server/queries/services";
 
 type Props = { params: Promise<{ locale: Locale; slug: string }> };
 
@@ -30,8 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, slug } = await params;
   const project = await getProjectBySlug(slug);
   if (!project) return {};
-  const t = await getTranslations({ locale, namespace: "Categories" });
-  const category = t(`${slugFromCategory(project.category)}.name`);
+  const category = (await getServiceNames(locale))(project.category);
   return pageMetadata({
     locale,
     path: `/portfolio/${slug}`,
@@ -47,12 +46,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function ProjectPage({ params }: Props) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
-  const [project, t] = await Promise.all([getProjectBySlug(slug), getTranslations()]);
+  const [project, t, serviceName] = await Promise.all([
+    getProjectBySlug(slug),
+    getTranslations(),
+    getServiceNames(locale),
+  ]);
   if (!project) notFound();
 
   const title = localize(project.title, project.titleFr, locale);
-  const categorySlug = slugFromCategory(project.category);
-  const categoryName = t(`Categories.${categorySlug}.name`);
+  const categorySlug = project.category;
+  const categoryName = serviceName(project.category);
   // The chosen cover leads; the remaining images follow in order.
   const lead = pickCover(project.images, project.coverId);
   const rest = project.images.filter((image) => image !== lead);

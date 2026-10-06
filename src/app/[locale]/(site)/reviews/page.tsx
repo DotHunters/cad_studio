@@ -10,12 +10,12 @@ import { FilterGroup } from "@/components/site/filter-group";
 import { Accent, SectionHeading } from "@/components/site/section-heading";
 import { StarRating } from "@/components/site/star-rating";
 import { siteConfig } from "@/config/site";
-import { categorySlugs } from "@/lib/categories";
 import { applyReviewFilters, parseReviewFilters, reviewsHref } from "@/lib/review-display";
 import { averageRating } from "@/lib/reviews";
 import { reviewsJsonLd } from "@/lib/seo/json-ld";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { getPublishedReviews } from "@/server/queries/reviews";
+import { getActiveServiceOptions, getServiceNames } from "@/server/queries/services";
 import { getVerifiedBooking } from "@/server/review-links";
 
 type Props = {
@@ -39,14 +39,26 @@ export default async function ReviewsPage({ params, searchParams }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
   const query = await searchParams;
-  const filters = parseReviewFilters(query);
+  const parsed = parseReviewFilters(query);
   const first = (value: string | string[] | undefined) => (Array.isArray(value) ? value[0] : value);
   const link = { reference: first(query.booking), exp: first(query.exp), token: first(query.t) };
-  const [t, reviews, verified] = await Promise.all([
+  const [t, reviews, verified, services, serviceName] = await Promise.all([
     getTranslations(),
     getPublishedReviews(),
     getVerifiedBooking(link.reference, link.exp, link.token),
+    getActiveServiceOptions(locale),
+    getServiceNames(locale),
   ]);
+  // An archived or unknown ?category falls back to "All".
+  const filters = {
+    ...parsed,
+    category: services.some((s) => s.slug === parsed.category) ? parsed.category : null,
+  };
+  // A verified client's own service stays selectable even if it was archived since.
+  const formServices =
+    verified && !services.some((s) => s.slug === verified.categorySlug)
+      ? [...services, { slug: verified.categorySlug, name: serviceName(verified.categorySlug) }]
+      : services;
 
   const customers = reviews.filter((review) => review.type === "CUSTOMER");
   const recommendations = reviews.filter((review) => review.type === "RECOMMENDATION");
@@ -99,11 +111,11 @@ export default async function ReviewsPage({ params, searchParams }: Props) {
               active: !filters.category,
               href: reviewsHref(filters, { category: null }),
             },
-            ...categorySlugs.map((slug) => ({
-              key: slug,
-              label: t(`Categories.${slug}.name`),
-              active: filters.category === slug,
-              href: reviewsHref(filters, { category: slug }),
+            ...services.map((service) => ({
+              key: service.slug,
+              label: service.name,
+              active: filters.category === service.slug,
+              href: reviewsHref(filters, { category: service.slug }),
             })),
           ]}
         />
@@ -126,7 +138,11 @@ export default async function ReviewsPage({ params, searchParams }: Props) {
           <ul className="mt-6 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {visibleCustomers.map((review) => (
               <li key={review.id}>
-                <ReviewCard review={review} locale={locale} />
+                <ReviewCard
+                  review={review}
+                  locale={locale}
+                  serviceName={review.category ? serviceName(review.category) : null}
+                />
               </li>
             ))}
           </ul>
@@ -144,7 +160,12 @@ export default async function ReviewsPage({ params, searchParams }: Props) {
             <ul className="mt-6 grid gap-5 md:grid-cols-2">
               {visibleRecommendations.map((review) => (
                 <li key={review.id}>
-                  <ReviewCard review={review} locale={locale} className="md:p-8" />
+                  <ReviewCard
+                    review={review}
+                    locale={locale}
+                    serviceName={review.category ? serviceName(review.category) : null}
+                    className="md:p-8"
+                  />
                 </li>
               ))}
             </ul>
@@ -173,6 +194,7 @@ export default async function ReviewsPage({ params, searchParams }: Props) {
             </p>
           ) : null}
           <ReviewForm
+            services={formServices}
             booking={
               verified
                 ? {
