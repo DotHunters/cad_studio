@@ -48,12 +48,12 @@ const GROUPS: NavGroup[] = [
     items: [
       { href: "/admin/portfolio", label: "Portfolio", icon: BookImage, adminOnly: true },
       { href: "/admin/gallery", label: "Images", icon: Images, adminOnly: true },
-      { href: "/admin/service-tiles", label: "Service tiles", icon: LayoutGrid, adminOnly: true },
     ],
   },
   {
     label: "Catalogue",
     items: [
+      { href: "/admin/services", label: "Services", icon: LayoutGrid, adminOnly: true },
       { href: "/admin/packages", label: "Packages", icon: Package, adminOnly: true },
       { href: "/admin/add-ons", label: "Add-ons", icon: PlusSquare, adminOnly: true },
       { href: "/admin/pricing", label: "Pricing", icon: BadgeDollarSign, adminOnly: true },
