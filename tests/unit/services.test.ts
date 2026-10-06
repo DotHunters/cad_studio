@@ -31,6 +31,10 @@ describe("isServiceSlug", () => {
     }
   });
 
+  it("accepts a slug of exactly 40 characters", () => {
+    expect(isServiceSlug("a".repeat(40))).toBe(true);
+  });
+
   it("rejects anything else", () => {
     for (const value of [
       "",
@@ -54,6 +58,7 @@ describe("slugFromName", () => {
     expect(slugFromName("Baby Showers")).toBe("baby-showers");
     expect(slugFromName("  Événements & Galas ")).toBe("evenements-galas");
     expect(slugFromName("Graduations 2026!")).toBe("graduations-2026");
+    expect(slugFromName("Cœur & Straße")).toBe("coeur-strasse");
   });
 
   it("keeps the result within 40 characters without a trailing dash", () => {

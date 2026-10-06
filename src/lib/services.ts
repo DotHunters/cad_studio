@@ -42,14 +42,17 @@ export function isServiceSlug(value: unknown): value is string {
   );
 }
 
+const LIGATURES: Record<string, string> = { œ: "oe", Œ: "OE", æ: "ae", Æ: "AE", ß: "ss" };
+
 /** "Événements & Galas" → "evenements-galas"; "" when nothing usable is left. */
 export function slugFromName(name: string): string {
   return name
+    .replace(/[œŒæÆß]/g, (char) => LIGATURES[char])
     .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
+    .replace(/^-+/, "")
     .slice(0, SERVICE_SLUG_MAX)
     .replace(/-+$/, "");
 }
