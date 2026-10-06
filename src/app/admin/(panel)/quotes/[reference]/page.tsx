@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { FileDown } from "lucide-react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { notFound } from "next/navigation";
 
 import { AdjustQuotePanel } from "@/components/admin/adjust-quote-panel";
 import { ConvertQuotePanel } from "@/components/admin/convert-quote-panel";
@@ -11,7 +11,6 @@ import { ResendQuotePanel } from "@/components/admin/resend-quote-panel";
 import { StatusBadge } from "@/components/admin/status-badge";
 import { buttonVariants } from "@/components/ui/button";
 import { quoteState, storedQuoteResult } from "@/lib/admin/quotes";
-import { slugFromCategory } from "@/lib/categories";
 import { formatInStudioTz } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { formatCAD } from "@/lib/money";
@@ -19,6 +18,7 @@ import { lineItemLabel, type Translate } from "@/lib/pricing/line-labels";
 import { savedOptionName } from "@/lib/pricing/options";
 import { requireAdminPage } from "@/server/auth/guards";
 import { getQuoteForAdmin } from "@/server/queries/admin-quotes";
+import { getServiceNames } from "@/server/queries/services";
 
 type Props = { params: Promise<{ reference: string }> };
 
@@ -44,9 +44,9 @@ export default async function AdminQuotePage({ params }: Props) {
   const addOnCodes = (result?.lineItems ?? []).flatMap((item) =>
     item.kind === "addOn" ? [item.code] : [],
   );
-  const [tQuote, tCategories, tProvinces, addOns, validDays] = await Promise.all([
+  const [tQuote, serviceName, tProvinces, addOns, validDays] = await Promise.all([
     getTranslations({ locale: "en", namespace: "Quote" }),
-    getTranslations({ locale: "en", namespace: "Categories" }),
+    getServiceNames("en"),
     getTranslations({ locale: "en", namespace: "Provinces" }),
     db.addOn.findMany({ where: { code: { in: addOnCodes } }, select: { code: true, name: true } }),
     db.pricingRule.findUnique({ where: { key: "QUOTE_VALID_DAYS" } }),
@@ -131,7 +131,7 @@ export default async function AdminQuotePage({ params }: Props) {
         <Section title="Event">
           <Facts
             rows={[
-              ["Service", tCategories(`${slugFromCategory(quote.category)}.name`)],
+              ["Service", serviceName(quote.category)],
               ["Package", savedOptionName(quote.breakdown, quote.package, "en") ?? "—"],
               ["Date", when(quote.eventDate)],
               ["Coverage", `${Number(quote.durationHours)} h`],

@@ -1,7 +1,6 @@
 import { AlertTriangle } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 
 import {
@@ -10,12 +9,12 @@ import {
 } from "@/components/admin/bookings-month-calendar";
 import { StatusBadge } from "@/components/admin/status-badge";
 import { parseMonth } from "@/lib/admin/calendar";
-import { slugFromCategory } from "@/lib/categories";
 import { formatInStudioTz, studioDateKey } from "@/lib/dates";
 import { formatCAD } from "@/lib/money";
 import { requireAdminPage } from "@/server/auth/guards";
 import { getMonthCalendar } from "@/server/queries/admin-calendar";
 import { getDashboardData } from "@/server/queries/admin-dashboard";
+import { getServiceNames } from "@/server/queries/services";
 
 export const metadata: Metadata = { title: "Dashboard" };
 
@@ -50,13 +49,11 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
   const month =
     parseMonth(typeof query.month === "string" ? query.month : undefined) ??
     studioDateKey(new Date()).slice(0, 7);
-  const [data, calendar, t] = await Promise.all([
+  const [data, calendar, serviceName] = await Promise.all([
     getDashboardData(),
     getMonthCalendar(month),
-    getTranslations({ locale: "en", namespace: "Categories" }),
+    getServiceNames("en"),
   ]);
-  const category = (value: Parameters<typeof slugFromCategory>[0]) =>
-    t(`${slugFromCategory(value)}.name`);
   const { revenue } = data;
 
   return (
@@ -170,7 +167,7 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
                       >
                         {booking.reference}
                       </Link>{" "}
-                      · {category(booking.category)} · {booking.photographers} ph.
+                      · {serviceName(booking.category)} · {booking.photographers} ph.
                     </span>
                   </span>
                   <StatusBadge status={booking.status} />
@@ -199,7 +196,7 @@ export default async function AdminDashboardPage({ searchParams }: Props) {
                       >
                         {quote.reference}
                       </Link>{" "}
-                      · {category(quote.category)} · event{" "}
+                      · {serviceName(quote.category)} · event{" "}
                       {formatInStudioTz(quote.eventDate, "MMM d, yyyy")}
                     </span>
                   </span>

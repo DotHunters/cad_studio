@@ -120,7 +120,7 @@ export function PackageForm({ id, defaults, categories }: Props) {
         >
           <input {...field("slug")} defaultValue={defaults.slug} className={adminFieldClass} />
         </Field>
-        <Field error={errors.category} name="category" label="Category">
+        <Field error={errors.category} name="category" label="Service">
           <select
             {...field("category")}
             defaultValue={defaults.category}

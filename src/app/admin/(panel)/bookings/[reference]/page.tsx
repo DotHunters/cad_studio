@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { notFound } from "next/navigation";
 
 import { BookingStatusPanel } from "@/components/admin/booking-status-panel";
 import { PaymentPanel } from "@/components/admin/payment-panel";
@@ -13,7 +13,6 @@ import { parseStoredBreakdown } from "@/lib/admin/bookings";
 import { availableStatusIntents } from "@/lib/admin/booking-status";
 import { canTakePayment } from "@/lib/admin/payments";
 import { needsPaymentRequest } from "@/lib/booking/holds";
-import { slugFromCategory } from "@/lib/categories";
 import { formatInStudioTz, studioDateKey } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { formatCAD } from "@/lib/money";
@@ -23,6 +22,7 @@ import { requireAdminPage } from "@/server/auth/guards";
 import { assignPhotographers } from "@/server/actions/admin/assignments";
 import { resolveChangeRequest } from "@/server/actions/admin/booking-status";
 import { getBookingForAdmin, getStaffingContext } from "@/server/queries/admin-bookings";
+import { getServiceNames } from "@/server/queries/services";
 
 type Props = { params: Promise<{ reference: string }> };
 
@@ -43,9 +43,9 @@ export default async function AdminBookingPage({ params }: Props) {
   const addOnCodes = (breakdown?.lineItems ?? []).flatMap((item) =>
     item.kind === "addOn" ? [item.code] : [],
   );
-  const [tQuote, tCategories, addOns, staffing] = await Promise.all([
+  const [tQuote, serviceName, addOns, staffing] = await Promise.all([
     getTranslations({ locale: "en", namespace: "Quote" }),
-    getTranslations({ locale: "en", namespace: "Categories" }),
+    getServiceNames("en"),
     db.addOn.findMany({ where: { code: { in: addOnCodes } }, select: { code: true, name: true } }),
     getStaffingContext(booking.id, booking.startAt),
   ]);
@@ -108,7 +108,7 @@ export default async function AdminBookingPage({ params }: Props) {
         <Section title="Event">
           <Facts
             rows={[
-              ["Service", tCategories(`${slugFromCategory(booking.category)}.name`)],
+              ["Service", serviceName(booking.category)],
               ["Package", savedOptionName(booking.breakdown, booking.package, "en") ?? "—"],
               ["Starts", when(booking.startAt)],
               ["Ends", when(booking.endAt)],

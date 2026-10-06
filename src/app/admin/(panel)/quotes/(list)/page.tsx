@@ -7,7 +7,6 @@ import { ConfirmDeleteButton } from "@/components/admin/row-actions";
 import { StatusBadge } from "@/components/admin/status-badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { parseQuoteFilters, quoteState } from "@/lib/admin/quotes";
-import { slugFromCategory } from "@/lib/categories";
 import { formatInStudioTz } from "@/lib/dates";
 import { formatCAD } from "@/lib/money";
 import { cancelQuote } from "@/server/actions/admin/quotes";
@@ -122,7 +121,7 @@ export default async function AdminQuotesPage({ searchParams }: Props) {
                       </span>
                     </td>
                     <td className="px-4 py-3">
-                      {categoryLabel.get(slugFromCategory(quote.category))}
+                      {categoryLabel.get(quote.category)}
                       <span className="text-muted-foreground block text-xs">
                         {formatInStudioTz(quote.eventDate, "EEE MMM d, yyyy")}
                       </span>
