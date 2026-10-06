@@ -1,11 +1,10 @@
 import "server-only";
 
-import { getTranslations } from "next-intl/server";
-
 import type { PackageFormDefaults } from "@/components/admin/package-form";
-import { categorySlugs, slugFromCategory } from "@/lib/categories";
+import { slugFromCategory } from "@/lib/categories";
 import { parseFaqs } from "@/lib/content";
 import { db } from "@/lib/db";
+import { getServices } from "@/server/queries/services";
 
 /** All packages (active and hidden) for the admin list. Uncached. */
 export const listPackagesForAdmin = () =>
@@ -97,8 +96,11 @@ export async function getPackageFormDefaults(id: string): Promise<PackageFormDef
   };
 }
 
-/** Category choices for admin forms, labelled in English. */
+/** Service choices for admin forms, in English; archived ones are marked so old records still match. */
 export async function adminCategoryOptions() {
-  const t = await getTranslations({ locale: "en", namespace: "Categories" });
-  return categorySlugs.map((slug) => ({ value: slug, label: t(`${slug}.name`) }));
+  const services = await getServices();
+  return services.map((service) => ({
+    value: service.slug,
+    label: service.active ? service.name : `${service.name} (archived)`,
+  }));
 }
