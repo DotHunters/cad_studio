@@ -54,7 +54,6 @@ describe("UI messages", () => {
       "Metadata.titleTemplate",
       "Home.heading",
       "Home.tagline",
-      "Home.trustLocation",
       "Home.reachLocal",
       "Nav.portfolio",
       "Nav.contact",

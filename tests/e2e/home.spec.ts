@@ -41,12 +41,6 @@ test.describe("home page", () => {
     await expect(page.getByRole("heading", { name: "Mariages" })).toBeVisible();
   });
 
-  test("hero shows the trust facts", async ({ page }) => {
-    await page.goto("/en");
-    await expect(page.getByText("Since 2014", { exact: true })).toBeVisible();
-    await expect(page.getByText("2,000+ events captured")).toBeVisible();
-  });
-
   test("slide indicators switch images", async ({ page }) => {
     await page.goto("/en");
     const second = page.getByRole("button", { name: `Show image 2 of ${heroSlideCount}` });

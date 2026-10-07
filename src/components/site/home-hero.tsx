@@ -15,7 +15,6 @@ export async function HomeHero() {
   // Chosen in Admin → Hero slides; the launch photos until the owner picks some.
   const [t, slides] = await Promise.all([getTranslations(), getHeroSlides(locale)]);
   const total = slides.length;
-  const trust = [t("Home.trustYears"), t("Home.trustEvents"), t("Home.trustLocation")];
 
   return (
     // -mt-16 slides the hero under the transparent sticky header (h-16).
@@ -29,19 +28,7 @@ export async function HomeHero() {
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-black/60 via-black/40 to-black/75" />
 
       <div className="text-paper mx-auto w-full max-w-4xl px-4 pt-28 pb-36 text-center sm:px-6">
-        <ul className="border-paper/25 text-paper/85 mx-auto inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-2xl border bg-black/20 px-4 py-1.5 text-[0.65rem] font-medium tracking-[0.2em] uppercase backdrop-blur-sm sm:rounded-full sm:text-xs">
-          {trust.map((item, index) => (
-            <li key={item} className="flex items-center gap-3">
-              {index > 0 && <span aria-hidden className="bg-paper/30 h-3 w-px" />}
-              {index === 0 && (
-                <span aria-hidden className="bg-gold-gradient size-1.5 rounded-full" />
-              )}
-              {item}
-            </li>
-          ))}
-        </ul>
-
-        <h1 className="[&_em]:text-gold-light mt-8 text-5xl leading-[1.05] sm:text-7xl">
+        <h1 className="[&_em]:text-gold-light text-5xl leading-[1.05] sm:text-7xl">
           {t.rich("Home.heroTitle", {
             accent: (chunks) => <em className="font-heading italic">{chunks}</em>,
           })}
