@@ -124,6 +124,8 @@ test.describe("accessibility (axe, WCAG 2.1 AA)", () => {
       "/admin/services/new",
       "/admin/services/wedding",
       "/admin/services/wedding/photo",
+      "/admin/hero",
+      "/admin/hero/add",
       "/admin/team",
       "/admin/audit",
     ]) {

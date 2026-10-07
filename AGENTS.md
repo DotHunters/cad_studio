@@ -152,7 +152,7 @@ pnpm photos           # assets/ originals → compressed WebP in public/photos +
     - `--brand-muted` `#6B6B6B` → shadcn `--muted-foreground` (5.0:1 on paper)
     - Dark theme via `.dark` class on `<html>`.
     - **Gold gradient (owner-supplied)** in `--brand-gold-gradient`: two radial gradients (`#FEDB37 → #FDB931 → #9F7928 → #8A6E2F` from bottom-right over `#FFFFFF → #FFFFAC → #D1B464 → #5D4A1F` from top-left). Utilities: `bg-gold-gradient` = exact gradient for lines, rules and decorative accents (never put text on it — worst case 2.9:1 with ink); `bg-gold-button` = same gradient under a 25% white tint with `--brand-ink` text (worst case 5.1:1, AA) for all primary buttons (shadcn `Button` default variant).
-  - **Design patterns** (owner shared chanthans.com as a reference — borrow layout ideas only, never its copy, photos or branding): transparent header over the home hero that turns solid on scroll; small uppercase letter-spaced nav and labels; centred hero with a trust pill (facts only), serif headline with one italic gold accent word, pill CTAs (`Button size="cta"`), slide indicators and a scroll cue; `SectionHeading` (eyebrow + gold rule + serif title with `<Accent>` word + intro) on every section; split intro statement with owner signature; dark "why us" band with icon cards and stats; inline "ready to book" bar; portfolio grid with "view all"; reviews carousel; split image + enquiry form on contact.
+  - **Design patterns** (owner shared chanthans.com as a reference — borrow layout ideas only, never its copy, photos or branding): transparent header over the home hero that turns solid on scroll; small uppercase letter-spaced nav and labels; centred hero (no trust pill — owner decision 2026-10-06), serif headline with one italic gold accent word, pill CTAs (`Button size="cta"`), slide indicators and a scroll cue; `SectionHeading` (eyebrow + gold rule + serif title with `<Accent>` word + intro) on every section; split intro statement with owner signature; dark "why us" band with icon cards and stats; inline "ready to book" bar; portfolio grid with "view all"; reviews carousel; split image + enquiry form on contact.
   - Typography: serif display (e.g. *Cormorant Garamond* / *Playfair Display*) for headings, clean sans (*Inter*) for body, via `next/font`.
   - Generous white space, full-bleed imagery, subtle motion (fade/slide ≤ 300 ms; respect `prefers-reduced-motion`).
 - Support **light and dark** themes.
@@ -163,7 +163,7 @@ pnpm photos           # assets/ originals → compressed WebP in public/photos +
 ## 6. Pages & acceptance criteria
 
 ### 6.1 Home `/`
-- Full-bleed hero (rotating 3–5 best images) + headline + two CTAs: **Get a Quote**, **Book a Date**.
+- Full-bleed hero (rotating 3–5 best images, chosen in Admin → Hero slides; launch photos until then) + headline + two CTAs: **Get a Quote**, **Book a Date**.
 - Service category tiles (6) linking to packages.
 - "Trusted locally and globally" strip — client logos (with permission) + stats (years, events, countries).
 - Featured portfolio (3–6 case studies).
@@ -236,7 +236,7 @@ pnpm photos           # assets/ originals → compressed WebP in public/photos +
 
 ### 6.10 Admin `/admin`
 - Dashboard: upcoming bookings, new quotes, pending reviews, monthly revenue estimate.
-- CRUD: services, packages, add-ons, pricing rules, tax rates, portfolio projects, gallery images (bulk upload, tagging, reorder), reviews (approve/reject/feature), blocked dates & capacity.
+- CRUD: hero slides, services, packages, add-ons, pricing rules, tax rates, portfolio projects, gallery images (bulk upload, tagging, reorder), reviews (approve/reject/feature), blocked dates & capacity.
 - Bookings: list + calendar view, status changes (`PENDING → CONFIRMED → COMPLETED` / `CANCELLED`), assign photographers, export CSV, `.ics` download.
 - Quotes: list, convert to booking, adjust and re-send.
 - Audit log of admin changes.
