@@ -72,6 +72,7 @@ describe("eventEnquirySchema", () => {
     expect(errorsFor({ ...valid, eventDate: "2026-10-31" })).toEqual({ eventDate: "pastDate" });
     expect(eventEnquirySchema.safeParse({ ...valid, eventDate: "2026-11-01" }).success).toBe(true);
     expect(errorsFor({ ...valid, eventDate: "next June" })).toEqual({ eventDate: "invalidDate" });
+    expect(errorsFor({ ...valid, eventDate: "2026-02-30" })).toEqual({ eventDate: "invalidDate" });
   });
 
   it("checks the guest count range", () => {

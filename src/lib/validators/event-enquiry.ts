@@ -1,3 +1,4 @@
+import { isValid, parse } from "date-fns";
 import * as z from "zod";
 
 import { studioDateKey } from "@/lib/dates";
@@ -20,6 +21,9 @@ export const EVENT_BUDGETS = ["under5k", "5to10k", "10to25k", "over25k"] as cons
 const PHONE = /^[+\d][\d\s().-]{6,19}$/;
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
+const isRealDate = (value: string) =>
+  ISO_DATE.test(value) && isValid(parse(value, "yyyy-MM-dd", new Date()));
+
 const emptyToUndefined = (value: string | undefined) => (value ? value : undefined);
 
 export const eventEnquirySchema = z.object({
@@ -37,10 +41,10 @@ export const eventEnquirySchema = z.object({
     .trim()
     .optional()
     .transform(emptyToUndefined)
-    .refine((value) => value === undefined || ISO_DATE.test(value), "invalidDate")
+    .refine((value) => value === undefined || isRealDate(value), "invalidDate")
     // Same-day enquiries are allowed; compared as studio-local calendar dates.
     .refine(
-      (value) => value === undefined || !ISO_DATE.test(value) || value >= studioDateKey(new Date()),
+      (value) => value === undefined || !isRealDate(value) || value >= studioDateKey(new Date()),
       "pastDate",
     ),
   guestCount: z
