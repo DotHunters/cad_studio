@@ -270,6 +270,8 @@ export function EventEnquiryForm() {
                 type="checkbox"
                 value={service}
                 className="accent-gold size-4"
+                aria-invalid={errors.services ? true : undefined}
+                aria-describedby={errors.services ? "event-services-error" : undefined}
                 {...register("services")}
               />
               {t(`serviceOptions.${service}`)}
