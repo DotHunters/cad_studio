@@ -56,6 +56,16 @@ describe("sendEventEnquiryEmails", () => {
     }
   });
 
+  it("strips line breaks from the name in the studio subject", async () => {
+    sendEmail.mockResolvedValue({ sent: true, id: "x" });
+    await sendEventEnquiryEmails({ ...data, name: "Alex\r\nBcc: x@evil.example" }, "en");
+    const subject = sendEmail.mock.calls[0][0].subject as string;
+    expect(subject).toBe(
+      "[CAD Studio Photography] New event enquiry from Alex Bcc: x@evil.example",
+    );
+    expect(subject).not.toMatch(/[\r\n]/);
+  });
+
   it("sends the client a confirmation in their locale", async () => {
     sendEmail.mockResolvedValue({ sent: true, id: "x" });
     await sendEventEnquiryEmails(data, "fr");

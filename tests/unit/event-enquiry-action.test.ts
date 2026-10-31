@@ -7,7 +7,8 @@ const sendEventEnquiryEmails = vi.fn();
 vi.mock("next/headers", () => ({
   headers: async () => new Headers({ "x-forwarded-for": "203.0.113.7" }),
 }));
-vi.mock("next-intl/server", () => ({ getLocale: async () => "fr" }));
+const getLocale = vi.fn();
+vi.mock("next-intl/server", () => ({ getLocale: () => getLocale() }));
 vi.mock("@/server/rate-limit", () => ({ isRateLimited: (...a: unknown[]) => isRateLimited(...a) }));
 vi.mock("@/lib/turnstile", () => ({
   verifyTurnstile: (...a: unknown[]) => verifyTurnstile(...a),
@@ -34,6 +35,7 @@ const valid = {
 
 describe("submitEventEnquiry", () => {
   beforeEach(() => {
+    getLocale.mockReset().mockResolvedValue("fr");
     isRateLimited.mockReset().mockResolvedValue(false);
     verifyTurnstile.mockReset().mockResolvedValue(true);
     sendEventEnquiryEmails.mockReset().mockResolvedValue(undefined);
@@ -47,6 +49,12 @@ describe("submitEventEnquiry", () => {
     const [data, locale] = sendEventEnquiryEmails.mock.calls[0];
     expect(locale).toBe("fr");
     expect(data).toMatchObject({ name: "Alex Martin", services: ["management"] });
+  });
+
+  it("falls back to English for an unsupported locale", async () => {
+    getLocale.mockResolvedValue("de");
+    expect(await submitEventEnquiry(valid, "token")).toEqual({ ok: true });
+    expect(sendEventEnquiryEmails.mock.calls[0][1]).toBe("en");
   });
 
   it("fakes success for bots that fill the honeypot", async () => {

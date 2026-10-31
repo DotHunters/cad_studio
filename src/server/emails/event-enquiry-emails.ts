@@ -18,7 +18,7 @@ export async function sendEventEnquiryEmails(data: EventEnquiryData, locale: Loc
   await sendEmail({
     to: adminNotifyAddress(),
     replyTo: data.email,
-    subject: `[${siteConfig.name}] New event enquiry from ${data.name}`,
+    subject: `[${siteConfig.name}] New event enquiry from ${data.name.replace(/[\r\n\t\u0000-\u001f]+/g, " ")}`,
     text: [
       `Name: ${data.name}`,
       `Email: ${data.email}`,

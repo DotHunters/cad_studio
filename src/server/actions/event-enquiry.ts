@@ -43,7 +43,8 @@ export async function submitEventEnquiry(
   }
 
   try {
-    await sendEventEnquiryEmails(parsed.data, (await getLocale()) as Locale);
+    const locale: Locale = (await getLocale()) === "fr" ? "fr" : "en";
+    await sendEventEnquiryEmails(parsed.data, locale);
     return { ok: true };
   } catch (error) {
     console.error("[events] failed to send enquiry", error);
