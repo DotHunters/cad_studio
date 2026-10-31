@@ -73,6 +73,7 @@
   },
   "Nav": {
     "packages": "Forfaits",
+    "events": "Événements",
     "portfolio": "Portfolio",
     "gallery": "Galerie",
     "reviews": "Avis",
@@ -225,6 +226,139 @@
     "phoneLabel": "Téléphone",
     "followLabel": "Suivez-nous",
     "quoteCta": "Obtenir un devis instantané"
+  },
+  "Events": {
+    "metaTitle": "Événements",
+    "metaDescription": "Événements par CAD : gestion d’événements, décoration, traiteur, éclairage et sonorisation, avec photo et vidéo par CAD Studio Photography. Toronto, partout au Canada et au Sri Lanka.",
+    "eyebrow": "Événements par CAD",
+    "title": "Votre événement, <accent>entre bonnes mains</accent>",
+    "intro": "Une seule équipe pour planifier, décorer, nourrir, éclairer et immortaliser votre événement — pour que vous en profitiez.",
+    "cta": "Planifier votre événement",
+    "servicesEyebrow": "Nos services",
+    "servicesTitle": "Tout ce dont votre événement a <accent>besoin</accent>",
+    "servicesIntro": "Choisissez un service ou confiez-nous toute la journée.",
+    "services": {
+      "management": {
+        "title": "Gestion d’événements",
+        "body": "Planification, coordination des fournisseurs et déroulement clair, avec une personne responsable le jour J."
+      },
+      "decor": {
+        "title": "Décoration",
+        "body": "Thèmes, mise en scène, décoration des tables et les détails qui rendent la salle unique."
+      },
+      "catering": {
+        "title": "Traiteur",
+        "body": "Des menus pensés pour vos invités, vos traditions et votre événement."
+      },
+      "av": {
+        "title": "Éclairage et son",
+        "body": "Éclairage, sonorisation et scène pour que chaque discours soit entendu et chaque moment bien mis en valeur."
+      }
+    },
+    "teamEyebrow": "Une seule équipe",
+    "teamTitle": "Planifier, décorer, <accent>immortaliser</accent>",
+    "teamBody": "Notre fondateur apporte son expérience en gestion d’événements à chaque réservation. Quand la même équipe organise et photographie votre événement, rien n’est laissé au hasard.",
+    "teamPackages": "Voir les forfaits photo",
+    "teamPortfolio": "Voir nos réalisations",
+    "processEyebrow": "Comment ça marche",
+    "processTitle": "Du premier appel à la <accent>dernière danse</accent>",
+    "steps": {
+      "consult": {
+        "title": "Consultation",
+        "body": "Parlez-nous de votre événement, de vos invités et de votre budget."
+      },
+      "plan": {
+        "title": "Planification",
+        "body": "Nous établissons avec vous le plan, l’horaire et les fournisseurs."
+      },
+      "setup": {
+        "title": "Installation",
+        "body": "Décor, éclairage et son sont prêts avant l’arrivée des invités."
+      },
+      "day": {
+        "title": "Le jour J",
+        "body": "Nous gérons l’horaire pendant que vous recevez."
+      },
+      "wrap": {
+        "title": "Après l’événement",
+        "body": "Démontage, puis vos photos et votre vidéo."
+      }
+    },
+    "enquireEyebrow": "Planifier votre événement",
+    "enquireTitle": "Parlez-nous de votre <accent>événement</accent>",
+    "enquireIntro": "Donnez-nous quelques détails et nous vous recontacterons pour en discuter.",
+    "teaserTitle": "Bien plus que la <accent>photographie</accent>",
+    "teaserBody": "Gestion d’événements, décoration, traiteur, éclairage et son — par l’équipe derrière l’objectif.",
+    "teaserCta": "Découvrir nos services d’événements",
+    "form": {
+      "name": "Nom",
+      "email": "Courriel",
+      "phone": "Téléphone (facultatif)",
+      "eventType": "Type d’événement",
+      "selectType": "Choisissez…",
+      "eventTypes": {
+        "wedding": "Mariage",
+        "corporate": "Événement d’entreprise",
+        "birthday": "Anniversaire ou fête de famille",
+        "cultural": "Événement culturel ou communautaire",
+        "other": "Autre chose"
+      },
+      "eventDate": "Date de l’événement (facultatif)",
+      "guestCount": "Nombre d’invités (facultatif)",
+      "city": "Ville",
+      "services": "De quoi avez-vous besoin?",
+      "serviceOptions": {
+        "management": "Gestion d’événements",
+        "decor": "Décoration",
+        "catering": "Traiteur",
+        "av": "Éclairage et son",
+        "photo": "Photographie",
+        "video": "Vidéographie"
+      },
+      "budget": "Budget (facultatif)",
+      "budgetNone": "Je ne sais pas encore",
+      "budgets": {
+        "under5k": "Moins de 5 000 $",
+        "5to10k": "5 000 $ à 10 000 $",
+        "10to25k": "10 000 $ à 25 000 $",
+        "over25k": "Plus de 25 000 $"
+      },
+      "message": "Parlez-nous de votre événement",
+      "honeypot": "Laissez ce champ vide",
+      "privacyNotice": "Nous utilisons ces renseignements uniquement pour répondre à votre demande. Consultez notre <privacy>politique de confidentialité</privacy>.",
+      "submit": "Envoyer la demande",
+      "sending": "Envoi…",
+      "successTitle": "Merci — demande envoyée",
+      "successBody": "Nous vous avons envoyé une copie par courriel et vous recontacterons bientôt.",
+      "sendAnother": "Envoyer une autre demande",
+      "serverError": "Un problème est survenu et votre demande n’a pas été envoyée. Réessayez ou écrivez-nous à {email}.",
+      "captchaError": "Nous n’avons pas pu vérifier que vous êtes une personne. Veuillez réessayer.",
+      "errors": {
+        "required": "Ce champ est obligatoire.",
+        "invalidEmail": "Entrez une adresse courriel valide.",
+        "invalidPhone": "Entrez un numéro de téléphone valide.",
+        "invalidDate": "Entrez une date valide.",
+        "pastDate": "Choisissez aujourd’hui ou une date future.",
+        "invalidGuests": "Entrez un nombre entier entre 1 et 5 000.",
+        "chooseService": "Choisissez au moins un service.",
+        "messageTooShort": "Veuillez écrire au moins 10 caractères.",
+        "tooLong": "C’est trop long.",
+        "spam": "Veuillez laisser ce champ vide."
+      }
+    },
+    "email": {
+      "subject": "Nous avons reçu votre demande d’événement",
+      "preview": "Merci de nous avoir parlé de votre événement",
+      "heading": "Votre demande est reçue",
+      "greeting": "Bonjour {name},",
+      "intro": "Merci d’avoir contacté Événements par CAD. Voici une copie de votre demande; nous vous répondrons par courriel.",
+      "eventTypeLabel": "Événement",
+      "dateLabel": "Date",
+      "cityLabel": "Ville",
+      "servicesLabel": "Services",
+      "dateNotSet": "À déterminer",
+      "footer": "CAD Studio Photography · Toronto"
+    }
   },
   "Legal": {
     "privacyTitle": "Politique de confidentialité",
