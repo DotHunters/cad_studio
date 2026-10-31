@@ -11,10 +11,24 @@ export type FilterOption = {
 };
 
 /** A labelled row of filter chips rendered as links, so filtering works without JavaScript. */
-export function FilterGroup({ label, options }: { label: string; options: FilterOption[] }) {
+export function FilterGroup({
+  label,
+  options,
+  hideLabel = false,
+}: {
+  label: string;
+  options: FilterOption[];
+  /** Keep the label for screen readers only (a single filter row needs no visible label). */
+  hideLabel?: boolean;
+}) {
   return (
     <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-      <span className="text-muted-foreground w-24 shrink-0 text-xs tracking-[0.2em] uppercase">
+      <span
+        className={cn(
+          "text-muted-foreground w-24 shrink-0 text-xs tracking-[0.2em] uppercase",
+          hideLabel && "sr-only",
+        )}
+      >
         {label}
       </span>
       <ul className="flex gap-2 overflow-x-auto pb-1 sm:flex-wrap">

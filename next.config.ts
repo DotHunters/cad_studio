@@ -19,6 +19,8 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "res.cloudinary.com" },
       // Photos uploaded in admin (Vercel Blob).
       { protocol: "https", hostname: "*.public.blob.vercel-storage.com" },
+      // Home showreel poster (YouTube thumbnail).
+      { protocol: "https", hostname: "i.ytimg.com" },
     ],
   },
 };

@@ -49,7 +49,10 @@ export const siteConfig = {
     instagram: "https://www.instagram.com/cadstudio/" as string | null,
     facebook: "https://www.facebook.com/cad.photos.54" as string | null,
     tiktok: null as string | null,
+    youtube: "https://www.youtube.com/@Cadstudiophotography" as string | null,
   },
+  // Home showreel (owner-supplied, 2026-10). YouTube video id; null hides the section.
+  showreelYoutubeId: "WbV1fdzC310" as string | null,
   // Trust-strip stats. Only owner-confirmed numbers; null hides the stat (AGENTS.md §13).
   stats: {
     yearsExperience: 10 as number | null,

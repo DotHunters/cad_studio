@@ -6,13 +6,12 @@ import type { ReactNode } from "react";
 import { LightboxGrid } from "@/components/gallery/lightbox-grid";
 import { FilterGroup } from "@/components/site/filter-group";
 import { JsonLd } from "@/components/site/json-ld";
-import { Accent, SectionHeading } from "@/components/site/section-heading";
+import { Accent } from "@/components/site/section-heading";
 import { buttonVariants } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { siteConfig } from "@/config/site";
 import {
   filterGallery,
-  galleryCategories,
   galleryHref,
   galleryTags,
   paginateGallery,
@@ -24,7 +23,6 @@ import { imageGalleryJsonLd } from "@/lib/seo/json-ld";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { cn } from "@/lib/utils";
 import { getGalleryImages } from "@/server/queries/gallery";
-import { getActiveServiceOptions } from "@/server/queries/services";
 
 type Props = {
   params: Promise<{ locale: Locale }>;
@@ -42,34 +40,24 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
 }
 
-/** Gallery (AGENTS.md §6.4): masonry grid, category/tag filters, "load more". */
+/**
+ * Gallery (AGENTS.md §6.4): full-width masonry grid under a minimal header, theme (tag)
+ * filter only — the service filter is hidden (owner decision 2026-10-31) — and "load more".
+ */
 export default async function GalleryPage({ params, searchParams }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const parsed = parseGalleryFilters(await searchParams);
+  // Only the theme filter is offered, so a ?category from old links is ignored.
+  const filters = { ...parseGalleryFilters(await searchParams), category: null };
 
-  const [t, images, services] = await Promise.all([
-    getTranslations(),
-    getGalleryImages(),
-    getActiveServiceOptions(locale),
-  ]);
-  // An archived or unknown ?category falls back to "All".
-  const filters = {
-    ...parsed,
-    category: services.some((s) => s.slug === parsed.category) ? parsed.category : null,
-  };
-  const serviceLabels = new Map(services.map((s) => [s.slug, s.name]));
+  const [t, images] = await Promise.all([getTranslations(), getGalleryImages()]);
   const matching = filterGallery(images, filters);
   const { items, hasMore } = paginateGallery(matching, filters.page);
   const tags = galleryTags(images);
-  const categories = galleryCategories(
-    images,
-    services.map((s) => s.slug),
-  );
-  const hasFilters = Boolean(filters.category || filters.tag);
+  const hasFilters = Boolean(filters.tag);
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
+    <div className="px-2 pt-10 pb-16 sm:px-4 sm:pt-14 sm:pb-24 lg:px-6">
       <JsonLd
         data={imageGalleryJsonLd({
           baseUrl: siteConfig.url,
@@ -85,37 +73,23 @@ export default async function GalleryPage({ params, searchParams }: Props) {
           })),
         })}
       />
-      <SectionHeading
-        as="h1"
-        align="center"
-        eyebrow={t("Gallery.eyebrow")}
-        title={t.rich("Gallery.title", {
-          accent: (chunks: ReactNode) => <Accent>{chunks}</Accent>,
-        })}
-        intro={t("Gallery.intro")}
-      />
+      <header className="flex flex-col gap-2 px-2 sm:flex-row sm:items-end sm:justify-between sm:px-0">
+        <h1 className="text-4xl leading-none sm:text-5xl">
+          {t.rich("Gallery.title", { accent: (chunks: ReactNode) => <Accent>{chunks}</Accent> })}
+        </h1>
+        <p role="status" className="text-muted-foreground text-sm">
+          {t("Gallery.count", { shown: items.length, total: matching.length })}
+        </p>
+      </header>
 
-      <nav aria-label={t("Gallery.filtersLabel")} className="mt-12 space-y-3 border-y py-5">
-        <FilterGroup
-          label={t("Gallery.category")}
-          options={[
-            {
-              key: "all",
-              label: t("Gallery.all"),
-              active: !filters.category,
-              href: galleryHref(filters, { category: null }),
-            },
-            ...categories.map((slug) => ({
-              key: slug,
-              label: serviceLabels.get(slug) ?? slug,
-              active: filters.category === slug,
-              href: galleryHref(filters, { category: slug }),
-            })),
-          ]}
-        />
-        {tags.length > 1 && (
+      {tags.length > 1 && (
+        <nav
+          aria-label={t("Gallery.filtersLabel")}
+          className="bg-background/90 sticky top-16 z-20 mt-6 border-y px-2 py-3 backdrop-blur sm:px-0"
+        >
           <FilterGroup
             label={t("Gallery.tag")}
+            hideLabel
             options={[
               {
                 key: "all",
@@ -131,12 +105,8 @@ export default async function GalleryPage({ params, searchParams }: Props) {
               })),
             ]}
           />
-        )}
-      </nav>
-
-      <p role="status" className="text-muted-foreground mt-6 text-sm">
-        {t("Gallery.count", { shown: items.length, total: matching.length })}
-      </p>
+        </nav>
+      )}
 
       {items.length > 0 ? (
         // CSS columns give a masonry layout while keeping each image's real aspect ratio.
@@ -145,12 +115,12 @@ export default async function GalleryPage({ params, searchParams }: Props) {
             ...image,
             alt: localize(image.alt, image.altFr, locale),
           }))}
-          className="mt-6 gap-4 sm:columns-2 lg:columns-3 [&>li]:mb-4"
-          itemClassName="bg-muted break-inside-avoid overflow-hidden rounded-lg"
+          className="mt-4 columns-2 gap-2 sm:mt-6 sm:columns-3 sm:gap-3 lg:columns-4 2xl:columns-5 [&>li]:mb-2 sm:[&>li]:mb-3"
+          itemClassName="bg-muted break-inside-avoid overflow-hidden rounded-sm"
           imageClassName="h-auto w-full"
-          sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+          sizes="(min-width: 1536px) 20vw, (min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
           // First row loads eagerly for a fast LCP; the rest lazy-load.
-          priorityCount={3}
+          priorityCount={4}
         />
       ) : (
         <div className="mt-16 text-center">

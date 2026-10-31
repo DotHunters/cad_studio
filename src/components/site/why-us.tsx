@@ -1,18 +1,14 @@
 import { CalendarCheck, Camera, Globe2 } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 
-import { buttonVariants } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
-import { Link } from "@/i18n/navigation";
 import { photos } from "@/lib/photos";
-import { cn } from "@/lib/utils";
 import { getClientNames } from "@/server/queries/home";
 
-import { ctaNav } from "./nav-items";
 import { SectionBackdrop } from "./section-backdrop";
 import { Accent, SectionHeading } from "./section-heading";
 
-/** Dark "why us" band: reasons, owner-confirmed stats, trusted-by names and a booking bar. */
+/** Dark "why us" band: reasons, owner-confirmed stats, and trusted-by names. */
 export async function WhyUs() {
   const [t, format] = await Promise.all([getTranslations(), getFormatter()]);
   const clientNames = await getClientNames();
@@ -90,15 +86,6 @@ export async function WhyUs() {
             </ul>
           </div>
         )}
-
-        <div className="border-paper/10 mt-16 flex flex-col items-center justify-between gap-5 rounded-xl border bg-white/[0.03] px-7 py-6 sm:flex-row">
-          <p className="font-heading [&_em]:text-gold-light text-2xl italic">
-            {t.rich("Home.readyTitle", { accent: (chunks) => <em>{chunks}</em> })}
-          </p>
-          <Link href={ctaNav.book.href} className={cn(buttonVariants({ size: "cta" }))}>
-            {t(`Nav.${ctaNav.book.key}`)}
-          </Link>
-        </div>
       </div>
     </section>
   );

@@ -52,9 +52,3 @@ export function filterHref(current: PortfolioFilters, change: Partial<PortfolioF
 export function projectPlace(project: { city: string | null; country: string }): string {
   return [project.city, project.country].filter(Boolean).join(", ");
 }
-
-/** Distinct known years, newest first (projects without a year are left out). */
-export function projectYears(projects: readonly { year: number | null }[]): number[] {
-  const years = projects.map((project) => project.year).filter((year) => year !== null);
-  return [...new Set(years)].sort((a, b) => b - a);
-}

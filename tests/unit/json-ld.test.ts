@@ -37,6 +37,7 @@ describe("businessJsonLd", () => {
     expect(ld.sameAs).toEqual([
       "https://www.instagram.com/cadstudio/",
       "https://www.facebook.com/cad.photos.54",
+      "https://www.youtube.com/@Cadstudiophotography",
     ]);
   });
 });
