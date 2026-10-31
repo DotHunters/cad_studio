@@ -24,6 +24,7 @@ const PUBLIC_PAGES = [
   "/en",
   "/en/packages",
   "/en/packages/wedding",
+  "/en/events",
   "/en/portfolio",
   "/en/portfolio/sample-northwind-annual-summit",
   "/en/gallery",
