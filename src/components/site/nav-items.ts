@@ -6,6 +6,7 @@ export type NavItem = { key: NavKey; href: string };
 
 export const mainNav: NavItem[] = [
   { key: "packages", href: "/packages" },
+  { key: "events", href: "/events" },
   { key: "portfolio", href: "/portfolio" },
   { key: "gallery", href: "/gallery" },
   { key: "reviews", href: "/reviews" },

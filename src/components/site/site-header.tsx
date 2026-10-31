@@ -26,7 +26,7 @@ export function SiteHeader() {
           <Logo alt={t("Common.logoAlt")} className="h-12" priority />
         </Link>
 
-        <nav aria-label={t("Common.mainNav")} className="hidden md:block">
+        <nav aria-label={t("Common.mainNav")} className="hidden lg:block">
           <ul className="flex items-center gap-1 lg:gap-4">
             {items.map((item) => (
               <li key={item.href}>

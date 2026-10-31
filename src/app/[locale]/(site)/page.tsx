@@ -3,6 +3,7 @@ import { setRequestLocale } from "next-intl/server";
 import { use } from "react";
 
 import { CategoryTiles } from "@/components/site/category-tiles";
+import { EventsTeaser } from "@/components/site/events-teaser";
 import { FeaturedPortfolio } from "@/components/site/featured-portfolio";
 import { FinalCta } from "@/components/site/final-cta";
 import { HomeHero } from "@/components/site/home-hero";
@@ -29,6 +30,7 @@ export default function HomePage({ params }: Props) {
       <HomeHero />
       <HomeIntro />
       <CategoryTiles />
+      <EventsTeaser />
       <WhyUs />
       <FeaturedPortfolio />
       <ReviewsCarousel />
