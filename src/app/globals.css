@@ -177,6 +177,9 @@
   }
   html {
     @apply font-sans;
+    /* Anchor links glide; offset clears the sticky header (h-16). Reduced motion turns it off below. */
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
   }
   h1,
   h2,
@@ -204,6 +207,21 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* Lenis (components/site/smooth-scroll.tsx): it drives the scroll, so native smoothing steps aside. */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
 }
 
 /*

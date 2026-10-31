@@ -121,6 +121,7 @@ export function LightboxGrid({
 
       <dialog
         ref={dialogRef}
+        data-lenis-prevent
         aria-label={t("dialog")}
         onKeyDown={onKeyDown}
         onClose={() => {
