@@ -71,21 +71,38 @@ test.describe("home page", () => {
     );
   });
 
-  test("why-us band shows confirmed stats and lists clients", async ({ page }) => {
+  test("why-us band shows cards on desktop, stats on phones, and lists clients", async ({
+    page,
+    isMobile,
+  }) => {
     await page.goto("/en");
     const band = page.getByRole("region", { name: /Planned like an event/ });
-    await expect(band.getByText("Events photographed", { exact: true })).toBeVisible();
-    await expect(band.getByText("2,000+", { exact: true })).toBeVisible();
-    // Countries is an exact count, so no "+".
-    await expect(band.getByText("2", { exact: true })).toBeVisible();
+    const stats = band.getByText("Events photographed", { exact: true });
+    const card = band.getByRole("heading", { name: "2,000+ occasions captured" });
+    if (isMobile) {
+      await expect(stats).toBeVisible();
+      await expect(band.getByText("2,000+", { exact: true })).toBeVisible();
+      // Countries is an exact count, so no "+".
+      await expect(band.getByText("2", { exact: true })).toBeVisible();
+      await expect(card).toBeHidden();
+    } else {
+      await expect(card).toBeVisible();
+      await expect(stats).toBeHidden();
+    }
     await expect(band.getByText("Northwind Corp (Sample)")).toBeVisible();
   });
 
   test("featured portfolio shows the studio's real work before samples", async ({ page }) => {
     await page.goto("/en");
     const portfolio = page.getByRole("region", { name: /Stories we've told/ });
-    await expect(portfolio.getByRole("listitem")).toHaveCount(3);
+    // Six featured photo groups (scripts/photos.config.mjs) fill the row before any sample.
+    await expect(portfolio.getByRole("listitem")).toHaveCount(6);
     await expect(portfolio.getByText("Sample", { exact: true })).toHaveCount(0);
+    // The row scrolls sideways; the arrows page through it.
+    const previous = portfolio.getByRole("button", { name: "Previous projects" });
+    await expect(previous).toBeDisabled();
+    await portfolio.getByRole("button", { name: "More projects" }).click();
+    await expect(previous).toBeEnabled();
     await expect(portfolio.getByRole("link", { name: "View all work" })).toHaveAttribute(
       "href",
       "/en/portfolio",

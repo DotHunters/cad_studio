@@ -9,14 +9,14 @@ import { cn } from "@/lib/utils";
 
 import { Accent } from "./section-heading";
 
-/** Split intro: statement on the left, owner note and signature on the right (AGENTS.md §6.1). */
+/** Split intro: statement on the left, owner (photo, name, role) above their note on the right (AGENTS.md §6.1). */
 export function HomeIntro() {
   const t = useTranslations("Home");
 
   return (
     <section
       aria-labelledby="intro-title"
-      className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28"
+      className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:py-16"
     >
       <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-20">
         <div>
@@ -29,9 +29,9 @@ export function HomeIntro() {
           </h2>
         </div>
 
-        <div className="border-border border-y py-8">
-          <div className="flex items-start gap-5">
-            {/* Decorative: the owner's name follows right below. */}
+        <div className="border-border border-t pt-8 lg:border-b lg:pb-8">
+          <div className="flex items-center gap-5">
+            {/* Decorative: the owner's name is right beside it. */}
             <Image
               src={photos.owner[0].src}
               alt=""
@@ -42,14 +42,14 @@ export function HomeIntro() {
               blurDataURL={photos.owner[0].blurDataUrl}
               className="size-20 shrink-0 rounded-full object-cover object-top"
             />
-            <p className="text-muted-foreground leading-relaxed">{t("introBody")}</p>
+            <div>
+              <p className="font-heading text-2xl italic">{siteConfig.owner.name}</p>
+              <p className="text-muted-foreground mt-1 text-xs tracking-[0.2em] uppercase">
+                {t("introRole")} · {siteConfig.location.region}
+              </p>
+            </div>
           </div>
-          <div className="mt-6">
-            <p className="font-heading text-2xl italic">{siteConfig.owner.name}</p>
-            <p className="text-muted-foreground mt-1 text-xs tracking-[0.2em] uppercase">
-              {t("introRole")} · {siteConfig.location.region}
-            </p>
-          </div>
+          <p className="text-muted-foreground mt-6 leading-relaxed">{t("introBody")}</p>
           <Link
             href="/about"
             className={cn(buttonVariants({ variant: "outline", size: "cta" }), "mt-8")}

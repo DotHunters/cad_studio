@@ -10,18 +10,11 @@ import { SESSION_MAX_AGE_SECONDS, signOut } from "@/auth";
 import { hashPassword, verifyPassword } from "@/lib/auth/password";
 import { passwordSchema } from "@/lib/auth/password-rules";
 import { CHANGE_PASSWORD_PATH, safeCallbackUrl, SIGN_IN_PATH } from "@/lib/auth/roles";
-import { checkSuperAdmin, isSuperAdminEmail } from "@/lib/auth/super-admin";
 import { db } from "@/lib/db";
+import { adminCredentialsSchema } from "@/lib/validators/admin/credentials";
+import { verifyAdminCredentials } from "@/server/auth/credentials";
 import { currentAdmin } from "@/server/auth/guards";
 import { isRateLimited } from "@/server/rate-limit";
-
-const credentialsSchema = z.object({
-  email: z.string().trim().toLowerCase().pipe(z.email().max(254)),
-  password: z.string().min(1).max(128),
-});
-
-// Compared against when the email is unknown, so a miss takes as long as a wrong password.
-const DUMMY_HASH = hashPassword("dummy password for timing");
 
 /** Creates a database session and sets the Auth.js cookie, as Auth.js would after sign-in. */
 async function startSession(userId: string) {
@@ -49,7 +42,7 @@ export async function signInWithPassword(formData: FormData): Promise<void> {
   const fail = (error: string) =>
     redirect(`${SIGN_IN_PATH}?error=${error}&callbackUrl=${encodeURIComponent(callbackUrl)}`);
 
-  const parsed = credentialsSchema.safeParse({
+  const parsed = adminCredentialsSchema.safeParse({
     email: formData.get("email") ?? "",
     password: formData.get("password") ?? "",
   });
@@ -60,36 +53,13 @@ export async function signInWithPassword(formData: FormData): Promise<void> {
     fail("TooManyRequests");
   }
 
-  let userId: string | null = null;
-  let mustChangePassword = false;
-  if (checkSuperAdmin(email, password)) {
-    // The super admin's account row is created on first sign-in and always restored.
-    const upsert = () =>
-      db.user.upsert({
-        where: { email },
-        update: { role: "ADMIN", isActive: true, mustChangePassword: false, passwordHash: null },
-        create: { email, name: "Super admin", role: "ADMIN" },
-        select: { id: true },
-      });
-    // Two first sign-ins at once: the loser's insert hits the unique email, then updates.
-    userId = (await upsert().catch(upsert)).id;
-  } else if (!isSuperAdminEmail(email)) {
-    const user = await db.user.findUnique({
-      where: { email },
-      select: { id: true, isActive: true, passwordHash: true, mustChangePassword: true },
-    });
-    const valid = await verifyPassword(password, user?.passwordHash ?? (await DUMMY_HASH));
-    if (user?.isActive && user.passwordHash && valid) {
-      userId = user.id;
-      mustChangePassword = user.mustChangePassword;
-    }
-  }
   // One message for unknown, deactivated and wrong-password, so nobody learns who has access.
-  if (!userId) fail("CredentialsSignin");
+  const user = await verifyAdminCredentials(email, password);
+  if (!user) fail("CredentialsSignin");
 
-  await startSession(userId!);
+  await startSession(user!.id);
   redirect(
-    mustChangePassword
+    user!.mustChangePassword
       ? `${CHANGE_PASSWORD_PATH}?callbackUrl=${encodeURIComponent(callbackUrl)}`
       : callbackUrl,
   );

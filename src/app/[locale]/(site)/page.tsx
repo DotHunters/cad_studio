@@ -9,6 +9,7 @@ import { HomeHero } from "@/components/site/home-hero";
 import { HomeIntro } from "@/components/site/home-intro";
 import { JsonLd } from "@/components/site/json-ld";
 import { ReviewsCarousel } from "@/components/site/reviews-carousel";
+import { Showreel } from "@/components/site/showreel";
 import { WhyUs } from "@/components/site/why-us";
 import { siteConfig } from "@/config/site";
 import { businessJsonLd } from "@/lib/seo/json-ld";
@@ -28,9 +29,10 @@ export default function HomePage({ params }: Props) {
       <JsonLd data={businessJsonLd({ baseUrl: siteConfig.url, locale })} />
       <HomeHero />
       <HomeIntro />
+      <Showreel />
+      <FeaturedPortfolio />
       <CategoryTiles />
       <WhyUs />
-      <FeaturedPortfolio />
       <ReviewsCarousel />
       <FinalCta />
     </>

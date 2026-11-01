@@ -6,7 +6,6 @@ import {
   paginateGallery,
   parseGalleryFilters,
   filterGallery,
-  galleryCategories,
   galleryTags,
 } from "@/lib/gallery-filters";
 
@@ -49,23 +48,6 @@ describe("filterGallery", () => {
     expect(filterGallery(images, { category: null, tag: "flat-lay", page: 1 })).toEqual([
       images[2],
     ]);
-  });
-});
-
-const ORDER = ["corporate", "wedding", "family", "gathering", "professional", "product"];
-
-describe("galleryCategories", () => {
-  it("lists only categories with images, in the standard order", () => {
-    expect(galleryCategories(images, ORDER)).toEqual(["wedding", "product"]);
-  });
-
-  it("hides images whose service is not in the service order", () => {
-    expect(galleryCategories(images, ["wedding"])).toEqual(["wedding"]);
-    expect(galleryCategories([{ category: "graduations", tags: [] }], ORDER)).toEqual([]);
-  });
-
-  it("is empty when there are no images", () => {
-    expect(galleryCategories([], ORDER)).toEqual([]);
   });
 });
 

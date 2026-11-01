@@ -24,23 +24,26 @@ test("package → customize quote → change hours and photographers → submit 
   page,
 }, testInfo) => {
   await page.goto("/en/packages/wedding");
-  await page.getByRole("complementary").getByRole("link", { name: "Customize quote" }).click();
-  await expect(page).toHaveURL(/\/en\/quote\?package=wedding$/);
+  await page
+    .getByRole("article", { name: "Signature" })
+    .getByRole("link", { name: "Customize quote" })
+    .click();
+  await expect(page).toHaveURL(/\/en\/quote\?package=wedding&tier=signature$/);
   await expect(page.locator('form[data-hydrated="true"]')).toBeVisible();
-  await expect(page.getByLabel("Package")).toHaveValue("wedding");
+  await expect(page.getByLabel("Package")).toHaveValue("wedding:signature");
 
   await page.getByLabel("Event date").fill(WEEKDAY);
   await expect(page.getByTestId("quote-total")).toHaveText("$3,164.00 CAD");
-  await page.getByLabel("Hours of coverage").fill("10");
+  await page.getByLabel("Hours of coverage").fill("12");
   await page.getByLabel("Photographers").fill("3");
-  // $2,800 + 2 h × $200 + 1 extra × 10 h × $120 = $4,400 + 13% HST
-  await expect(page.getByTestId("quote-total")).toHaveText("$4,972.00 CAD");
+  // $2,800 + 2 h × $200 + 1 extra × 12 h × $120 = $4,640 + 13% HST
+  await expect(page.getByTestId("quote-total")).toHaveText("$5,243.20 CAD");
 
   await page.getByLabel("Name").fill("Scenario One");
   await page.getByLabel("Email").fill(uniqueEmail("s1", testInfo.project.name));
   await page.getByRole("button", { name: "Get my quote" }).click();
   await expect(page.getByText(/^Quote CAD-Q-\d{4}-\d{4,}$/)).toBeVisible();
-  await expect(page.getByTestId("quote-total")).toHaveText("$4,972.00 CAD");
+  await expect(page.getByTestId("quote-total")).toHaveText("$5,243.20 CAD");
 });
 
 test.describe("private quote page", () => {

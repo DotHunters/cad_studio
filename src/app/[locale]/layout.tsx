@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
 import { Toaster } from "sonner";
 
+import { SmoothScroll } from "@/components/site/smooth-scroll";
 import { ThemeProvider } from "@/components/site/theme-provider";
 import { siteConfig } from "@/config/site";
 import { routing } from "@/i18n/routing";
@@ -48,6 +49,8 @@ export default async function LocaleLayout({ children, params }: Props) {
     <html
       lang={locale === "fr" ? "fr-CA" : "en-CA"}
       className={cn("font-sans", inter.variable, cormorant.variable)}
+      // Lets Next.js skip the smooth scroll on route changes (globals.css sets it for anchors).
+      data-scroll-behavior="smooth"
       // next-themes sets the theme class on <html> before hydration.
       suppressHydrationWarning
     >
@@ -66,6 +69,7 @@ export default async function LocaleLayout({ children, params }: Props) {
         >
           <NextIntlClientProvider>{children}</NextIntlClientProvider>
           <Toaster position="top-center" richColors closeButton />
+          <SmoothScroll />
         </ThemeProvider>
       </body>
     </html>

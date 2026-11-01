@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import type { Locale } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
-import { CategoryFilter } from "@/components/packages/category-filter";
-import { PackageCard } from "@/components/packages/package-card";
+import { PackageOptionCard } from "@/components/packages/package-option-card";
+import { PackageTabs } from "@/components/packages/package-tabs";
 import { Accent, SectionHeading } from "@/components/site/section-heading";
 import { Link } from "@/i18n/navigation";
+import { localize } from "@/lib/localize";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { getActivePackages } from "@/server/queries/packages";
-import { getActiveServiceOptions, getServiceNames } from "@/server/queries/services";
+import { getActiveServiceOptions } from "@/server/queries/services";
 
 type Props = {
   params: Promise<{ locale: Locale }>;
@@ -31,18 +32,89 @@ export default async function PackagesPage({ params, searchParams }: Props) {
   setRequestLocale(locale);
   const { category: rawCategory } = await searchParams;
 
-  // Unknown or repeated ?category values fall back to "All".
-  const [t, packages, services, serviceName] = await Promise.all([
+  const [t, packages, services] = await Promise.all([
     getTranslations(),
     getActivePackages(),
     getActiveServiceOptions(locale),
-    getServiceNames(locale),
   ]);
-  const activeSlug =
-    typeof rawCategory === "string" && services.some((s) => s.slug === rawCategory)
+
+  // One tab per service that has packages; tiered packages show each option as its own card.
+  const tabs = services
+    .map((service) => ({ service, items: packages.filter((pkg) => pkg.category === service.slug) }))
+    .map(({ service, items }) => {
+      const tiered = items.filter((pkg) => pkg.tiers.length > 0);
+      const single = items.filter((pkg) => pkg.tiers.length === 0);
+      return {
+        slug: service.slug,
+        label: service.name,
+        hasPackages: items.length > 0,
+        panel: (
+          <div className="space-y-14">
+            {items.length === 0 && (
+              <p className="text-muted-foreground py-6 text-center">{t("Packages.empty")}</p>
+            )}
+            {tiered.map((pkg) => (
+              <section key={pkg.id} aria-labelledby={`package-${pkg.slug}`}>
+                <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
+                  <div>
+                    <h2 id={`package-${pkg.slug}`} className="text-3xl">
+                      {localize(pkg.name, pkg.nameFr, locale)}
+                    </h2>
+                    <p className="text-muted-foreground mt-1 text-sm">
+                      {localize(pkg.summary, pkg.summaryFr, locale)}
+                    </p>
+                  </div>
+                  <Link
+                    href={`/packages/${pkg.slug}`}
+                    className="text-gold-text text-sm underline-offset-4 hover:underline"
+                    aria-describedby={`package-${pkg.slug}`}
+                  >
+                    {t("Packages.details")}
+                  </Link>
+                </div>
+                <ul className="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  {pkg.tiers.map((tier) => (
+                    <li key={tier.key}>
+                      <PackageOptionCard
+                        title={localize(tier.name, tier.nameFr, locale)}
+                        priceCents={tier.basePriceCents}
+                        inclusions={localizeList(tier.inclusions, tier.inclusionsFr, locale)}
+                        packageSlug={pkg.slug}
+                        tierKey={tier.key}
+                        locale={locale}
+                        headingId={`option-${pkg.slug}-${tier.key}`}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ))}
+            {single.length > 0 && (
+              <ul className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {single.map((pkg) => (
+                  <li key={pkg.id}>
+                    <PackageOptionCard
+                      title={localize(pkg.name, pkg.nameFr, locale)}
+                      priceCents={pkg.basePriceCents}
+                      inclusions={localizeList(pkg.inclusions, pkg.inclusionsFr, locale)}
+                      packageSlug={pkg.slug}
+                      locale={locale}
+                      headingId={`option-${pkg.slug}`}
+                    />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        ),
+      };
+    });
+
+  // Unknown or repeated ?category values open the first tab that has packages.
+  const initial =
+    typeof rawCategory === "string" && tabs.some((tab) => tab.slug === rawCategory)
       ? rawCategory
-      : null;
-  const visible = activeSlug ? packages.filter((pkg) => pkg.category === activeSlug) : packages;
+      : (tabs.find((tab) => tab.hasPackages) ?? tabs[0])?.slug;
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
@@ -55,27 +127,23 @@ export default async function PackagesPage({ params, searchParams }: Props) {
       />
 
       <div className="mt-10">
-        <CategoryFilter services={services} active={activeSlug} pathname="/packages" />
+        {initial ? (
+          <PackageTabs
+            tabs={tabs.map(({ slug, label, panel }) => ({ slug, label, panel }))}
+            initial={initial}
+            label={t("Packages.filterLabel")}
+            pathname="/packages"
+          />
+        ) : (
+          <p className="text-muted-foreground mt-16 text-center">{t("Packages.empty")}</p>
+        )}
       </div>
-
-      {visible.length > 0 ? (
-        <ul className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {visible.map((pkg) => (
-            <li key={pkg.id}>
-              <PackageCard pkg={pkg} locale={locale} serviceName={serviceName(pkg.category)} />
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <div className="mt-16 text-center">
-          <p className="text-muted-foreground">{t("Packages.empty")}</p>
-          <Link href="/packages" className="text-gold-text mt-3 inline-block underline">
-            {t("Packages.emptyCta")}
-          </Link>
-        </div>
-      )}
 
       <p className="text-muted-foreground mt-10 text-center text-xs">{t("Packages.taxNote")}</p>
     </div>
   );
+}
+
+function localizeList(english: string[], french: string[], locale: Locale): string[] {
+  return localize(english, french.length > 0 ? french : null, locale);
 }

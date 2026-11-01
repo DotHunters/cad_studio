@@ -28,7 +28,7 @@ export async function CategoryTiles() {
   return (
     <section
       aria-labelledby="categories-title"
-      className="mx-auto max-w-7xl scroll-mt-20 px-4 py-20 sm:px-6 sm:py-28"
+      className="mx-auto max-w-7xl scroll-mt-20 px-4 py-10 sm:px-6 sm:py-12 lg:py-16"
     >
       <SectionHeading
         id="categories-title"

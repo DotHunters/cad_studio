@@ -4,6 +4,7 @@ const NETWORKS = [
   { key: "instagram", label: "Instagram" },
   { key: "facebook", label: "Facebook" },
   { key: "tiktok", label: "TikTok" },
+  { key: "youtube", label: "YouTube" },
 ] as const;
 
 type Props = { className?: string; linkClassName?: string };

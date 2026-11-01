@@ -12,7 +12,6 @@ import {
   filterProjects,
   parsePortfolioFilters,
   type PortfolioFilters,
-  projectYears,
 } from "@/lib/portfolio-filters";
 import { pageMetadata } from "@/lib/seo/metadata";
 import { getPublishedProjects } from "@/server/queries/portfolio";
@@ -37,7 +36,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function PortfolioPage({ params, searchParams }: Props) {
   const { locale } = await params;
   setRequestLocale(locale);
-  const parsed = parsePortfolioFilters(await searchParams);
+  // Category is the only filter shown; ?reach / ?year from old links are ignored.
+  const { category } = parsePortfolioFilters(await searchParams);
 
   const [t, projects, services, serviceName] = await Promise.all([
     getTranslations(),
@@ -47,12 +47,12 @@ export default async function PortfolioPage({ params, searchParams }: Props) {
   ]);
   // An archived or unknown ?category falls back to "All".
   const filters: PortfolioFilters = {
-    ...parsed,
-    category: services.some((s) => s.slug === parsed.category) ? parsed.category : null,
+    category: services.some((s) => s.slug === category) ? category : null,
+    reach: null,
+    year: null,
   };
   const visible = filterProjects(projects, filters);
-  const years = projectYears(projects);
-  const hasFilters = Boolean(filters.category || filters.reach || filters.year);
+  const hasFilters = Boolean(filters.category);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-24">
@@ -69,6 +69,7 @@ export default async function PortfolioPage({ params, searchParams }: Props) {
       <nav aria-label={t("Portfolio.filtersLabel")} className="mt-12 space-y-3 border-y py-5">
         <FilterGroup
           label={t("Portfolio.category")}
+          hideLabel
           options={[
             {
               key: "all",
@@ -84,48 +85,6 @@ export default async function PortfolioPage({ params, searchParams }: Props) {
             })),
           ]}
         />
-        <FilterGroup
-          label={t("Portfolio.reach")}
-          options={[
-            {
-              key: "all",
-              label: t("Portfolio.all"),
-              active: !filters.reach,
-              href: filterHref(filters, { reach: null }),
-            },
-            {
-              key: "local",
-              label: t("Portfolio.local"),
-              active: filters.reach === "local",
-              href: filterHref(filters, { reach: "local" }),
-            },
-            {
-              key: "global",
-              label: t("Portfolio.global"),
-              active: filters.reach === "global",
-              href: filterHref(filters, { reach: "global" }),
-            },
-          ]}
-        />
-        {years.length > 1 && (
-          <FilterGroup
-            label={t("Portfolio.year")}
-            options={[
-              {
-                key: "all",
-                label: t("Portfolio.all"),
-                active: !filters.year,
-                href: filterHref(filters, { year: null }),
-              },
-              ...years.map((year) => ({
-                key: String(year),
-                label: String(year),
-                active: filters.year === year,
-                href: filterHref(filters, { year }),
-              })),
-            ]}
-          />
-        )}
       </nav>
 
       <p role="status" className="text-muted-foreground mt-6 text-sm">

@@ -17,10 +17,10 @@ const SATURDAY = "2027-06-12";
 
 test.describe("quote generator", () => {
   test("prefills from a package and shows the base estimate with HST", async ({ page }) => {
-    await open(page, "/en/quote?package=wedding");
+    await open(page, "/en/quote?package=wedding&tier=signature");
     await expect(page.getByLabel("Event type")).toHaveValue("wedding");
-    await expect(page.getByLabel("Package")).toHaveValue("wedding");
-    await expect(page.getByLabel("Hours of coverage")).toHaveValue("8");
+    await expect(page.getByLabel("Package")).toHaveValue("wedding:signature");
+    await expect(page.getByLabel("Hours of coverage")).toHaveValue("10");
     await expect(page.getByLabel("Photographers")).toHaveValue("2");
 
     await expect(estimate(page)).toContainText("Complete the event details");
@@ -34,10 +34,10 @@ test.describe("quote generator", () => {
   });
 
   test("updates live as hours, add-ons and the date change", async ({ page }) => {
-    await open(page, "/en/quote?package=wedding");
+    await open(page, "/en/quote?package=wedding&tier=signature");
     await page.getByLabel("Event date").fill(WEEKDAY);
 
-    await page.getByLabel("Hours of coverage").fill("10");
+    await page.getByLabel("Hours of coverage").fill("12");
     // + 2 h × $200 = $3,200 + HST
     await expect(total(page)).toHaveText("$3,616.00 CAD");
     await expect(estimate(page)).toContainText("Extra hours (2 h)");
@@ -95,11 +95,11 @@ test.describe("quote generator", () => {
   test("starts from a category tile with the cheapest package", async ({ page }) => {
     await open(page, "/en/quote?category=family");
     await page.getByLabel("Event date").fill(WEEKDAY);
-    await expect(estimate(page)).toContainText("Family Event package");
+    await expect(estimate(page)).toContainText("Maternity — Mini package");
   });
 
   test("is localized in French with fr-CA currency format", async ({ page }) => {
-    await open(page, "/fr/quote?package=wedding");
+    await open(page, "/fr/quote?package=wedding&tier=signature");
     await page.getByLabel("Date de l’événement").fill(WEEKDAY);
     await expect(total(page)).toHaveText(/3\s164,00\s\$\sCAD/);
     await expect(page.getByRole("region", { name: "Votre estimation" })).toContainText(

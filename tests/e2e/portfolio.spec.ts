@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 
+import { pickFilter } from "./filters";
 import { caseStudies, portfolioCounts } from "./photo-counts";
 
 test.describe("portfolio page", () => {
@@ -13,32 +14,25 @@ test.describe("portfolio page", () => {
     await expect(page.getByRole("heading", { name: "Cultural Festival" })).toBeVisible();
   });
 
-  test("filters by category, reach and year, keeping other filters", async ({ page }) => {
+  test("filters by category only", async ({ page }) => {
     await page.goto("/en/portfolio");
     const filters = page.getByRole("navigation", { name: "Filter case studies" });
-    await filters.getByRole("link", { name: "Local", exact: true }).click();
-    await expect(page).toHaveURL(/\?reach=local$/);
+    await expect(filters.getByRole("link", { name: "Local", exact: true })).toHaveCount(0);
+    await pickFilter(filters, "Weddings");
+    await expect(page).toHaveURL(/\?category=wedding$/);
     await expect(page.getByRole("main").getByRole("status")).toHaveText(
-      caseStudies(portfolioCounts.local),
+      caseStudies(portfolioCounts.wedding),
     );
-
-    await filters.getByRole("link", { name: "2024" }).click();
-    await expect(page).toHaveURL(/reach=local&year=2024/);
-    await expect(page.getByRole("main").getByRole("status")).toHaveText(
-      caseStudies(portfolioCounts.local2024),
-    );
-    await expect(filters.getByRole("link", { name: "2024" })).toHaveAttribute(
-      "aria-current",
-      "true",
-    );
+    await expect(
+      filters.getByRole("link", { name: "Weddings", includeHidden: true }).first(),
+    ).toHaveAttribute("aria-current", "true");
   });
 
-  test("shows an empty state with a way to clear filters", async ({ page }) => {
-    // The only corporate work is a local sample.
-    await page.goto("/en/portfolio?category=corporate&reach=global");
-    await expect(page.getByText("No case studies match these filters yet.")).toBeVisible();
-    await page.getByRole("link", { name: "Clear filters" }).click();
-    await expect(page).toHaveURL(/\/en\/portfolio$/);
+  test("ignores reach and year from old links", async ({ page }) => {
+    await page.goto("/en/portfolio?reach=global&year=2024");
+    await expect(page.getByRole("main").getByRole("status")).toHaveText(
+      caseStudies(portfolioCounts.total),
+    );
   });
 
   test("package pages link to the matching portfolio filter", async ({ page }) => {
@@ -51,7 +45,7 @@ test.describe("portfolio page", () => {
   });
 
   test("is localized in French", async ({ page }) => {
-    await page.goto("/fr/portfolio?reach=global");
+    await page.goto("/fr/portfolio?category=product");
     await expect(page.getByRole("main").getByRole("status")).toHaveText("1 étude de cas");
     await expect(page.getByRole("heading", { name: "Catalogue du printemps" })).toBeVisible();
   });

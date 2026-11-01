@@ -45,7 +45,7 @@ test("pricing rules: validation, save, and the quote form uses the new value", a
   await expect(rules.getByLabel("Guests per photographer (hint)")).toHaveValue("50");
 
   // Wedding includes 2 photographers: 120 guests ÷ 50 → suggest 3 (at 100 there was no hint).
-  await page.goto("/en/quote?package=wedding");
+  await page.goto("/en/quote?package=wedding&tier=signature");
   await expect(page.locator('form[data-hydrated="true"]')).toBeVisible();
   await page.getByLabel("Event date").fill("2027-06-09");
   await page.getByLabel(/Guest count/).fill("120");

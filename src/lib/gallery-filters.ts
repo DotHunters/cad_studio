@@ -34,15 +34,6 @@ export function filterGallery<T extends Filterable>(
   );
 }
 
-/** Services that have at least one image, in the given service order (active services only). */
-export function galleryCategories(
-  images: readonly Filterable[],
-  serviceOrder: readonly string[],
-): string[] {
-  const present = new Set(images.map((image) => image.category));
-  return serviceOrder.filter((slug) => present.has(slug));
-}
-
 /** Unique tags, most used first (ties alphabetical). */
 export function galleryTags(images: readonly Filterable[]): string[] {
   const counts = new Map<string, number>();

@@ -5,7 +5,6 @@ import {
   parsePortfolioFilters,
   filterHref,
   projectPlace,
-  projectYears,
 } from "@/lib/portfolio-filters";
 
 const projects = [
@@ -71,14 +70,6 @@ describe("projectPlace", () => {
     expect(projectPlace({ city: "Toronto", country: "Canada" })).toBe("Toronto, Canada");
     expect(projectPlace({ city: null, country: "Sri Lanka" })).toBe("Sri Lanka");
     expect(projectPlace({ city: null, country: "" })).toBe("");
-  });
-});
-
-describe("projectYears", () => {
-  it("lists distinct known years, newest first", () => {
-    expect(projectYears([{ year: 2023 }, { year: null }, { year: 2025 }, { year: 2023 }])).toEqual([
-      2025, 2023,
-    ]);
   });
 });
 

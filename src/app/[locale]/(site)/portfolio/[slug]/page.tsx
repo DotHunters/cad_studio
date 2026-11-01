@@ -42,7 +42,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
 }
 
-/** Case study (AGENTS.md §6.3): story, image set, optional client recommendation, CTA. */
+/** Case study (AGENTS.md §6.3), images first: image set, then story, facts, optional client recommendation, CTA. */
 export default async function ProjectPage({ params }: Props) {
   const { locale, slug } = await params;
   setRequestLocale(locale);
@@ -136,7 +136,7 @@ export default async function ProjectPage({ params }: Props) {
 
         {lead && (
           <a
-            href="#project-story"
+            href="#project-content"
             className="text-paper/70 hover:text-paper absolute inset-x-0 bottom-6 mx-auto flex w-fit flex-col items-center gap-1 text-[0.65rem] tracking-[0.3em] uppercase"
           >
             {t("Home.scroll")}
@@ -146,10 +146,32 @@ export default async function ProjectPage({ params }: Props) {
       </header>
 
       <div
-        id="project-story"
+        id="project-content"
         className="mx-auto max-w-7xl scroll-mt-16 px-4 py-12 sm:px-6 sm:py-16"
       >
-        <div className="grid gap-12 lg:grid-cols-[1fr_320px]">
+        {rest.length > 0 && (
+          <section aria-labelledby="project-gallery">
+            <h2 id="project-gallery" className="text-3xl">
+              {t("Project.gallery")}
+            </h2>
+            <p className="text-muted-foreground mt-1 text-sm">
+              {t("Project.imageCount", { count: project.images.length })}
+            </p>
+            <LightboxGrid
+              images={rest.map((image) => ({
+                ...image,
+                alt: localize(image.alt, image.altFr, locale),
+              }))}
+              className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
+              itemClassName="bg-muted relative aspect-[4/5] overflow-hidden rounded-lg"
+              imageClassName="object-cover"
+              sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+              fill
+            />
+          </section>
+        )}
+
+        <div className={cn("grid gap-12 lg:grid-cols-[1fr_320px]", rest.length > 0 && "mt-16")}>
           <div className="text-lg leading-relaxed [&_h2]:mt-10 [&_h2]:text-3xl [&_p]:mt-4">
             <ReactMarkdown skipHtml>
               {localize(project.story, project.storyFr, locale)}
@@ -182,28 +204,6 @@ export default async function ProjectPage({ params }: Props) {
             </dl>
           </aside>
         </div>
-
-        {rest.length > 0 && (
-          <section aria-labelledby="project-gallery" className="mt-16">
-            <h2 id="project-gallery" className="text-3xl">
-              {t("Project.gallery")}
-            </h2>
-            <p className="text-muted-foreground mt-1 text-sm">
-              {t("Project.imageCount", { count: project.images.length })}
-            </p>
-            <LightboxGrid
-              images={rest.map((image) => ({
-                ...image,
-                alt: localize(image.alt, image.altFr, locale),
-              }))}
-              className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3"
-              itemClassName="bg-muted relative aspect-[4/5] overflow-hidden rounded-lg"
-              imageClassName="object-cover"
-              sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
-              fill
-            />
-          </section>
-        )}
 
         <section className="bg-ink text-paper mt-20 rounded-2xl px-6 py-14 text-center sm:px-12">
           <h2 className="[&_em]:text-gold-light text-4xl">

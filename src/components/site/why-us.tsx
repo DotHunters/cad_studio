@@ -1,18 +1,14 @@
 import { CalendarCheck, Camera, Globe2 } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 
-import { buttonVariants } from "@/components/ui/button";
 import { siteConfig } from "@/config/site";
-import { Link } from "@/i18n/navigation";
 import { photos } from "@/lib/photos";
-import { cn } from "@/lib/utils";
 import { getClientNames } from "@/server/queries/home";
 
-import { ctaNav } from "./nav-items";
 import { SectionBackdrop } from "./section-backdrop";
 import { Accent, SectionHeading } from "./section-heading";
 
-/** Dark "why us" band: reasons, owner-confirmed stats, trusted-by names and a booking bar. */
+/** Dark "why us" band: reasons, owner-confirmed stats, and trusted-by names. */
 export async function WhyUs() {
   const [t, format] = await Promise.all([getTranslations(), getFormatter()]);
   const clientNames = await getClientNames();
@@ -49,7 +45,8 @@ export async function WhyUs() {
           intro={t("Home.whyIntro")}
         />
 
-        <ul className="mt-14 grid gap-5 md:grid-cols-3">
+        {/* Desktop only: on phones the stat strip below says the same thing more compactly. */}
+        <ul className="mt-14 hidden gap-5 md:grid md:grid-cols-3">
           {reasons.map(({ icon: Icon, title, body }) => (
             <li key={title} className="border-paper/10 rounded-xl border bg-white/[0.03] p-7">
               <span className="border-gold/40 text-gold-light inline-flex size-11 items-center justify-center rounded-lg border">
@@ -61,9 +58,9 @@ export async function WhyUs() {
           ))}
         </ul>
 
-        {/* A lone stat would just repeat the first card; show the strip once two are confirmed. */}
+        {/* Phones only (the cards carry these facts on desktop). A lone stat isn't worth a strip. */}
         {statItems.length > 1 && (
-          <dl className="mt-14 flex flex-wrap justify-center gap-x-16 gap-y-8 text-center">
+          <dl className="mt-14 flex flex-wrap justify-center gap-x-16 gap-y-8 text-center md:hidden">
             {statItems.map((stat) => (
               <div key={stat.label} className="flex flex-col">
                 <dt className="text-paper/60 order-2 mt-1 text-xs tracking-[0.2em] uppercase">
@@ -90,15 +87,6 @@ export async function WhyUs() {
             </ul>
           </div>
         )}
-
-        <div className="border-paper/10 mt-16 flex flex-col items-center justify-between gap-5 rounded-xl border bg-white/[0.03] px-7 py-6 sm:flex-row">
-          <p className="font-heading [&_em]:text-gold-light text-2xl italic">
-            {t.rich("Home.readyTitle", { accent: (chunks) => <em>{chunks}</em> })}
-          </p>
-          <Link href={ctaNav.book.href} className={cn(buttonVariants({ size: "cta" }))}>
-            {t(`Nav.${ctaNav.book.key}`)}
-          </Link>
-        </div>
       </div>
     </section>
   );
