@@ -1,5 +1,7 @@
 import { expect, type Page, test } from "@playwright/test";
 
+import { pickFilter } from "./filters";
+
 const customers = (page: Page) => page.getByRole("region", { name: "Client reviews" });
 
 test.describe("reviews page", () => {
@@ -26,11 +28,11 @@ test.describe("reviews page", () => {
   test("filters by service and sorts by rating", async ({ page }) => {
     await page.goto("/en/reviews");
     const filters = page.getByRole("navigation", { name: "Filter and sort reviews" });
-    await filters.getByRole("link", { name: "Highest rated" }).click();
+    await pickFilter(filters, "Highest rated");
     await expect(page).toHaveURL(/\?sort=highest$/);
     await expect(customers(page).getByRole("listitem").last()).toContainText("Sample C.");
 
-    await filters.getByRole("link", { name: "Weddings" }).click();
+    await pickFilter(filters, "Weddings");
     await expect(page).toHaveURL(/category=wedding&sort=highest/);
     await expect(customers(page).getByRole("listitem")).toHaveCount(1);
   });

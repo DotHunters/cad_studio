@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 
+import { pickFilter } from "./filters";
 import { caseStudies, portfolioCounts } from "./photo-counts";
 
 test.describe("portfolio page", () => {
@@ -17,15 +18,14 @@ test.describe("portfolio page", () => {
     await page.goto("/en/portfolio");
     const filters = page.getByRole("navigation", { name: "Filter case studies" });
     await expect(filters.getByRole("link", { name: "Local", exact: true })).toHaveCount(0);
-    await filters.getByRole("link", { name: "Weddings" }).click();
+    await pickFilter(filters, "Weddings");
     await expect(page).toHaveURL(/\?category=wedding$/);
     await expect(page.getByRole("main").getByRole("status")).toHaveText(
       caseStudies(portfolioCounts.wedding),
     );
-    await expect(filters.getByRole("link", { name: "Weddings" })).toHaveAttribute(
-      "aria-current",
-      "true",
-    );
+    await expect(
+      filters.getByRole("link", { name: "Weddings", includeHidden: true }).first(),
+    ).toHaveAttribute("aria-current", "true");
   });
 
   test("ignores reach and year from old links", async ({ page }) => {

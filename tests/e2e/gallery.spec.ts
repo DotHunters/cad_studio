@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 
+import { pickFilter } from "./filters";
 import { galleryCounts } from "./photo-counts";
 
 const { total, preShoot } = galleryCounts;
@@ -29,7 +30,7 @@ test.describe("gallery page", () => {
     await page.goto("/en/gallery?page=2");
     const filters = page.getByRole("navigation", { name: "Filter images" });
     await expect(filters.getByRole("link", { name: "Weddings" })).toHaveCount(0);
-    await filters.getByRole("link", { name: "pre shoot" }).click();
+    await pickFilter(filters, "pre shoot");
     await expect(page).toHaveURL(/\/en\/gallery\?tag=pre-shoot$/);
     await expect(count(page)).toHaveText(`Showing ${Math.min(12, preShoot)} of ${preShoot} images`);
   });
