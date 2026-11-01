@@ -35,7 +35,8 @@ Services are admin-managed (`Service` table, Admin → Services: create, edit EN
 6. **Reviews & recommendations** — customer reviews (with star ratings) and client recommendations/testimonials (longer, from businesses/notable clients), moderated by admin.
 7. **About** — owner profile (I. Rukshan, 10+ years, event management background).
 8. **Contact** — form, email, phone, service area map.
-9. **Admin dashboard** — manage packages, pricing rules, availability, bookings, quotes, portfolio, gallery, reviews.
+9. **Events by CAD** — showcase of event management, décor, catering and lights & sound, with an event enquiry form (emails only; no pricing or booking).
+10. **Admin dashboard** — manage packages, pricing rules, availability, bookings, quotes, portfolio, gallery, reviews.
 
 ---
 
@@ -106,6 +107,7 @@ pnpm photos           # assets/ originals → compressed WebP in public/photos +
 │   │   │   ├── reviews/page.tsx
 │   │   │   ├── about/page.tsx
 │   │   │   ├── contact/page.tsx
+│   │   │   ├── events/page.tsx           # Events by CAD
 │   │   │   ├── privacy/page.tsx
 │   │   │   └── terms/page.tsx
 │   │   ├── admin/                        # protected
@@ -120,7 +122,8 @@ pnpm photos           # assets/ originals → compressed WebP in public/photos +
 │   │   ├── site/        # header, footer, hero, cards
 │   │   ├── booking/     # calendar, booking form, stepper
 │   │   ├── quote/       # quote form, price breakdown
-│   │   └── gallery/     # masonry grid, lightbox, filters
+│   │   ├── gallery/     # masonry grid, lightbox, filters
+│   │   └── events/      # event services, enquiry form
 │   ├── lib/
 │   │   ├── pricing/     # quote engine (pure functions, fully unit tested)
 │   │   ├── booking/     # availability logic
@@ -233,6 +236,13 @@ pnpm photos           # assets/ originals → compressed WebP in public/photos +
 ### 6.9 Contact `/contact`
 - Form (name, email, phone, enquiry type, message) with spam protection (honeypot + Cloudflare Turnstile).
 - Email, phone, socials, business hours, service area ("Based in Toronto — serving the GTA, Canada-wide, Sri Lanka and worldwide"). **No public street address and no map embed** (owner decision).
+
+### 6.11 Events by CAD `/events`
+- Sub-brand inside the site ("Events by CAD"), same visual system; nav item **Events** and a home teaser after the service tiles. The desktop nav shows from `xl` (1280 px); below that, the menu button (the Get a Quote CTA stays visible from `lg`).
+- Sections: hero with **Plan your event** CTA → 4 services (event management, décor, catering, lights & sound) → dark "one team" band linking packages and portfolio → 5-step process → split image + enquiry form (`#enquire`).
+- Enquiry form: name, email, phone?, event type, date? (today or later), guests? (1–5000), city, services (≥ 1 of management, décor, catering, lights & sound, photography, videography), budget range?, message. Honeypot + Turnstile + rate limit (`eventEnquiry`).
+- Emails only, nothing stored: studio notification must succeed (else the client sees an error with the studio email); the client's localized copy is best effort.
+- No prices, packages or booking for event services. Copy uses only owner-confirmed facts; open items in `docs/loop/OPEN_QUESTIONS.md`.
 
 ### 6.10 Admin `/admin`
 - Dashboard: upcoming bookings, new quotes, pending reviews, monthly revenue estimate.
@@ -652,6 +662,7 @@ Live tracker: `docs/loop/OPEN_QUESTIONS.md`. Answered so far: studio in Scarboro
 Also answered: brand name is **"CAD Studio Photography"** (2026-10-03; was "Cad Studio"); studio story and stats (est. 2014, 2,000+ events, Canada + Sri Lanka); no public street address; dummy domain and dummy (clearly sample) clients for now; PST in BC/MB/SK unknown → GST only until confirmed; admin emails bank details or a payment link manually; agents write the French, a tester reviews it before launch.
 
 Still open:
+- Events by CAD: catering in-house or partners; décor and AV equipment owned or hired; event photos; enquiry response time; service area for event services.
 - Real domain (contact email cadstudio01@gmail.com, phones and socials are in `config/site.ts`).
 - Real past clients that can be named publicly.
 - SVG logo versions (nice-to-have).
