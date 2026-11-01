@@ -31,7 +31,7 @@ export function MobileNav({ items, ctas, navLabel, openLabel, closeLabel }: Prop
   }, [open]);
 
   return (
-    <div className="md:hidden">
+    <div className="xl:hidden">
       <Button
         variant="ghost"
         size="icon"

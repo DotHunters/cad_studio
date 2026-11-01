@@ -20,7 +20,7 @@ describe("clientIp", () => {
 describe("RATE_LIMITS", () => {
   it("covers every public form", () => {
     expect(Object.keys(RATE_LIMITS).sort()).toEqual(
-      ["booking", "changeRequest", "contact", "quote", "review", "signIn"].sort(),
+      ["booking", "changeRequest", "contact", "eventEnquiry", "quote", "review", "signIn"].sort(),
     );
   });
 });

@@ -84,6 +84,9 @@ describe("UI messages", () => {
       "BookingConfirmed.total",
       "Reviews.category",
       "Reviews.eventOn",
+      "Events.email.dateLabel",
+      "Events.email.servicesLabel",
+      "Events.email.footer",
     ]);
     const english = new Map(keyPaths(en).map((path) => [path, valueAt(en, path)]));
     const untranslated = keyPaths(fr).filter(

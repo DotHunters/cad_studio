@@ -42,6 +42,7 @@ Motion ≤ 300 ms, respects `prefers-reduced-motion`. Verified at 360 / 768 / 12
 
 - `src/components/site/nav-items.ts`: add `{ key: "events", href: "/events" }` after `packages`; add `Nav.events` to both message files.
 - New `src/components/site/events-teaser.tsx`: compact band on the home page after the category tiles — eyebrow "Events by CAD", one-line pitch, 4 service chips (icon + name), CTA to `/events`.
+- The desktop nav shows from `xl` (1280 px); below that, the menu button.
 
 ## 3. Enquiry form and action
 
@@ -51,11 +52,11 @@ Shared Zod schema (client + server):
 
 | Field | Rule |
 |---|---|
-| `name` | required, trimmed, 2–100 chars |
+| `name` | required, trimmed, 1–120 chars (as contact) |
 | `email` | required, email |
-| `phone` | optional, ≤ 30 chars |
+| `phone` | optional; same pattern as contact (7–20 chars of digits, spaces, + ( ) . -) |
 | `eventType` | enum: `wedding`, `corporate`, `birthday`, `cultural`, `other` |
-| `eventDate` | optional ISO date; if present, must be today or later (studio time zone) |
+| `eventDate` | optional ISO date; if present, must be a real calendar date and today or later (studio time zone) |
 | `guestCount` | optional integer 1–5000 |
 | `city` | required, ≤ 100 chars |
 | `services` | array, at least one of `management`, `decor`, `catering`, `av`, `photo`, `video` |

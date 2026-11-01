@@ -9,6 +9,7 @@ import { getPublishedProjects } from "@/server/queries/portfolio";
 const STATIC_PATHS = [
   "",
   "/packages",
+  "/events",
   "/quote",
   "/book",
   "/portfolio",

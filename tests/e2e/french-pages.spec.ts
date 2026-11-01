@@ -23,6 +23,7 @@ const PAGES = [
   "/fr",
   "/fr/packages",
   "/fr/packages/wedding",
+  "/fr/events",
   "/fr/portfolio",
   "/fr/portfolio/sample-northwind-annual-summit",
   "/fr/gallery",

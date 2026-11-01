@@ -79,6 +79,31 @@ export function serviceJsonLd({
   } satisfies JsonLdObject;
 }
 
+/** "Events by CAD" (event management, décor, catering, AV). No prices: none are published. */
+export function eventServicesJsonLd({
+  baseUrl,
+  locale,
+  name,
+  description,
+  services,
+}: Base & { name: string; description: string; services: string[] }) {
+  return {
+    "@type": "Service",
+    name,
+    description,
+    url: absolute(baseUrl, `/${locale}/events`),
+    provider: businessRef(baseUrl),
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name,
+      itemListElement: services.map((service) => ({
+        "@type": "Offer",
+        itemOffered: { "@type": "Service", name: service },
+      })),
+    },
+  } satisfies JsonLdObject;
+}
+
 export function personJsonLd({ baseUrl, locale, jobTitle }: Base & { jobTitle: string }) {
   return {
     "@type": "Person",

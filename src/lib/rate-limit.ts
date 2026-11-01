@@ -4,6 +4,7 @@
  */
 export const RATE_LIMITS = {
   contact: { limit: 5, window: "10 m" },
+  eventEnquiry: { limit: 5, window: "10 m" },
   quote: { limit: 10, window: "10 m" },
   booking: { limit: 5, window: "10 m" },
   review: { limit: 3, window: "10 m" },
