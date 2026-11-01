@@ -36,7 +36,7 @@ describe("businessJsonLd", () => {
     expect(ld.telephone).toBe("+14372236197");
     expect(ld.sameAs).toEqual([
       "https://www.instagram.com/cadstudio/",
-      "https://www.facebook.com/cad.photos.54",
+      "https://www.facebook.com/profile.php?id=61575616316808",
       "https://www.youtube.com/@Cadstudiophotography",
     ]);
   });

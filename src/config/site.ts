@@ -47,7 +47,7 @@ export const siteConfig = {
   },
   socials: {
     instagram: "https://www.instagram.com/cadstudio/" as string | null,
-    facebook: "https://www.facebook.com/cad.photos.54" as string | null,
+    facebook: "https://www.facebook.com/profile.php?id=61575616316808" as string | null,
     tiktok: null as string | null,
     youtube: "https://www.youtube.com/@Cadstudiophotography" as string | null,
   },
