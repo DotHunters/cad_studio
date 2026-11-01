@@ -19,7 +19,7 @@ const eslintConfig = [
   },
   {
     // CLI scripts may log to the console.
-    files: ["prisma/**/*.ts"],
+    files: ["prisma/**/*.ts", "scripts/**/*.ts"],
     rules: { "no-console": "off" },
   },
   {
