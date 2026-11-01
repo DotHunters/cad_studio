@@ -41,7 +41,10 @@ test.describe("scénarios clés en français", () => {
   // Scenario 1: package → customize quote → prefilled → change hours → total updates → reference.
   test("forfait → devis personnalisé → référence", async ({ page }, testInfo) => {
     await page.goto("/fr/packages/wedding");
-    await page.getByRole("link", { name: "Personnaliser le devis" }).first().click();
+    await page
+      .getByRole("article", { name: "Signature" })
+      .getByRole("link", { name: "Personnaliser le devis" })
+      .click();
     await expect(page).toHaveURL(/\/fr\/quote\?package=wedding/);
     await expect(page.locator('form[data-hydrated="true"]')).toBeVisible();
     await expect(page.getByLabel("Type d’événement")).toHaveValue("wedding");
@@ -49,7 +52,7 @@ test.describe("scénarios clés en français", () => {
     await page.getByLabel("Date de l’événement").fill("2027-06-09");
     // 2 800 $ + 13 % TVH, in Canadian French currency format.
     await expect(total(page)).toHaveText(/^3\s164,00\s\$/);
-    await page.getByLabel("Heures de couverture").fill("10");
+    await page.getByLabel("Heures de couverture").fill("12");
     await expect(total(page)).toHaveText(/^3\s616,00\s\$/);
 
     await page.getByLabel("Nom", { exact: true }).fill("Client Test");

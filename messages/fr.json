@@ -108,8 +108,6 @@
     "title": "Trouvez le <accent>bon</accent> forfait",
     "intro": "Chaque forfait peut être adapté. Commencez ici, puis personnalisez votre devis en quelques minutes.",
     "filterLabel": "Filtrer les forfaits par catégorie",
-    "all": "Tous",
-    "from": "À partir de",
     "hours": "{count, plural, one {# heure} other {# heures}}",
     "photographers": "{count, plural, one {# photographe} other {# photographes}}",
     "editedImages": "{count}+ images retouchées",
@@ -118,9 +116,11 @@
     "book": "Réserver",
     "details": "Voir les détails",
     "empty": "Aucun forfait dans cette catégorie pour le moment.",
-    "emptyCta": "Voir tous les forfaits",
     "taxNote": "Prix en dollars canadiens, avant taxes et frais de déplacement applicables.",
-    "options": "{count, plural, one {# formule} other {# formules}} : {names}"
+    "options": "{count, plural, one {# formule} other {# formules}} : {names}",
+    "select": "Choisir ce forfait",
+    "startingPrice": "Prix de départ",
+    "more": "+{count} autres éléments inclus"
   },
   "PackageDetail": {
     "breadcrumb": "Fil d’Ariane",

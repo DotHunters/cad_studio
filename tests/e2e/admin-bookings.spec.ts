@@ -82,7 +82,7 @@ test("staff find a booking and see its details, price and change requests", asyn
   await expect(page.getByRole("region", { name: "Client" })).toContainText("French");
 
   const price = page.getByRole("region", { name: "Price" });
-  await expect(price).toContainText("Family Event package");
+  await expect(price).toContainText("Birthdays & Private Events package");
   await expect(price).toContainText("Drone coverage");
   await expect(price).toContainText("HST (13%)");
   await expect(price).toContainText("$1,017.00");

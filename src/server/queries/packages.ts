@@ -28,7 +28,14 @@ export const getActivePackages = unstable_cache(
         inclusionsFr: true,
         tiers: {
           orderBy: [{ sortOrder: "asc" }, { basePriceCents: "asc" }],
-          select: { key: true, name: true, nameFr: true, basePriceCents: true },
+          select: {
+            key: true,
+            name: true,
+            nameFr: true,
+            basePriceCents: true,
+            inclusions: true,
+            inclusionsFr: true,
+          },
         },
       },
     }),

@@ -108,8 +108,6 @@
     "title": "Find the <accent>right</accent> package",
     "intro": "Every package can be tailored. Start here, then customize your quote in minutes.",
     "filterLabel": "Filter packages by category",
-    "all": "All",
-    "from": "From",
     "hours": "{count, plural, one {# hour} other {# hours}}",
     "photographers": "{count, plural, one {# photographer} other {# photographers}}",
     "editedImages": "{count}+ edited images",
@@ -118,9 +116,11 @@
     "book": "Book",
     "details": "View details",
     "empty": "No packages in this category yet.",
-    "emptyCta": "See all packages",
     "taxNote": "Prices in Canadian dollars, before applicable taxes and travel.",
-    "options": "{count, plural, one {# option} other {# options}}: {names}"
+    "options": "{count, plural, one {# option} other {# options}}: {names}",
+    "select": "Select package",
+    "startingPrice": "Starting price",
+    "more": "+{count} more included"
   },
   "PackageDetail": {
     "breadcrumb": "Breadcrumb",

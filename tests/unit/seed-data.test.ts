@@ -15,12 +15,15 @@ const CATEGORIES = ["corporate", "wedding", "family", "gathering", "professional
 const PROVINCES = ["AB", "BC", "MB", "NB", "NL", "NS", "NT", "NU", "ON", "PE", "QC", "SK", "YT"];
 
 describe("seed packages", () => {
-  it("has one package per category", () => {
-    expect(packages.map((p) => p.category).sort()).toEqual([...CATEGORIES].sort());
+  it("has a package for every category", () => {
+    expect([...new Set(packages.map((p) => p.category))].sort()).toEqual([...CATEGORIES].sort());
   });
 
   it("stores money as integer cents", () => {
-    for (const p of packages) expect(Number.isInteger(p.basePriceCents)).toBe(true);
+    for (const p of packages) {
+      expect(Number.isInteger(p.basePriceCents)).toBe(true);
+      for (const tier of p.tiers ?? []) expect(Number.isInteger(tier.basePriceCents)).toBe(true);
+    }
     for (const a of addOns) expect(Number.isInteger(a.priceCents)).toBe(true);
   });
 
@@ -28,12 +31,45 @@ describe("seed packages", () => {
     const bySlug = Object.fromEntries(packages.map((p) => [p.slug, p.basePriceCents]));
     expect(bySlug).toMatchObject({
       "corporate-event": 120000,
-      wedding: 280000,
-      "family-event": 60000,
       gathering: 75000,
       "professional-photoshoot": 35000,
       "product-photography": 40000,
     });
+  });
+
+  it("matches the owner's 2026-10-20 price list", () => {
+    const options = Object.fromEntries(
+      packages.map((p) => [p.slug, (p.tiers ?? []).map((t) => [t.key, t.basePriceCents])]),
+    );
+    expect(options).toMatchObject({
+      wedding: [
+        ["essential", 200000],
+        ["signature", 280000],
+        ["premium", 355000],
+      ],
+      "engagement-couples": [
+        ["mini", 35000],
+        ["signature", 50000],
+        ["premium", 85000],
+      ],
+      maternity: [
+        ["mini", 35000],
+        ["signature", 50000],
+        ["premium", 75000],
+      ],
+      "family-event": [
+        ["essential", 50000],
+        ["signature", 85000],
+        ["premium", 130000],
+      ],
+    });
+  });
+
+  it("starts each package with options at its cheapest option", () => {
+    for (const p of packages.filter((p) => p.tiers?.length)) {
+      const cheapest = Math.min(...p.tiers!.map((t) => t.basePriceCents));
+      expect(p.basePriceCents, p.slug).toBe(cheapest);
+    }
   });
 
   it("has French text for every package field", () => {
@@ -41,6 +77,10 @@ describe("seed packages", () => {
       expect(p.nameFr && p.summaryFr && p.descriptionFr).toBeTruthy();
       expect(p.inclusionsFr).toHaveLength(p.inclusions.length);
       expect(p.exclusionsFr).toHaveLength(p.exclusions.length);
+      for (const tier of p.tiers ?? []) {
+        expect(tier.nameFr.trim(), `${p.slug}:${tier.key}`).toBeTruthy();
+        expect(tier.inclusionsFr).toHaveLength(tier.inclusions.length);
+      }
     }
   });
 
@@ -59,6 +99,10 @@ describe("seed packages", () => {
   it("has unique slugs and add-on codes", () => {
     expect(new Set(packages.map((p) => p.slug)).size).toBe(packages.length);
     expect(new Set(addOns.map((a) => a.code)).size).toBe(addOns.length);
+    for (const p of packages) {
+      const keys = (p.tiers ?? []).map((t) => t.key);
+      expect(new Set(keys).size, p.slug).toBe(keys.length);
+    }
   });
 });
 

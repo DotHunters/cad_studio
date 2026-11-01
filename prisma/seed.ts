@@ -38,8 +38,15 @@ async function seedCatalogue() {
     await db.service.upsert({ where: { slug: service.slug }, update: {}, create: service });
   }
 
-  for (const pkg of packages) {
-    await db.package.upsert({ where: { slug: pkg.slug }, update: {}, create: pkg });
+  for (const { tiers = [], ...pkg } of packages) {
+    await db.package.upsert({
+      where: { slug: pkg.slug },
+      update: {},
+      create: {
+        ...pkg,
+        tiers: { create: tiers.map((tier, sortOrder) => ({ ...tier, sortOrder })) },
+      },
+    });
   }
 
   for (const { categories, ...addOn } of addOns) {

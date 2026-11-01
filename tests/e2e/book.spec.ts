@@ -43,7 +43,7 @@ test.describe("booking wizard", () => {
   test("walks from a package to the review with the estimate and deposit", async ({
     page,
   }, testInfo) => {
-    await open(page, "/en/book?package=wedding");
+    await open(page, "/en/book?package=wedding&tier=signature");
     await expect(heading(page)).toHaveText("Service");
     await expect(page.getByLabel("Event type")).toHaveValue("wedding");
     await next(page).click();
@@ -104,7 +104,7 @@ test.describe("booking wizard", () => {
     await open(page, "/en/book?package=wedding");
     await next(page).click();
     await page.getByRole("button", { name: "Back" }).click();
-    await expect(page.getByLabel("Package")).toHaveValue("wedding");
+    await expect(page.getByLabel("Package")).toHaveValue("wedding:essential");
   });
 
   test("ignores invalid quote links and prices fresh", async ({ page }) => {
@@ -143,7 +143,7 @@ test.describe("booking wizard", () => {
 
     await expect(page).toHaveURL(/\/en\/book\/CAD-B-/);
     const reference = page.url().match(/CAD-B-\d{4}-\d{4,}/)![0];
-    // Wedding takes 2 of 3 photographers → the day is now "limited".
+    // Wedding Essential takes 1 of 3 photographers → the day is now "limited".
     await expect.poll(status).toBe("limited");
 
     const [booking] = await queryDb<{
@@ -162,7 +162,7 @@ test.describe("booking wizard", () => {
     // Booked at the quoted price — every line, not just the total; the quote is now accepted.
     expect(booking).toEqual({
       status: "PENDING",
-      totalCents: 316400,
+      totalCents: 226000,
       quoteStatus: "ACCEPTED",
       samePrice: true,
     });
@@ -171,7 +171,7 @@ test.describe("booking wizard", () => {
   test("books from a quote, keeping the quoted price until details change", async ({
     page,
   }, testInfo) => {
-    // Create a quote first (Wednesday 9 June 2027, wedding, 8 h, 2 photographers).
+    // Create a quote first (Wednesday 9 June 2027, wedding Essential, 7 h, 1 photographer).
     await open(page, "/en/quote?package=wedding");
     await page.getByLabel("Event date").fill("2027-06-09");
     await page.getByLabel("Name", { exact: true }).fill("Quote To Booking");
@@ -183,14 +183,14 @@ test.describe("booking wizard", () => {
     await expect(page.getByText(/Booking from quote CAD-Q-/)).toBeVisible();
     await next(page).click();
     await expect(page.getByText(/Selected: Wednesday, June 9(th)?, 2027/)).toBeVisible();
-    await expect(page.getByLabel("End time")).toHaveValue("22:00");
+    await expect(page.getByLabel("End time")).toHaveValue("21:00");
     await next(page).click();
     await next(page).click();
     await fillContact(page, emailFor(testInfo));
     await next(page).click();
 
     await expect(page.getByText(/Quoted price \(from CAD-Q-/)).toBeVisible();
-    await expect(page.getByTestId("booking-total")).toHaveText("$3,164.00 CAD");
+    await expect(page.getByTestId("booking-total")).toHaveText("$2,260.00 CAD");
 
     // Changing a price-relevant detail drops the quoted price.
     await page.getByRole("button", { name: "Back" }).click();
