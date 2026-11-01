@@ -26,13 +26,13 @@ export function SiteHeader() {
           <Logo alt={t("Common.logoAlt")} className="h-12" priority />
         </Link>
 
-        <nav aria-label={t("Common.mainNav")} className="hidden lg:block">
-          <ul className="flex items-center gap-1 lg:gap-4">
+        <nav aria-label={t("Common.mainNav")} className="hidden xl:block">
+          <ul className="flex items-center gap-1 xl:gap-4">
             {items.map((item) => (
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className="hover:text-gold-text group-data-[transparent=true]:hover:text-gold-light rounded-md px-2 py-1 text-xs font-medium tracking-[0.15em] uppercase transition-colors"
+                  className="hover:text-gold-text group-data-[transparent=true]:hover:text-gold-light rounded-md px-2 py-1 text-xs font-medium tracking-[0.15em] whitespace-nowrap uppercase transition-colors"
                 >
                   {item.label}
                 </Link>
