@@ -20,6 +20,7 @@ type Props = { params: Promise<{ locale: Locale }> };
 
 const STEPS = ["consult", "plan", "setup", "day", "wrap"] as const;
 
+// TODO(owner-fr): review — French copy for the Events namespace (messages/fr.json) is an agent draft (Q23).
 // TODO(owner): event photos — placeholders render as brand-toned blanks until supplied.
 const HERO_IMAGE = { publicId: "placeholder/events-hero", width: 1600, height: 1067 };
 const ENQUIRE_IMAGE = { publicId: "placeholder/events-enquire", width: 1200, height: 1500 };

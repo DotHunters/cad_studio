@@ -91,10 +91,8 @@ export function eventServicesJsonLd({
     "@type": "Service",
     name,
     description,
-    serviceType: "Event management",
     url: absolute(baseUrl, `/${locale}/events`),
     provider: businessRef(baseUrl),
-    areaServed: ["Greater Toronto Area", "Canada", "Sri Lanka"],
     hasOfferCatalog: {
       "@type": "OfferCatalog",
       name,

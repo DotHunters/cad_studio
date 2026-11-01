@@ -229,7 +229,7 @@
   },
   "Events": {
     "metaTitle": "Événements",
-    "metaDescription": "Événements par CAD : gestion d’événements, décoration, traiteur, éclairage et sonorisation, avec photo et vidéo par CAD Studio Photography. Toronto, partout au Canada et au Sri Lanka.",
+    "metaDescription": "Événements par CAD : gestion d’événements, décoration, traiteur, éclairage et sonorisation, avec photo et vidéo par CAD Studio Photography.",
     "eyebrow": "Événements par CAD",
     "title": "Votre événement, <accent>entre bonnes mains</accent>",
     "intro": "Une seule équipe pour planifier, décorer, servir, éclairer et immortaliser votre événement — pour que vous en profitiez.",
@@ -329,7 +329,7 @@
       "submit": "Envoyer la demande",
       "sending": "Envoi…",
       "successTitle": "Merci — demande envoyée",
-      "successBody": "Nous vous avons envoyé une copie par courriel et vous recontacterons bientôt.",
+      "successBody": "Merci — nous vous recontacterons bientôt.",
       "sendAnother": "Envoyer une autre demande",
       "serverError": "Un problème est survenu et votre demande n’a pas été envoyée. Réessayez ou écrivez-nous à {email}.",
       "captchaError": "Nous n’avons pas pu vérifier que vous n’êtes pas un robot. Veuillez réessayer.",

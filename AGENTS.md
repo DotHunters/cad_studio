@@ -237,19 +237,19 @@ pnpm photos           # assets/ originals → compressed WebP in public/photos +
 - Form (name, email, phone, enquiry type, message) with spam protection (honeypot + Cloudflare Turnstile).
 - Email, phone, socials, business hours, service area ("Based in Toronto — serving the GTA, Canada-wide, Sri Lanka and worldwide"). **No public street address and no map embed** (owner decision).
 
-### 6.11 Events by CAD `/events`
-- Sub-brand inside the site ("Events by CAD"), same visual system; nav item **Events** and a home teaser after the service tiles. The desktop nav shows from `xl` (1280 px); below that, the menu button (the Get a Quote CTA stays visible from `lg`).
-- Sections: hero with **Plan your event** CTA → 4 services (event management, décor, catering, lights & sound) → dark "one team" band linking packages and portfolio → 5-step process → split image + enquiry form (`#enquire`).
-- Enquiry form: name, email, phone?, event type, date? (today or later), guests? (1–5000), city, services (≥ 1 of management, décor, catering, lights & sound, photography, videography), budget range?, message. Honeypot + Turnstile + rate limit (`eventEnquiry`).
-- Emails only, nothing stored: studio notification must succeed (else the client sees an error with the studio email); the client's localized copy is best effort.
-- No prices, packages or booking for event services. Copy uses only owner-confirmed facts; open items in `docs/loop/OPEN_QUESTIONS.md`.
-
 ### 6.10 Admin `/admin`
 - Dashboard: upcoming bookings, new quotes, pending reviews, monthly revenue estimate.
 - CRUD: hero slides, services, packages, add-ons, pricing rules, tax rates, portfolio projects, gallery images (bulk upload, tagging, reorder), reviews (approve/reject/feature), blocked dates & capacity.
 - Bookings: list + calendar view, status changes (`PENDING → CONFIRMED → COMPLETED` / `CANCELLED`), assign photographers, export CSV, `.ics` download.
 - Quotes: list, convert to booking, adjust and re-send.
 - Audit log of admin changes.
+
+### 6.11 Events by CAD `/events`
+- Sub-brand inside the site ("Events by CAD"), same visual system; nav item **Events** and a home teaser after the service tiles. The desktop nav shows from `xl` (1280 px); below that, the menu button (the Get a Quote CTA stays visible from `lg`).
+- Sections: hero with **Plan your event** CTA → 4 services (event management, décor, catering, lights & sound) → dark "one team" band linking packages and portfolio → 5-step process → split image + enquiry form (`#enquire`).
+- Enquiry form: name, email, phone?, event type, date? (today or later), guests? (1–5000), city, services (≥ 1 of management, décor, catering, lights & sound, photography, videography), budget range?, message. Honeypot + Turnstile + rate limit (`eventEnquiry`).
+- Emails only, nothing stored: studio notification must succeed (else the client sees an error with the studio email); the client's localized copy is best effort.
+- No prices, packages or booking for event services. Copy uses only owner-confirmed facts; open items in `docs/loop/OPEN_QUESTIONS.md`.
 
 ---
 

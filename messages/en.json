@@ -229,7 +229,7 @@
   },
   "Events": {
     "metaTitle": "Events",
-    "metaDescription": "Events by CAD: event management, décor, catering, lights and sound, with photography and video by CAD Studio Photography. Toronto, Canada-wide and Sri Lanka.",
+    "metaDescription": "Events by CAD: event management, décor, catering, lights and sound, with photography and video by CAD Studio Photography.",
     "eyebrow": "Events by CAD",
     "title": "Your event, <accent>handled</accent>",
     "intro": "One team to plan, style, cater, light and capture your event — so you can enjoy it.",
@@ -329,7 +329,7 @@
       "submit": "Send enquiry",
       "sending": "Sending…",
       "successTitle": "Thank you — enquiry sent",
-      "successBody": "We’ve emailed you a copy and will be in touch soon.",
+      "successBody": "Thank you — we’ll be in touch soon.",
       "sendAnother": "Send another enquiry",
       "serverError": "Something went wrong and your enquiry wasn’t sent. Please try again or email us at {email}.",
       "captchaError": "We couldn’t verify you’re human. Please try again.",

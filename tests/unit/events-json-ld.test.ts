@@ -14,7 +14,6 @@ describe("eventServicesJsonLd", () => {
     expect(data).toMatchObject({
       "@type": "Service",
       name: "Événements par CAD",
-      serviceType: "Event management",
       url: "https://cadstudio.example/fr/events",
       provider: { "@type": "ProfessionalService", name: "CAD Studio Photography" },
       hasOfferCatalog: {
@@ -25,6 +24,8 @@ describe("eventServicesJsonLd", () => {
         ],
       },
     });
+    expect(data).not.toHaveProperty("serviceType");
+    expect(data).not.toHaveProperty("areaServed");
     expect(JSON.stringify(data)).not.toContain("price");
   });
 });
