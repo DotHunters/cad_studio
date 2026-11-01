@@ -45,7 +45,8 @@ export async function WhyUs() {
           intro={t("Home.whyIntro")}
         />
 
-        <ul className="mt-14 grid gap-5 md:grid-cols-3">
+        {/* Desktop only: on phones the stat strip below says the same thing more compactly. */}
+        <ul className="mt-14 hidden gap-5 md:grid md:grid-cols-3">
           {reasons.map(({ icon: Icon, title, body }) => (
             <li key={title} className="border-paper/10 rounded-xl border bg-white/[0.03] p-7">
               <span className="border-gold/40 text-gold-light inline-flex size-11 items-center justify-center rounded-lg border">
@@ -57,9 +58,9 @@ export async function WhyUs() {
           ))}
         </ul>
 
-        {/* A lone stat would just repeat the first card; show the strip once two are confirmed. */}
+        {/* Phones only (the cards carry these facts on desktop). A lone stat isn't worth a strip. */}
         {statItems.length > 1 && (
-          <dl className="mt-14 flex flex-wrap justify-center gap-x-16 gap-y-8 text-center">
+          <dl className="mt-14 flex flex-wrap justify-center gap-x-16 gap-y-8 text-center md:hidden">
             {statItems.map((stat) => (
               <div key={stat.label} className="flex flex-col">
                 <dt className="text-paper/60 order-2 mt-1 text-xs tracking-[0.2em] uppercase">

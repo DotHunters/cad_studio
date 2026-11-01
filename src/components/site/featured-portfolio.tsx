@@ -9,13 +9,14 @@ import { cn } from "@/lib/utils";
 import { getFeaturedProjects } from "@/server/queries/home";
 import { getServiceNames } from "@/server/queries/services";
 
+import { ScrollRow } from "./scroll-row";
 import { Accent, SectionHeading } from "./section-heading";
 
 export async function FeaturedPortfolio() {
   const locale = (await getLocale()) as Locale;
   const [t, projects, serviceName] = await Promise.all([
     getTranslations(),
-    getFeaturedProjects(3),
+    getFeaturedProjects(6),
     getServiceNames(locale),
   ]);
   if (projects.length === 0) return null;
@@ -23,7 +24,7 @@ export async function FeaturedPortfolio() {
   return (
     <section
       aria-labelledby="portfolio-title"
-      className="mx-auto max-w-7xl px-4 py-20 sm:px-6 sm:py-28"
+      className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-12 lg:py-16"
     >
       <div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-end">
         <SectionHeading
@@ -41,9 +42,18 @@ export async function FeaturedPortfolio() {
         </Link>
       </div>
 
-      <ul className="mt-12 grid gap-6 md:grid-cols-3">
+      {/* Up to six projects (AGENTS.md §6.1); three show on desktop, the rest scroll in. */}
+      <ScrollRow
+        label={t("Home.portfolioListLabel")}
+        previousLabel={t("Home.portfolioPrevious")}
+        nextLabel={t("Home.portfolioNext")}
+        className="mt-12"
+      >
         {projects.map((project) => (
-          <li key={project.id}>
+          <li
+            key={project.id}
+            className="w-[85%] shrink-0 snap-start sm:w-[calc((100%-1.5rem)/2)] md:w-[calc((100%-3rem)/3)]"
+          >
             <ProjectCard
               project={project}
               locale={locale}
@@ -51,7 +61,7 @@ export async function FeaturedPortfolio() {
             />
           </li>
         ))}
-      </ul>
+      </ScrollRow>
     </section>
   );
 }

@@ -163,7 +163,7 @@ pnpm photos           # assets/ originals → compressed WebP in public/photos +
 ## 6. Pages & acceptance criteria
 
 ### 6.1 Home `/`
-- Full-bleed hero (rotating 3–5 best images, chosen in Admin → Hero slides; launch photos until then) + headline + two CTAs: **Get a Quote**, **Book a Date**.
+- Full-bleed hero (rotating 3–5 best images, chosen in Admin → Hero slides; launch photos until then) + headline + two CTAs: **Book a Date** (primary, gold) and **Get a Quote** (outline) — owner decision 2026-10-31.
 - Service category tiles (6) linking to packages.
 - "Trusted locally and globally" strip — client logos (with permission) + stats (years, events, countries).
 - Featured portfolio (3–6 case studies).

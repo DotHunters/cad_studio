@@ -38,18 +38,19 @@ export async function HomeHero() {
         </p>
 
         <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <Link href={ctaNav.quote.href} className={cn(buttonVariants({ size: "cta" }))}>
-            {t(`Nav.${ctaNav.quote.key}`)}
+          {/* Booking is the main call to action; a quote is the softer second step. */}
+          <Link href={ctaNav.book.href} className={cn(buttonVariants({ size: "cta" }))}>
+            {t(`Nav.${ctaNav.book.key}`)}
             <ArrowUpRight className="size-4" aria-hidden />
           </Link>
           <Link
-            href={ctaNav.book.href}
+            href={ctaNav.quote.href}
             className={cn(
               buttonVariants({ variant: "outline", size: "cta" }),
               "border-paper/50 text-paper hover:bg-paper hover:text-ink bg-transparent dark:bg-transparent",
             )}
           >
-            {t(`Nav.${ctaNav.book.key}`)}
+            {t(`Nav.${ctaNav.quote.key}`)}
           </Link>
         </div>
       </div>
