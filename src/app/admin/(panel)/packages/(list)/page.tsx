@@ -5,6 +5,7 @@ import { ActionSwitch, ConfirmDeleteButton } from "@/components/admin/row-action
 import { buttonVariants } from "@/components/ui/button";
 import { formatCAD } from "@/lib/money";
 import { startingPriceCents } from "@/lib/pricing/options";
+import { isOfferLive, offerEndDateKey } from "@/lib/seasonal/offer";
 import { deletePackage, setPackageActive } from "@/server/actions/admin/packages";
 import { requireAdminPage } from "@/server/auth/guards";
 import { adminCategoryOptions, listPackagesForAdmin } from "@/server/queries/admin-packages";
@@ -89,6 +90,13 @@ export default async function AdminPackagesPage({ searchParams }: Props) {
                     <span className="text-muted-foreground block font-mono text-xs">
                       {pkg.slug}
                     </span>
+                    {pkg.offerEndsAt && (
+                      <span className="text-muted-foreground block text-xs">
+                        {isOfferLive(pkg.offerEndsAt)
+                          ? `Offer ends ${offerEndDateKey(pkg.offerEndsAt)}`
+                          : "Offer expired"}
+                      </span>
+                    )}
                   </td>
                   <td className="px-4 py-3">{categoryLabel.get(pkg.category)}</td>
                   <td className="px-4 py-3 tabular-nums">

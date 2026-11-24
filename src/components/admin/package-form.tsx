@@ -18,6 +18,8 @@ export type PackageFormDefaults = {
   description: string;
   descriptionFr: string;
   basePrice: string;
+  regularPrice: string;
+  offerEndsOn: string;
   includedHours: string;
   includedShooters: string;
   editedImages: string;
@@ -226,6 +228,40 @@ export function PackageForm({ id, defaults, categories }: Props) {
             type="number"
             min={0}
             defaultValue={defaults.turnaroundDays}
+            className={adminFieldClass}
+          />
+        </Field>
+      </fieldset>
+
+      <fieldset className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <legend className="mb-3 text-lg font-medium">Offer</legend>
+        <p className="text-muted-foreground text-sm sm:col-span-2 lg:col-span-4">
+          Optional, for seasonal or limited-time packages. The starting price above is what clients
+          pay.
+        </p>
+        <Field
+          error={errors.regularPrice}
+          name="regularPrice"
+          label="Regular price (CAD)"
+          hint="Shown struck through next to the starting price, e.g. 350"
+        >
+          <input
+            {...field("regularPrice")}
+            inputMode="decimal"
+            defaultValue={defaults.regularPrice}
+            className={adminFieldClass}
+          />
+        </Field>
+        <Field
+          error={errors.offerEndsOn}
+          name="offerEndsOn"
+          label="Offer ends on"
+          hint="Last day it can be booked (Toronto time). Blank = no end date."
+        >
+          <input
+            {...field("offerEndsOn")}
+            type="date"
+            defaultValue={defaults.offerEndsOn}
             className={adminFieldClass}
           />
         </Field>

@@ -9,6 +9,7 @@ import { auditSummary, describeChanges } from "@/lib/admin/audit";
 import { db } from "@/lib/db";
 import { formatCAD } from "@/lib/money";
 import { tierKeyFor } from "@/lib/pricing/options";
+import { offerEndDateKey, offerEndFromDateKey } from "@/lib/seasonal/offer";
 import {
   fieldErrorsOf,
   packageFormSchema,
@@ -32,11 +33,13 @@ export async function savePackage(id: string | null, input: unknown): Promise<Sa
   const parsed = packageFormSchema.safeParse(input);
   if (!parsed.success) return { ok: false, fieldErrors: fieldErrorsOf(parsed.error) };
 
-  const { basePrice, category, faqs, tiers, ...rest } = parsed.data;
+  const { basePrice, regularPrice, offerEndsOn, category, faqs, tiers, ...rest } = parsed.data;
   const data = {
     ...rest,
     category: category,
     basePriceCents: basePrice,
+    regularPriceCents: regularPrice,
+    offerEndsAt: offerEndsOn ? offerEndFromDateKey(offerEndsOn) : null,
     faqs: faqs as Prisma.InputJsonValue,
   };
 
@@ -75,6 +78,15 @@ export async function savePackage(id: string | null, input: unknown): Promise<Sa
               basePriceCents: {
                 label: "price",
                 format: (value) => formatCAD(Number(value), "en", { suffix: false }),
+              },
+              regularPriceCents: {
+                label: "regular price",
+                format: (value) =>
+                  value === null ? "none" : formatCAD(Number(value), "en", { suffix: false }),
+              },
+              offerEndsAt: {
+                label: "offer ends",
+                format: (value) => (value ? offerEndDateKey(value as Date) : "none"),
               },
               includedHours: { label: "hours" },
               includedShooters: { label: "photographers" },

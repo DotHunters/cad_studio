@@ -3,6 +3,7 @@ import "server-only";
 import type { PackageFormDefaults } from "@/components/admin/package-form";
 import { parseFaqs } from "@/lib/content";
 import { db } from "@/lib/db";
+import { offerEndDateKey } from "@/lib/seasonal/offer";
 import { getServices } from "@/server/queries/services";
 
 /** All packages (active and hidden) for the admin list. Uncached. */
@@ -15,6 +16,7 @@ export const listPackagesForAdmin = () =>
       name: true,
       category: true,
       basePriceCents: true,
+      offerEndsAt: true,
       includedHours: true,
       isActive: true,
       sortOrder: true,
@@ -32,6 +34,8 @@ export const EMPTY_PACKAGE: PackageFormDefaults = {
   description: "",
   descriptionFr: "",
   basePrice: "",
+  regularPrice: "",
+  offerEndsOn: "",
   includedHours: "1",
   includedShooters: "1",
   editedImages: "",
@@ -64,6 +68,8 @@ export async function getPackageFormDefaults(id: string): Promise<PackageFormDef
     description: pkg.description,
     descriptionFr: pkg.descriptionFr ?? "",
     basePrice: (pkg.basePriceCents / 100).toFixed(2),
+    regularPrice: pkg.regularPriceCents === null ? "" : (pkg.regularPriceCents / 100).toFixed(2),
+    offerEndsOn: pkg.offerEndsAt ? offerEndDateKey(pkg.offerEndsAt) : "",
     includedHours: String(pkg.includedHours),
     includedShooters: String(pkg.includedShooters),
     editedImages: optional(pkg.editedImages),
