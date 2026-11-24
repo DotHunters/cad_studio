@@ -85,6 +85,9 @@ export const optionalDollarsToCents = z
     return z.NEVER;
   });
 
+const MIN_DATE_KEY = "2000-01-01";
+const MAX_DATE_KEY = "2100-12-31";
+
 /** Optional calendar date from `<input type="date">`: blank → null, else the "yyyy-MM-dd" text. */
 export const optionalDateKey = z
   .string()
@@ -96,7 +99,9 @@ export const optionalDateKey = z
     const real =
       /^\d{4}-\d{2}-\d{2}$/.test(value) &&
       !Number.isNaN(date.getTime()) &&
-      date.toISOString().startsWith(value);
+      date.toISOString().startsWith(value) &&
+      value >= MIN_DATE_KEY &&
+      value <= MAX_DATE_KEY;
     if (real) return value;
     ctx.addIssue({ code: "custom", message: "Enter a valid date." });
     return z.NEVER;

@@ -19,7 +19,6 @@ export type SeasonalOfferCardProps = {
   startingAt: boolean;
   /** Struck-through price; null when there is no offer discount to show. */
   regularPriceCents: number | null;
-  hours: number | null;
   editedImages: number | null;
   inclusions: string[];
   /** Already formatted, e.g. "December 25, 2026"; null when the offer has no end date. */
@@ -38,7 +37,6 @@ export function SeasonalOfferCard({
   priceCents,
   startingAt,
   regularPriceCents,
-  hours,
   editedImages,
   inclusions,
   endsOn,
@@ -47,7 +45,6 @@ export function SeasonalOfferCard({
 }: SeasonalOfferCardProps) {
   const t = useTranslations();
   const facts = [
-    hours !== null && t("Packages.hours", { count: hours }),
     editedImages !== null && t("Packages.editedImages", { count: editedImages }),
   ].filter((fact): fact is string => Boolean(fact));
 
@@ -57,7 +54,7 @@ export function SeasonalOfferCard({
       className="bg-card text-card-foreground hover:border-gold relative flex h-full flex-col rounded-xl border p-6 shadow-sm transition-colors"
     >
       {regularPriceCents !== null && (
-        <span className="bg-gold-button absolute top-4 right-4 rounded-full px-2.5 py-0.5 text-[0.65rem] font-semibold tracking-[0.15em] uppercase">
+        <span className="bg-gold-button absolute top-4 right-4 rounded-full px-2.5 py-0.5 text-xs font-semibold tracking-[0.15em] uppercase">
           {t("Seasonal.offerBadge")}
         </span>
       )}

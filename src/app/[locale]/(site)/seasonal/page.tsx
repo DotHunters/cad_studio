@@ -159,6 +159,18 @@ export default async function SeasonalPage({ params }: Props) {
             </a>
           </>
         )}
+        {siteConfig.socials.facebook && (
+          <>
+            {" · "}
+            <a
+              className="hover:text-foreground underline"
+              href={siteConfig.socials.facebook}
+              rel="noopener noreferrer"
+            >
+              Facebook
+            </a>
+          </>
+        )}
       </p>
       <p className="text-muted-foreground mt-6 text-center text-xs">{packagesT("taxNote")}</p>
     </div>

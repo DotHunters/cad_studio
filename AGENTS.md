@@ -258,6 +258,7 @@ pnpm photos           # assets/ originals → compressed WebP in public/photos +
 - An offer is **live** when the package is active, its service is not archived and `offerEndsAt` is empty or not yet past (`src/lib/seasonal/offer.ts`). Applied after the cached reads in `getActivePackages`, `getPackageBySlug` and `getPricingContext`, so ended offers disappear from the site and cannot be priced or booked.
 - Home: `SeasonalBookingStrip` directly after the hero; renders nothing when no offer is live. `/seasonal` returns 404 and leaves the sitemap in that case. Both revalidate hourly.
 - Booking uses the normal wizard (`/book?package=<slug>`), availability and deposit rules.
+- The seasonal service itself is hidden from tiles and forms while no offer is live, so it needs no archiving between seasons.
 - Flyer content (Christmas 2026) is available as `pnpm db:seed:seasonal` (create-only); it is not part of `pnpm db:seed`.
 
 ---

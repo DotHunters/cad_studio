@@ -25,14 +25,13 @@ export function SeasonalOfferGrid({
         return (
           <li key={pkg.id}>
             <SeasonalOfferCard
-              headingId={`seasonal-${pkg.slug}`}
+              headingId={`seasonal-offer-${pkg.slug}`}
               packageSlug={pkg.slug}
               name={localize(pkg.name, pkg.nameFr, locale)}
               summary={localize(pkg.summary, pkg.summaryFr, locale)}
               priceCents={startingPriceCents(pkg)}
               startingAt={tiered}
               regularPriceCents={tiered ? null : pkg.regularPriceCents}
-              hours={tiered ? null : pkg.includedHours}
               editedImages={tiered ? null : pkg.editedImages}
               inclusions={
                 withInclusions

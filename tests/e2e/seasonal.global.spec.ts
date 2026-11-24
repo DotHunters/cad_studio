@@ -48,6 +48,9 @@ async function createPackage(page: Page) {
 }
 
 const strip = (page: Page) => page.getByRole("region", { name: SERVICE_NAME });
+const tile = (page: Page) => page.locator(`a[href="/en/packages?category=${SERVICE_SLUG}"]`);
+const quoteChoice = (page: Page) =>
+  page.locator(`select[name="category"] option[value="${SERVICE_SLUG}"]`);
 
 test("an admin creates a seasonal offer, it shows after the hero, and it hides when it ends", async ({
   page,
@@ -66,6 +69,10 @@ test("an admin creates a seasonal offer, it shows after the hero, and it hides w
   await createService(page);
   await page.goto("/en");
   await expect(strip(page)).toHaveCount(0);
+  // ...and the empty service is not offered as a tile or in the quote form either.
+  await expect(tile(page)).toHaveCount(0);
+  await page.goto("/en/quote");
+  await expect(quoteChoice(page)).toHaveCount(0);
 
   // First package: strip appears right after the hero.
   await createPackage(page);
@@ -76,10 +83,15 @@ test("an admin creates a seasonal offer, it shows after the hero, and it hides w
   await expect(card).toContainText("$250.00 CAD");
   await expect(card.locator("s")).toContainText("$350.00");
   await expect(card).toContainText("Offer");
-  await expect(card.getByRole("link", { name: "Book this session" })).toHaveAttribute(
+  await expect(card.getByRole("link", { name: "Book this offer" })).toHaveAttribute(
     "href",
     `/en/book?package=${PACKAGE_SLUG}`,
   );
+
+  // With a live package the service is a tile and a quote choice.
+  await expect(tile(page)).toHaveCount(1);
+  await page.goto("/en/quote");
+  await expect(quoteChoice(page)).toHaveCount(1);
 
   // The French home page uses the French service name.
   await page.goto("/fr");
@@ -89,7 +101,7 @@ test("an admin creates a seasonal offer, it shows after the hero, and it hides w
   await page.goto("/en/seasonal");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(SERVICE_NAME);
   await expect(page.getByRole("article", { name: PACKAGE_NAME })).toBeVisible();
-  await page.getByRole("link", { name: "Book this session" }).click();
+  await page.getByRole("link", { name: "Book this offer" }).click();
   await expect(page).toHaveURL(new RegExp(`/en/book\\?package=${PACKAGE_SLUG}$`));
 
   // Ending the offer (two days ago) hides it everywhere.
@@ -106,6 +118,13 @@ test("an admin creates a seasonal offer, it shows after the hero, and it hides w
 
   await page.goto("/en");
   await expect(strip(page)).toHaveCount(0);
+  await expect(tile(page)).toHaveCount(0);
+  await page.goto("/en/quote");
+  await expect(quoteChoice(page)).toHaveCount(0);
+  // A link to the ended offer no longer preselects it (and never falls back to another price).
+  await page.goto(`/en/book?package=${PACKAGE_SLUG}`);
+  await expect(page.locator('form[data-hydrated="true"]')).toBeVisible();
+  await expect(page.locator('select[name="category"]')).toHaveValue("");
   expect((await page.goto("/en/seasonal"))?.status()).toBe(404);
   expect((await page.goto(`/en/packages/${PACKAGE_SLUG}`))?.status()).toBe(404);
 
