@@ -36,7 +36,8 @@ Services are admin-managed (`Service` table, Admin → Services: create, edit EN
 7. **About** — owner profile (I. Rukshan, 10+ years, event management background).
 8. **Contact** — form, email, phone, service area map.
 9. **Events by CAD** — showcase of event management, décor, catering and lights & sound, with an event enquiry form (emails only; no pricing or booking).
-10. **Admin dashboard** — manage packages, pricing rules, availability, bookings, quotes, portfolio, gallery, reviews.
+10. **Seasonal offers** — admin-managed seasonal packages (service slug `seasonal`) with an optional regular price and end date, a booking strip on the home page right after the hero (hidden when no offer is live) and a `/seasonal` page.
+11. **Admin dashboard** — manage packages, pricing rules, availability, bookings, quotes, portfolio, gallery, reviews.
 
 ---
 
@@ -251,6 +252,13 @@ pnpm photos           # assets/ originals → compressed WebP in public/photos +
 - Enquiry form: name, email, phone?, event type, date? (today or later), guests? (1–5000), city, services (≥ 1 of management, décor, catering, lights & sound, photography, videography), budget range?, message. Honeypot + Turnstile + rate limit (`eventEnquiry`).
 - Emails only, nothing stored: studio notification must succeed (else the client sees an error with the studio email); the client's localized copy is best effort.
 - No prices, packages or booking for event services. Copy uses only owner-confirmed facts; open items in `docs/loop/OPEN_QUESTIONS.md`.
+
+### 6.12 Seasonal offers `/seasonal`
+- One service with slug `seasonal` (created in Admin → Services; rename it each season). Its packages are the offers. Optional `Package.regularPriceCents` (struck through on cards, display only — clients are charged the starting price) and `Package.offerEndsAt` (entered as a date; live until the end of that day, Toronto time).
+- An offer is **live** when the package is active, its service is not archived and `offerEndsAt` is empty or not yet past (`src/lib/seasonal/offer.ts`). Applied after the cached reads in `getActivePackages`, `getPackageBySlug` and `getPricingContext`, so ended offers disappear from the site and cannot be priced or booked.
+- Home: `SeasonalBookingStrip` directly after the hero; renders nothing when no offer is live. `/seasonal` returns 404 and leaves the sitemap in that case. Both revalidate hourly.
+- Booking uses the normal wizard (`/book?package=<slug>`), availability and deposit rules.
+- Flyer content (Christmas 2026) is available as `pnpm db:seed:seasonal` (create-only); it is not part of `pnpm db:seed`.
 
 ---
 
