@@ -83,7 +83,12 @@ export default async function SeasonalPage({ params }: Props) {
       />
 
       <div className="mt-12">
-        <SeasonalOfferGrid packages={offers.packages} locale={locale} withInclusions />
+        <SeasonalOfferGrid
+          packages={offers.packages}
+          locale={locale}
+          withInclusions
+          headingLevel="h2"
+        />
       </div>
 
       {offers.addOns.length > 0 && (

@@ -11,10 +11,12 @@ export function SeasonalOfferGrid({
   packages,
   locale,
   withInclusions = false,
+  headingLevel = "h3",
 }: {
   packages: readonly PackageSummary[];
   locale: Locale;
   withInclusions?: boolean;
+  headingLevel?: "h2" | "h3";
 }) {
   return (
     <ul className="grid [grid-template-columns:repeat(auto-fit,minmax(min(100%,16rem),1fr))] gap-5">
@@ -43,6 +45,7 @@ export function SeasonalOfferGrid({
               }
               endsOn={pkg.offerEndsAt ? formatInStudioTz(pkg.offerEndsAt, "PPP", locale) : null}
               locale={locale}
+              headingLevel={headingLevel}
             />
           </li>
         );

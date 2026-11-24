@@ -25,6 +25,8 @@ export type SeasonalOfferCardProps = {
   /** Already formatted, e.g. "December 25, 2026"; null when the offer has no end date. */
   endsOn: string | null;
   locale: Locale;
+  /** Heading level for the offer name: h2 when the page has only an h1 above the cards. */
+  headingLevel: "h2" | "h3";
 };
 
 /** One seasonal offer: price, struck-through regular price, key facts and a Book button. */
@@ -41,6 +43,7 @@ export function SeasonalOfferCard({
   inclusions,
   endsOn,
   locale,
+  headingLevel: Heading,
 }: SeasonalOfferCardProps) {
   const t = useTranslations();
   const facts = [
@@ -58,9 +61,9 @@ export function SeasonalOfferCard({
           {t("Seasonal.offerBadge")}
         </span>
       )}
-      <h3 id={headingId} className="pr-16 text-2xl">
+      <Heading id={headingId} className="pr-16 text-2xl">
         {name}
-      </h3>
+      </Heading>
       <p className="text-muted-foreground mt-2 text-sm">{summary}</p>
 
       <p className="mt-4 flex flex-wrap items-baseline gap-x-3">
