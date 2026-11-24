@@ -10,7 +10,7 @@ import { studioDateKey } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { calculateQuote } from "@/lib/pricing/calculate-quote";
 import { toEngineInput } from "@/lib/pricing/engine-input";
-import { resolvePackage } from "@/lib/pricing/rules";
+import { matchesRequestedPackage, resolvePackage } from "@/lib/pricing/rules";
 import { counterKey, formatReference } from "@/lib/references";
 import { signValue } from "@/lib/signing";
 import { verifyTurnstile } from "@/lib/turnstile";
@@ -62,7 +62,9 @@ export async function createQuote(
     const context = await getPricingContext();
     if (!(await isActiveServiceSlug(request.category))) return { ok: false, error: "unavailable" };
     const pkg = resolvePackage(context.packages, request.category, request.packageSlug);
-    if (!pkg) return { ok: false, error: "unavailable" };
+    if (!pkg || !matchesRequestedPackage(request.packageSlug, pkg)) {
+      return { ok: false, error: "unavailable" };
+    }
 
     let quote;
     try {
