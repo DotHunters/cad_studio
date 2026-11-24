@@ -3,9 +3,8 @@ import "server-only";
 import { unstable_cache } from "next/cache";
 
 import { db } from "@/lib/db";
-import { pricedOptions } from "@/lib/pricing/options";
+import { livePricedOptions } from "@/lib/pricing/options";
 import { parsePricingRules } from "@/lib/pricing/rules";
-import { filterLive } from "@/lib/seasonal/offer";
 import { CACHE_TAGS, CONTENT_REVALIDATE_SECONDS } from "@/server/cache";
 
 const readPricingData = unstable_cache(
@@ -87,7 +86,7 @@ export async function getPricingContext(now: Date = new Date()) {
   return {
     ...data,
     // One option per package, or per tier for packages with tiers (lib/pricing/options.ts).
-    packages: pricedOptions(filterLive(data.packages, now)),
+    packages: livePricedOptions(data.packages, now),
   };
 }
 

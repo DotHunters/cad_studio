@@ -4,6 +4,8 @@
  * quote engine work on options, so tiers need no special handling there. Pure, unit tested.
  */
 
+import { filterLive } from "@/lib/seasonal/offer";
+
 export type TierRecord = {
   key: string;
   name: string;
@@ -77,6 +79,17 @@ export function pricedOptions<C extends string>(
       includedShooters: tier.includedShooters,
     }));
   });
+}
+
+/**
+ * Options for the packages whose offer has not ended. Runs after the cached read so an offer
+ * stops being priced and bookable the moment it ends. `offerEndsAt` may be a string (cached JSON).
+ */
+export function livePricedOptions<C extends string>(
+  packages: readonly (PackageRecord<C> & { offerEndsAt: Date | string | null })[],
+  now: Date = new Date(),
+): PricedOption<C>[] {
+  return pricedOptions(filterLive(packages, now));
 }
 
 /** The lowest price a package can be booked at: its cheapest tier, or its own price. */

@@ -2,12 +2,15 @@ import { describe, expect, it } from "vitest";
 
 import {
   findOption,
+  livePricedOptions,
   optionSlug,
   pricedOptions,
   savedOptionName,
   startingPriceCents,
   tierKeyFor,
+  type TierRecord,
 } from "@/lib/pricing/options";
+import { offerEndFromDateKey } from "@/lib/seasonal/offer";
 
 const base = {
   category: "wedding",
@@ -158,5 +161,55 @@ describe("savedOptionName", () => {
     expect(savedOptionName({ lineItems: [] }, pkg, "fr")).toBe("Mariage");
     expect(savedOptionName(null, pkg, "en")).toBe("Wedding");
     expect(savedOptionName({}, null, "en")).toBeNull();
+  });
+});
+
+describe("livePricedOptions", () => {
+  const offer = (slug: string, offerEndsAt: Date | string | null, tiers: TierRecord[] = []) => ({
+    ...base,
+    slug,
+    name: slug,
+    nameFr: null,
+    tiers,
+    offerEndsAt,
+  });
+  const lastDay = offerEndFromDateKey("2026-12-25");
+  const slugs = (options: { slug: string }[]) => options.map((option) => option.slug);
+
+  it("drops a package whose offer has ended", () => {
+    const now = new Date(lastDay.getTime() + 1);
+    expect(slugs(livePricedOptions([offer("old", lastDay), offer("regular", null)], now))).toEqual([
+      "regular",
+    ]);
+  });
+
+  it("keeps a package that ends today until the last minute of the day in Toronto", () => {
+    const now = new Date(lastDay.getTime() - 60_000);
+    expect(slugs(livePricedOptions([offer("today", lastDay)], now))).toEqual(["today"]);
+  });
+
+  it("keeps a package with no end date", () => {
+    const now = new Date("2099-01-01T00:00:00Z");
+    expect(slugs(livePricedOptions([offer("evergreen", null)], now))).toEqual(["evergreen"]);
+  });
+
+  it("expands a live tiered package into its tiers", () => {
+    const tier = (key: string, basePriceCents: number) => ({
+      key,
+      name: key,
+      nameFr: null,
+      basePriceCents,
+      includedHours: 2,
+      includedShooters: 1,
+    });
+    const tiered = offer("duo", null, [tier("silver", 100000), tier("gold", 200000)]);
+    expect(slugs(livePricedOptions([tiered], new Date()))).toEqual(["duo:silver", "duo:gold"]);
+  });
+
+  it("handles end dates that came back from the cache as ISO strings", () => {
+    const now = new Date(lastDay.getTime() - 60_000);
+    const live = offer("live", lastDay.toISOString());
+    const ended = offer("ended", new Date(lastDay.getTime() - 120_000).toISOString());
+    expect(slugs(livePricedOptions([live, ended], now))).toEqual(["live"]);
   });
 });
