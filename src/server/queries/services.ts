@@ -4,8 +4,10 @@ import { unstable_cache } from "next/cache";
 
 import type { Locale } from "@/config/site";
 import { db } from "@/lib/db";
+import { SEASONAL_SERVICE_SLUG } from "@/lib/seasonal/offer";
 import { serviceNameMap, serviceOptions, type ServiceRow, type ServiceUsage } from "@/lib/services";
 import { CACHE_TAGS, CONTENT_REVALIDATE_SECONDS } from "@/server/cache";
+import { getActivePackages } from "@/server/queries/packages";
 
 const usageSelect = {
   packages: true,
@@ -36,9 +38,21 @@ export const getServices = unstable_cache(
   { tags: [CACHE_TAGS.services], revalidate: CONTENT_REVALIDATE_SECONDS },
 );
 
-/** Active services as `{ slug, name }` in the viewer's language — for public forms and filters. */
+/**
+ * Active services for the public site (tiles, forms, filters). The seasonal service is left out
+ * while no seasonal offer is live, so an empty service never shows between seasons.
+ */
+export async function getPublicServices(): Promise<ServiceRow[]> {
+  const [services, packages] = await Promise.all([getServices(), getActivePackages()]);
+  const seasonalLive = packages.some((pkg) => pkg.category === SEASONAL_SERVICE_SLUG);
+  return services.filter(
+    (service) => service.active && (service.slug !== SEASONAL_SERVICE_SLUG || seasonalLive),
+  );
+}
+
+/** Public services as `{ slug, name }` in the viewer's language — for public forms and filters. */
 export const getActiveServiceOptions = async (locale: Locale) =>
-  serviceOptions(await getServices(), locale);
+  serviceOptions(await getPublicServices(), locale);
 
 /** Slug → localized name for every service, so old quotes and bookings keep their label. */
 export async function getServiceNames(locale: Locale) {
