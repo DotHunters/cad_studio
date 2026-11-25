@@ -10,7 +10,7 @@ import { studioDateKey } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { calculateQuote, type QuoteResult } from "@/lib/pricing/calculate-quote";
 import { toEngineInput } from "@/lib/pricing/engine-input";
-import { resolvePackage } from "@/lib/pricing/rules";
+import { matchesRequestedPackage, resolvePackage } from "@/lib/pricing/rules";
 import { counterKey, formatReference } from "@/lib/references";
 import type { BookingRequest } from "@/lib/validators/booking";
 import { getPricingContext } from "@/server/queries/pricing";
@@ -50,6 +50,8 @@ export async function placeBooking(
   const category = (await isActiveServiceSlug(request.category)) ? request.category : null;
   const pkg = category ? resolvePackage(context.packages, category, request.packageSlug) : null;
   if (!category || !pkg) return { ok: false, error: "invalid" };
+  // A package that is no longer offered (e.g. an ended offer) must not fall back to another price.
+  if (!matchesRequestedPackage(request.packageSlug, pkg)) return { ok: false, error: "invalid" };
 
   let price: QuoteResult;
   try {

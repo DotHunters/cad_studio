@@ -5,7 +5,7 @@ import type { Locale } from "@/config/site";
 import { Link } from "@/i18n/navigation";
 import { placeholderImage } from "@/lib/images";
 import { localize } from "@/lib/localize";
-import { getServices } from "@/server/queries/services";
+import { getPublicServices } from "@/server/queries/services";
 import { getServiceTileImages } from "@/server/queries/service-tiles";
 
 import { Accent, SectionHeading } from "./section-heading";
@@ -18,12 +18,11 @@ const TILE_CLASS =
 /** Service tiles; each photo is chosen in Admin → Services (default: first launch photo). */
 export async function CategoryTiles() {
   const locale = (await getLocale()) as Locale;
-  const [t, services, images] = await Promise.all([
+  const [t, tiles, images] = await Promise.all([
     getTranslations(),
-    getServices(),
+    getPublicServices(),
     getServiceTileImages(),
   ]);
-  const tiles = services.filter((service) => service.active);
 
   return (
     <section

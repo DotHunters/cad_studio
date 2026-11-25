@@ -68,6 +68,45 @@ export const dollarsToCents = z
     return z.NEVER;
   });
 
+/** Optional dollars: blank → null; otherwise like `dollarsToCents`, but above zero. */
+export const optionalDollarsToCents = z
+  .string()
+  .trim()
+  .optional()
+  .transform((value, ctx) => {
+    if (!value) return null;
+    try {
+      const cents = toCents(value);
+      if (cents > 0 && cents <= 100_000_000) return cents;
+    } catch {
+      // Reported below.
+    }
+    ctx.addIssue({ code: "custom", message: "Enter an amount like 350 or 1,200.50." });
+    return z.NEVER;
+  });
+
+const MIN_DATE_KEY = "2000-01-01";
+const MAX_DATE_KEY = "2100-12-31";
+
+/** Optional calendar date from `<input type="date">`: blank → null, else the "yyyy-MM-dd" text. */
+export const optionalDateKey = z
+  .string()
+  .trim()
+  .optional()
+  .transform((value, ctx) => {
+    if (!value) return null;
+    const date = new Date(`${value}T00:00:00Z`);
+    const real =
+      /^\d{4}-\d{2}-\d{2}$/.test(value) &&
+      !Number.isNaN(date.getTime()) &&
+      date.toISOString().startsWith(value) &&
+      value >= MIN_DATE_KEY &&
+      value <= MAX_DATE_KEY;
+    if (real) return value;
+    ctx.addIssue({ code: "custom", message: "Enter a valid date." });
+    return z.NEVER;
+  });
+
 /** HTML checkbox: "on" when ticked, missing when not. */
 export const checkbox = z.preprocess((value) => value === true || value === "on", z.boolean());
 

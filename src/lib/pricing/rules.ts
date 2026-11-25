@@ -58,3 +58,15 @@ export function resolvePackage<
     cheapest(inCategory)
   );
 }
+
+/**
+ * False when the request named a package (e.g. an offer that has since ended) but the option
+ * it was priced from belongs to another one. Tier keys ("wedding:gold") are ignored.
+ */
+export function matchesRequestedPackage(
+  requestedSlug: string | undefined,
+  option: { packageSlug?: string; slug: string },
+): boolean {
+  if (!requestedSlug) return true;
+  return (option.packageSlug ?? option.slug) === requestedSlug.split(":")[0];
+}

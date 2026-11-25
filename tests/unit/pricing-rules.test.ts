@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { parsePricingRules, resolvePackage } from "@/lib/pricing/rules";
+import { matchesRequestedPackage, parsePricingRules, resolvePackage } from "@/lib/pricing/rules";
 
 const records = [
   { key: "EXTRA_HOUR_RATE", value: 20000 },
@@ -83,5 +83,29 @@ describe("resolvePackage", () => {
     it("falls back to the category's cheapest option otherwise", () => {
       expect(resolvePackage(options, "wedding", "nope")?.slug).toBe("elopement");
     });
+  });
+});
+
+describe("matchesRequestedPackage", () => {
+  const tier = { slug: "wedding:gold", packageSlug: "wedding" };
+  const plain = { slug: "elopement" };
+
+  it("accepts a request that names no package", () => {
+    expect(matchesRequestedPackage(undefined, plain)).toBe(true);
+    expect(matchesRequestedPackage("", plain)).toBe(true);
+  });
+
+  it("accepts another tier of the same package", () => {
+    expect(matchesRequestedPackage("wedding:silver", tier)).toBe(true);
+  });
+
+  it("rejects a different package", () => {
+    expect(matchesRequestedPackage("seasonal-mini", plain)).toBe(false);
+    expect(matchesRequestedPackage("wedding", plain)).toBe(false);
+  });
+
+  it("ignores the tier key when comparing", () => {
+    expect(matchesRequestedPackage("elopement:gold", plain)).toBe(true);
+    expect(matchesRequestedPackage("wedding", tier)).toBe(true);
   });
 });

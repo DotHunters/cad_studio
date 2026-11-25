@@ -4,10 +4,11 @@ import { unstable_cache } from "next/cache";
 
 import { parseLocalizedText } from "@/lib/content";
 import { db } from "@/lib/db";
+import { filterLive, isOfferLive } from "@/lib/seasonal/offer";
 import { CACHE_TAGS, CONTENT_REVALIDATE_SECONDS } from "@/server/cache";
 
 /** Active packages in display order, with prices from the DB (never hardcoded — AGENTS.md §6.2). */
-export const getActivePackages = unstable_cache(
+const readActivePackages = unstable_cache(
   async () =>
     db.package.findMany({
       where: { isActive: true, service: { archivedAt: null } },
@@ -21,6 +22,8 @@ export const getActivePackages = unstable_cache(
         summary: true,
         summaryFr: true,
         basePriceCents: true,
+        regularPriceCents: true,
+        offerEndsAt: true,
         includedHours: true,
         includedShooters: true,
         editedImages: true,
@@ -43,10 +46,15 @@ export const getActivePackages = unstable_cache(
   { tags: [CACHE_TAGS.packages, CACHE_TAGS.services], revalidate: CONTENT_REVALIDATE_SECONDS },
 );
 
+/** Active packages whose offer (if any) has not ended. The live check runs after the cache. */
+export async function getActivePackages() {
+  return filterLive(await readActivePackages());
+}
+
 export type PackageSummary = Awaited<ReturnType<typeof getActivePackages>>[number];
 
 /** One active package with its add-ons and images, or null (inactive/unknown → 404). */
-export const getPackageBySlug = unstable_cache(
+const readPackageBySlug = unstable_cache(
   async (slug: string) =>
     db.package.findFirst({
       where: { slug, isActive: true, service: { archivedAt: null } },
@@ -59,6 +67,12 @@ export const getPackageBySlug = unstable_cache(
   ["packages:by-slug"],
   { tags: [CACHE_TAGS.packages, CACHE_TAGS.services], revalidate: CONTENT_REVALIDATE_SECONDS },
 );
+
+/** One live package, or null (inactive, unknown or offer ended → 404). */
+export async function getPackageBySlug(slug: string) {
+  const pkg = await readPackageBySlug(slug);
+  return pkg && isOfferLive(pkg.offerEndsAt) ? pkg : null;
+}
 
 export type PackageDetail = NonNullable<Awaited<ReturnType<typeof getPackageBySlug>>>;
 

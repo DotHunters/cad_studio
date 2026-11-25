@@ -104,39 +104,43 @@ model Service {
 }
 
 model Package {
-  id               String        @id @default(cuid())
-  slug             String        @unique
-  category         String
-  service          Service       @relation(fields: [category], references: [slug], onDelete: Restrict)
-  name             String
-  nameFr           String?
-  summary          String
-  summaryFr        String?
+  id                String        @id @default(cuid())
+  slug              String        @unique
+  category          String
+  service           Service       @relation(fields: [category], references: [slug], onDelete: Restrict)
+  name              String
+  nameFr            String?
+  summary           String
+  summaryFr         String?
   /// Markdown.
-  description      String
-  descriptionFr    String?
-  basePriceCents   Int
-  includedHours    Int
-  includedShooters Int           @default(1)
-  editedImages     Int?
-  turnaroundDays   Int?
-  inclusions       String[]
-  inclusionsFr     String[]
-  exclusions       String[]
-  exclusionsFr     String[]
+  description       String
+  descriptionFr     String?
+  basePriceCents    Int
+  /// Shown struck through next to basePriceCents when set. Display only: never charged.
+  regularPriceCents Int?
+  /// Last moment the package can be shown and booked (end of its last day, studio time). Null = no end.
+  offerEndsAt       DateTime?
+  includedHours     Int
+  includedShooters  Int           @default(1)
+  editedImages      Int?
+  turnaroundDays    Int?
+  inclusions        String[]
+  inclusionsFr      String[]
+  exclusions        String[]
+  exclusionsFr      String[]
   /// [{ q, a, qFr?, aFr? }]
-  faqs             Json          @default("[]")
-  isActive         Boolean       @default(true)
-  sortOrder        Int           @default(0)
-  images           Image[]
-  addOns           AddOn[]
+  faqs              Json          @default("[]")
+  isActive          Boolean       @default(true)
+  sortOrder         Int           @default(0)
+  images            Image[]
+  addOns            AddOn[]
   /// Optional options such as Silver / Gold / Platinum. When present, they set the price,
   /// hours and photographers, and the package's own values are only defaults.
-  tiers            PackageTier[]
-  quotes           Quote[]
-  bookings         Booking[]
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
+  tiers             PackageTier[]
+  quotes            Quote[]
+  bookings          Booking[]
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
 
   @@index([category, isActive, sortOrder])
 }

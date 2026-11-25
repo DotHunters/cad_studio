@@ -102,6 +102,21 @@
   "PricingBanner": {
     "message": "Tarifs en attente de confirmation — les prix affichés sont provisoires."
   },
+  "Seasonal": {
+    "metaTitle": "Offres saisonnières",
+    "metaDescription": "Forfaits photo saisonniers à durée limitée pour couples, familles et petits événements, avec tarifs promotionnels et réservation en ligne.",
+    "eyebrow": "Offre saisonnière limitée",
+    "viewAll": "Voir toutes les offres saisonnières",
+    "book": "Réserver cette offre",
+    "offerBadge": "Offre",
+    "regularPrice": "Prix régulier",
+    "endsOn": "L’offre se termine le {date}",
+    "addOnsTitle": "Options",
+    "addOnsIntro": "Ajoutez-les à n’importe quelle séance saisonnière.",
+    "ribbonTitle": "Places de réservation limitées",
+    "ribbonBody": "Réservez votre date et confirmez l’heure souhaitée.",
+    "contactLead": "Des questions ? Joignez-nous :"
+  },
   "Packages": {
     "metaTitle": "Forfaits",
     "metaDescription": "Forfaits photo pour mariages, événements corporatifs, événements familiaux, rassemblements, portraits et produits — avec prix de départ en dollars canadiens.",

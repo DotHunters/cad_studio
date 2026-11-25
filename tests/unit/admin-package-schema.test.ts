@@ -138,3 +138,49 @@ describe("packageFormSchema", () => {
     });
   });
 });
+
+describe("packageFormSchema seasonal offer fields", () => {
+  it("defaults both to null when left blank or missing", () => {
+    expect(packageFormSchema.parse(valid)).toMatchObject({ regularPrice: null, offerEndsOn: null });
+    expect(packageFormSchema.parse({ ...valid, regularPrice: "", offerEndsOn: "" })).toMatchObject({
+      regularPrice: null,
+      offerEndsOn: null,
+    });
+  });
+
+  it("reads a regular price in dollars and an end date", () => {
+    expect(
+      packageFormSchema.parse({ ...valid, regularPrice: "$1,500", offerEndsOn: "2026-12-25" }),
+    ).toMatchObject({ regularPrice: 150_000, offerEndsOn: "2026-12-25" });
+  });
+
+  it("requires the regular price to be higher than the starting price", () => {
+    expect(errors({ ...valid, regularPrice: "1,250.50" }).regularPrice).toBe(
+      "Must be higher than the starting price.",
+    );
+    expect(errors({ ...valid, regularPrice: "1,000" }).regularPrice).toBe(
+      "Must be higher than the starting price.",
+    );
+    expect(errors({ ...valid, regularPrice: "1,250.51" }).regularPrice).toBeUndefined();
+  });
+
+  it("rejects unreadable prices and dates", () => {
+    expect(errors({ ...valid, regularPrice: "lots" }).regularPrice).toBe(
+      "Enter an amount like 350 or 1,200.50.",
+    );
+    expect(errors({ ...valid, regularPrice: "0" }).regularPrice).toBe(
+      "Enter an amount like 350 or 1,200.50.",
+    );
+    expect(errors({ ...valid, offerEndsOn: "25/12/2026" }).offerEndsOn).toBe("Enter a valid date.");
+    expect(errors({ ...valid, offerEndsOn: "2026-02-30" }).offerEndsOn).toBe("Enter a valid date.");
+  });
+
+  it("rejects offer end dates outside 2000 to 2100", () => {
+    for (const offerEndsOn of ["1999-12-31", "2101-01-01", "0001-01-01", "9999-12-31"]) {
+      expect(errors({ ...valid, offerEndsOn }).offerEndsOn).toBe("Enter a valid date.");
+    }
+    for (const offerEndsOn of ["2000-01-01", "2100-12-31"]) {
+      expect(packageFormSchema.parse({ ...valid, offerEndsOn })).toMatchObject({ offerEndsOn });
+    }
+  });
+});

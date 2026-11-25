@@ -102,6 +102,21 @@
   "PricingBanner": {
     "message": "Pricing pending owner confirmation — prices shown are placeholders."
   },
+  "Seasonal": {
+    "metaTitle": "Seasonal offers",
+    "metaDescription": "Limited-time seasonal photoshoot packages for couples, families and small events, with offer prices and online booking.",
+    "eyebrow": "Limited seasonal offer",
+    "viewAll": "See all seasonal offers",
+    "book": "Book this offer",
+    "offerBadge": "Offer",
+    "regularPrice": "Regular price",
+    "endsOn": "Offer ends {date}",
+    "addOnsTitle": "Add-ons",
+    "addOnsIntro": "Add these to any seasonal session.",
+    "ribbonTitle": "Limited booking slots available",
+    "ribbonBody": "Book your date and confirm your preferred time.",
+    "contactLead": "Questions? Reach us:"
+  },
   "Packages": {
     "metaTitle": "Packages",
     "metaDescription": "Photography packages for weddings, corporate events, family events, gatherings, portraits and products — with starting prices in CAD.",

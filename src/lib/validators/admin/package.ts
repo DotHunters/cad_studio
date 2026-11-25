@@ -6,6 +6,8 @@ import {
   dollarsToCents,
   integer,
   lines,
+  optionalDateKey,
+  optionalDollarsToCents,
   optionalInteger,
   optionalText,
   text,
@@ -89,6 +91,8 @@ export const packageFormSchema = z.object({
   description: text(10_000),
   descriptionFr: optionalText(10_000),
   basePrice: dollarsToCents,
+  regularPrice: optionalDollarsToCents,
+  offerEndsOn: optionalDateKey,
   includedHours: integer(1, 24),
   includedShooters: integer(1, 10),
   editedImages: optionalInteger(0, 10_000),
@@ -101,6 +105,9 @@ export const packageFormSchema = z.object({
   tiers,
   isActive: checkbox,
   sortOrder: integer(0, 1000),
+}).refine((form) => form.regularPrice === null || form.regularPrice > form.basePrice, {
+  path: ["regularPrice"],
+  message: "Must be higher than the starting price.",
 });
 
 export type PackageFormInput = z.input<typeof packageFormSchema>;
