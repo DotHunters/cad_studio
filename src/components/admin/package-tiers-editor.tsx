@@ -75,7 +75,8 @@ export function PackageTiersEditor({
       <legend className="mb-1 text-lg font-medium">Options (Silver, Gold, Platinum…)</legend>
       <p className="text-muted-foreground text-sm">
         Optional. Each option has its own price and coverage, and clients pick one. With options,
-        the website shows “from” the cheapest one and the price above is only a default.
+        package pages show “from” the cheapest one and the price above is only a default. Seasonal
+        offers show one card per option, without a struck-through regular price.
       </p>
       {errors.tiers && !Object.keys(errors).some((key) => key.startsWith("tiers.")) && (
         <p className="text-destructive text-sm" role="alert">

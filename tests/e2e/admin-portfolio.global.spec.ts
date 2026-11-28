@@ -8,8 +8,10 @@ import { queryDb } from "./db";
 const slugFor = (testInfo: TestInfo) =>
   `e2e-project-${testInfo.project.name}-${testInfo.testId}`.toLowerCase().slice(0, 80);
 const titleFor = (testInfo: TestInfo) => `E2E Project ${testInfo.project.name}`;
+const photoIdFor = (testInfo: TestInfo) => `placeholder/${slugFor(testInfo)}`;
 
 test.afterEach(async ({}, testInfo) => {
+  await queryDb(`delete from "Image" where "publicId" = $1`, [photoIdFor(testInfo)]);
   await queryDb(`delete from "PortfolioProject" where slug = $1`, [slugFor(testInfo)]);
   await deleteAdmin(adminEmailFor(testInfo));
 });
@@ -50,6 +52,17 @@ test("projects: client named only with consent, unpublishing hides them", async 
   await expect(page.getByText("Private client").first()).toBeVisible();
   await expect(page.getByText("Lakeshore Test Co.")).toHaveCount(0);
 
+  // A project photo, as the uploader records it (consented and marked for the gallery). The
+  // next project save refreshes the gallery cache.
+  const photoAlt = `E2E gallery photo ${testInfo.project.name}`;
+  await queryDb(
+    `insert into "Image" (id, "publicId", width, height, alt, "consentToPublish", "projectId")
+     select gen_random_uuid()::text, $1, 1600, 1067, $2, true, id
+     from "PortfolioProject" where slug = $3`,
+    [photoIdFor(testInfo), photoAlt, slug],
+  );
+  const galleryPhoto = page.locator(`img[alt="${photoAlt}"]`);
+
   // With consent the name appears.
   await page.goto("/admin/portfolio");
   await page.getByRole("link", { name: title, exact: true }).click();
@@ -59,6 +72,8 @@ test("projects: client named only with consent, unpublishing hides them", async 
   await expect(page.getByRole("status")).toBeVisible();
   await page.goto(`/en/portfolio/${slug}`);
   await expect(page.getByText("Lakeshore Test Co.").first()).toBeVisible();
+  await page.goto("/en/gallery");
+  await expect(galleryPhoto).toHaveCount(1);
 
   // Unpublished → gone from the website.
   await page.goto("/admin/portfolio");
@@ -72,6 +87,18 @@ test("projects: client named only with consent, unpublishing hides them", async 
   );
   const response = await page.goto(`/en/portfolio/${slug}`);
   expect(response?.status()).toBe(404);
+  // ...including its photos in the gallery.
+  await page.goto("/en/gallery");
+  await expect(galleryPhoto).toHaveCount(0);
+
+  // Deleting a pending project must not turn its photos into public, unlinked gallery images.
+  await page.goto("/admin/portfolio");
+  const pendingRow = page.getByRole("row", { name: new RegExp(title) });
+  await pendingRow.getByRole("button", { name: `Delete ${title}` }).click();
+  await pendingRow.getByRole("button", { name: "Yes, delete" }).click();
+  await expect(page.getByRole("row", { name: new RegExp(title) })).toHaveCount(0);
+  await page.goto("/en/gallery");
+  await expect(galleryPhoto).toHaveCount(0);
 });
 
 test("projects: validation", async ({ page, context, baseURL }, testInfo) => {

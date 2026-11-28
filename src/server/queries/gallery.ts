@@ -11,9 +11,11 @@ const cachedGalleryImages = unstable_cache(
   async (includeSamples: boolean) =>
     db.image.findMany({
       // Only images the admin marked for the gallery and with client consent (AGENTS.md §9).
+      // Photos of a portfolio project stay hidden while that project is pending.
       where: {
         inGallery: true,
         consentToPublish: true,
+        OR: [{ projectId: null }, { project: { publishedAt: { not: null } } }],
         ...(includeSamples ? {} : { isSample: false }),
       },
       orderBy: [{ sortOrder: "asc" }, { createdAt: "desc" }],
@@ -30,7 +32,8 @@ const cachedGalleryImages = unstable_cache(
         isSample: true,
       },
     }),
-  ["gallery:images"],
+  // New key: entries cached before pending projects were excluded must not be reused.
+  ["gallery:public-images"],
   { tags: [CACHE_TAGS.gallery, CACHE_TAGS.portfolio], revalidate: CONTENT_REVALIDATE_SECONDS },
 );
 

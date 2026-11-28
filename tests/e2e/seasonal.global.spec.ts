@@ -104,6 +104,34 @@ test("an admin creates a seasonal offer, it shows after the hero, and it hides w
   await page.getByRole("link", { name: "Book this offer" }).click();
   await expect(page).toHaveURL(new RegExp(`/en/book\\?package=${PACKAGE_SLUG}$`));
 
+  // Options inside one package: each gets its own card, price and booking link.
+  await page.goto("/admin/packages");
+  await page.getByRole("link", { name: PACKAGE_NAME }).first().click();
+  await expect(page.locator('form[data-hydrated="true"]')).toBeVisible();
+  const options = [
+    { name: "E2E Quick", price: "250" },
+    { name: "E2E Classic", price: "400" },
+  ];
+  for (const [index, option] of options.entries()) {
+    const n = index + 1;
+    await page.getByRole("button", { name: "Add option" }).click();
+    await page.getByLabel(`Name (English) for option ${n}`).fill(option.name);
+    await page.getByLabel(`Price (CAD) for option ${n}`).fill(option.price);
+    await page.getByLabel(`Hours included for option ${n}`).fill("2");
+  }
+  await page.getByRole("button", { name: "Save package" }).click();
+  await expect(page.getByRole("status")).toContainText(`Saved “${PACKAGE_SLUG}”`);
+
+  await page.goto("/en");
+  await expect(strip(page).getByRole("article")).toHaveCount(2);
+  const classic = strip(page).getByRole("article", { name: "E2E Classic" });
+  await expect(classic).toContainText("$400.00 CAD");
+  await classic.getByRole("link", { name: "Book this offer" }).click();
+  await expect(page).toHaveURL(new RegExp(`/en/book\\?package=${PACKAGE_SLUG}&tier=e2e-classic$`));
+  await expect(page.locator('select[name="packageSlug"]')).toHaveValue(
+    `${PACKAGE_SLUG}:e2e-classic`,
+  );
+
   // Ending the offer (two days ago) hides it everywhere.
   const ended = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
   await page.goto("/admin/packages");
