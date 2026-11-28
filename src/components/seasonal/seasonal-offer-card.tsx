@@ -12,11 +12,12 @@ const MAX_INCLUSIONS = 5;
 export type SeasonalOfferCardProps = {
   headingId: string;
   packageSlug: string;
+  /** Set when the card is one option of a package, so booking preselects it. */
+  tierKey: string | null;
   name: string;
-  summary: string;
+  /** Null when the inclusions describe the offer instead. */
+  summary: string | null;
   priceCents: number;
-  /** True when the package has options, so the price shown is its cheapest option. */
-  startingAt: boolean;
   /** Struck-through price; null when there is no offer discount to show. */
   regularPriceCents: number | null;
   editedImages: number | null;
@@ -32,10 +33,10 @@ export type SeasonalOfferCardProps = {
 export function SeasonalOfferCard({
   headingId,
   packageSlug,
+  tierKey,
   name,
   summary,
   priceCents,
-  startingAt,
   regularPriceCents,
   editedImages,
   inclusions,
@@ -61,14 +62,9 @@ export function SeasonalOfferCard({
       <Heading id={headingId} className="pr-16 text-2xl">
         {name}
       </Heading>
-      <p className="text-muted-foreground mt-2 text-sm">{summary}</p>
+      {summary && <p className="text-muted-foreground mt-2 text-sm">{summary}</p>}
 
       <p className="mt-4 flex flex-wrap items-baseline gap-x-3">
-        {startingAt && (
-          <span className="text-muted-foreground w-full text-xs tracking-[0.15em] uppercase">
-            {t("PackageDetail.startingAt")}
-          </span>
-        )}
         <span className="font-heading text-4xl lining-nums">{formatCAD(priceCents, locale)}</span>
         {regularPriceCents !== null && (
           <s className="text-muted-foreground text-lg">
@@ -82,7 +78,7 @@ export function SeasonalOfferCard({
         <p className="text-muted-foreground mt-2 text-sm">{facts.join(" · ")}</p>
       )}
       {inclusions.length > 0 && (
-        <ul className="border-border mt-4 flex-1 space-y-2 border-t pt-4 text-sm">
+        <ul className="border-border mt-4 space-y-2 border-t pt-4 text-sm">
           {inclusions.slice(0, MAX_INCLUSIONS).map((item) => (
             <li key={item} className="flex gap-2">
               <Check className="text-gold-text mt-0.5 size-4 shrink-0" aria-hidden />
@@ -91,6 +87,7 @@ export function SeasonalOfferCard({
           ))}
         </ul>
       )}
+      <div className="flex-1" />
       {endsOn && (
         <p className="text-muted-foreground mt-4 text-xs">
           {t("Seasonal.endsOn", { date: endsOn })}
@@ -98,7 +95,10 @@ export function SeasonalOfferCard({
       )}
 
       <Link
-        href={{ pathname: "/book", query: { package: packageSlug } }}
+        href={{
+          pathname: "/book",
+          query: tierKey ? { package: packageSlug, tier: tierKey } : { package: packageSlug },
+        }}
         aria-describedby={headingId}
         className={cn(buttonVariants({ size: "cta" }), "mt-6")}
       >
