@@ -190,6 +190,7 @@ pnpm photos           # assets/ originals → compressed WebP in public/photos +
 ### 6.4 Gallery `/gallery`
 - Masonry/justified grid, lazy loaded, infinite scroll or "load more".
 - Filters by category and tags.
+- Only consented images marked "Show in the gallery" appear. Photos linked to a portfolio project appear only while it is published; deleting a pending project takes its photos out of the gallery.
 - Accessible lightbox: keyboard (←, →, Esc), swipe on mobile, focus trap, alt text shown on demand.
 - Use responsive images (`next/image`, Cloudinary transformations, AVIF/WebP, blur placeholders).
 - Right-click/save deterrence is optional and must not break accessibility; watermarking is done at upload time, not in the browser.

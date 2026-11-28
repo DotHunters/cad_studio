@@ -126,17 +126,28 @@ export async function setProjectFeatured(id: string, featured: boolean): Promise
   return { ok: true };
 }
 
-/** Deletes a project (ADMIN only). Its images stay in the image library, unlinked. */
+/**
+ * Deletes a project (ADMIN only). Its images stay in the image library, unlinked. Photos of a
+ * pending project are also taken out of the gallery, so deleting it never publishes them.
+ */
 export async function deleteProject(id: string): Promise<ActionResult> {
   const actor = await requireRole("ADMIN");
-  const title = await projectTitle(id);
-  if (!title) return { ok: false, error: "This project no longer exists." };
-  await db.portfolioProject.delete({ where: { id } });
+  const project = await db.portfolioProject.findUnique({
+    where: { id },
+    select: { title: true, publishedAt: true },
+  });
+  if (!project) return { ok: false, error: "This project no longer exists." };
+  await db.$transaction(async (tx) => {
+    if (!project.publishedAt) {
+      await tx.image.updateMany({ where: { projectId: id }, data: { inGallery: false } });
+    }
+    await tx.portfolioProject.delete({ where: { id } });
+  });
   await audit(actor, {
     action: "project.delete",
     entityType: "PortfolioProject",
     entityId: id,
-    summary: `Deleted ${title}`,
+    summary: `Deleted ${project.title}`,
   });
   revalidateContent("portfolio", "gallery");
   revalidatePath("/admin", "layout");
@@ -147,7 +158,8 @@ export type AddImagesResult = { ok: true; added: number } | { ok: false; error: 
 
 /**
  * Records photos uploaded to Vercel Blob as images of a project (ADMIN only): numbered alt
- * text to refine later, consent ticked, shown in the gallery under the project's category.
+ * text to refine later, consent ticked, shown in the gallery under the project's category
+ * once the project is published.
  * The first photo becomes the cover if the project has none.
  */
 export async function addProjectImages(
